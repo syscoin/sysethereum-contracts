@@ -56,6 +56,11 @@ contract SyscoinToken is HumanStandardToken(0, "SyscoinToken", 8, "SYSCOINTOKEN"
         trustedRelayerContract = _trustedRelayerContract;
         assetGUID = _assetGUID;
     }
+
+    function wasSyscoinTxProcessed(uint txHash) public view returns (bool) {
+        return Set.contains(syscoinTxHashesAlreadyProcessed, txHash);
+    }
+
     function processTransaction(uint txHash, uint value, address destinationAddress, uint32 _assetGUID, address _assetContractAddress, address superblockSubmitterAddress)
         public returns (uint) {
             
