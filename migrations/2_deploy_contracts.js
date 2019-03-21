@@ -158,7 +158,7 @@ module.exports = function(deployer, network, accounts) {
     } else if (network === 'rinkeby') {
       await deployIntegration(deployer, network, accounts, SYSCOIN_MAINNET, null, SUPERBLOCK_OPTIONS_INTEGRATION_FAST_SYNC);
     } else if (network === 'integrationSyscoinMain') {
-      await deployIntegration(deployer, network, accounts, SYSCOIN_MAINNET, null, SUPERBLOCK_OPTIONS_INTEGRATION_FAST_SYNC);
+      await deployIntegration(deployer, network, accounts, SYSCOIN_MAINNET, null, SUPERBLOCK_OPTIONS_PRODUCTION);
     } else if (network === 'integrationSyscoinRegtest') {
       await deployIntegration(deployer, network, accounts, SYSCOIN_REGTEST, null, SUPERBLOCK_OPTIONS_LOCAL);
     }
