@@ -24,8 +24,8 @@ module.exports = async function(callback) {
   console.log("SyscoinToken");
   console.log("---------");
   var dt = await SyscoinToken.deployed();
-  var balance1 = await dt.balanceOf.call("0x92ecc1ba4ea10f681dcf35c02f583e59d2b99b4b"); 
-  console.log("SyscoinToken Balance of 0x92ecc1ba4ea10f681dcf35c02f583e59d2b99b4b : " + balance1);
+  var balance1 = await dt.balanceOf.call("0x1a8d58bc7390f55d060bb78cf8f8cae953ce9b94"); 
+  console.log("SyscoinToken Balance of 0x1a8d58bc7390f55d060bb78cf8f8cae953ce9b94 : " + balance1);
   var balance2 = await dt.balanceOf.call("0xd2394f3fad76167e7583a876c292c86ed10305da"); 
   console.log("SyscoinToken Balance of 0xd2394f3fad76167e7583a876c292c86ed10305da : " + balance2);
   var balance3 = await dt.balanceOf.call("0xf5fa014271b7971cb0ae960d445db3cb3802dfd9"); 
