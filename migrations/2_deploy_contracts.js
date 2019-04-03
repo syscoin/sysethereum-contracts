@@ -10,22 +10,8 @@ const SyscoinBattleManager = artifacts.require('./SyscoinBattleManager.sol');
 
 const SafeMath = artifacts.require('openzeppelin-solidity/contracts/math/SafeMath.sol');
 
-//const sysethereumRecipientUnitTest = '0x4d905b4b815d483cdfabcd292c6f86509d0fad82';
-//const sysethereumRecipientIntegrationSyscoinMain = '0x0000000000000000000000000000000000000003';
-//const sysethereumRecipientIntegrationSyscoinRegtest = '0x03cd041b0139d3240607b9fd1b2d1b691e22b5d6';
-
-/* ---- CONSTANTS FOR GENESIS SUPERBLOCK ---- */
-
-// TODO: set these to their actual values
-const genesisSuperblockMerkleRoot = "0x3d2160a3b5dc4a9d62e7e66a295f70313ac808440ef7400d6c0772171ce973a5";
-const genesisSuperblockChainWork = 0;
-const genesisSuperblockLastBlockTimestamp = 1296688602;
-const genesisSuperblockLastBlockHash = "0x3d2160a3b5dc4a9d62e7e66a295f70313ac808440ef7400d6c0772171ce973a5";
-const genesisSuperblockParentId = "0x0";
-
 
 const SYSCOIN_MAINNET = 0;
-const SYSCOIN_TESTNET = 1;
 const SYSCOIN_REGTEST = 2;
 
 const SUPERBLOCK_OPTIONS_PRODUCTION = {
@@ -34,14 +20,6 @@ const SUPERBLOCK_OPTIONS_PRODUCTION = {
   TIMEOUT: 300,     // 5 minutes
   CONFIRMATIONS: 3, // Superblocks required to confirm semi approved superblock
   REWARD: 10        // Monetary reward for opponent in case a battle is lost
-};
-
-const SUPERBLOCK_OPTIONS_INTEGRATION_SLOW_SYNC = {
-  DURATION: 600,    // 10 minutes
-  DELAY: 300,       // 5 minutes
-  TIMEOUT: 60,      // 1 minutes
-  CONFIRMATIONS: 1, // Superblocks required to confirm semi approved superblock
-  REWARD: 10        // Monetary reward for opponent in case a battle is lost  
 };
 
 const SUPERBLOCK_OPTIONS_INTEGRATION_FAST_SYNC = {
@@ -60,8 +38,7 @@ const SUPERBLOCK_OPTIONS_LOCAL = {
   REWARD: 10        // Monetary reward for opponent in case a battle is lost  
 };
 
-async function deployDevelopment(deployer, network, accounts, networkId,
-    sysethereumRecipient, superblockOptions) {
+async function deployDevelopment(deployer, networkId, superblockOptions) {
   await deployer.deploy(Set);
   await deployer.deploy(SyscoinMessageLibrary);
   await deployer.deploy(SafeMath);
@@ -101,8 +78,7 @@ async function deployDevelopment(deployer, network, accounts, networkId,
   await syscoinBattleManager.setSyscoinClaimManager(SyscoinClaimManager.address);
 }
 
-async function deployIntegration(deployer, network, accounts, networkId, 
-    sysethereumRecipient, superblockOptions) {
+async function deployIntegration(deployer,  networkId, superblockOptions) {
   await deployer.deploy(Set, {gas: 300000});
   await deployer.deploy(SyscoinMessageLibrary, {gas: 2000000});
   await deployer.deploy(SafeMath, {gas: 100000});
@@ -142,20 +118,20 @@ async function deployIntegration(deployer, network, accounts, networkId,
   await syscoinBattleManager.setSyscoinClaimManager(SyscoinClaimManager.address);
 }
 
-module.exports = function(deployer, network, accounts) {
+module.exports = function(deployer, network) {
   deployer.then(async () => {
 
 
     if (network === 'development') {
-      await deployDevelopment(deployer, network, accounts, SYSCOIN_MAINNET, null, SUPERBLOCK_OPTIONS_LOCAL);
+      await deployDevelopment(deployer, SYSCOIN_MAINNET, SUPERBLOCK_OPTIONS_LOCAL);
     } else if (network === 'ropsten') {
-      await deployIntegration(deployer, network, accounts, SYSCOIN_MAINNET, null, SUPERBLOCK_OPTIONS_INTEGRATION_FAST_SYNC);
+      await deployIntegration(deployer, SYSCOIN_MAINNET, SUPERBLOCK_OPTIONS_INTEGRATION_FAST_SYNC);
     } else if (network === 'rinkeby') {
-      await deployIntegration(deployer, network, accounts, SYSCOIN_MAINNET, null, SUPERBLOCK_OPTIONS_INTEGRATION_FAST_SYNC);
+      await deployIntegration(deployer, SYSCOIN_MAINNET, SUPERBLOCK_OPTIONS_INTEGRATION_FAST_SYNC);
     } else if (network === 'integrationSyscoinMain') {
-      await deployIntegration(deployer, network, accounts, SYSCOIN_MAINNET, null, SUPERBLOCK_OPTIONS_PRODUCTION);
+      await deployIntegration(deployer, SYSCOIN_MAINNET, SUPERBLOCK_OPTIONS_PRODUCTION);
     } else if (network === 'integrationSyscoinRegtest') {
-      await deployIntegration(deployer, network, accounts, SYSCOIN_REGTEST, null, SUPERBLOCK_OPTIONS_LOCAL);
+      await deployIntegration(deployer, SYSCOIN_REGTEST, SUPERBLOCK_OPTIONS_LOCAL);
     }
   });
 };
