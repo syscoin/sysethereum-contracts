@@ -3,8 +3,6 @@ pragma solidity ^0.4.8;
 import "./HumanStandardToken.sol";
 import "./Set.sol";
 import "./../SyscoinTransactionProcessor.sol";
-import "../SyscoinParser/SyscoinMessageLibrary.sol";
-import "./../ECRecovery.sol";
 import "openzeppelin-solidity/contracts/math/SafeMath.sol";
 
 contract SyscoinToken is HumanStandardToken(0, "SyscoinToken", 8, "SYSCOINTOKEN"), SyscoinTransactionProcessor {

@@ -1,6 +1,5 @@
 
 const Set = artifacts.require('./token/Set.sol');
-const ECRecovery = artifacts.require('ECRecovery');
 const SyscoinToken = artifacts.require('./token/SyscoinToken.sol');
 const SyscoinTokenForTests = artifacts.require('./token/SyscoinTokenForTests.sol');
 const SyscoinMessageLibrary = artifacts.require('./SyscoinParser/SyscoinMessageLibrary.sol');
@@ -66,11 +65,9 @@ async function deployDevelopment(deployer, network, accounts, networkId,
   await deployer.deploy(Set);
   await deployer.deploy(SyscoinMessageLibrary);
   await deployer.deploy(SafeMath);
-  await deployer.deploy(ECRecovery);
 
   await deployer.link(Set, SyscoinTokenForTests);
-  await deployer.link(SyscoinMessageLibrary, [SyscoinMessageLibraryForTests, SyscoinTokenForTests, SyscoinSuperblocks, SyscoinBattleManager, SyscoinClaimManager]);
-  await deployer.link(ECRecovery, SyscoinTokenForTests);
+  await deployer.link(SyscoinMessageLibrary, [SyscoinMessageLibraryForTests, SyscoinSuperblocks, SyscoinBattleManager, SyscoinClaimManager]);
 
 
   await deployer.deploy(SyscoinSuperblocks);
@@ -109,11 +106,9 @@ async function deployIntegration(deployer, network, accounts, networkId,
   await deployer.deploy(Set, {gas: 300000});
   await deployer.deploy(SyscoinMessageLibrary, {gas: 2000000});
   await deployer.deploy(SafeMath, {gas: 100000});
-  await deployer.deploy(ECRecovery, {gas: 100000});
 
   await deployer.link(Set, SyscoinToken);
-  await deployer.link(SyscoinMessageLibrary, [SyscoinToken, SyscoinSuperblocks, SyscoinBattleManager, SyscoinClaimManager]);
-  await deployer.link(ECRecovery, SyscoinToken);
+  await deployer.link(SyscoinMessageLibrary, [SyscoinSuperblocks, SyscoinBattleManager, SyscoinClaimManager]);
 
   await deployer.deploy(SyscoinSuperblocks, {gas: 5000000});
 

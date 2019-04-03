@@ -16,7 +16,6 @@ let input = {
     'SyscoinDepositsManager.sol' : fs.readFileSync('./contracts/SyscoinDepositsManager.sol', 'utf8'),
     'SyscoinErrorCodes.sol' : fs.readFileSync('./contracts/SyscoinErrorCodes.sol', 'utf8'),
     'SyscoinSuperblocks.sol' : fs.readFileSync('./contracts/SyscoinSuperblocks.sol', 'utf8'),
-    'ECRecovery.sol' : fs.readFileSync('./contracts/ECRecovery.sol', 'utf8'),
     'token/SyscoinToken.sol' : fs.readFileSync('./contracts/token/SyscoinToken.sol', 'utf8'),
     'token/Token.sol' : fs.readFileSync('./contracts/token/Token.sol', 'utf8'),
     'token/StandardToken.sol' : fs.readFileSync('./contracts/token/StandardToken.sol', 'utf8'),
