@@ -121,12 +121,10 @@ library SyscoinMessageLibrary {
     uint constant ERR_INVALID_HEADER_HASH = 10140;
     uint constant ERR_PROOF_OF_WORK_AUXPOW = 10150;
     uint constant ERR_PARSE_TX_OUTPUT_LENGTH = 10160;
-    uint constant ERR_PARSE_TX_SYS_ASSET = 10170;
-    uint constant ERR_PARSE_TX_SYS = 10180;
+    uint constant ERR_PARSE_TX_SYS = 10170;
     enum Network { MAINNET, TESTNET, REGTEST }
-    uint32 constant SYSCOIN_TX_VERSION_ASSET = 0x7401;
-    uint32 constant SYSCOIN_TX_VERSION_MINT = 0x7402;
-
+    uint32 constant SYSCOIN_TX_VERSION_ASSET_ALLOCATION_BURN = 0x7407;
+    uint32 constant SYSCOIN_TX_VERSION_BURN = 0x7401;
     // AuxPoW block fields
     struct AuxPoW {
         uint blockHash;
@@ -203,32 +201,22 @@ library SyscoinMessageLibrary {
 
 
     function parseTransaction(bytes memory txBytes) internal pure
-             returns (uint, uint, address, uint32, address)
+             returns (uint, uint, address, uint32)
     {
         
         uint output_value;
         uint32 assetGUID;
-        address assetContractAddress;
         address destinationAddress;
-        uint pos = 4; // account for version
-        pos = skipInputs(txBytes, pos);
+        uint32 version;
+        uint pos = 0;
+        version = bytesToUint32Flipped(txBytes, pos);
+        if(version != SYSCOIN_TX_VERSION_ASSET_ALLOCATION_BURN && version != SYSCOIN_TX_VERSION_BURN){
+            return (ERR_PARSE_TX_SYS, output_value, destinationAddress, assetGUID);
+        }
+        pos = skipInputs(txBytes, 4);
             
-        uint output_script_start;
-        (output_value, output_script_start,pos) = scanOutputs(txBytes, pos);
-       
-        if(isSyscoinAssetBurn(txBytes, output_script_start)){
-            if(!isSyscoinAsset(txBytes)){
-               return (ERR_PARSE_TX_SYS_ASSET, output_value, destinationAddress, assetGUID, assetContractAddress); 
-            }
-            (output_value, destinationAddress, assetGUID, assetContractAddress) = scanAssetDetails(txBytes, output_script_start+2);
-        }
-        else{
-            if(!isSyscoinBurn(txBytes, output_script_start)){
-                return (ERR_PARSE_TX_SYS, output_value, destinationAddress, assetGUID, assetContractAddress); 
-            }  
-            destinationAddress = scanSyscoinDetails(txBytes, output_script_start+2);   
-        }
-        return (0, output_value, destinationAddress, assetGUID, assetContractAddress);
+        (output_value, destinationAddress, assetGUID) = scanBurns(txBytes, version, pos);
+        return (0, output_value, destinationAddress, assetGUID);
     }
 
 
@@ -274,37 +262,47 @@ library SyscoinMessageLibrary {
 
         return pos;
     }
-    // scan the outputs and return the value and script length of first output.
-
-    function scanOutputs(bytes memory txBytes, uint pos) private pure
-             returns (uint, uint, uint)
+             
+    // scan the burn outputs and return the value and script data of first burned output.
+    function scanBurns(bytes memory txBytes, uint32 version, uint pos) private pure
+             returns (uint, address, uint32)
     {
-        uint n_outputs;
-        (n_outputs, pos) = parseVarInt(txBytes, pos);
-
-        require(n_outputs < 10);
-
         uint script_len;
         uint output_value;
-        uint first_script_start;
-        uint first_output_value;
+        uint32 assetGUID = 0;
+        address destinationAddress;
+        uint n_outputs;
+        (n_outputs, pos) = parseVarInt(txBytes, pos);
+        require(n_outputs < 10);
         for (uint i = 0; i < n_outputs; i++) {
-            output_value = getBytesLE(txBytes, pos, 64);
-            if(i==0){
-                first_output_value = output_value;
+            // output
+            if(version == SYSCOIN_TX_VERSION_BURN){
+                output_value = getBytesLE(txBytes, pos, 64);
             }
             pos += 8;
-
+            // varint
             (script_len, pos) = parseVarInt(txBytes, pos);
-            if(i == 0){
-                first_script_start = pos;
+            if(!isOpReturn(txBytes, pos)){
+                // output script
+                pos += script_len;
+                output_value = 0;
+                continue;
             }
-            pos += script_len;
+            // skip opreturn marker
+            pos += 1;
+            if(version == SYSCOIN_TX_VERSION_ASSET_ALLOCATION_BURN){
+                (output_value, destinationAddress, assetGUID) = scanAssetDetails(txBytes, pos);
+            }
+            else if(version == SYSCOIN_TX_VERSION_BURN){                
+                destinationAddress = scanSyscoinDetails(txBytes, pos);   
+            }
+            // only one opreturn data allowed per transaction
+            break;
         }
 
-        return (first_output_value, first_script_start, pos);
+        return (output_value, destinationAddress, assetGUID);
     }
-    // similar to scanOutputs, but consumes less gas since it doesn't store the outputs
+
     function skipOutputs(bytes memory txBytes, uint pos) private pure
              returns (uint)
     {
@@ -400,49 +398,28 @@ library SyscoinMessageLibrary {
     }
     
     
-    function isSyscoinAsset(bytes memory txBytes) private pure returns (bool){
-        uint version = getBytesLE(txBytes, 0, 32);
-        return (version & SYSCOIN_TX_VERSION_ASSET != 0);
-    }
-    // Returns true if the tx output is an syscoin burn transaction
-    function isSyscoinBurn(bytes memory txBytes, uint pos) private pure
+    // Returns true if the tx output is an OP_RETURN output
+    function isOpReturn(bytes memory txBytes, uint pos) private pure
              returns (bool) {
         // scriptPub format is
         // 0x6a OP_RETURN
-        // 0x51 OP_TRUE
         return 
-            txBytes[pos] == byte(0x6a) &&
-            txBytes[pos+1] == byte(0x51);
+            txBytes[pos] == byte(0x6a);
     }
-    // Returns true if the tx output is an syscoin asset burn transaction
-    function isSyscoinAssetBurn(bytes memory txBytes, uint pos) private pure
-             returns (bool) {
-        // scriptPub format is
-        // 0x52 OP_SYSCOIN_ASSET_ALLOCATION
-        // 0x52 OP_ASSET_ALLOCATION_BURN
-        return 
-            txBytes[pos] == byte(0x52) &&
-            txBytes[pos+1] == byte(0x52);
-    } 
     // Returns syscoin data parsed from the op_return data output from syscoin burn transaction
     function scanSyscoinDetails(bytes memory txBytes, uint pos) private pure
-             returns (address) {
-                 
-        address destinationAddress;
+             returns (address) {      
         uint8 op;
-        // vchContract
         (op, pos) = getOpcode(txBytes, pos);
         // ethereum addresses are 20 bytes (without the 0x)
         require(op == 0x14);
-        destinationAddress = readEthereumAddress(txBytes, pos);
-        return destinationAddress;
+        return readEthereumAddress(txBytes, pos);
     }    
     // Returns asset data parsed from the op_return data output from syscoin asset burn transaction
     function scanAssetDetails(bytes memory txBytes, uint pos) private pure
-             returns (uint, address, uint32, address) {
+             returns (uint, address, uint32) {
                  
         uint32 assetGUID;
-        address assetContractAddress;
         address destinationAddress;
         uint output_value;
         uint8 op;
@@ -457,18 +434,12 @@ library SyscoinMessageLibrary {
         require(op == 0x08);
         output_value = bytesToUint64(txBytes, pos);
         pos += op;
-        // vchContract
-        (op, pos) = getOpcode(txBytes, pos);
-        // ethereum contracts are 20 bytes (without the 0x)
-        require(op == 0x14);
-        assetContractAddress = readEthereumAddress(txBytes, pos);
-        pos += op;
          // destination address
         (op, pos) = getOpcode(txBytes, pos);
         // ethereum contracts are 20 bytes (without the 0x)
         require(op == 0x14);
         destinationAddress = readEthereumAddress(txBytes, pos);       
-        return (output_value, destinationAddress, assetGUID, assetContractAddress);
+        return (output_value, destinationAddress, assetGUID);
     }         
     // Read the ethereum address embedded in the tx output
     function readEthereumAddress(bytes memory txBytes, uint pos) private pure
@@ -487,40 +458,6 @@ library SyscoinMessageLibrary {
         require(pos < txBytes.length);
         return (uint8(txBytes[pos]), pos + 1);
     }
-
-    function expmod(uint256 base, uint256 e, uint256 m) internal view returns (uint256 o) {
-        assembly {
-            // pointer to free memory
-            let p := mload(0x40)
-            mstore(p, 0x20)             // Length of Base
-            mstore(add(p, 0x20), 0x20)  // Length of Exponent
-            mstore(add(p, 0x40), 0x20)  // Length of Modulus
-            mstore(add(p, 0x60), base)  // Base
-            mstore(add(p, 0x80), e)     // Exponent
-            mstore(add(p, 0xa0), m)     // Modulus
-            // call modexp precompile!
-            if iszero(staticcall(gas, 0x05, p, 0xc0, p, 0x20)) {
-                revert(0, 0)
-            }
-            // data
-            o := mload(p)
-        }
-    }
-
-    function pub2address(uint x, bool odd) internal view returns (address) {
-        // First, uncompress pub key
-        uint yy = mulmod(x, x, p);
-        yy = mulmod(yy, x, p);
-        yy = addmod(yy, 7, p);
-        uint y = expmod(yy, q, p);
-        if (((y & 1) == 1) != odd) {
-          y = p - y;
-        }
-        require(yy == mulmod(y, y, p));
-        // Now, with uncompressed x and y, create the address
-        return address(keccak256(abi.encodePacked(x, y)));
-    }
-    
 
     // @dev - convert an unsigned integer from little-endian to big-endian representation
     //
@@ -808,10 +745,10 @@ library SyscoinMessageLibrary {
     // @param _blockHeader - Syscoin block header bytes
     // @param pos - where to start reading hash from
     // @return - hash of block's parent in big endian format
-    function getHashPrevBlock(bytes memory _blockHeader, uint pos) internal pure returns (uint) {
+    function getHashPrevBlock(bytes memory _blockHeader) internal pure returns (uint) {
         uint hashPrevBlock;
         assembly {
-            hashPrevBlock := mload(add(add(_blockHeader, 0x24), pos))
+            hashPrevBlock := mload(add(add(_blockHeader, 32), 0x04))
         }
         return flip32Bytes(hashPrevBlock);
     }
@@ -821,27 +758,12 @@ library SyscoinMessageLibrary {
     // @param _blockHeader - Syscoin block header bytes
     // @param pos - where to start reading root from
     // @return - block's Merkle root in big endian format
-    function getHeaderMerkleRoot(bytes memory _blockHeader, uint pos) public pure returns (uint) {
+    function getHeaderMerkleRoot(bytes memory _blockHeader) public pure returns (uint) {
         uint merkle;
         assembly {
-            merkle := mload(add(add(_blockHeader, 0x44), pos))
+            merkle := mload(add(add(_blockHeader, 32), 0x24))
         }
         return flip32Bytes(merkle);
-    }
-
-    // @dev - extract bits field from a raw Syscoin block header
-    //
-    // @param _blockHeader - Syscoin block header bytes
-    // @param pos - where to start reading bits from
-    // @return - block's difficulty in bits format, also big-endian
-    function getBits(bytes memory _blockHeader, uint pos) internal pure returns (uint32 bits) {
-        assembly {
-            let word := mload(add(add(_blockHeader, 0x50), pos))
-            bits := add(byte(24, word),
-                add(mul(byte(25, word), 0x100),
-                    add(mul(byte(26, word), 0x10000),
-                        mul(byte(27, word), 0x1000000))))
-        }
     }
 
     // @dev - extract timestamp field from a raw Syscoin block header
@@ -849,22 +771,26 @@ library SyscoinMessageLibrary {
     // @param _blockHeader - Syscoin block header bytes
     // @param pos - where to start reading bits from
     // @return - block's timestamp in big-endian format
-    function getTimestamp(bytes memory _blockHeader, uint pos) internal pure returns (uint32 time) {
-        assembly {
-            let word := mload(add(add(_blockHeader, 0x4c), pos))
-            time := add(byte(24, word),
-                add(mul(byte(25, word), 0x100),
-                    add(mul(byte(26, word), 0x10000),
-                        mul(byte(27, word), 0x1000000))))
-        }
+    function getTimestamp(bytes memory _blockHeader) internal pure returns (uint32 time) {
+        return bytesToUint32Flipped(_blockHeader, 0x44);
     }
+
+    // @dev - extract bits field from a raw Syscoin block header
+    //
+    // @param _blockHeader - Syscoin block header bytes
+    // @param pos - where to start reading bits from
+    // @return - block's difficulty in bits format, also big-endian
+    function getBits(bytes memory _blockHeader) internal pure returns (uint32 bits) {
+        return bytesToUint32Flipped(_blockHeader, 0x48);
+    }
+
 
     // @dev - converts raw bytes representation of a Syscoin block header to struct representation
     //
     // @param _rawBytes - first 80 bytes of a block header
     // @return - exact same header information in BlockHeader struct form
     function parseHeaderBytes(bytes memory _rawBytes, uint pos) internal view returns (BlockHeader bh) {
-        bh.bits = getBits(_rawBytes, pos);
+        bh.bits = getBits(_rawBytes);
         bh.blockHash = dblShaFlipMem(_rawBytes, pos, 80);
     }
 

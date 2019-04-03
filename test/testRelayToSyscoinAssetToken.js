@@ -14,8 +14,8 @@ contract('testRelayToSyscoinAssetToken', function(accounts) {
   const address = '0xc47bD54a3Df2273426829a7928C3526BF8F7Acaa';
   it('test mint and burn asset', async () => {
     let syscoinToken = await SyscoinToken.new(trustedRelayerContract, 1496703512);
-    const [ ret, amount, inputEthAddress, assetGUID, assetContractAddress ]  = await syscoinMessageLibraryForTests.parseTransaction(txData);
-    await syscoinToken.processTransaction(txHash, amount, inputEthAddress, assetGUID, syscoinToken.address, superblockSubmitterAddress);
+    const [ ret, amount, inputEthAddress, assetGUID ]  = await syscoinMessageLibraryForTests.parseTransaction(txData);
+    await syscoinToken.processTransaction(txHash, amount, inputEthAddress, assetGUID, superblockSubmitterAddress);
     const superblockSubmitterFee = 10000000; 
     const userValue = value - superblockSubmitterFee;
 

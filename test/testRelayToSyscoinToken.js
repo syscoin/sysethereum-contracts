@@ -17,14 +17,16 @@ contract('testRelayToSyscoinToken', function(accounts) {
     const superblockSubmitterAddress = accounts[4];
     const headerAndHashes = await utils.store11blocks(superblocks, claimManager, superblockSubmitterAddress);
     const txIndex = 1; // Second tx in the block
-    const txHash = '337dbd9301a40576d7e1176bbcfaea049c8004ecea418c04b77bbe06a1cf6f46';
-    const txData = `0x020000000102a4fc39dbe0e77264cb9a333891b02c338d98ba2e1d3fdb2736f361dcaac184010000006b4830450221008f70fb6586e75f3cd1a79c4b3c15324d90fdb9d9d8b75ee3be259235891352b2022042ac981873a6a6014e41e775130fe31b724d36f8958a97882f12f3464d14abcd01210350e35982a18e009660e38b2e7adab32d620656190b3c287e4cfe9609c9919131ffffffff02007ddaac00000000026a510ad7f505000000001976a9142df03062154b2ad0039fd78e661305b445e49be488ac00000000`;
+    const txHash = 'd34d59c2f93bfb2eecec5aba3d6b0783f4615298dfffdeac1f2dba186d6f20d2';
+    const txData = '0x01740000000102466ac5d8ad1a1053289751e5511e5b334c040848a14bed412d008cc4d0d0d3ff0100000000ffffffffbfae5ac02e4df7e4e834997c675c2485dc261e29379dfc4f3b791b0cbdf663780100000000ffffffff02007ddaac00000000166a145a714c3ed4ce4f297679e733f3c476b24d8895e5724321830000000016001407c680ea77fcbb3bda422ab307163df13f42b37102473044022040495afea9d3429982fd95e1e8373e17e0b1ad1d33620ba96c43f436e6b82eab022065e7ac0c3e97675500ebc44e9e621c3799c4bdf4c15fa0780d66ff14385bfe1301210375ff4756252bdfa0ba423f612701fe345bdd1a907be3cfc9c157db76a423e7f80247304402206a95bb46f24616f913c4a312c702248c3533d0955f6aee4db2479854a6b7c46302203dc19bd95898d4c84aa3f031e78099411d52776d48b03d50acc6469dc86e10e101210375ff4756252bdfa0ba423f612701fe345bdd1a907be3cfc9c157db76a423e7f800000000';
 
     const siblings = utils.makeMerkleProof(headerAndHashes.hashes, txIndex)
       .map(sibling => `0x${sibling}`);
-
     const blockIndex = 9;
+    console.log("hashes " + headerAndHashes.proposedSuperblock.blockHashes.length);
     const blockData = `0x${headerAndHashes.proposedSuperblock.blockHeaders[blockIndex].slice(0, 160)}`;
+    console.log("txData " + txData);
+    console.log("siblings " + siblings);
     const blockSiblings = utils.makeMerkleProof(
       headerAndHashes.proposedSuperblock.blockHashes,
       blockIndex,

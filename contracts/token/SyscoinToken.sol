@@ -61,7 +61,7 @@ contract SyscoinToken is HumanStandardToken(0, "SyscoinToken", 8, "SYSCOINTOKEN"
         return Set.contains(syscoinTxHashesAlreadyProcessed, txHash);
     }
 
-    function processTransaction(uint txHash, uint value, address destinationAddress, uint32 _assetGUID, address _assetContractAddress, address superblockSubmitterAddress)
+    function processTransaction(uint txHash, uint value, address destinationAddress, uint32 _assetGUID, address superblockSubmitterAddress)
         public returns (uint) {
             
         require(msg.sender == trustedRelayerContract);
@@ -69,11 +69,7 @@ contract SyscoinToken is HumanStandardToken(0, "SyscoinToken", 8, "SYSCOINTOKEN"
         if (assetGUID != _assetGUID){
             emit ErrorSyscoinToken(ERR_UNLOCK_ASSET_MISMATCH);
             return;         
-        }
-        if(_assetContractAddress != 0 && keccak256(abi.encodePacked(_assetContractAddress)) != keccak256(abi.encodePacked(address(this)))){     
-            emit ErrorSyscoinToken(ERR_UNLOCK_CONTRACT_MISMATCH);
-            return;        
-        }            
+        }       
             
         // Add tx to the syscoinTxHashesAlreadyProcessed
         bool inserted = Set.insert(syscoinTxHashesAlreadyProcessed, txHash);

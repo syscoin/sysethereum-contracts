@@ -230,7 +230,7 @@ contract('SyscoinClaimManager', (accounts) => {
         headers,
         genesisSuperblock.superblockHash,
         genesisSuperblock.accumulatedWork,
-        4
+        7
       );
 
       result = await claimManager.proposeSuperblock(

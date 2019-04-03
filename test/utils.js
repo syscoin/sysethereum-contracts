@@ -310,7 +310,7 @@ async function initSuperblockChain(options) {
 }
 
 const SYSCOIN = {
-  messagePrefix: '\x19Syscoin Signed Message:\n',
+  messagePrefix: '\x19Bitcoin Signed Message:\n',
   bip32: {
     public: 0x0499b21e,
     private: 0x0488ade4
@@ -345,10 +345,13 @@ function ethAddressFromKeyPair(keyPair) {
   const uncompressedPublicKey = bitcoin.ECPair.fromPublicKey(keyPair.publicKey, { compressed: false });
   return `0x${Buffer.from(keccak256.arrayBuffer(uncompressedPublicKey.publicKey.slice(1))).slice(12).toString('hex')}`;
 }
-
+function ethAddressFromKeyPairRaw(keyPair) {
+  const uncompressedPublicKey = bitcoin.ECPair.fromPublicKey(keyPair.publicKey, { compressed: false });
+  return Buffer.from(keccak256.arrayBuffer(uncompressedPublicKey.publicKey.slice(1))).slice(12);
+}
 function buildSyscoinTransaction({ signer, inputs, outputs }) {
   const txBuilder = new bitcoin.TransactionBuilder(SYSCOIN);
-  txBuilder.setVersion(1);
+  txBuilder.setVersion(0x7401);
   inputs.forEach(([ txid, index ]) => txBuilder.addInput(txid, index));
   outputs.forEach(([address, amount, data]) => {
     if (address === 'OP_RETURN') {
@@ -384,11 +387,11 @@ module.exports = {
     const { headers, hashes } = await parseDataFile('test/headers/store11blocks.txt');
 
     const genesisSuperblock = makeSuperblock(
-      headers.slice(0, 1), // header 778
+      headers.slice(0, 1), // header 120
       '0x0000000000000000000000000000000000000000000000000000000000000000',
-      0,            // accumulated work block 778
-      1542587310,    // timestamp block 778,
-      778
+      0,            // accumulated work block 120
+      1553880473,    // timestamp block 120,
+      120
     );
 
     await superblocks.initialize(
@@ -407,7 +410,7 @@ module.exports = {
       headers.slice(1),
       genesisSuperblock.superblockHash,
       genesisSuperblock.accumulatedWork,
-      788
+      130
     );
 
     await claimManager.makeDeposit({ value: DEPOSITS.MIN_PROPOSAL_DEPOSIT, from: sender });
@@ -436,18 +439,18 @@ module.exports = {
 
     const headerAndHashes = {
       header: {
-        nonce: 21755,
-        hash: '000002bb371caeb9c0b957ef76a57b72dcaae5c240b77082fbac5bb3ef6600c1',
-        timestamp: 1542675879,
-        merkle_root: '90b5468ef79a1eca68f2914035b145beab69baaccbc2f0ef5a61301e6c641e4c',
-        version: 805306368,
-        prevhash: '000003671b6838e4eb4cb2c662ca67b58054823861056b8146ffc051471fcb9e',
-        bits: 503578623,
+        nonce: 0,
+        hash: '245bd0337365034bd68d352315d5723ea8dd00e24fddf504df31183387df1b5a',
+        timestamp: 1554271190,
+        merkle_root: 'c71174f829d001bd5a5c70ac40e5ef967bf30bc7afa813bde8db62bc7cc6af1e',
+        version: 268435716,
+        prevhash: '36137727331051290595ddc8d3f8fa00d100f0a309e3e373e3ee5392afea5230',
+        bits: 504365040,
         auxpow: 'realValueShouldBePutHere'
       },
       hashes: [
-        '959c2eafe0e7619ce5ed8cedadc28fe5b193684388b90b58670171a2ce8ff027', 
-        '337dbd9301a40576d7e1176bbcfaea049c8004ecea418c04b77bbe06a1cf6f46',
+        '122f5db2eefed5bd9ce566673b0f22298286ae72dc576227d74dda89b5c32023', 
+        'd34d59c2f93bfb2eecec5aba3d6b0783f4615298dfffdeac1f2dba186d6f20d2',
       ],
       genesisSuperblock,
       proposedSuperblock,
@@ -527,4 +530,5 @@ module.exports = {
   publicKeyHashFromKeyPair,
   buildSyscoinTransaction,
   ethAddressFromKeyPair,
+  ethAddressFromKeyPairRaw,
 };

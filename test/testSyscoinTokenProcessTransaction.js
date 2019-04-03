@@ -14,7 +14,7 @@ contract('testSyscoinTokenProcessTransaction', function(accounts) {
     let syscoinToken = await SyscoinToken.new(trustedRelayerContract, 0);
     console.log("contract address " + syscoinToken.address);
     const superblockSubmitterAddress = accounts[4];
-    await syscoinToken.processTransaction(txHash, value, address, 0, 0, superblockSubmitterAddress);
+    await syscoinToken.processTransaction(txHash, value, address, 0, superblockSubmitterAddress);
 
     const superblockSubmitterFee = 905853205; 
     const userValue = value - superblockSubmitterFee;
@@ -30,9 +30,9 @@ contract('testSyscoinTokenProcessTransaction', function(accounts) {
   it("processTransaction fail - tx already processed", async () => {
     let syscoinToken = await SyscoinToken.new(trustedRelayerContract,0);
     const superblockSubmitterAddress = accounts[4];
-    await syscoinToken.processTransaction(txHash, value, address, 0, 0, superblockSubmitterAddress);
+    await syscoinToken.processTransaction(txHash, value, address, 0, superblockSubmitterAddress);
 
-    var processTransactionTxReceipt = await syscoinToken.processTransaction(txHash, value, address, 0, 0, superblockSubmitterAddress);
+    var processTransactionTxReceipt = await syscoinToken.processTransaction(txHash, value, address, 0, superblockSubmitterAddress);
     assert.equal(60070, processTransactionTxReceipt.logs[0].args.err, "Expected ERR_PROCESS_TX_ALREADY_PROCESSED error");
   });
 

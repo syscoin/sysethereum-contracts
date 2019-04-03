@@ -38,7 +38,6 @@ contract SyscoinSuperblocks is SyscoinErrorCodes {
         uint value;
         address destinationAddress;
         uint32 assetGUID;
-        address assetContractAddress;
         address superblockSubmitterAddress;
         SyscoinTransactionProcessor untrustedTargetContract;
     }
@@ -360,43 +359,28 @@ contract SyscoinSuperblocks is SyscoinErrorCodes {
     function parseTxHelper(bytes memory _txBytes, uint txHash, SyscoinTransactionProcessor _untrustedTargetContract) private returns (uint) {
         uint value;
         address destinationAddress;
-        address _assetContractAddress;
         uint32 _assetGUID;
         uint ret;
-        (ret, value, destinationAddress, _assetGUID, _assetContractAddress) = SyscoinMessageLibrary.parseTransaction(_txBytes);
+        (ret, value, destinationAddress, _assetGUID) = SyscoinMessageLibrary.parseTransaction(_txBytes);
         if(ret != 0){
             return ret;
-        }
-        // TODO js test for these conditions
-        if(_assetGUID != 0 && _assetContractAddress == 0){
-            emit RelayTransaction(bytes32(0), ERR_ASSET_ADDRESS);
-            return ERR_ASSET_ADDRESS;          
-        }
-        else if(_assetContractAddress != 0 && _assetGUID == 0){
-            emit RelayTransaction(bytes32(0), ERR_CONTRACT_ADDRESS);
-            return ERR_CONTRACT_ADDRESS;           
-        }
-         
-        if(_assetContractAddress != 0){
-            _untrustedTargetContract = SyscoinTransactionProcessor(_assetContractAddress);
         }
 
         ProcessTransactionParams memory params;
         params.value = value;
         params.destinationAddress = destinationAddress;
         params.assetGUID = _assetGUID;
-        params.assetContractAddress = _assetContractAddress;
         params.untrustedTargetContract = _untrustedTargetContract;
         txParams[txHash] = params;        
         return 0;
     }
     function verifyTxHelper(uint txHash) private returns (uint) {
         ProcessTransactionParams memory params = txParams[txHash];        
-        uint returnCode = params.untrustedTargetContract.processTransaction(txHash, params.value, params.destinationAddress, params.assetGUID, params.assetContractAddress, params.superblockSubmitterAddress);
+        uint returnCode = params.untrustedTargetContract.processTransaction(txHash, params.value, params.destinationAddress, params.assetGUID, params.superblockSubmitterAddress);
         emit RelayTransaction(bytes32(txHash), returnCode);
         return (returnCode);
     }
-    // @dev - Checks whether the transaction given by `_txBytes` is in the block identified by `_txBlockHash`.
+    // @dev - Checks whether the transaction given by `_txBytes` is in the block identified by `_txBlockHeaderBytes`.
     // First it guards against a Merkle tree collision attack by raising an error if the transaction is exactly 64 bytes long,
     // then it calls helperVerifyHash to do the actual check.
     //
@@ -429,7 +413,7 @@ contract SyscoinSuperblocks is SyscoinErrorCodes {
         }
     }
 
-    // @dev - Checks whether the transaction identified by `_txHash` is in the block identified by `_txBlockHash`
+    // @dev - Checks whether the transaction identified by `_txHash` is in the block identified by `_blockHeaderBytes`
     // and whether the block is in the Syscoin main chain. Transaction check is done via Merkle proof.
     // Note: no verification is performed to prevent txHash from just being an
     // internal hash in the Merkle tree. Thus this helper method should NOT be used
@@ -458,7 +442,7 @@ contract SyscoinSuperblocks is SyscoinErrorCodes {
         }
 
         // Verify tx Merkle root
-        uint merkle = SyscoinMessageLibrary.getHeaderMerkleRoot(_blockHeaderBytes, 0);
+        uint merkle = SyscoinMessageLibrary.getHeaderMerkleRoot(_blockHeaderBytes);
         if (SyscoinMessageLibrary.computeMerkle(_txHash, _txIndex, _siblings) != merkle) {
             emit VerifyTransaction(bytes32(_txHash), ERR_MERKLE_ROOT);
             return (ERR_MERKLE_ROOT);

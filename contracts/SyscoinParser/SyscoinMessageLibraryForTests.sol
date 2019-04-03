@@ -84,7 +84,7 @@ contract SyscoinMessageLibraryForTests {
     }
 
     function parseTransaction(bytes txBytes) public pure
-             returns (uint, uint, address, uint32, address) {
+             returns (uint, uint, address, uint32) {
         return SyscoinMessageLibrary.parseTransaction(txBytes);
      }
 
@@ -109,8 +109,7 @@ contract SyscoinMessageLibraryForTests {
     uint constant ERR_INVALID_HEADER_HASH = 10140;
     uint constant ERR_PROOF_OF_WORK_AUXPOW = 10150;
     uint constant ERR_PARSE_TX_OUTPUT_LENGTH = 10160;
-    uint constant ERR_PARSE_TX_SYS_ASSET = 10170;
-    uint constant ERR_PARSE_TX_SYS = 10180;
+    uint constant ERR_PARSE_TX_SYS = 10170;
 
     // error codes for verifyTx
     uint constant ERR_BAD_FEE = 20010;
@@ -119,8 +118,6 @@ contract SyscoinMessageLibraryForTests {
     uint constant ERR_SUPERBLOCK = 20040;
     uint constant ERR_MERKLE_ROOT = 20050;
     uint constant ERR_TX_64BYTE = 20060;
-    uint constant ERR_ASSET_ADDRESS = 20070;
-    uint constant ERR_CONTRACT_ADDRESS = 20080;
 
     // error codes for relayTx
     uint constant ERR_RELAY_VERIFY = 30010;

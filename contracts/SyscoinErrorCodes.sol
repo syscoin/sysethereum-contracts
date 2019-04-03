@@ -34,8 +34,6 @@ contract SyscoinErrorCodes {
     uint constant ERR_SUPERBLOCK = 20040;
     uint constant ERR_MERKLE_ROOT = 20050;
     uint constant ERR_TX_64BYTE = 20060;
-    uint constant ERR_ASSET_ADDRESS = 20070;
-    uint constant ERR_CONTRACT_ADDRESS = 20080;
     // error codes for relayTx
     uint constant ERR_RELAY_VERIFY = 30010;
 

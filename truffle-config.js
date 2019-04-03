@@ -33,7 +33,7 @@ module.exports = {
       port: 8545,
       network_id: "4", // Rinkeby
       gas: 1000000,
-      from: "0x1a8d58bc7390f55d060bb78cf8f8cae953ce9b94", 
+      from: "0x2f038a7306449dc9bcde25d8399dba36ee8ad6bf", 
       gasPrice: "2000000000"
     }
   },

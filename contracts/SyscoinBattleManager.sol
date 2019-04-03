@@ -248,7 +248,7 @@ contract SyscoinBattleManager is SyscoinErrorCodes {
 
     // @dev - Verify that block timestamp is in the superblock timestamp interval
     function verifyTimestamp(bytes32 superblockHash, bytes blockHeader) internal view returns (bool) {
-        uint blockTimestamp = SyscoinMessageLibrary.getTimestamp(blockHeader, 0);
+        uint blockTimestamp = SyscoinMessageLibrary.getTimestamp(blockHeader);
         uint superblockTimestamp;
 
         (, , superblockTimestamp, , , , , ,,) = getSuperblockInfo(superblockHash);
@@ -273,9 +273,9 @@ contract SyscoinBattleManager is SyscoinErrorCodes {
             SyscoinMessageLibrary.sliceArray(blockHeader, blockHeader.length - 80, blockHeader.length) :
             SyscoinMessageLibrary.sliceArray(blockHeader, 0, 80);
 
-        blockInfo.timestamp = SyscoinMessageLibrary.getTimestamp(blockHeader, 0);
-        blockInfo.bits = SyscoinMessageLibrary.getBits(blockHeader, 0);
-        blockInfo.prevBlock = bytes32(SyscoinMessageLibrary.getHashPrevBlock(blockHeader, 0));
+        blockInfo.timestamp = SyscoinMessageLibrary.getTimestamp(blockHeader);
+        blockInfo.bits = SyscoinMessageLibrary.getBits(blockHeader);
+        blockInfo.prevBlock = bytes32(SyscoinMessageLibrary.getHashPrevBlock(blockHeader));
         blockInfo.blockHash = blockHash;
         blockInfo.powBlockHeader = powBlockHeader;
         return (ERR_SUPERBLOCK_OK, powBlockHeader);
