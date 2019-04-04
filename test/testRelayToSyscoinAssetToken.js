@@ -13,7 +13,7 @@ contract('testRelayToSyscoinAssetToken', function(accounts) {
   // passed into syscoin burn function
   const address = '0x5a714c3ed4ce4f297679e733f3c476b24d8895e5';
   it('test mint and burn asset', async () => {
-    let syscoinToken = await SyscoinToken.new(trustedRelayerContract, 1702063431);
+    let syscoinToken = await SyscoinToken.new(trustedRelayerContract, 1702063431, "SyscoinTokenAsset", 8, "SYSASSETX");
     const [ ret, amount, inputEthAddress, assetGUID ]  = await syscoinMessageLibraryForTests.parseTransaction(txData);
     assert.equal(assetGUID,1702063431);
     assert.equal(inputEthAddress,address);

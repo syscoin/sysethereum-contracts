@@ -4,7 +4,7 @@ import "./SyscoinToken.sol";
 
 contract SyscoinTokenForTests is SyscoinToken {
 
-    constructor (address _trustedRelayerContract, uint32 _assetGUID) public SyscoinToken(_trustedRelayerContract, _assetGUID) {
+    constructor (address _trustedRelayerContract, uint32 _assetGUID, string _tokenName, uint8 _decimalUnits, string _tokenSymbol) public SyscoinToken(_trustedRelayerContract, _assetGUID, _tokenName, _decimalUnits, _tokenSymbol) {
 
     }
 

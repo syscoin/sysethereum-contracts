@@ -11,7 +11,7 @@ contract('testSyscoinTokenProcessTransaction', function(accounts) {
   const value = 905853205327;
 
   it("processTransaction success", async () => {
-    let syscoinToken = await SyscoinToken.new(trustedRelayerContract, 0);
+    let syscoinToken = await SyscoinToken.new(trustedRelayerContract, 0, "SyscoinToken", 8, "SYSX");
     const superblockSubmitterAddress = accounts[4];
     await syscoinToken.processTransaction(txHash, value, address, 0, superblockSubmitterAddress);
 
@@ -27,7 +27,7 @@ contract('testSyscoinTokenProcessTransaction', function(accounts) {
   });
 
   it("processTransaction fail - tx already processed", async () => {
-    let syscoinToken = await SyscoinToken.new(trustedRelayerContract,0);
+    let syscoinToken = await SyscoinToken.new(trustedRelayerContract,0, "SyscoinToken", 8, "SYSX");
     const superblockSubmitterAddress = accounts[4];
     await syscoinToken.processTransaction(txHash, value, address, 0, superblockSubmitterAddress);
 

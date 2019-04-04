@@ -50,9 +50,12 @@ contract SyscoinToken is HumanStandardToken(0, "SyscoinToken", 8, "SYSX"), Sysco
     event Burn(address indexed from, uint value, uint32 assetGUID, bytes syscoinWitnessProgram);
 
 
-    constructor (address _trustedRelayerContract, uint32 _assetGUID) public {
+    constructor (address _trustedRelayerContract, uint32 _assetGUID, string _tokenName, uint8 _decimalUnits, string _tokenSymbol) public {
         trustedRelayerContract = _trustedRelayerContract;
         assetGUID = _assetGUID;
+        name = _tokenName;
+        decimals = _decimalUnits;
+        symbol = _tokenSymbol;
     }
 
     function wasSyscoinTxProcessed(uint txHash) public view returns (bool) {
@@ -91,8 +94,15 @@ contract SyscoinToken is HumanStandardToken(0, "SyscoinToken", 8, "SYSX"), Sysco
 
         uint superblockSubmitterFee = value.mul(SUPERBLOCK_SUBMITTER_LOCK_FEE) / 1000;
         balances[superblockSubmitterAddress] = balances[superblockSubmitterAddress].add(superblockSubmitterFee);
+        emit NewToken(superblockSubmitterAddress, superblockSubmitterFee);
+        // Hack to make etherscan show the event
+        emit Transfer(0, superblockSubmitterAddress, superblockSubmitterFee);
+
         uint userValue = value.sub(superblockSubmitterFee);
         balances[destinationAddress] = balances[destinationAddress].add(userValue);
+        emit NewToken(destinationAddress, userValue);
+        // Hack to make etherscan show the event
+        emit Transfer(0, destinationAddress, userValue);   
         totalSupply += value;  
     }
     // keyhash or scripthash for syscoinWitnessProgram
