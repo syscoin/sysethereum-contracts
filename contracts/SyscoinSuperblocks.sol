@@ -345,7 +345,7 @@ contract SyscoinSuperblocks is SyscoinErrorCodes {
         if (txHash != 0) {
             uint ret = parseTxHelper(_txBytes, txHash, _untrustedTargetContract);
             if(ret != 0){
-                emit RelayTransaction(bytes32(txHash), ret);
+                emit RelayTransaction(bytes32(0), ret);
                 return ret;
             }
             ProcessTransactionParams memory params = txParams[txHash];

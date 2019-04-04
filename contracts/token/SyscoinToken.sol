@@ -5,7 +5,7 @@ import "./Set.sol";
 import "./../SyscoinTransactionProcessor.sol";
 import "openzeppelin-solidity/contracts/math/SafeMath.sol";
 
-contract SyscoinToken is HumanStandardToken(0, "SyscoinToken", 8, "SYSCOINTOKEN"), SyscoinTransactionProcessor {
+contract SyscoinToken is HumanStandardToken(0, "SyscoinToken", 8, "SYSX"), SyscoinTransactionProcessor {
 
     using SafeMath for uint;
 
@@ -63,7 +63,6 @@ contract SyscoinToken is HumanStandardToken(0, "SyscoinToken", 8, "SYSCOINTOKEN"
         public returns (uint) {
             
         require(msg.sender == trustedRelayerContract);
-        // TODO js test for these conditions
         if (assetGUID != _assetGUID){
             emit ErrorSyscoinToken(ERR_UNLOCK_ASSET_MISMATCH);
             return;         
@@ -92,15 +91,9 @@ contract SyscoinToken is HumanStandardToken(0, "SyscoinToken", 8, "SYSCOINTOKEN"
 
         uint superblockSubmitterFee = value.mul(SUPERBLOCK_SUBMITTER_LOCK_FEE) / 1000;
         balances[superblockSubmitterAddress] = balances[superblockSubmitterAddress].add(superblockSubmitterFee);
-        emit NewToken(superblockSubmitterAddress, superblockSubmitterFee);
-        // Hack to make etherscan show the event
-        emit Transfer(0, superblockSubmitterAddress, superblockSubmitterFee);
-
         uint userValue = value.sub(superblockSubmitterFee);
         balances[destinationAddress] = balances[destinationAddress].add(userValue);
-        emit NewToken(destinationAddress, userValue);
-        // Hack to make etherscan show the event
-        emit Transfer(0, destinationAddress, userValue);    
+        totalSupply += value;  
     }
     // keyhash or scripthash for syscoinWitnessProgram
     function burn(uint _value, uint32 _assetGUID, bytes syscoinWitnessProgram) payable public returns (bool success) {

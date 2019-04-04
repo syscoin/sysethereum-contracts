@@ -9,7 +9,6 @@ rm -rf build
 truffle compile
 truffle migrate --reset --network $ETHNETWORK
 
-$WEB3JBIN truffle generate $CONTRACTS/SyscoinToken.json -o ~/agents/src/main/java/ -p $OUTPACKAGE
 $WEB3JBIN truffle generate $CONTRACTS/SyscoinClaimManager.json -o ~/agents/src/main/java/ -p $OUTPACKAGE
 $WEB3JBIN truffle generate $CONTRACTS/SyscoinBattleManager.json -o ~/agents/src/main/java/ -p $OUTPACKAGE
 $WEB3JBIN truffle generate $CONTRACTS/SyscoinSuperblocks.json -o ~/agents/src/main/java/ -p $OUTPACKAGE

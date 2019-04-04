@@ -12,7 +12,6 @@ contract('testSyscoinTokenProcessTransaction', function(accounts) {
 
   it("processTransaction success", async () => {
     let syscoinToken = await SyscoinToken.new(trustedRelayerContract, 0);
-    console.log("contract address " + syscoinToken.address);
     const superblockSubmitterAddress = accounts[4];
     await syscoinToken.processTransaction(txHash, value, address, 0, superblockSubmitterAddress);
 

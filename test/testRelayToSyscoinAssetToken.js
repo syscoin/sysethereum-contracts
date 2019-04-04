@@ -7,32 +7,35 @@ contract('testRelayToSyscoinAssetToken', function(accounts) {
   });
   const trustedRelayerContract = accounts[0]; // Tell SyscoinToken to trust accounts[0] as it would be the relayer contract
   const superblockSubmitterAddress = accounts[4];
-  const txHash = '0x382408d5022c639ad63892858351c7f2dde7220d4b326acbd8b436c69af0fe88';
-  const txData = '0x017400000001011df3c2dab5d82b4caa9adaef8ff0aa7b7f97f10ed13591d766b0a63f5a8f4e2f0300000000ffffffff036009000000000000535252045935e2180800000002540be4001456d82225d76ced3b03442cb2162d53e075a1cb6914c47bd54a3df2273426829a7928c3526bf8f7acaa6d6d6d0014763be29b909fdb7cc83a88233c5f2e0d696194cb0000000000000000346a523118e235590014763be29b909fdb7cc83a88233c5f2e0d696194cb0100046275726e00e40b540200000000000000000000004e5c000000000000160014763be29b909fdb7cc83a88233c5f2e0d696194cb0247304402204003b735e03e6b094a11465dc4cd2de44fc8239079c96bb6932b353c4ac16ed402203194ee059ff94f86e8ec720ff1d397d74f7a7ae24a73a100697b52298a4ae8dc0121032e137cb103813687b563e9d5deabaa5787dc7c37da2d2ad800609b0ba94ba80f00000000';
-  const value = 10000000000;
-  // passed into syscoin burn function (call validateaddress and get the witnessprogram, should be 20 bytes for keyhash and 32 for scripthash programs)
-  const address = '0xc47bD54a3Df2273426829a7928C3526BF8F7Acaa';
+  const txHash = '0x20cc6689f9ce4fdb661341720bf33414455e0b623eaf10b1333e60fecab2ed5b';
+  const txData = '0x077400000001017016f189c5594d5787d42ab53c9085e06d32a74f5d858f966f47036e799c16df0100000000ffffffff0400000000000000003b6a0465736d4708000000003b9aca00145a714c3ed4ce4f297679e733f3c476b24d8895e50100147f0618238b7a35f78a3338332822ee1c0de9636330750000000000001600147f0618238b7a35f78a3338332822ee1c0de9636330750000000000001600147f0618238b7a35f78a3338332822ee1c0de9636304eb0a54020000001600147f0618238b7a35f78a3338332822ee1c0de963630247304402203d7529bd258223c55729fa8adf417a500746aeef2730223791a45134c133a07302201dd4f7f36866865b29c71993239c0be140de43438e9f19d51637cd96b69ee731012102a1376a9732077c2432e3c50f039fdb3b7fab50871d48d36a6e34d2fc87250cc300000000';
+  const value = 1000000000;
+  // passed into syscoin burn function
+  const address = '0x5a714c3ed4ce4f297679e733f3c476b24d8895e5';
   it('test mint and burn asset', async () => {
-    let syscoinToken = await SyscoinToken.new(trustedRelayerContract, 1496703512);
+    let syscoinToken = await SyscoinToken.new(trustedRelayerContract, 1702063431);
     const [ ret, amount, inputEthAddress, assetGUID ]  = await syscoinMessageLibraryForTests.parseTransaction(txData);
+    assert.equal(assetGUID,1702063431);
+    assert.equal(inputEthAddress,address);
     await syscoinToken.processTransaction(txHash, amount, inputEthAddress, assetGUID, superblockSubmitterAddress);
-    const superblockSubmitterFee = 10000000; 
+    const superblockSubmitterFee = value/1000; 
     const userValue = value - superblockSubmitterFee;
 
     const balance = await syscoinToken.balanceOf(address);
     assert.equal(balance.toString(10), userValue, `SyscoinToken's ${address} balance is not the expected one`);
     var superblockSubmitterTokenBalance = await syscoinToken.balanceOf(superblockSubmitterAddress);
     assert.equal(superblockSubmitterTokenBalance.toNumber(), superblockSubmitterFee, `SyscoinToken's superblock submitter balance is not the expected one`);
+
     await syscoinToken.assign(accounts[0], 2000000000);
     const balance2 = await syscoinToken.balanceOf(accounts[0])
     assert.equal(balance2, 2000000000, `SyscoinToken's ${accounts[0]} balance is not the expected one`);
 
     // 0x004322ec9eb713f37cf8d701d819c165549d53d14e == 0 for version and 4322ec9eb713f37cf8d701d819c165549d53d14e for witness program (20 byte p2wpkh)
-    const burnResult = await syscoinToken.burn(2000000000, 1496703512, "0x004322ec9eb713f37cf8d701d819c165549d53d14e");
+    const burnResult = await syscoinToken.burn(2000000000, 1702063431, "0x004322ec9eb713f37cf8d701d819c165549d53d14e");
     const balance3 = await syscoinToken.balanceOf(accounts[0]);
     assert.equal(balance3, 0, `SyscoinToken's ${accounts[0]} balance is not the expected one`);
     const burnHex = await web3.eth.getTransaction(burnResult.receipt.transactionHash);
-    assert.equal(burnHex.input, "0x285c5bc60000000000000000000000000000000000000000000000000000000077359400000000000000000000000000000000000000000000000000000000005935e21800000000000000000000000000000000000000000000000000000000000000600000000000000000000000000000000000000000000000000000000000000015004322ec9eb713f37cf8d701d819c165549d53d14e0000000000000000000000");
+    assert.equal(burnHex.input, "0x285c5bc600000000000000000000000000000000000000000000000000000000773594000000000000000000000000000000000000000000000000000000000065736d4700000000000000000000000000000000000000000000000000000000000000600000000000000000000000000000000000000000000000000000000000000015004322ec9eb713f37cf8d701d819c165549d53d14e0000000000000000000000");
     
   });
 });

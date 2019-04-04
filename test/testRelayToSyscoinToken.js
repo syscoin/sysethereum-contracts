@@ -39,8 +39,7 @@ contract('testRelayToSyscoinToken', function(accounts) {
       headerAndHashes.proposedSuperblock.superblockHash,
       syscoinToken.address,
     );
-
-    const address = '0x5A714c3ED4CE4f297679E733f3c476B24D8895e5';
+    const address = '0x5a714c3ed4ce4f297679e733f3c476b24d8895e5';
     const value = '2900000000';
     const balance = await syscoinToken.balanceOf(address);
 
