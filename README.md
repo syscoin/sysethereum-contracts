@@ -2,9 +2,9 @@
 
 [![Build Status](https://travis-ci.org/syscoin/sysethereum/sysethereum-contracts.svg?branch=master)](https://travis-ci.org/syscoin/sysethereum/sysethereum-contracts)
 
-Ethereum contracts for the Syscoin <-> Ethereum bridge.
+Ethereum contracts for the Syscoin <=> Ethereum bridge.
 
-If you are new to the Syscoin <-> Ethereum bridge, please check the [docs](https://github.com/syscoin/sysethereum/docs) repository first.
+If you are new to the Syscoin <=> Ethereum bridge, please check the [docs](https://github.com/syscoin/sysethereum/docs) repository first.
 
 ## Core components
 * [SyscoinSuperblocks contract](contracts/SyscoinSuperblocks.sol)
