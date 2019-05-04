@@ -106,7 +106,7 @@ contract SyscoinToken is HumanStandardToken(0, "SyscoinToken", 8, "SYSX"), Sysco
         totalSupply += value;  
     }
     // keyhash or scripthash for syscoinWitnessProgram
-    function burn(uint _value, uint32 _assetGUID, bytes syscoinWitnessProgram) payable public returns (bool success) {
+    function burn(uint _value, uint32 _assetGUID, bytes) payable public returns (bool success) {
         if (assetGUID != _assetGUID){
             emit ErrorSyscoinToken(ERR_UNLOCK_ASSET_MISMATCH);
             return;         
@@ -122,7 +122,7 @@ contract SyscoinToken is HumanStandardToken(0, "SyscoinToken", 8, "SYSX"), Sysco
         balances[msg.sender] -= _value;            // Subtract from the sender
         totalSupply -= _value;                      // Updates totalSupply
         // Hack to make etherscan show the event
-        emit Transfer(msg.sender, 0, userValue);   
+        emit Transfer(msg.sender, 0, _value);   
         return true;
     }
 }
