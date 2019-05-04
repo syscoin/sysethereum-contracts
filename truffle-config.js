@@ -14,13 +14,6 @@ module.exports = {
       gas: 4700000,
       gasPrice: 1
     },
-    integrationSyscoinRegtest: {
-      host: "localhost",
-      port: 8545,
-      network_id: "32001",
-      gas: 4700000,
-      gasPrice: 1
-    },
     ropsten: {
       host: "localhost",
       port: 8545,
@@ -33,7 +26,7 @@ module.exports = {
       port: 8545,
       network_id: "4", // Rinkeby
       gas: 1000000,
-      from: "0x2f038a7306449dc9bcde25d8399dba36ee8ad6bf", 
+      from: "0x3dddfea5b9adc24a45ad3339e1e40bfeed1fc573", 
       gasPrice: "2000000000"
     }
   },

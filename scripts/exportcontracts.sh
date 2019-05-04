@@ -1,8 +1,9 @@
 #!/bin/sh
 
-export WEB3JBIN=/usr/local/bin/web3j
+#export WEB3JBIN=/usr/local/bin/web3j
+export WEB3JBIN=web3j
 export CONTRACTS=./build/contracts
-export ETHNETWORK=integrationSyscoinRegtest
+export ETHNETWORK=rinkeby
 export OUTPACKAGE=org.sysethereum.agents.contract
 
 rm -rf build
