@@ -121,7 +121,8 @@ contract SyscoinToken is HumanStandardToken(0, "SyscoinToken", 8, "SYSX"), Sysco
         }     
         balances[msg.sender] -= _value;            // Subtract from the sender
         totalSupply -= _value;                      // Updates totalSupply
-        emit Burn(msg.sender, _value, _assetGUID, syscoinWitnessProgram);
+        // Hack to make etherscan show the event
+        emit Transfer(msg.sender, 0, userValue);   
         return true;
     }
 }
