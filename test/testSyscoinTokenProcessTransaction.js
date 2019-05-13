@@ -1,6 +1,5 @@
 var SyscoinToken = artifacts.require("./token/SyscoinTokenForTests.sol");
-var utils = require('./utils');
-
+const truffleAssert = require('truffle-assertions');
 
 contract('testSyscoinTokenProcessTransaction', function(accounts) {
   const trustedRelayerContract = accounts[0]; // Tell SyscoinToken to trust accounts[0] as it would be the relayer contract
@@ -31,8 +30,7 @@ contract('testSyscoinTokenProcessTransaction', function(accounts) {
     const superblockSubmitterAddress = accounts[4];
     await syscoinToken.processTransaction(txHash, value, address, 0, superblockSubmitterAddress);
 
-    var processTransactionTxReceipt = await syscoinToken.processTransaction(txHash, value, address, 0, superblockSubmitterAddress);
-    assert.equal(60070, processTransactionTxReceipt.logs[0].args.err, "Expected ERR_PROCESS_TX_ALREADY_PROCESSED error");
+    await truffleAssert.reverts(syscoinToken.processTransaction(txHash, value, address, 0, superblockSubmitterAddress));
   });
 
 });

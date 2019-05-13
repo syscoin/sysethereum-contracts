@@ -16,21 +16,6 @@ contract SyscoinToken is HumanStandardToken(0, "SyscoinToken", 8, "SYSX"), Sysco
     // Unlock constants
     uint public constant MIN_UNLOCK_VALUE = 300000000; // 3 syscoins
 
-    // Error codes
-    uint constant ERR_PROCESS_TX_ALREADY_PROCESSED = 60070;
-    uint constant ERR_UNLOCK_MIN_UNLOCK_VALUE = 60080;
-    uint constant ERR_UNLOCK_USER_BALANCE = 60090;
-    uint constant ERR_UNLOCK_ASSET_MISMATCH = 60100;
-    uint constant ERR_UNLOCK_CONTRACT_MISMATCH = 60110;
-    uint constant ERR_UNLOCK_INVALID_TYPE = 60120;
-
-   
-    uint constant ERR_UNLOCK_VALUE_TO_SEND_LESS_THAN_FEE = 60140;
-    uint constant ERR_UNLOCK_BAD_ADDR_LENGTH = 60150;
-    uint constant ERR_UNLOCK_BAD_ADDR_PREFIX = 60160;
-    uint constant ERR_UNLOCK_BAD_ADDR_CHAR = 60170;
-    uint constant ERR_LOCK_MIN_LOCK_VALUE = 60180;
-
     // Variables set by constructor
 
     // Contract to trust for tx included in a syscoin block verification.
@@ -66,24 +51,16 @@ contract SyscoinToken is HumanStandardToken(0, "SyscoinToken", 8, "SYSX"), Sysco
         public returns (uint) {
             
         require(msg.sender == trustedRelayerContract);
-        if (assetGUID != _assetGUID){
-            emit ErrorSyscoinToken(ERR_UNLOCK_ASSET_MISMATCH);
-            return;         
-        }       
+        require (assetGUID == _assetGUID);
+            
             
         // Add tx to the syscoinTxHashesAlreadyProcessed
         bool inserted = Set.insert(syscoinTxHashesAlreadyProcessed, txHash);
         // Check tx was not already processed
-        if (!inserted) {
-            emit ErrorSyscoinToken(ERR_PROCESS_TX_ALREADY_PROCESSED);
-            return;        
-        }
+        require (inserted);
 
 
-        if (value < MIN_LOCK_VALUE) {
-              emit ErrorSyscoinToken(ERR_LOCK_MIN_LOCK_VALUE);
-              return;
-        }
+        require (value >= MIN_LOCK_VALUE);
 
         processLockTransaction(destinationAddress, value, superblockSubmitterAddress);
         return value;
@@ -107,18 +84,9 @@ contract SyscoinToken is HumanStandardToken(0, "SyscoinToken", 8, "SYSX"), Sysco
     }
     // keyhash or scripthash for syscoinWitnessProgram
     function burn(uint _value, uint32 _assetGUID, bytes) payable public returns (bool success) {
-        if (assetGUID != _assetGUID){
-            emit ErrorSyscoinToken(ERR_UNLOCK_ASSET_MISMATCH);
-            return;         
-        }
-        if (_value < MIN_UNLOCK_VALUE) {
-            emit ErrorSyscoinToken(ERR_UNLOCK_MIN_UNLOCK_VALUE);
-            return;
-        }
-        if (balances[msg.sender] < _value) {
-            emit ErrorSyscoinToken(ERR_UNLOCK_USER_BALANCE);
-            return;
-        }     
+        require (assetGUID == _assetGUID);
+        require (_value >= MIN_UNLOCK_VALUE);
+        require (balances[msg.sender] >= _value);  
         balances[msg.sender] -= _value;            // Subtract from the sender
         totalSupply -= _value;                      // Updates totalSupply
         // Hack to make etherscan show the event
