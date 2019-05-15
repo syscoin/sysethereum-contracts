@@ -29,11 +29,7 @@ contract SyscoinToken is HumanStandardToken(0, "SyscoinToken", 8, "SYSX"), Sysco
     // Syscoin transactions that were already processed by processTransaction()
     Set.Data syscoinTxHashesAlreadyProcessed;
 
-    event ErrorSyscoinToken(uint err);
     event NewToken(address indexed user, uint value);
-    /* This notifies clients about the amount burnt */
-    event Burn(address indexed from, uint value, uint32 assetGUID, bytes syscoinWitnessProgram);
-
 
     constructor (address _trustedRelayerContract, uint32 _assetGUID, string _tokenName, uint8 _decimalUnits, string _tokenSymbol) public {
         trustedRelayerContract = _trustedRelayerContract;
