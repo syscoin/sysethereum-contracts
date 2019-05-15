@@ -48,15 +48,15 @@ To deploy the contracts
 
 ### Requirements
 
-* A Rinkeby client running with rpc enabled
+* A Rinkeby/Mainnet client running with rpc enabled
 
 ### Deployment
 
-* Run `truffle migrate --network rinkeby`
+* Run `./scripts/exportAndInit.sh`
 
 ## License
 
 MIT License<br/>
-Copyright (c) 2018 Blockchain Foundry Inc<br/>
+Copyright (c) 2019 Blockchain Foundry Inc<br/>
 [License](LICENSE)
 
