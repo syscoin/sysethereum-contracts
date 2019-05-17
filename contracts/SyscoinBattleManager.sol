@@ -405,7 +405,7 @@ contract SyscoinBattleManager is SyscoinErrorCodes {
             }
             if (net != SyscoinMessageLibrary.Network.REGTEST) {
                 uint32 newBits;
-                if (net == SyscoinMessageLibrary.Network.TESTNET && session.blocksInfo[blockSha256Hash].timestamp - parentTimestamp > 43200) {
+                if (net == SyscoinMessageLibrary.Network.TESTNET && session.blocksInfo[blockSha256Hash].timestamp - parentTimestamp > 120) {
                     newBits = 0x1e0fffff;
                 }
                 else if((prevHeight+idx+1) % SyscoinMessageLibrary.difficultyAdjustmentInterval() != 0){
@@ -414,6 +414,7 @@ contract SyscoinBattleManager is SyscoinErrorCodes {
                 else{
                     newBits = SyscoinMessageLibrary.calculateDifficulty(int64(parentTimestamp) - int64(prevTimestamp), prevBits);
                     prevTimestamp = parentTimestamp;
+                    prevBits = bits;
                 }
                 if (bits != newBits) {
                    return ERR_SUPERBLOCK_BAD_BITS;
@@ -421,7 +422,6 @@ contract SyscoinBattleManager is SyscoinErrorCodes {
             }
             work += SyscoinMessageLibrary.diffFromBits(bits);
             prevBlock = blockSha256Hash;
-            prevBits = bits;
             parentTimestamp = session.blocksInfo[blockSha256Hash].timestamp;
             idx += 1;
         }
