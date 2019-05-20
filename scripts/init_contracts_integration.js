@@ -6,7 +6,7 @@ module.exports = async function(callback) {
 
   var blocksMerkleRoot = "0x000009e388d0cb406b36ed70bf89d21a4f7a3b1adea23a21e7948bac2dbb9fcc";
   var accumulatedWork = web3.toBigNumber("0");
-  var timestamp = 1557607987;
+  var timestamp = 1552606660;
   var prevTimestamp = 0;
   var lastHash = "0x000009e388d0cb406b36ed70bf89d21a4f7a3b1adea23a21e7948bac2dbb9fcc";
   var lastBits = 0x1e0ffff0;
