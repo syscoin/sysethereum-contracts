@@ -524,11 +524,18 @@ contract SyscoinClaimManager is SyscoinDepositsManager, SyscoinErrorCodes {
         for (idx = 0; idx < claim.currentChallenger; ++idx) {
             totalDeposits = totalDeposits.add(claim.bondedDeposits[claim.challengers[idx]]);
         }
+        
         address challenger;
-        uint reward;
+        uint reward = 0;
+        if(totalDeposits == 0 && claim.currentChallenger.length > 0){
+            reward = rewards.div(claim.currentChallenger.length);
+        }
         for (idx = 0; idx < claim.currentChallenger; ++idx) {
+            reward = 0;
             challenger = claim.challengers[idx];
-            reward = rewards.mul(claim.bondedDeposits[challenger]).div(totalDeposits);
+            if(totalDeposits > 0){
+                reward = rewards.mul(claim.bondedDeposits[challenger]).div(totalDeposits);
+            }
             claim.bondedDeposits[challenger] = claim.bondedDeposits[challenger].add(reward);
         }
         uint bondedDeposit;
