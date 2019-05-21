@@ -527,8 +527,8 @@ contract SyscoinClaimManager is SyscoinDepositsManager, SyscoinErrorCodes {
         
         address challenger;
         uint reward = 0;
-        if(totalDeposits == 0 && claim.currentChallenger.length > 0){
-            reward = rewards.div(claim.currentChallenger.length);
+        if(totalDeposits == 0 && claim.currentChallenger > 0){
+            reward = rewards.div(claim.currentChallenger);
         }
         for (idx = 0; idx < claim.currentChallenger; ++idx) {
             reward = 0;
