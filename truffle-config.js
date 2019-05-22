@@ -1,3 +1,5 @@
+var HDWalletProvider = require("truffle-hdwallet-provider");
+var mnenomic = "cup aisle bright dice when flame left assume laptop lock cry brown";
 module.exports = {
   networks: {
     development: {
@@ -22,12 +24,10 @@ module.exports = {
       gasPrice: "20000000000"
     },
     rinkeby: {
-      host: "localhost",
-      port: 8545,
-      network_id: "4", // Rinkeby
-      gas: 1000000,
-      from: "0x55428beae5c33c37859f43d2c050a7f7ff1f20cc", 
-      gasPrice: "2000000000"
+      provider:   function () {
+         return new HDWalletProvider(mnenomic, "https://rinkeby.infura.io/v3/d178aecf49154b12be98e68e998cfb8d");
+      },
+      network_id: "4",
     }
   },
   solc: {

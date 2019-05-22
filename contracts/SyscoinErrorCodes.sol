@@ -38,7 +38,7 @@ contract SyscoinErrorCodes {
     uint constant ERR_RELAY_VERIFY = 30010;
 
     // Minimum gas requirements
-    uint constant public minReward = 400000;
+    uint constant public minReward = 1000000000000000000;
     uint constant public superblockCost = 440000;
     uint constant public challengeCost = 34000;
     uint constant public minProposalDeposit = challengeCost + minReward;
