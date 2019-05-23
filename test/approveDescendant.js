@@ -56,7 +56,7 @@ contract('approveDescendant', (accounts) => {
         }));
 
         //FIXME: ganache-cli creates the same transaction hash if two accounts send the same amount
-        await claimManager.makeDeposit({ value: utils.DEPOSITS.MIN_PROPOSAL_DEPOSIT, from: submitter });
+        await claimManager.makeDeposit({ value: utils.DEPOSITS.MIN_PROPOSAL_DEPOSIT * 2, from: submitter });
         await claimManager.makeDeposit({ value: utils.DEPOSITS.MIN_CHALLENGE_DEPOSIT * 2, from: challenger });
     }
 
@@ -119,6 +119,7 @@ contract('approveDescendant', (accounts) => {
             await claimManager.makeDeposit({ value: utils.DEPOSITS.RESPOND_HEADER_COST, from: challenger });
             result = await battleManager.queryBlockHeader(superblock1Id, session1, superblock1Hashes[0], { from: challenger });
             assert.ok(utils.findEvent(result.logs, 'QueryBlockHeader'), 'Query block header');
+            await claimManager.makeDeposit({ value: utils.DEPOSITS.RESPOND_HEADER_COST, from: submitter });
             result = await battleManager.respondBlockHeader(superblock1Id, session1, `0x${superblock1Headers[0]}`, { from: submitter });
             assert.ok(utils.findEvent(result.logs, 'RespondBlockHeader'), 'Respond block header');
             
@@ -126,7 +127,7 @@ contract('approveDescendant', (accounts) => {
             result = await battleManager.queryBlockHeader(superblock1Id, session1, superblock1Hashes[1], { from: challenger });
             assert.ok(utils.findEvent(result.logs, 'QueryBlockHeader'), 'Query block header');
 
-            await claimManager.makeDeposit({ value: utils.DEPOSITS.VERIFY_SUPERBLOCK_COST, from: submitter });
+            await claimManager.makeDeposit({ value: utils.DEPOSITS.RESPOND_HEADER_COST, from: submitter });
             result = await battleManager.respondBlockHeader(superblock1Id, session1, `0x${superblock1Headers[1]}`, { from: submitter });
             assert.ok(utils.findEvent(result.logs, 'RespondBlockHeader'), 'Respond block header');
 
@@ -134,7 +135,7 @@ contract('approveDescendant', (accounts) => {
             result = await battleManager.queryBlockHeader(superblock1Id, session1, superblock1Hashes[2], { from: challenger });
             assert.ok(utils.findEvent(result.logs, 'QueryBlockHeader'), 'Query block header');
 
-            await claimManager.makeDeposit({ value: utils.DEPOSITS.VERIFY_SUPERBLOCK_COST, from: submitter });
+            await claimManager.makeDeposit({ value: utils.DEPOSITS.RESPOND_HEADER_COST, from: submitter });
             result = await battleManager.respondBlockHeader(superblock1Id, session1, `0x${superblock1Headers[2]}`, { from: submitter });
 
             assert.ok(utils.findEvent(result.logs, 'RespondBlockHeader'), 'Respond block header');
@@ -285,7 +286,7 @@ contract('approveDescendant', (accounts) => {
             await claimManager.makeDeposit({ value: utils.DEPOSITS.RESPOND_HEADER_COST, from: challenger });
             result = await battleManager.queryBlockHeader(superblock1Id, session1, superblock1Hashes[0], { from: challenger });
             assert.ok(utils.findEvent(result.logs, 'QueryBlockHeader'), 'Query block header');
-            await claimManager.makeDeposit({ value: utils.DEPOSITS.VERIFY_SUPERBLOCK_COST, from: submitter });
+            await claimManager.makeDeposit({ value: utils.DEPOSITS.RESPOND_HEADER_COST, from: submitter });
             result = await battleManager.respondBlockHeader(superblock1Id, session1, `0x${superblock1Headers[0]}`, { from: submitter });
 
             assert.ok(utils.findEvent(result.logs, 'RespondBlockHeader'), 'Respond block header');
@@ -294,7 +295,7 @@ contract('approveDescendant', (accounts) => {
             result = await battleManager.queryBlockHeader(superblock1Id, session1, superblock1Hashes[1], { from: challenger });
             assert.ok(utils.findEvent(result.logs, 'QueryBlockHeader'), 'Query block header');
 
-            await claimManager.makeDeposit({ value: utils.DEPOSITS.VERIFY_SUPERBLOCK_COST, from: submitter });
+            await claimManager.makeDeposit({ value: utils.DEPOSITS.RESPOND_HEADER_COST, from: submitter });
             result = await battleManager.respondBlockHeader(superblock1Id, session1, `0x${superblock1Headers[1]}`, { from: submitter });
 
             assert.ok(utils.findEvent(result.logs, 'RespondBlockHeader'), 'Respond block header');
@@ -303,7 +304,7 @@ contract('approveDescendant', (accounts) => {
             result = await battleManager.queryBlockHeader(superblock1Id, session1, superblock1Hashes[2], { from: challenger });
             assert.ok(utils.findEvent(result.logs, 'QueryBlockHeader'), 'Query block header');
 
-            await claimManager.makeDeposit({ value: utils.DEPOSITS.VERIFY_SUPERBLOCK_COST, from: submitter });
+            await claimManager.makeDeposit({ value: utils.DEPOSITS.RESPOND_HEADER_COST, from: submitter });
             result = await battleManager.respondBlockHeader(superblock1Id, session1, `0x${superblock1Headers[2]}`, { from: submitter });
 
             assert.ok(utils.findEvent(result.logs, 'RespondBlockHeader'), 'Respond block header');
@@ -360,16 +361,22 @@ contract('approveDescendant', (accounts) => {
         });
 
         it('Query and reply block header', async () => {
+            await claimManager.makeDeposit({ value: utils.DEPOSITS.RESPOND_HEADER_COST, from: challenger });
             result = await battleManager.queryBlockHeader(superblock2Id, session1, superblock2Hashes[0], { from: challenger });
             assert.ok(utils.findEvent(result.logs, 'QueryBlockHeader'), 'Query block header');
+            await claimManager.makeDeposit({ value: utils.DEPOSITS.RESPOND_HEADER_COST, from: submitter });
             result = await battleManager.respondBlockHeader(superblock2Id, session1, `0x${superblock2Headers[0]}`, { from: submitter });
             assert.ok(utils.findEvent(result.logs, 'RespondBlockHeader'), 'Respond block header');
+            await claimManager.makeDeposit({ value: utils.DEPOSITS.RESPOND_HEADER_COST, from: challenger });
             result = await battleManager.queryBlockHeader(superblock2Id, session1, superblock2Hashes[1], { from: challenger });
             assert.ok(utils.findEvent(result.logs, 'QueryBlockHeader'), 'Query block header');
+            await claimManager.makeDeposit({ value: utils.DEPOSITS.RESPOND_HEADER_COST, from: submitter });
             result = await battleManager.respondBlockHeader(superblock2Id, session1, `0x${superblock2Headers[1]}`, { from: submitter });
             assert.ok(utils.findEvent(result.logs, 'RespondBlockHeader'), 'Respond block header');
+            await claimManager.makeDeposit({ value: utils.DEPOSITS.RESPOND_HEADER_COST, from: challenger });
             result = await battleManager.queryBlockHeader(superblock2Id, session1, superblock2Hashes[2], { from: challenger });
             assert.ok(utils.findEvent(result.logs, 'QueryBlockHeader'), 'Query block header');
+            await claimManager.makeDeposit({ value: utils.DEPOSITS.RESPOND_HEADER_COST, from: submitter });
             result = await battleManager.respondBlockHeader(superblock2Id, session1, `0x${superblock2Headers[2]}`, { from: submitter });
             assert.ok(utils.findEvent(result.logs, 'RespondBlockHeader'), 'Respond block header');
         });

@@ -89,7 +89,7 @@ contract('validateDifficultyAdjustment', (accounts) => {
       result = await battleManager.queryBlockHeader(proposesSuperblockHash, battleSessionId, hashes[0], { from: challenger });
       assert.ok(utils.findEvent(result.logs, 'QueryBlockHeader'), 'Query block header');
       
-      await claimManager.makeDeposit({ value: utils.DEPOSITS.VERIFY_SUPERBLOCK_COST, from: submitter });
+      await claimManager.makeDeposit({ value: utils.DEPOSITS.RESPOND_HEADER_COST, from: submitter });
       result = await battleManager.respondBlockHeader(proposesSuperblockHash, battleSessionId, `0x${headers[0]}`, { from: submitter });
       assert.ok(utils.findEvent(result.logs, 'RespondBlockHeader'), 'Respond block header');
       

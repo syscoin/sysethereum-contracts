@@ -286,7 +286,6 @@ contract SyscoinBattleManager is SyscoinErrorCodes {
         BattleSession storage session,
         bytes memory blockHeader
     ) internal returns (uint, bytes) {
-        // TODO: see if this should fund Scrypt verification
         if (!hasDeposit(msg.sender, respondBlockHeaderCost)) {
             return (ERR_SUPERBLOCK_MIN_DEPOSIT, new bytes(0));
         }

@@ -185,7 +185,7 @@ contract('SyscoinClaimManager', (accounts) => {
       result = await battleManager.queryBlockHeader(proposedSuperblockHash, battleSessionId, hashes[0], { from: challenger });
       assert.ok(utils.findEvent(result.logs, 'QueryBlockHeader'), 'Query block header');
 
-      await claimManager.makeDeposit({ value: utils.DEPOSITS.VERIFY_SUPERBLOCK_COST, from: submitter });
+      await claimManager.makeDeposit({ value: utils.DEPOSITS.RESPOND_HEADER_COST, from: submitter });
       result = await battleManager.respondBlockHeader(proposedSuperblockHash, battleSessionId, `0x${headers[0]}`, { from: submitter });
 
       assert.ok(utils.findEvent(result.logs, 'RespondBlockHeader'), 'Respond block header');
@@ -194,7 +194,7 @@ contract('SyscoinClaimManager', (accounts) => {
       result = await battleManager.queryBlockHeader(proposedSuperblockHash, battleSessionId, hashes[1], { from: challenger });
       assert.ok(utils.findEvent(result.logs, 'QueryBlockHeader'), 'Query block header');
 
-      await claimManager.makeDeposit({ value: utils.DEPOSITS.VERIFY_SUPERBLOCK_COST, from: submitter });
+      await claimManager.makeDeposit({ value: utils.DEPOSITS.RESPOND_HEADER_COST, from: submitter });
       result = await battleManager.respondBlockHeader(proposedSuperblockHash, battleSessionId, `0x${headers[1]}`, { from: submitter });
 
       assert.ok(utils.findEvent(result.logs, 'RespondBlockHeader'), 'Respond block header');
@@ -280,7 +280,7 @@ contract('SyscoinClaimManager', (accounts) => {
       });
 
       it(`Answer blocks header ${hash.slice(0, 20)}..`, async () => {
-        await claimManager.makeDeposit({ value: utils.DEPOSITS.VERIFY_SUPERBLOCK_COST, from: submitter });
+        await claimManager.makeDeposit({ value: utils.DEPOSITS.RESPOND_HEADER_COST, from: submitter });
         result = await battleManager.respondBlockHeader(proposedSuperblockHash, battleSessionId, `0x${headers[idx]}`, { from: submitter });
 
         assert.ok(utils.findEvent(result.logs, 'RespondBlockHeader'), 'Respond block header');
@@ -429,7 +429,7 @@ contract('SyscoinClaimManager', (accounts) => {
       result = await battleManager.queryBlockHeader(proposedSuperblockHash, battleSessionId, hashes[0], { from: challenger });
       assert.ok(utils.findEvent(result.logs, 'QueryBlockHeader'), 'Query block header');
 
-      await claimManager.makeDeposit({ value: utils.DEPOSITS.VERIFY_SUPERBLOCK_COST, from: submitter });
+      await claimManager.makeDeposit({ value: utils.DEPOSITS.RESPOND_HEADER_COST, from: submitter });
       result = await battleManager.respondBlockHeader(proposedSuperblockHash, battleSessionId, `0x${headers[0]}`, { from: submitter });
 
       assert.ok(utils.findEvent(result.logs, 'RespondBlockHeader'), 'Respond block header');
@@ -461,7 +461,7 @@ contract('SyscoinClaimManager', (accounts) => {
       result = await battleManager.queryBlockHeader(proposedSuperblockHash, battleSessionId, hashes[0], { from: challenger });
       assert.ok(utils.findEvent(result.logs, 'QueryBlockHeader'), 'Query block header');
 
-      await claimManager.makeDeposit({ value: utils.DEPOSITS.VERIFY_SUPERBLOCK_COST, from: submitter });
+      await claimManager.makeDeposit({ value: utils.DEPOSITS.RESPOND_HEADER_COST, from: submitter });
       result = await battleManager.respondBlockHeader(proposedSuperblockHash, battleSessionId, `0x${headers[0]}`, { from: submitter });
 
       assert.ok(utils.findEvent(result.logs, 'RespondBlockHeader'), 'Respond block header');
