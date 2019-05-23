@@ -11,6 +11,7 @@ contract SyscoinErrorCodes {
     uint constant ERR_SUPERBLOCK_BAD_TIMESTAMP = 50035;
     uint constant ERR_SUPERBLOCK_INVALID_MERKLE = 50040;
     uint constant ERR_SUPERBLOCK_BAD_PARENT = 50050;
+    uint constant ERR_SUPERBLOCK_OWN_CHALLENGE = 50055;
 
     uint constant ERR_SUPERBLOCK_MIN_DEPOSIT = 50060;
 

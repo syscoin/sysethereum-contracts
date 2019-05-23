@@ -253,6 +253,10 @@ contract SyscoinSuperblocks is SyscoinErrorCodes {
             emit ErrorSuperblock(_superblockHash, ERR_SUPERBLOCK_BAD_STATUS);
             return (ERR_SUPERBLOCK_BAD_STATUS, 0);
         }
+        if(superblock.submitter == _challenger){
+            emit ErrorSuperblock(_superblockHash, ERR_SUPERBLOCK_OWN_CHALLENGE);
+            return (ERR_SUPERBLOCK_OWN_CHALLENGE, 0);        
+        }
         superblock.status = Status.InBattle;
         emit ChallengeSuperblock(_superblockHash, _challenger);
         return (ERR_SUPERBLOCK_OK, _superblockHash);
