@@ -201,17 +201,19 @@ contract SyscoinClaimManager is SyscoinDepositsManager, SyscoinErrorCodes {
         // allow to propose an existing claim only if its invalid and decided and its a different submitter or not on the tip
         // those are the ones that may actually be stuck and need to be proposed again, 
         // but we want to ensure its not the same submitter submitting the same thing
-        if (claimExists(claim) {
-            SuperblockInfo storage parent = superblocks[_parentHash];
+        if (claimExists(claim)) {
             bool allowed = claim.invalid && claim.decided && claim.submitter != msg.sender;
             if(allowed){
                 // we also want to ensure that if parent is approved we are building on the tip and not anywhere else
-                if(parent.status == Status.Approved){
+                if(trustedSuperblocks.getSuperblockStatus(_parentHash) == SyscoinSuperblocks.Status.Approved){
                     allowed = trustedSuperblocks.getBestSuperblock() == _parentHash;
                 }
                 // or if its semi approved allow to build on top as well
-                else if(parent.status == Status.SemiApproved){
+                else if(trustedSuperblocks.getSuperblockStatus(_parentHash) == SyscoinSuperblocks.Status.SemiApproved){
                     allowed = true;
+                }
+                else{
+                    allowed = false;
                 }
             }
             if(!allowed){
@@ -220,8 +222,6 @@ contract SyscoinClaimManager is SyscoinDepositsManager, SyscoinErrorCodes {
             }
         }
 
-        (err, ) = this.bondDeposit(superblockHash, msg.sender, battleReward);
-        assert(err == ERR_SUPERBLOCK_OK);
 
         claim.superblockHash = superblockHash;
         claim.submitter = msg.sender;
@@ -232,6 +232,9 @@ contract SyscoinClaimManager is SyscoinDepositsManager, SyscoinErrorCodes {
         claim.createdAt = block.timestamp;
         claim.challengeTimeout = block.timestamp + superblockTimeout;
         claim.challengers.length = 0;
+
+        (err, ) = this.bondDeposit(superblockHash, msg.sender, battleReward);
+        assert(err == ERR_SUPERBLOCK_OK);
 
         emit SuperblockClaimCreated(superblockHash, msg.sender);
 
