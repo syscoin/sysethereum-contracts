@@ -203,7 +203,18 @@ contract SyscoinClaimManager is SyscoinDepositsManager, SyscoinErrorCodes {
         // but we want to ensure its not the same submitter submitting the same thing
         if (claimExists(claim) {
             SuperblockInfo storage parent = superblocks[_parentHash];
-            if(!claim.invalid || !claim.decided || claim.submitter == msg.sender || trustedSuperblocks.getBestSuperblock() != _parentHash || parent.status != Status.Approved){
+            bool allowed = claim.invalid && claim.decided && claim.submitter != msg.sender;
+            if(allowed){
+                // we also want to ensure that if parent is approved we are building on the tip and not anywhere else
+                if(parent.status == Status.Approved){
+                    allowed = trustedSuperblocks.getBestSuperblock() == _parentHash;
+                }
+                // or if its semi approved allow to build on top as well
+                else if(parent.status == Status.SemiApproved){
+                    allowed = true;
+                }
+            }
+            if(!allowed){
                 emit ErrorClaim(superblockHash, ERR_SUPERBLOCK_BAD_CLAIM);
                 return (ERR_SUPERBLOCK_BAD_CLAIM, superblockHash);  
             }
