@@ -111,7 +111,7 @@ function getBlockDifficulty(blockHeader) {
   const target = mant.mul(web3.toBigNumber(256).pow(exp.minus(3)));
   const difficulty1 = web3.toBigNumber(0x00FFFFF).mul(web3.toBigNumber(256).pow(web3.toBigNumber(0x1e-3)));
   const difficulty = difficulty1.divToInt(target);
-  return difficulty1.divToInt(target);
+  return difficulty.mul(0x100001);
 }
 
 const timeout = async (ms) => new Promise((resolve, reject) => setTimeout(resolve, ms));
@@ -209,6 +209,7 @@ function makeSuperblock(headers, parentId, parentAccumulatedWork, _blockHeight, 
     throw new Error('Requires at least one header to build a superblock');
   }
   const blockHashes = headers.map(header => calcBlockSha256Hash(header));
+
   const accumulatedWork = headers.reduce((work, header) => work.plus(getBlockDifficulty(header)), web3.toBigNumber(parentAccumulatedWork));
   const merkleRoot = makeMerkle(blockHashes);
   const timestamp = getBlockTimestamp(headers[headers.length - 1]);
