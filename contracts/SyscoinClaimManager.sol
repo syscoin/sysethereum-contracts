@@ -196,11 +196,21 @@ contract SyscoinClaimManager is SyscoinDepositsManager, SyscoinErrorCodes {
             return (err, superblockHash);
         }
 
+
         SuperblockClaim storage claim = claims[superblockHash];
-        if (claimExists(claim)) {
-            emit ErrorClaim(superblockHash, ERR_SUPERBLOCK_BAD_CLAIM);
-            return (ERR_SUPERBLOCK_BAD_CLAIM, superblockHash);
+        // allow to propose an existing claim only if its invalid and decided and its a different submitter or not on the tip
+        // those are the ones that may actually be stuck and need to be proposed again, 
+        // but we want to ensure its not the same submitter submitting the same thing
+        if (claimExists(claim) {
+            SuperblockInfo storage parent = superblocks[_parentHash];
+            if(!claim.invalid || !claim.decided || claim.submitter == msg.sender || trustedSuperblocks.getBestSuperblock() != _parentHash || parent.status != Status.Approved){
+                emit ErrorClaim(superblockHash, ERR_SUPERBLOCK_BAD_CLAIM);
+                return (ERR_SUPERBLOCK_BAD_CLAIM, superblockHash);  
+            }
         }
+
+        (err, ) = this.bondDeposit(superblockHash, msg.sender, battleReward);
+        assert(err == ERR_SUPERBLOCK_OK);
 
         claim.superblockHash = superblockHash;
         claim.submitter = msg.sender;
@@ -210,9 +220,7 @@ contract SyscoinClaimManager is SyscoinDepositsManager, SyscoinErrorCodes {
         claim.verificationOngoing = false;
         claim.createdAt = block.timestamp;
         claim.challengeTimeout = block.timestamp + superblockTimeout;
-
-        (err, ) = this.bondDeposit(superblockHash, msg.sender, battleReward);
-        assert(err == ERR_SUPERBLOCK_OK);
+        claim.challengers.length = 0;
 
         emit SuperblockClaimCreated(superblockHash, msg.sender);
 
