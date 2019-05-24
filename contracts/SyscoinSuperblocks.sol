@@ -175,28 +175,23 @@ contract SyscoinSuperblocks is SyscoinErrorCodes {
 
         bytes32 superblockHash = calcSuperblockHash(_blocksMerkleRoot, _accumulatedWork, _timestamp, _prevTimestamp, _lastHash, _lastBits, _parentId, _blockHeight);
         SuperblockInfo storage superblock = superblocks[superblockHash];
-        if (superblock.status != Status.Unitialized) {
-            emit ErrorSuperblock(superblockHash, ERR_SUPERBLOCK_EXIST);
-            return (ERR_SUPERBLOCK_EXIST, 0);
+        if (superblock.status == Status.Unitialized) {
+            indexSuperblock[indexNextSuperblock] = superblockHash;
+            superblock.blocksMerkleRoot = _blocksMerkleRoot;
+            superblock.accumulatedWork = _accumulatedWork;
+            superblock.timestamp = _timestamp;
+            superblock.prevTimestamp = _prevTimestamp;
+            superblock.lastHash = _lastHash;
+            superblock.parentId = _parentId;
+            superblock.submitter = submitter;
+            superblock.index = indexNextSuperblock;
+            superblock.height = parent.height + 1;
+            superblock.lastBits = _lastBits;
+            superblock.status = Status.New;
+            superblock.blockHeight = _blockHeight;
+            superblock.ancestors = updateAncestors(parent.ancestors, parent.index, parent.height);
+            indexNextSuperblock++;
         }
-
-        indexSuperblock[indexNextSuperblock] = superblockHash;
-
-        superblock.blocksMerkleRoot = _blocksMerkleRoot;
-        superblock.accumulatedWork = _accumulatedWork;
-        superblock.timestamp = _timestamp;
-        superblock.prevTimestamp = _prevTimestamp;
-        superblock.lastHash = _lastHash;
-        superblock.parentId = _parentId;
-        superblock.submitter = submitter;
-        superblock.index = indexNextSuperblock;
-        superblock.height = parent.height + 1;
-        superblock.lastBits = _lastBits;
-        superblock.status = Status.New;
-        superblock.blockHeight = _blockHeight;
-        superblock.ancestors = updateAncestors(parent.ancestors, parent.index, parent.height);
-        indexNextSuperblock++;
-
         emit NewSuperblock(superblockHash, submitter);
 
         return (ERR_SUPERBLOCK_OK, superblockHash);

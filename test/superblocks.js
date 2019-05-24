@@ -110,9 +110,9 @@ contract('SyscoinSuperblocks', (accounts) => {
       assert.equal(result.logs[0].event, 'NewSuperblock', 'New superblock proposed');
       id1 = result.logs[0].args.superblockHash;
     });
-    it('Bad propose', async () => {
+    it('Re-propose', async () => {
       const result = await superblocks.propose(merkleRoot, accumulatedWork, timestamp, prevTimestamp, lastHash, lastBits, id0, claimManager, 0,{ from: claimManager });
-      assert.equal(result.logs[0].event, 'ErrorSuperblock', 'Superblock already exist');
+      assert.equal(result.logs[0].event, 'NewSuperblock', 'Superblock can be recreated');
     });
     it('Bad parent', async () => {
       const result = await superblocks.propose(merkleRoot, accumulatedWork, timestamp, prevTimestamp, lastHash, lastBits, "0x0", claimManager, 0,{ from: claimManager });
@@ -122,7 +122,7 @@ contract('SyscoinSuperblocks', (accounts) => {
       const result = await superblocks.confirm(id1, claimManager, { from: claimManager });
       assert.equal(result.logs[0].event, 'ApprovedSuperblock', 'Superblock confirmed');
     });
-    it('Propose bis', async () => {
+    it('Propose bits', async () => {
       const result = await superblocks.propose(merkleRoot, accumulatedWork, timestamp, prevTimestamp, lastHash, lastBits, id1, claimManager, 0,{ from: claimManager });
       assert.equal(result.logs[0].event, 'NewSuperblock', 'New superblock proposed');
       id2 = result.logs[0].args.superblockHash;

@@ -114,7 +114,7 @@ async function deployIntegration(deployer,  networkId, superblockOptions) {
     superblockOptions.TIMEOUT,
     superblockOptions.CONFIRMATIONS,
     superblockOptions.REWARD,
-    {gas: 4000000}
+    {gas: 5000000}
   );
 
   const superblocks = SyscoinSuperblocks.at(SyscoinSuperblocks.address);

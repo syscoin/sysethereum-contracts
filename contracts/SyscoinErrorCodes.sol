@@ -4,7 +4,6 @@ pragma solidity ^0.4.19;
 contract SyscoinErrorCodes {
     // Error codes
     uint constant ERR_SUPERBLOCK_OK = 0;
-    uint constant ERR_SUPERBLOCK_EXIST = 50010;
     uint constant ERR_SUPERBLOCK_BAD_STATUS = 50020;
     uint constant ERR_SUPERBLOCK_BAD_SYSCOIN_STATUS = 50025;
     uint constant ERR_SUPERBLOCK_NO_TIMEOUT = 50030;
