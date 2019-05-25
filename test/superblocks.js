@@ -112,7 +112,7 @@ contract('SyscoinSuperblocks', (accounts) => {
     });
     it('Re-propose', async () => {
       const result = await superblocks.propose(merkleRoot, accumulatedWork, timestamp, prevTimestamp, lastHash, lastBits, id0, claimManager, 0,{ from: claimManager });
-      assert.equal(result.logs[0].event, 'NewSuperblock', 'Superblock can be recreated');
+      assert.equal(result.logs.length,  0, 'Superblock not created again');
     });
     it('Bad parent', async () => {
       const result = await superblocks.propose(merkleRoot, accumulatedWork, timestamp, prevTimestamp, lastHash, lastBits, "0x0", claimManager, 0,{ from: claimManager });

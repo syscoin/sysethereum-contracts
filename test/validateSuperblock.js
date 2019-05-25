@@ -323,6 +323,55 @@ contract('validateSuperblocks', (accounts) => {
 
       result = await claimManager.checkClaimFinished(proposesSuperblockHash, { from: challenger });
       assert.ok(utils.findEvent(result.logs, 'SuperblockClaimFailed'), 'Superblock rejected');
+
+      await claimManager.makeDeposit({ value: utils.DEPOSITS.MIN_PROPOSAL_DEPOSIT, from: submitter });
+      result = await claimManager.proposeSuperblock(
+        proposedSuperblock.merkleRoot,
+        proposedSuperblock.accumulatedWork,
+        proposedSuperblock.timestamp + 1,
+        proposedSuperblock.prevTimestamp,
+        0, // proposedSuperblock.lastHash,
+        proposedSuperblock.lastBits,
+        proposedSuperblock.parentId,
+        proposedSuperblock.blockHeight,
+        { from: submitter },
+      );
+
+      assert.ok(utils.findEvent(result.logs, 'ErrorClaim'), 'Submitter cannot submit same superblock');
+
+      // challenger can submit the same block after winning
+      await claimManager.makeDeposit({ value: utils.DEPOSITS.MIN_PROPOSAL_DEPOSIT, from: challenger });
+      result = await claimManager.proposeSuperblock(
+        proposedSuperblock.merkleRoot,
+        proposedSuperblock.accumulatedWork,
+        proposedSuperblock.timestamp + 1,
+        proposedSuperblock.prevTimestamp,
+        0, // proposedSuperblock.lastHash,
+        proposedSuperblock.lastBits,
+        proposedSuperblock.parentId,
+        proposedSuperblock.blockHeight,
+        { from: challenger },
+      );
+
+      const superblockClaimCreatedEvent1 = utils.findEvent(result.logs, 'SuperblockClaimCreated');
+      assert.ok(superblockClaimCreatedEvent1, 'New superblock reproposed');
+
+      // cannot submit again
+      await claimManager.makeDeposit({ value: utils.DEPOSITS.MIN_PROPOSAL_DEPOSIT, from: challenger });
+      result = await claimManager.proposeSuperblock(
+        proposedSuperblock.merkleRoot,
+        proposedSuperblock.accumulatedWork,
+        proposedSuperblock.timestamp + 1,
+        proposedSuperblock.prevTimestamp,
+        0, // proposedSuperblock.lastHash,
+        proposedSuperblock.lastBits,
+        proposedSuperblock.parentId,
+        proposedSuperblock.blockHeight,
+        { from: challenger },
+      );
+
+      assert.ok(utils.findEvent(result.logs, 'ErrorClaim'), 'Cannot submit twice');
+
     });
   });
 });

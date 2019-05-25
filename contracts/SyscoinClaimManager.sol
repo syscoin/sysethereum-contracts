@@ -202,7 +202,7 @@ contract SyscoinClaimManager is SyscoinDepositsManager, SyscoinErrorCodes {
         // those are the ones that may actually be stuck and need to be proposed again, 
         // but we want to ensure its not the same submitter submitting the same thing
         if (claimExists(claim)) {
-            bool allowed = claim.invalid && claim.decided && claim.submitter != msg.sender;
+            bool allowed = claim.invalid == true && claim.decided == true && claim.submitter != msg.sender;
             if(allowed){
                 // we also want to ensure that if parent is approved we are building on the tip and not anywhere else
                 if(trustedSuperblocks.getSuperblockStatus(_parentHash) == SyscoinSuperblocks.Status.Approved){

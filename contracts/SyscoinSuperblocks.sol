@@ -191,8 +191,9 @@ contract SyscoinSuperblocks is SyscoinErrorCodes {
             superblock.blockHeight = _blockHeight;
             superblock.ancestors = updateAncestors(parent.ancestors, parent.index, parent.height);
             indexNextSuperblock++;
+            emit NewSuperblock(superblockHash, submitter);
         }
-        emit NewSuperblock(superblockHash, submitter);
+        
 
         return (ERR_SUPERBLOCK_OK, superblockHash);
     }

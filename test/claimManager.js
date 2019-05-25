@@ -38,13 +38,13 @@ contract('SyscoinClaimManager', (accounts) => {
   ];
   const hashes = headers.map(utils.calcBlockSha256Hash);
   const genesisSuperblock = utils.makeSuperblock(genesisHeaders, initParentId, initAccumulatedWork, 2);
-
   describe('Confirm superblock after timeout', () => {
     let genesisSuperblockHash;
     let proposedSuperblockHash;
     let proposedForkSuperblockHash;
     let battleSessionId;
     let result;
+    
     before(initSuperblockChain);
 
     it('Initialize', async () => {
@@ -54,7 +54,7 @@ contract('SyscoinClaimManager', (accounts) => {
     });
 
     it('Propose', async () => {
-      const proposedSuperblock = utils.makeSuperblock(
+      let proposedSuperblock = utils.makeSuperblock(
         headers.slice(0, 3),
         genesisSuperblock.superblockHash,
         genesisSuperblock.accumulatedWork,
@@ -78,7 +78,7 @@ contract('SyscoinClaimManager', (accounts) => {
       proposedSuperblockHash = superblockClaimCreatedEvent.args.superblockHash;
     });
 
-    it('Try to confirm whitout waiting', async () => {
+    it('Try to confirm without waiting', async () => {
       result = await claimManager.checkClaimFinished('0x02', { from: challenger });
       assert.ok(utils.findEvent(result.logs, 'ErrorClaim'), 'Invalid claim');
       result = await claimManager.checkClaimFinished(proposedSuperblockHash, { from: challenger });
@@ -303,6 +303,7 @@ contract('SyscoinClaimManager', (accounts) => {
     let genesisSuperblockHash;
     let proposedSuperblockHash;
     let battleSessionId;
+    let proposeSuperblock;
     const beginNewChallenge = async () => {
       let result;
       ({
@@ -320,7 +321,7 @@ contract('SyscoinClaimManager', (accounts) => {
       genesisSuperblockHash = genesisSuperblock.superblockHash;
 
       // Propose
-      const proposeSuperblock = utils.makeSuperblock(
+      proposeSuperblock = utils.makeSuperblock(
         headers.slice(0, 2),
         genesisSuperblock.superblockHash,
         genesisSuperblock.accumulatedWork,
@@ -473,9 +474,44 @@ contract('SyscoinClaimManager', (accounts) => {
       result = await battleManager.respondBlockHeader(proposedSuperblockHash, battleSessionId, `0x${headers[1]}`, { from: submitter });
 
       assert.ok(utils.findEvent(result.logs, 'RespondBlockHeader'), 'Respond block header');
-      
+
       result = await battleManager.verifySuperblock(battleSessionId, { from: challenger });
       assert.ok(utils.findEvent(result.logs, 'ChallengerConvicted'), 'Should convict challenger');
+
+      await utils.blockchainTimeoutSeconds(2*utils.OPTIONS_SYSCOIN_REGTEST.TIMEOUT);
+      result = await claimManager.checkClaimFinished(proposedSuperblockHash, { from: submitter });
+      assert.ok(utils.findEvent(result.logs, 'SuperblockClaimPending'), 'Superblock accepted');
+
+
+      await claimManager.makeDeposit({ value: utils.DEPOSITS.MIN_PROPOSAL_DEPOSIT, from: submitter });
+      result = await claimManager.proposeSuperblock(
+        proposeSuperblock.merkleRoot,
+        proposeSuperblock.accumulatedWork,
+        proposeSuperblock.timestamp,
+        proposeSuperblock.prevTimestamp,
+        proposeSuperblock.lastHash,
+        proposeSuperblock.lastBits,
+        proposeSuperblock.parentId,
+        proposeSuperblock.blockHeight,
+        { from: submitter },
+      );
+      assert.ok(utils.findEvent(result.logs, 'ErrorClaim'), 'Tried to repropose valid superblock');
+
+      await claimManager.makeDeposit({ value: utils.DEPOSITS.MIN_PROPOSAL_DEPOSIT, from: challenger });
+      result = await claimManager.proposeSuperblock(
+        proposeSuperblock.merkleRoot,
+        proposeSuperblock.accumulatedWork,
+        proposeSuperblock.timestamp,
+        proposeSuperblock.prevTimestamp,
+        proposeSuperblock.lastHash,
+        proposeSuperblock.lastBits,
+        proposeSuperblock.parentId,
+        proposeSuperblock.blockHeight,
+        { from: challenger },
+      );
+      assert.ok(utils.findEvent(result.logs, 'ErrorClaim'), 'Tried to repropose valid superblock');
+
+
     });
   });
 });

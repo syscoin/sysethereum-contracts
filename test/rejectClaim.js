@@ -103,7 +103,38 @@ contract('rejectClaim', (accounts) => {
             assert.ok(superblockClaimCreatedEvent, 'New superblock proposed');
             superblock1Id = superblockClaimCreatedEvent.args.superblockHash;
         });
+        it('Re-Propose superblock 1 bad', async () => {
+            await claimManager.makeDeposit({ value: utils.DEPOSITS.MIN_PROPOSAL_DEPOSIT, from: submitter });
+            var result = await claimManager.proposeSuperblock(
+                superblock1.merkleRoot,
+                superblock1.accumulatedWork,
+                superblock1.timestamp,
+                superblock1.prevTimestamp,
+                superblock1.lastHash,
+                superblock1.lastBits,
+                superblock1.parentId,
+                superblock1.blockHeight,
+                { from: submitter },
+            );
+            assert.ok(utils.findEvent(result.logs, 'ErrorClaim'), 'Tried to repropose before timeout');
 
+
+            await claimManager.makeDeposit({ value: utils.DEPOSITS.MIN_PROPOSAL_DEPOSIT, from: challenger });
+            result = await claimManager.proposeSuperblock(
+                superblock1.merkleRoot,
+                superblock1.accumulatedWork,
+                superblock1.timestamp,
+                superblock1.prevTimestamp,
+                superblock1.lastHash,
+                superblock1.lastBits,
+                superblock1.parentId,
+                superblock1.blockHeight,
+                { from: challenger },
+            );
+            assert.ok(utils.findEvent(result.logs, 'ErrorClaim'), 'Tried to repropose before timeout');
+
+
+        });
         it('Confirm superblock 1', async () => {
             await utils.blockchainTimeoutSeconds(2*utils.OPTIONS_SYSCOIN_REGTEST.TIMEOUT);
             const result = await claimManager.checkClaimFinished(superblock1Id, { from: submitter });
@@ -111,7 +142,37 @@ contract('rejectClaim', (accounts) => {
             const best = await superblocks.getBestSuperblock();
             assert.equal(superblock1Id, best, 'Best superblock should match');
         });
+        it('Propose superblock 1 bad 2', async () => {
+            await claimManager.makeDeposit({ value: utils.DEPOSITS.MIN_PROPOSAL_DEPOSIT, from: submitter });
+            var result = await claimManager.proposeSuperblock(
+                superblock1.merkleRoot,
+                superblock1.accumulatedWork,
+                superblock1.timestamp,
+                superblock1.prevTimestamp,
+                superblock1.lastHash,
+                superblock1.lastBits,
+                superblock1.parentId,
+                superblock1.blockHeight,
+                { from: submitter },
+            );
+            assert.ok(utils.findEvent(result.logs, 'ErrorClaim'), 'Tried to repropose without timeout');
 
+            await claimManager.makeDeposit({ value: utils.DEPOSITS.MIN_PROPOSAL_DEPOSIT, from: challenger });
+
+            result = await claimManager.proposeSuperblock(
+                superblock1.merkleRoot,
+                superblock1.accumulatedWork,
+                superblock1.timestamp,
+                superblock1.prevTimestamp,
+                superblock1.lastHash,
+                superblock1.lastBits,
+                superblock1.parentId,
+                superblock1.blockHeight,
+                { from: challenger },
+            );
+            assert.ok(utils.findEvent(result.logs, 'ErrorClaim'), 'Tried to repropose without timeout');
+
+        });
         it('Claim does not exist', async () => {
             const result = await claimManager.rejectClaim(superblockR0.superblockHash, { from: submitter });
             assert.ok(utils.findEvent(result.logs, 'ErrorClaim'), 'Claim has not been made');
