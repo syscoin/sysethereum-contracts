@@ -25,10 +25,10 @@ const SUPERBLOCK_OPTIONS_PRODUCTION = {
 const SUPERBLOCK_OPTIONS_INTEGRATION_FAST_SYNC = {
   DURATION: 600,    // 10 minutes
   DELAY: 300,       // 5 minutes
-  TIMEOUT: 600,      // 10 minutes
+  TIMEOUT: 300,      // 5 minutes
   CONFIRMATIONS: 3, // Superblocks required to confirm semi approved superblock
   REWARD: 1000000000000000000,        // Monetary reward for opponent in case a battle is lost  
-  ASSETGUID: 1642350303
+  ASSETGUID: 1178279744
 };
 
 const SUPERBLOCK_OPTIONS_LOCAL = {
@@ -37,7 +37,7 @@ const SUPERBLOCK_OPTIONS_LOCAL = {
   TIMEOUT: 30,      // 30 seconds
   CONFIRMATIONS: 1, // Superblocks required to confirm semi approved superblock
   REWARD: 10,        // Monetary reward for opponent in case a battle is lost  
-  ASSETGUID: 1642350303
+  ASSETGUID: 1178279744
 };
 
 async function deployDevelopment(deployer, networkId, superblockOptions) {
