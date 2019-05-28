@@ -4,11 +4,11 @@ module.exports = async function(callback) {
   
   var sb = await Superblocks.deployed();
 
-  var blocksMerkleRoot = "0x00000448444b0b3ddf48863024870d158bf48ce7f02a1d3093b01a84c1c1da42";
+  var blocksMerkleRoot = "0x000001cab6418dbdbdc0255b5216938d0b1d93e9c4fbce43a1a8886eb2b4356f";
   var accumulatedWork = web3.toBigNumber(0x100001);
-  var timestamp = 1552606661;
+  var timestamp = 1552606662;
   var prevTimestamp = 0;
-  var lastHash = "0x00000448444b0b3ddf48863024870d158bf48ce7f02a1d3093b01a84c1c1da42";
+  var lastHash = "0x000001cab6418dbdbdc0255b5216938d0b1d93e9c4fbce43a1a8886eb2b4356f";
   var lastBits = 0x1e0fffff;
   var parentId = "0x0";
   var height = 0;
