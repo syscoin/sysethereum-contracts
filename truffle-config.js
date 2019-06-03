@@ -9,11 +9,11 @@ module.exports = {
       gas: 47000000000,
       gasPrice: 1
     },
-    integrationSyscoinMain: {
+    mainnet: {
       provider:   function () {
          return new HDWalletProvider(mnenomic, "https://mainnet.infura.io/v3/d178aecf49154b12be98e68e998cfb8d");
       },
-      network_id: "1",
+      network_id: "1"
     },
     ropsten: {
       host: "localhost",

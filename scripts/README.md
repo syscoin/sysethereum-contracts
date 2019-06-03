@@ -14,7 +14,7 @@ Where NETWORK can be
 
 *   development: Contract development without interacting with Syscoin blockchain
 *   integrationSyscoinRegtest: Integration tests ganache and Syscoin regtest
-*   integrationSyscoinMain: Integration tests ganache and Syscoin main network
+*   mainnet: Integration tests mainnet and Syscoin main network
 *   rinkeby: Integration tests Rinkeby testnet and Syscoin main network
 
 Note: There's a ropsten network but currently contracts are too large to be
