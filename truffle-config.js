@@ -10,11 +10,10 @@ module.exports = {
       gasPrice: 1
     },
     integrationSyscoinMain: {
-      host: "localhost",
-      port: 8545,
-      network_id: "32000",
-      gas: 4700000,
-      gasPrice: 1
+      provider:   function () {
+         return new HDWalletProvider(mnenomic, "https://mainnet.infura.io/v3/d178aecf49154b12be98e68e998cfb8d");
+      },
+      network_id: "1",
     },
     ropsten: {
       host: "localhost",

@@ -3,7 +3,7 @@
 #export WEB3JBIN=/usr/local/bin/web3j
 export WEB3JBIN=web3j
 export CONTRACTS=./build/contracts
-export ETHNETWORK=rinkeby
+export ETHNETWORK=mainnet
 export OUTPACKAGE=org.sysethereum.agents.contract
 
 rm -rf build
