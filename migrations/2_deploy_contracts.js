@@ -74,10 +74,10 @@ async function deployDevelopment(deployer, networkId, superblockOptions) {
   await deployer.deploy(SyscoinMessageLibraryForTests);
 
   const superblocks = SyscoinSuperblocks.at(SyscoinSuperblocks.address);
-  await superblocks.setClaimManager(SyscoinClaimManager.address);
+  (await superblocks).setClaimManager(SyscoinClaimManager.address);
 
   const syscoinBattleManager = SyscoinBattleManager.at(SyscoinBattleManager.address);
-  await syscoinBattleManager.setSyscoinClaimManager(SyscoinClaimManager.address);
+  (await syscoinBattleManager).setSyscoinClaimManager(SyscoinClaimManager.address);
 }
 
 async function deployIntegration(deployer,  networkId, superblockOptions) {
@@ -118,10 +118,10 @@ async function deployIntegration(deployer,  networkId, superblockOptions) {
   );
 
   const superblocks = SyscoinSuperblocks.at(SyscoinSuperblocks.address);
-  await superblocks.setClaimManager(SyscoinClaimManager.address, {gas: 60000});
+  (await superblocks).setClaimManager(SyscoinClaimManager.address, {gas: 60000});
 
   const syscoinBattleManager = SyscoinBattleManager.at(SyscoinBattleManager.address);
-  await syscoinBattleManager.setSyscoinClaimManager(SyscoinClaimManager.address);
+  (await syscoinBattleManager).setSyscoinClaimManager(SyscoinClaimManager.address);
 }
 
 module.exports = function(deployer, network) {
