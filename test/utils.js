@@ -50,7 +50,7 @@ async function parseDataFile(filename) {
       resolve({ headers, hashes });
     });
   });
-};
+}
 
 // Calculates the merkle root from an array of hashes
 // The hashes are expected to be 32 bytes in hexadecimal
