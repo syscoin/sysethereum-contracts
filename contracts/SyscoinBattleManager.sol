@@ -501,39 +501,6 @@ contract SyscoinBattleManager is SyscoinErrorCodes {
         delete sessions[sessionId];
     }
 
-    // @dev - Compare two 80-byte Syscoin block headers
-    function compareBlockHeader(bytes memory left, bytes memory right) internal pure returns (int) {
-        require(left.length == 80);
-        require(right.length == 80);
-        int a;
-        int b;
-        // Compare first 32 bytes
-        assembly {
-            a := mload(add(left, 0x20))
-            b := mload(add(right, 0x20))
-        }
-        if (a != b) {
-            return a - b;
-        }
-        // Compare next 32 bytes
-        assembly {
-            a := mload(add(left, 0x40))
-            b := mload(add(right, 0x40))
-        }
-        if (a != b) {
-            return a - b;
-        }
-        // Compare last 32 bytes
-        assembly {
-            a := mload(add(left, 0x50))
-            b := mload(add(right, 0x50))
-        }
-        // Note: There's a 16 bytes overlap with previous 32 bytes chunk
-        // But comparing full 32 bytes is faster/cheaper
-        return a - b;
-    }
-
-
     // @dev - Check if a session's challenger did not respond before timeout
     function getChallengerHitTimeout(bytes32 sessionId) public view returns (bool) {
         BattleSession storage session = sessions[sessionId];
