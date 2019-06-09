@@ -163,7 +163,7 @@ library SyscoinMessageLibrary {
             return (getBytesLE(txBytes, pos, 16), pos + 2);
         } else if (ibit == 0xfe) {
             return (getBytesLE(txBytes, pos, 32), pos + 4);
-        } else if (ibit == 0xff) {
+        } else { /*if (ibit == 0xff)*/
             return (getBytesLE(txBytes, pos, 64), pos + 8);
         }
     }
@@ -690,25 +690,6 @@ library SyscoinMessageLibrary {
     // @return - result of applying SHA-256 twice to raw data and then flipping the bytes
     function dblShaFlipMem(bytes memory _rawBytes, uint offset, uint len) internal view returns (uint) {
         return flip32Bytes(uint(sha256(abi.encodePacked(sha256mem(_rawBytes, offset, len)))));
-    }
-
-    // @dev – Read a bytes32 from an offset in the byte array
-    function readBytes32(bytes memory data, uint offset) internal pure returns (bytes32) {
-        bytes32 result;
-        assembly {
-            result := mload(add(add(data, 0x20), offset))
-        }
-        return result;
-    }
-
-    // @dev – Read an uint32 from an offset in the byte array
-    function readUint32(bytes memory data, uint offset) internal pure returns (uint32) {
-        uint32 result;
-        assembly {
-            result := mload(add(add(data, 0x20), offset))
-            
-        }
-        return result;
     }
 
     // @dev - Bitcoin-way of computing the target from the 'bits' field of a block header
