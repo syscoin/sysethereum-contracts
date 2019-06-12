@@ -1,11 +1,11 @@
 pragma solidity ^0.4.19;
 
-import {SyscoinDepositsManager} from './SyscoinDepositsManager.sol';
-import {SyscoinSuperblocks} from './SyscoinSuperblocks.sol';
-import {SyscoinBattleManager} from './SyscoinBattleManager.sol';
-import {SyscoinMessageLibrary} from './SyscoinParser/SyscoinMessageLibrary.sol';
-import {SyscoinErrorCodes} from "./SyscoinErrorCodes.sol";
-import "openzeppelin-solidity/contracts/math/SafeMath.sol";
+import './SyscoinDepositsManager.sol';
+import './SyscoinSuperblocks.sol';
+import './SyscoinBattleManager.sol';
+import './SyscoinParser/SyscoinMessageLibrary.sol';
+import './SyscoinErrorCodes.sol';
+import 'openzeppelin-solidity/contracts/math/SafeMath.sol';
 
 // @dev - Manager of superblock claims
 //

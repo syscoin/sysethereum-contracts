@@ -1,8 +1,8 @@
-pragma solidity ^0.4.8;
+pragma solidity ^0.4.19;
 
 import "./HumanStandardToken.sol";
 import "./Set.sol";
-import "./../SyscoinTransactionProcessor.sol";
+import "../SyscoinTransactionProcessor.sol";
 import "openzeppelin-solidity/contracts/math/SafeMath.sol";
 
 contract SyscoinToken is HumanStandardToken(0, "SyscoinToken", 8, "SYSX"), SyscoinTransactionProcessor {

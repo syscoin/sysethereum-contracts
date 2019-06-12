@@ -1,4 +1,4 @@
-import {SyscoinTransactionProcessor} from "../SyscoinTransactionProcessor.sol";
+import "../SyscoinTransactionProcessor.sol";
 
 // Bitcoin transaction parsing library - modified for SYSCOIN
 

@@ -1,9 +1,9 @@
 pragma solidity ^0.4.19;
 
-import {SyscoinClaimManager} from './SyscoinClaimManager.sol';
-import {SyscoinErrorCodes} from "./SyscoinErrorCodes.sol";
-import {SyscoinSuperblocks} from './SyscoinSuperblocks.sol';
-import {SyscoinMessageLibrary} from './SyscoinParser/SyscoinMessageLibrary.sol';
+import './SyscoinClaimManager.sol';
+import './SyscoinErrorCodes.sol';
+import './SyscoinSuperblocks.sol';
+import './SyscoinParser/SyscoinMessageLibrary.sol';
 
 // @dev - Manages a battle session between superblock submitter and challenger
 contract SyscoinBattleManager is SyscoinErrorCodes {

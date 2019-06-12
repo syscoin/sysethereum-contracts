@@ -1,8 +1,8 @@
 pragma solidity ^0.4.19;
 
-import {SyscoinMessageLibrary} from "./SyscoinParser/SyscoinMessageLibrary.sol";
-import {SyscoinErrorCodes} from "./SyscoinErrorCodes.sol";
-import {SyscoinTransactionProcessor} from "./SyscoinTransactionProcessor.sol";
+import "./SyscoinParser/SyscoinMessageLibrary.sol";
+import "./SyscoinErrorCodes.sol";
+import "./SyscoinTransactionProcessor.sol";
 
 // @dev - Manages superblocks
 //

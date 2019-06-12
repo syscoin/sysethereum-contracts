@@ -1,6 +1,6 @@
 pragma solidity ^0.4.19;
 
-import {SyscoinMessageLibrary} from './SyscoinMessageLibrary.sol';
+import './SyscoinMessageLibrary.sol';
 
 // @dev - Manages a battle session between superblock submitter and challenger
 contract SyscoinMessageLibraryForTests {
