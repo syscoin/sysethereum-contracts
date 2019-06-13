@@ -34,8 +34,6 @@ contract SyscoinDepositsManager {
     // @return – the given user's updated deposit amount.
     function increaseDeposit(address who, uint amount) internal {
         deposits[who] = deposits[who].add(amount);
-        require(deposits[who] <= address(this).balance);
-
         emit DepositMade(who, amount);
     }
 

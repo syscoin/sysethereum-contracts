@@ -300,6 +300,13 @@ contract('rejectClaim', (accounts) => {
             session1 = verificationGameStartedEvent.args.sessionId;
         });
 
+        // Challenge multiple
+        it('Challenge multiple', async () => {
+            // try to do multiple challenges from same challenger should reject
+            const result = await claimManager.challengeSuperblock(superblockR0Id, { from: challenger });   
+            assert.ok(utils.findEvent(result.logs, 'ErrorClaim'), 'Error claim cannot challenge multiple times as same challenger');
+        });
+
         // Don't reject claim if it's undecided
         it('Try to reject undecided claim', async () => {
             const result = await claimManager.rejectClaim(superblockR0Id, { from: submitter });

@@ -57,7 +57,7 @@ contract SyscoinBattleManager is SyscoinErrorCodes {
 
     mapping (bytes32 => BattleSession) public sessions;
 
-    uint public sessionsCount = 0;
+
 
     uint public superblockDuration;         // Superblock duration (in seconds)
     uint public superblockTimeout;          // Timeout action (in seconds)
@@ -123,7 +123,7 @@ contract SyscoinBattleManager is SyscoinErrorCodes {
     // @dev - Start a battle session
     function beginBattleSession(bytes32 superblockHash, address submitter, address challenger)
         onlyFrom(trustedSyscoinClaimManager) public returns (bytes32) {
-        bytes32 sessionId = keccak256(abi.encode(superblockHash, msg.sender, sessionsCount));
+        bytes32 sessionId = keccak256(abi.encode(superblockHash, msg.sender));
         BattleSession storage session = sessions[sessionId];
         session.id = sessionId;
         session.superblockHash = superblockHash;
@@ -135,7 +135,6 @@ contract SyscoinBattleManager is SyscoinErrorCodes {
         session.actionsCounter = 1;
         session.challengeState = ChallengeState.Challenged;
 
-        sessionsCount += 1;
 
         emit NewBattle(superblockHash, sessionId, submitter, challenger);
         return sessionId;

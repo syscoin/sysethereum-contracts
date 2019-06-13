@@ -263,6 +263,7 @@ contract SyscoinClaimManager is SyscoinDepositsManager, SyscoinErrorCodes {
         }
 
         uint err;
+        uint idx;
         (err, ) = trustedSuperblocks.challenge(superblockHash, msg.sender);
         if (err != 0) {
             emit ErrorClaim(superblockHash, err);
@@ -273,6 +274,12 @@ contract SyscoinClaimManager is SyscoinDepositsManager, SyscoinErrorCodes {
         assert(err == ERR_SUPERBLOCK_OK);
 
         claim.challengeTimeout = block.timestamp + superblockTimeout;
+        for (idx = 0; idx < claim.challengers.length; ++idx) {
+            if(claim.challengers[idx] == msg.sender){
+                emit ErrorClaim(superblockHash, ERR_SUPERBLOCK_BAD_CHALLENGER);
+                return (ERR_SUPERBLOCK_BAD_CHALLENGER, superblockHash);
+            }
+        }
         claim.challengers.push(msg.sender);
         emit SuperblockClaimChallenged(superblockHash, msg.sender);
 
@@ -538,35 +545,35 @@ contract SyscoinClaimManager is SyscoinDepositsManager, SyscoinErrorCodes {
 
     // @dev - Pay challengers than ran their battles with submitter deposits
     // Challengers that did not run will be returned their deposits
+    // Assumption is that each challenger is unique
     function doPayChallengers(bytes32 superblockHash, SuperblockClaim storage claim) internal {
         uint rewards = claim.bondedDeposits[claim.submitter];
-        claim.bondedDeposits[claim.submitter] = 0;
         uint totalDeposits = 0;
         uint idx = 0;
         for (idx = 0; idx < claim.currentChallenger; ++idx) {
             totalDeposits = totalDeposits.add(claim.bondedDeposits[claim.challengers[idx]]);
         }
-        
-        address challenger;
-        uint reward = 0;
-        if(totalDeposits == 0 && claim.currentChallenger > 0){
-            reward = rewards.div(claim.currentChallenger);
+        if(totalDeposits > 0){
+            delete claim.bondedDeposits[claim.submitter];
+        }else{
+            unbondDeposit(superblockHash, claim.submitter);
         }
+       
+        address challenger;
+        uint reward;
         for (idx = 0; idx < claim.currentChallenger; ++idx) {
-            reward = 0;
             challenger = claim.challengers[idx];
             if(totalDeposits > 0){
                 reward = rewards.mul(claim.bondedDeposits[challenger]).div(totalDeposits);
             }
+            else{
+                reward = 0;
+            }
             claim.bondedDeposits[challenger] = claim.bondedDeposits[challenger].add(reward);
         }
-        uint bondedDeposit;
         for (idx = 0; idx < claim.challengers.length; ++idx) {
             challenger = claim.challengers[idx];
-            bondedDeposit = claim.bondedDeposits[challenger];
-            deposits[challenger] = deposits[challenger].add(bondedDeposit);
-            claim.bondedDeposits[challenger] = 0;
-            emit DepositUnbonded(superblockHash, challenger, bondedDeposit);
+            unbondDeposit(superblockHash, challenger);
         }
     }
 
@@ -577,8 +584,8 @@ contract SyscoinClaimManager is SyscoinDepositsManager, SyscoinErrorCodes {
         for (uint idx=0; idx < claim.challengers.length; ++idx) {
             challenger = claim.challengers[idx];
             bondedDeposit = claim.bondedDeposits[challenger];
-            claim.bondedDeposits[challenger] = 0;
             claim.bondedDeposits[claim.submitter] = claim.bondedDeposits[claim.submitter].add(bondedDeposit);
+            delete claim.bondedDeposits[challenger];
         }
         unbondDeposit(superblockHash, claim.submitter);
     }
