@@ -183,18 +183,17 @@ contract SyscoinSuperblocks is SyscoinErrorCodes {
             superblock.prevTimestamp = _prevTimestamp;
             superblock.lastHash = _lastHash;
             superblock.parentId = _parentId;
-            superblock.submitter = submitter;
             superblock.index = indexNextSuperblock;
             superblock.height = parent.height + 1;
             superblock.lastBits = _lastBits;
-            superblock.status = Status.New;
             superblock.blockHeight = _blockHeight;
             superblock.ancestors = updateAncestors(parent.ancestors, parent.index, parent.height);
             indexNextSuperblock++;
-            emit NewSuperblock(superblockHash, submitter);
+            
         }
-        
-
+        emit NewSuperblock(superblockHash, submitter);
+        superblock.status = Status.New;
+        superblock.submitter = submitter;
         return (ERR_SUPERBLOCK_OK, superblockHash);
     }
 
