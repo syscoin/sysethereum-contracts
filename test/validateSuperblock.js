@@ -1,5 +1,5 @@
 const utils = require('./utils');
-
+const truffleAssert = require('truffle-assertions');
 contract('validateSuperblocks', (accounts) => {
   const owner = accounts[0];
   const submitter = accounts[1];
@@ -325,7 +325,8 @@ contract('validateSuperblocks', (accounts) => {
       assert.ok(utils.findEvent(result.logs, 'SuperblockClaimFailed'), 'Superblock rejected');
 
       await claimManager.makeDeposit({ value: utils.DEPOSITS.MIN_PROPOSAL_DEPOSIT, from: submitter });
-      result = await claimManager.proposeSuperblock(
+      // Submitter cannot submit same superblock
+      await truffleAssert.reverts(claimManager.proposeSuperblock(
         proposedSuperblock.merkleRoot,
         proposedSuperblock.accumulatedWork,
         proposedSuperblock.timestamp + 1,
@@ -335,10 +336,9 @@ contract('validateSuperblocks', (accounts) => {
         proposedSuperblock.parentId,
         proposedSuperblock.blockHeight,
         { from: submitter },
-      );
+      ));
 
-      assert.ok(utils.findEvent(result.logs, 'ErrorClaim'), 'Submitter cannot submit same superblock');
-
+      
       // challenger can submit the same block after winning
       await claimManager.makeDeposit({ value: utils.DEPOSITS.MIN_PROPOSAL_DEPOSIT, from: challenger });
       result = await claimManager.proposeSuperblock(
@@ -358,7 +358,7 @@ contract('validateSuperblocks', (accounts) => {
 
       // cannot submit again
       await claimManager.makeDeposit({ value: utils.DEPOSITS.MIN_PROPOSAL_DEPOSIT, from: challenger });
-      result = await claimManager.proposeSuperblock(
+      await truffleAssert.reverts(claimManager.proposeSuperblock(
         proposedSuperblock.merkleRoot,
         proposedSuperblock.accumulatedWork,
         proposedSuperblock.timestamp + 1,
@@ -368,10 +368,9 @@ contract('validateSuperblocks', (accounts) => {
         proposedSuperblock.parentId,
         proposedSuperblock.blockHeight,
         { from: challenger },
-      );
+      ));
 
-      assert.ok(utils.findEvent(result.logs, 'ErrorClaim'), 'Cannot submit twice');
-
+  
     });
   });
 });

@@ -217,8 +217,7 @@ contract SyscoinClaimManager is SyscoinDepositsManager, SyscoinErrorCodes {
                 }
             }
             if(!allowed){
-                emit ErrorClaim(superblockHash, ERR_SUPERBLOCK_BAD_CLAIM);
-                return (ERR_SUPERBLOCK_BAD_CLAIM, superblockHash);  
+                revert();
             }
         }
 

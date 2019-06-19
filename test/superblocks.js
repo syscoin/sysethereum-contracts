@@ -110,9 +110,10 @@ contract('SyscoinSuperblocks', (accounts) => {
       assert.equal(result.logs[0].event, 'NewSuperblock', 'New superblock proposed');
       id1 = result.logs[0].args.superblockHash;
     });
+    // re-propose works but claimmanager will reject() if validation fails
     it('Re-propose', async () => {
       const result = await superblocks.propose(merkleRoot, accumulatedWork, timestamp, prevTimestamp, lastHash, lastBits, id0, claimManager, 0,{ from: claimManager });
-      assert.equal(result.logs.length,  0, 'Superblock not created again');
+      assert.equal(result.logs[0].event, 'NewSuperblock', 'New superblock proposed');
     });
     it('Bad parent', async () => {
       const result = await superblocks.propose(merkleRoot, accumulatedWork, timestamp, prevTimestamp, lastHash, lastBits, "0x0", claimManager, 0,{ from: claimManager });

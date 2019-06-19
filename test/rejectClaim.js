@@ -1,7 +1,7 @@
 // Idea: propose descendants and see if they should get invalidated as well
 
 const utils = require('./utils');
-
+const truffleAssert = require('truffle-assertions');
 const SEMI_APPROVED = 3;
 const INVALID = 5;
 
@@ -105,7 +105,8 @@ contract('rejectClaim', (accounts) => {
         });
         it('Re-Propose superblock 1 bad', async () => {
             await claimManager.makeDeposit({ value: utils.DEPOSITS.MIN_PROPOSAL_DEPOSIT, from: submitter });
-            var result = await claimManager.proposeSuperblock(
+            // try to propose before timeout as submitter
+            await truffleAssert.reverts(claimManager.proposeSuperblock(
                 superblock1.merkleRoot,
                 superblock1.accumulatedWork,
                 superblock1.timestamp,
@@ -115,12 +116,11 @@ contract('rejectClaim', (accounts) => {
                 superblock1.parentId,
                 superblock1.blockHeight,
                 { from: submitter },
-            );
-            assert.ok(utils.findEvent(result.logs, 'ErrorClaim'), 'Tried to repropose before timeout');
-
-
+            ));
+           
+            // try to propose before timeout as challenger       
             await claimManager.makeDeposit({ value: utils.DEPOSITS.MIN_PROPOSAL_DEPOSIT, from: challenger });
-            result = await claimManager.proposeSuperblock(
+            await truffleAssert.reverts(claimManager.proposeSuperblock(
                 superblock1.merkleRoot,
                 superblock1.accumulatedWork,
                 superblock1.timestamp,
@@ -130,9 +130,8 @@ contract('rejectClaim', (accounts) => {
                 superblock1.parentId,
                 superblock1.blockHeight,
                 { from: challenger },
-            );
-            assert.ok(utils.findEvent(result.logs, 'ErrorClaim'), 'Tried to repropose before timeout');
-
+            ));
+            
 
         });
         it('Confirm superblock 1', async () => {
@@ -144,7 +143,7 @@ contract('rejectClaim', (accounts) => {
         });
         it('Propose superblock 1 bad 2', async () => {
             await claimManager.makeDeposit({ value: utils.DEPOSITS.MIN_PROPOSAL_DEPOSIT, from: submitter });
-            var result = await claimManager.proposeSuperblock(
+            await truffleAssert.reverts(claimManager.proposeSuperblock(
                 superblock1.merkleRoot,
                 superblock1.accumulatedWork,
                 superblock1.timestamp,
@@ -154,12 +153,11 @@ contract('rejectClaim', (accounts) => {
                 superblock1.parentId,
                 superblock1.blockHeight,
                 { from: submitter },
-            );
-            assert.ok(utils.findEvent(result.logs, 'ErrorClaim'), 'Tried to repropose without timeout');
-
+            ));
+           
             await claimManager.makeDeposit({ value: utils.DEPOSITS.MIN_PROPOSAL_DEPOSIT, from: challenger });
 
-            result = await claimManager.proposeSuperblock(
+            await truffleAssert.reverts(claimManager.proposeSuperblock(
                 superblock1.merkleRoot,
                 superblock1.accumulatedWork,
                 superblock1.timestamp,
@@ -169,8 +167,7 @@ contract('rejectClaim', (accounts) => {
                 superblock1.parentId,
                 superblock1.blockHeight,
                 { from: challenger },
-            );
-            assert.ok(utils.findEvent(result.logs, 'ErrorClaim'), 'Tried to repropose without timeout');
+            ));
 
         });
         it('Claim does not exist', async () => {

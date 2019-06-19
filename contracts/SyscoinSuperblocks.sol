@@ -188,12 +188,11 @@ contract SyscoinSuperblocks is SyscoinErrorCodes {
             superblock.lastBits = _lastBits;
             superblock.blockHeight = _blockHeight;
             superblock.ancestors = updateAncestors(parent.ancestors, parent.index, parent.height);
-            indexNextSuperblock++;
-            
+            indexNextSuperblock++; 
         }
-        emit NewSuperblock(superblockHash, submitter);
         superblock.status = Status.New;
         superblock.submitter = submitter;
+        emit NewSuperblock(superblockHash, submitter);
         return (ERR_SUPERBLOCK_OK, superblockHash);
     }
 

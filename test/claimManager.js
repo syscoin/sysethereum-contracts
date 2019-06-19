@@ -1,5 +1,5 @@
 const utils = require('./utils');
-
+const truffleAssert = require('truffle-assertions');
 contract('SyscoinClaimManager', (accounts) => {
   const owner = accounts[0];
   const submitter = accounts[1];
@@ -482,9 +482,9 @@ contract('SyscoinClaimManager', (accounts) => {
       result = await claimManager.checkClaimFinished(proposedSuperblockHash, { from: submitter });
       assert.ok(utils.findEvent(result.logs, 'SuperblockClaimPending'), 'Superblock accepted');
 
-
+      // Tried to repropose valid superblock
       await claimManager.makeDeposit({ value: utils.DEPOSITS.MIN_PROPOSAL_DEPOSIT, from: submitter });
-      result = await claimManager.proposeSuperblock(
+      await truffleAssert.reverts(claimManager.proposeSuperblock(
         proposeSuperblock.merkleRoot,
         proposeSuperblock.accumulatedWork,
         proposeSuperblock.timestamp,
@@ -494,11 +494,12 @@ contract('SyscoinClaimManager', (accounts) => {
         proposeSuperblock.parentId,
         proposeSuperblock.blockHeight,
         { from: submitter },
-      );
-      assert.ok(utils.findEvent(result.logs, 'ErrorClaim'), 'Tried to repropose valid superblock');
+      ));
+    
 
+      // Tried to repropose valid superblock
       await claimManager.makeDeposit({ value: utils.DEPOSITS.MIN_PROPOSAL_DEPOSIT, from: challenger });
-      result = await claimManager.proposeSuperblock(
+      await truffleAssert.reverts(claimManager.proposeSuperblock(
         proposeSuperblock.merkleRoot,
         proposeSuperblock.accumulatedWork,
         proposeSuperblock.timestamp,
@@ -508,8 +509,8 @@ contract('SyscoinClaimManager', (accounts) => {
         proposeSuperblock.parentId,
         proposeSuperblock.blockHeight,
         { from: challenger },
-      );
-      assert.ok(utils.findEvent(result.logs, 'ErrorClaim'), 'Tried to repropose valid superblock');
+      ));
+
 
 
     });
