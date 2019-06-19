@@ -260,7 +260,12 @@ contract SyscoinClaimManager is SyscoinDepositsManager, SyscoinErrorCodes {
             emit ErrorClaim(superblockHash, ERR_SUPERBLOCK_MIN_DEPOSIT);
             return (ERR_SUPERBLOCK_MIN_DEPOSIT, superblockHash);
         }
-
+        for (idx = 0; idx < claim.challengers.length; ++idx) {
+            if(claim.challengers[idx] == msg.sender){
+                emit ErrorClaim(superblockHash, ERR_SUPERBLOCK_BAD_CHALLENGER);
+                return (ERR_SUPERBLOCK_BAD_CHALLENGER, superblockHash);
+            }
+        }
         uint err;
         uint idx;
         (err, ) = trustedSuperblocks.challenge(superblockHash, msg.sender);
@@ -273,12 +278,6 @@ contract SyscoinClaimManager is SyscoinDepositsManager, SyscoinErrorCodes {
         assert(err == ERR_SUPERBLOCK_OK);
 
         claim.challengeTimeout = block.timestamp + superblockTimeout;
-        for (idx = 0; idx < claim.challengers.length; ++idx) {
-            if(claim.challengers[idx] == msg.sender){
-                emit ErrorClaim(superblockHash, ERR_SUPERBLOCK_BAD_CHALLENGER);
-                return (ERR_SUPERBLOCK_BAD_CHALLENGER, superblockHash);
-            }
-        }
         claim.challengers.push(msg.sender);
         emit SuperblockClaimChallenged(superblockHash, msg.sender);
 
