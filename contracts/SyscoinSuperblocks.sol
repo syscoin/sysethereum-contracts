@@ -205,20 +205,20 @@ contract SyscoinSuperblocks is SyscoinErrorCodes {
     // @param _superblockHash Id of the superblock to confirm
     // @param _validator Address requesting superblock confirmation
     // @return Error code and superblockHash
-    function confirm(bytes32 _superblockHash, address _validator) public returns (uint, bytes32) {
+    function confirm(bytes32 _superblockHash, address _validator) public returns (uint) {
         if (msg.sender != trustedClaimManager) {
             emit ErrorSuperblock(_superblockHash, ERR_SUPERBLOCK_NOT_CLAIMMANAGER);
-            return (ERR_SUPERBLOCK_NOT_CLAIMMANAGER, 0);
+            return ERR_SUPERBLOCK_NOT_CLAIMMANAGER;
         }
         SuperblockInfo storage superblock = superblocks[_superblockHash];
         if (superblock.status != Status.New && superblock.status != Status.SemiApproved) {
             emit ErrorSuperblock(_superblockHash, ERR_SUPERBLOCK_BAD_STATUS);
-            return (ERR_SUPERBLOCK_BAD_STATUS, 0);
+            return ERR_SUPERBLOCK_BAD_STATUS;
         }
         SuperblockInfo storage parent = superblocks[superblock.parentId];
         if (parent.status != Status.Approved) {
             emit ErrorSuperblock(_superblockHash, ERR_SUPERBLOCK_BAD_PARENT);
-            return (ERR_SUPERBLOCK_BAD_PARENT, 0);
+            return ERR_SUPERBLOCK_BAD_PARENT;
         }
         superblock.status = Status.Approved;
         if (superblock.accumulatedWork > bestSuperblockAccumulatedWork) {
@@ -226,7 +226,7 @@ contract SyscoinSuperblocks is SyscoinErrorCodes {
             bestSuperblockAccumulatedWork = superblock.accumulatedWork;
         }
         emit ApprovedSuperblock(_superblockHash, _validator);
-        return (ERR_SUPERBLOCK_OK, _superblockHash);
+        return ERR_SUPERBLOCK_OK;
     }
 
     // @dev - Challenge a proposed superblock
@@ -237,23 +237,23 @@ contract SyscoinSuperblocks is SyscoinErrorCodes {
     // @param _superblockHash Id of the superblock to challenge
     // @param _challenger Address requesting a challenge
     // @return Error code and superblockHash
-    function challenge(bytes32 _superblockHash, address _challenger) public returns (uint, bytes32) {
+    function challenge(bytes32 _superblockHash, address _challenger) public returns (uint) {
         if (msg.sender != trustedClaimManager) {
             emit ErrorSuperblock(_superblockHash, ERR_SUPERBLOCK_NOT_CLAIMMANAGER);
-            return (ERR_SUPERBLOCK_NOT_CLAIMMANAGER, 0);
+            return ERR_SUPERBLOCK_NOT_CLAIMMANAGER;
         }
         SuperblockInfo storage superblock = superblocks[_superblockHash];
         if (superblock.status != Status.New && superblock.status != Status.InBattle) {
             emit ErrorSuperblock(_superblockHash, ERR_SUPERBLOCK_BAD_STATUS);
-            return (ERR_SUPERBLOCK_BAD_STATUS, 0);
+            return ERR_SUPERBLOCK_BAD_STATUS;
         }
         if(superblock.submitter == _challenger){
             emit ErrorSuperblock(_superblockHash, ERR_SUPERBLOCK_OWN_CHALLENGE);
-            return (ERR_SUPERBLOCK_OWN_CHALLENGE, 0);        
+            return ERR_SUPERBLOCK_OWN_CHALLENGE;        
         }
         superblock.status = Status.InBattle;
         emit ChallengeSuperblock(_superblockHash, _challenger);
-        return (ERR_SUPERBLOCK_OK, _superblockHash);
+        return ERR_SUPERBLOCK_OK;
     }
 
     // @dev - Semi-approve a challenged superblock

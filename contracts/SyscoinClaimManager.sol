@@ -100,22 +100,22 @@ contract SyscoinClaimManager is SyscoinDepositsManager, SyscoinErrorCodes {
     // @param account – user's address.
     // @param amount – amount of deposit to lock up.
     // @return – user's deposit bonded for the claim.
-    function bondDeposit(bytes32 superblockHash, address account, uint amount) onlyMeOrBattleManager external returns (uint, uint) {
+    function bondDeposit(bytes32 superblockHash, address account, uint amount) onlyMeOrBattleManager external returns (uint) {
         SuperblockClaim storage claim = claims[superblockHash];
 
         if (!claimExists(claim)) {
-            return (ERR_SUPERBLOCK_BAD_CLAIM, 0);
+            return ERR_SUPERBLOCK_BAD_CLAIM;
         }
 
         if (deposits[account] < amount) {
-            return (ERR_SUPERBLOCK_MIN_DEPOSIT, deposits[account]);
+            return ERR_SUPERBLOCK_MIN_DEPOSIT;
         }
 
         deposits[account] = deposits[account].sub(amount);
         claim.bondedDeposits[account] = claim.bondedDeposits[account].add(amount);
         emit DepositBonded(superblockHash, account, amount);
 
-        return (ERR_SUPERBLOCK_OK, claim.bondedDeposits[account]);
+        return ERR_SUPERBLOCK_OK;
     }
 
     // @dev – accessor for a claim's bonded deposits.
@@ -232,7 +232,7 @@ contract SyscoinClaimManager is SyscoinDepositsManager, SyscoinErrorCodes {
         claim.challengeTimeout = block.timestamp + superblockTimeout;
         claim.challengers.length = 0;
 
-        (err, ) = this.bondDeposit(superblockHash, msg.sender, battleReward);
+        err = this.bondDeposit(superblockHash, msg.sender, battleReward);
         assert(err == ERR_SUPERBLOCK_OK);
 
         emit SuperblockClaimCreated(superblockHash, msg.sender);
@@ -266,15 +266,14 @@ contract SyscoinClaimManager is SyscoinDepositsManager, SyscoinErrorCodes {
                 return (ERR_SUPERBLOCK_BAD_CHALLENGER, superblockHash);
             }
         }
-        uint err;
         uint idx;
-        (err, ) = trustedSuperblocks.challenge(superblockHash, msg.sender);
+        uint err = trustedSuperblocks.challenge(superblockHash, msg.sender);
         if (err != 0) {
             emit ErrorClaim(superblockHash, err);
             return (err, 0);
         }
 
-        (err, ) = this.bondDeposit(superblockHash, msg.sender, battleReward);
+        err = this.bondDeposit(superblockHash, msg.sender, battleReward);
         assert(err == ERR_SUPERBLOCK_OK);
 
         claim.challengeTimeout = block.timestamp + superblockTimeout;
@@ -436,7 +435,7 @@ contract SyscoinClaimManager is SyscoinDepositsManager, SyscoinErrorCodes {
             return false;
         }
 
-        (uint err, ) = trustedSuperblocks.confirm(superblockHash, msg.sender);
+        uint err = trustedSuperblocks.confirm(superblockHash, msg.sender);
         if (err != ERR_SUPERBLOCK_OK) {
             emit ErrorClaim(superblockHash, err);
             return false;
@@ -458,7 +457,7 @@ contract SyscoinClaimManager is SyscoinDepositsManager, SyscoinErrorCodes {
                 idx -= 1;
                 id = descendants[idx];
                 claim = claims[id];
-                (err, ) = trustedSuperblocks.confirm(id, msg.sender);
+                err = trustedSuperblocks.confirm(id, msg.sender);
                 require(err == ERR_SUPERBLOCK_OK);
                 emit SuperblockClaimSuccessful(id, claim.submitter);
                 doPaySubmitter(id, claim);

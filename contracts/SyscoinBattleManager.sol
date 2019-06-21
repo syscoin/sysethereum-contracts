@@ -148,7 +148,7 @@ contract SyscoinBattleManager is SyscoinErrorCodes {
         if (session.challengeState == ChallengeState.Challenged) {
             session.challengeState = ChallengeState.QueryMerkleRootHashes;
             assert(msg.sender == session.challenger);
-            (uint err, ) = bondDeposit(session.superblockHash, msg.sender, respondMerkleRootHashesCost);
+            uint err = bondDeposit(session.superblockHash, msg.sender, respondMerkleRootHashesCost);
             if (err != ERR_SUPERBLOCK_OK) {
                 return err;
             }
@@ -185,7 +185,7 @@ contract SyscoinBattleManager is SyscoinErrorCodes {
             if (merkleRoot != SyscoinMessageLibrary.makeMerkle(blockHashes)) {
                 return ERR_SUPERBLOCK_INVALID_MERKLE;
             }
-            (uint err, ) = bondDeposit(session.superblockHash, msg.sender, verifySuperblockCost);
+            uint err = bondDeposit(session.superblockHash, msg.sender, verifySuperblockCost);
             if (err != ERR_SUPERBLOCK_OK) {
                 return err;
             }
@@ -219,7 +219,7 @@ contract SyscoinBattleManager is SyscoinErrorCodes {
             (session.countBlockHeaderQueries > 0 && session.challengeState == ChallengeState.RespondBlockHeader)) {
             require(session.countBlockHeaderQueries < session.blockHashes.length);
             require(session.blocksInfo[blockHash].status == BlockInfoStatus.Uninitialized);
-            (uint err, ) = bondDeposit(session.superblockHash, msg.sender, respondBlockHeaderCost);
+            uint err = bondDeposit(session.superblockHash, msg.sender, respondBlockHeaderCost);
             if (err != ERR_SUPERBLOCK_OK) {
                 return err;
             }
@@ -262,11 +262,11 @@ contract SyscoinBattleManager is SyscoinErrorCodes {
         BlockInfo storage blockInfo,
         bytes32 blockHash,
         bytes blockHeader
-    ) internal returns (uint, bytes) {
+    ) internal returns (uint) {
         (uint err, bool isMergeMined) =
             SyscoinMessageLibrary.verifyBlockHeader(blockHeader, 0, uint(blockHash));
         if (err != 0) {
-            return (err, new bytes(0));
+            return err;
         }
         bytes memory powBlockHeader = (isMergeMined) ?
             SyscoinMessageLibrary.sliceArray(blockHeader, blockHeader.length - 80, blockHeader.length) :
@@ -277,7 +277,7 @@ contract SyscoinBattleManager is SyscoinErrorCodes {
         blockInfo.prevBlock = bytes32(SyscoinMessageLibrary.getHashPrevBlock(blockHeader));
         blockInfo.blockHash = blockHash;
         blockInfo.powBlockHeader = powBlockHeader;
-        return (ERR_SUPERBLOCK_OK, powBlockHeader);
+        return ERR_SUPERBLOCK_OK;
     }
 
     // @dev - Verify block header sent by challenger
@@ -301,15 +301,14 @@ contract SyscoinBattleManager is SyscoinErrorCodes {
 			// pass in blockSha256Hash here instead of proposedScryptHash because we
             // don't need a proposed hash (we already calculated it here, syscoin uses 
             // sha256 just like bitcoin)
-            (uint err, ,) =
-                verifyBlockAuxPoW(blockInfo, blockSha256Hash, blockHeader);
+            uint err = verifyBlockAuxPoW(blockInfo, blockSha256Hash, blockHeader);
             if (err != ERR_SUPERBLOCK_OK) {
                 return (err, 0);
             }
 			// set to verify block header status
             blockInfo.status = BlockInfoStatus.Verified;
 
-            (err, ) = bondDeposit(session.superblockHash, msg.sender, respondBlockHeaderCost);
+            err = bondDeposit(session.superblockHash, msg.sender, respondBlockHeaderCost);
             if (err != ERR_SUPERBLOCK_OK) {
                 return (err, 0);
             }
@@ -546,7 +545,7 @@ contract SyscoinBattleManager is SyscoinErrorCodes {
     }
 
     // @dev – locks up part of a user's deposit into a claim.
-    function bondDeposit(bytes32 superblockHash, address account, uint amount) internal returns (uint, uint) {
+    function bondDeposit(bytes32 superblockHash, address account, uint amount) internal returns (uint) {
         return trustedSyscoinClaimManager.bondDeposit(superblockHash, account, amount);
     }
 }
