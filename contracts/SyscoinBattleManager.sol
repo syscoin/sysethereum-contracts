@@ -80,7 +80,7 @@ contract SyscoinBattleManager is SyscoinErrorCodes {
     event QueryMerkleRootHashes(bytes32 superblockHash, bytes32 sessionId, address submitter);
     event RespondMerkleRootHashes(bytes32 superblockHash, bytes32 sessionId, address challenger, bytes32[] blockHashes);
     event QueryBlockHeader(bytes32 superblockHash, bytes32 sessionId, address submitter, bytes32 blockSha256Hash);
-    event RespondBlockHeader(bytes32 superblockHash, bytes32 sessionId, address challenger, bytes blockHeader, bytes powBlockHeader);
+    event RespondBlockHeader(bytes32 superblockHash, bytes32 sessionId, address challenger, bytes32 blockSha256Hash);
 
     event ErrorBattle(bytes32 sessionId, uint err);
     modifier onlyFrom(address sender) {
@@ -284,34 +284,34 @@ contract SyscoinBattleManager is SyscoinErrorCodes {
     function doVerifyBlockHeader(
         BattleSession storage session,
         bytes memory blockHeader
-    ) internal returns (uint, bytes) {
+    ) internal returns (uint, bytes32) {
         if (!hasDeposit(msg.sender, respondBlockHeaderCost)) {
-            return (ERR_SUPERBLOCK_MIN_DEPOSIT, new bytes(0));
+            return (ERR_SUPERBLOCK_MIN_DEPOSIT, 0);
         }
         if (session.challengeState == ChallengeState.QueryBlockHeader) {
             bytes32 blockSha256Hash = bytes32(SyscoinMessageLibrary.dblShaFlipMem(blockHeader, 0, 80));
             BlockInfo storage blockInfo = session.blocksInfo[blockSha256Hash];
             if (blockInfo.status != BlockInfoStatus.Requested) {
-                return (ERR_SUPERBLOCK_BAD_SYSCOIN_STATUS, new bytes(0));
+                return (ERR_SUPERBLOCK_BAD_SYSCOIN_STATUS, 0);
             }
 
             if (!verifyTimestamp(session.superblockHash, blockHeader)) {
-                return (ERR_SUPERBLOCK_BAD_TIMESTAMP, new bytes(0));
+                return (ERR_SUPERBLOCK_BAD_TIMESTAMP, 0);
             }
 			// pass in blockSha256Hash here instead of proposedScryptHash because we
             // don't need a proposed hash (we already calculated it here, syscoin uses 
             // sha256 just like bitcoin)
-            (uint err, bytes memory powBlockHeader) =
+            (uint err, ,) =
                 verifyBlockAuxPoW(blockInfo, blockSha256Hash, blockHeader);
             if (err != ERR_SUPERBLOCK_OK) {
-                return (err, new bytes(0));
+                return (err, 0);
             }
 			// set to verify block header status
             blockInfo.status = BlockInfoStatus.Verified;
 
             (err, ) = bondDeposit(session.superblockHash, msg.sender, respondBlockHeaderCost);
             if (err != ERR_SUPERBLOCK_OK) {
-                return (err, new bytes(0));
+                return (err, 0);
             }
 
             session.countBlockHeaderResponses += 1;
@@ -322,9 +322,9 @@ contract SyscoinBattleManager is SyscoinErrorCodes {
                 session.challengeState = ChallengeState.RespondBlockHeader;
             }
 
-            return (ERR_SUPERBLOCK_OK, powBlockHeader);
+            return (ERR_SUPERBLOCK_OK, blockSha256Hash);
         }
-        return (ERR_SUPERBLOCK_BAD_STATUS, new bytes(0));
+        return (ERR_SUPERBLOCK_BAD_STATUS, 0);
     }
 
     // @dev - For the submitter to respond to challenger queries
@@ -334,14 +334,14 @@ contract SyscoinBattleManager is SyscoinErrorCodes {
         bytes memory blockHeader
     ) onlyClaimant(sessionId) public {
         BattleSession storage session = sessions[sessionId];
-        (uint err, bytes memory powBlockHeader) = doVerifyBlockHeader(session, blockHeader);
+        (uint err, bytes32 blockSha256Hash) = doVerifyBlockHeader(session, blockHeader);
         if (err != 0) {
             emit ErrorBattle(sessionId, err);
         } else {
             session.actionsCounter += 1;
             session.lastActionTimestamp = block.timestamp;
             session.lastActionClaimant = session.actionsCounter;
-            emit RespondBlockHeader(superblockHash, sessionId, session.challenger, blockHeader, powBlockHeader);
+            emit RespondBlockHeader(superblockHash, sessionId, session.challenger, blockSha256Hash);
         }
     }
 
