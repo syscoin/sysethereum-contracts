@@ -8,6 +8,7 @@ const ECDSA = bitcoreLib.crypto.ECDSA;
 const bitcoreMessage = require('bitcore-message');
 const bitcoin = require('bitcoinjs-lib');
 
+const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000'
 
 const OPTIONS_SYSCOIN_REGTEST = {
   DURATION: 600,           // 10 minute
@@ -372,6 +373,7 @@ module.exports = {
   SYSCOIN_TESTNET,
   SYSCOIN_REGTEST,
   DEPOSITS,
+  ZERO_ADDRESS,
 
   formatHexUint32: function (str) {
     // To format 32 bytes is 64 hexadecimal characters
