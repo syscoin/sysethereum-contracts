@@ -345,7 +345,7 @@ function publicKeyHashFromKeyPair(keyPair) {
 
 function ethAddressFromKeyPair(keyPair) {
   const uncompressedPublicKey = bitcoin.ECPair.fromPublicKey(keyPair.publicKey, { compressed: false });
-  return `0x${Buffer.from(keccak256.arrayBuffer(uncompressedPublicKey.publicKey.slice(1))).slice(12).toString('hex')}`;
+  return web3.utils.toChecksumAddress(`0x${Buffer.from(keccak256.arrayBuffer(uncompressedPublicKey.publicKey.slice(1))).slice(12).toString('hex')}`);
 }
 function ethAddressFromKeyPairRaw(keyPair) {
   const uncompressedPublicKey = bitcoin.ECPair.fromPublicKey(keyPair.publicKey, { compressed: false });

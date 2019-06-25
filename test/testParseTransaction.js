@@ -21,7 +21,7 @@ contract('testParseTransaction', (accounts) => {
     });
     tx.version = 0x01;
     const txData = `0x${tx.toHex()}`;
-    const [ ret, amount, inputEthAddress, assetGUID ] = await syscoinMessageLibraryForTests.parseTransaction(txData);
+    const [ ret, amount, inputEthAddress, assetGUID ] = Object.values(await syscoinMessageLibraryForTests.parseTransaction(txData));
     assert.equal(ret, 10170, 'Parsed');
     assert.equal(amount.toNumber(), 0, 'Amount burned');
     
@@ -36,7 +36,7 @@ contract('testParseTransaction', (accounts) => {
     });
     tx.version = 0x7401;
     const txData = `0x${tx.toHex()}`;
-    const [ ret, amount, inputEthAddress, assetGUID ] = await syscoinMessageLibraryForTests.parseTransaction(txData);
+    const [ ret, amount, inputEthAddress, assetGUID ] = Object.values(await syscoinMessageLibraryForTests.parseTransaction(txData));
     assert.equal(ret.toNumber(), 0, 'Parsed');
     assert.equal(amount.toNumber(), 1000001, 'Amount burned');
     
@@ -55,7 +55,7 @@ contract('testParseTransaction', (accounts) => {
     });
     tx.version = 0x7401;
     const txData = `0x${tx.toHex()}`;
-    const [ ret, amount, inputEthAddress, assetGUID ]  = await syscoinMessageLibraryForTests.parseTransaction(txData);
+    const [ ret, amount, inputEthAddress, assetGUID ]  = Object.values(await syscoinMessageLibraryForTests.parseTransaction(txData));
     assert.equal(ret.toNumber(), 0, 'Parsed');
     assert.equal(amount.toNumber(), 0, 'Amount burned');
   });  
@@ -70,7 +70,7 @@ contract('testParseTransaction', (accounts) => {
     });
     tx.version = 0x7401;
     const txData = `0x${tx.toHex()}`;
-    const [ ret, amount, inputEthAddress, assetGUID ]  = await syscoinMessageLibraryForTests.parseTransaction(txData);
+    const [ ret, amount, inputEthAddress, assetGUID ]  = Object.values(await syscoinMessageLibraryForTests.parseTransaction(txData));
     assert.equal(ret.toNumber(), 0, 'Parsed');
     assert.equal(amount.toNumber(), 1000001, 'Amount burned');
     
@@ -87,7 +87,7 @@ contract('testParseTransaction', (accounts) => {
     tx.version = 0x7401;
     const txData = `0x${tx.toHex()}`;
     
-    const [ ret, amount, inputEthAddress, assetGUID ] = await syscoinMessageLibraryForTests.parseTransaction(txData);
+    const [ ret, amount, inputEthAddress, assetGUID ] = Object.values(await syscoinMessageLibraryForTests.parseTransaction(txData));
     assert.equal(ret.toNumber(), 0, 'Parsed');
     assert.equal(amount.toNumber(), 1000001, 'Amount burned');
     
