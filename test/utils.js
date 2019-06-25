@@ -7,6 +7,7 @@ const bitcoreLib = require('bitcore-lib');
 const ECDSA = bitcoreLib.crypto.ECDSA;
 const bitcoreMessage = require('bitcore-message');
 const bitcoin = require('bitcoinjs-lib');
+const BN = web3.utils.BN;
 
 const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000'
 
@@ -107,12 +108,12 @@ function getBlockDifficultyBits(blockHeader) {
 // Get difficulty from syscoin block header
 function getBlockDifficulty(blockHeader) {
   const headerBin = module.exports.fromHex(blockHeader).slice(0, 80);
-  const exp = web3.toBigNumber(headerBin[75]);
-  const mant = web3.toBigNumber(headerBin[72] + 256 * headerBin[73] + 256 * 256 * headerBin[74]);
-  const target = mant.mul(web3.toBigNumber(256).pow(exp.minus(3)));
-  const difficulty1 = web3.toBigNumber(0x00FFFFF).mul(web3.toBigNumber(256).pow(web3.toBigNumber(0x1e-3)));
-  const difficulty = difficulty1.divToInt(target);
-  return difficulty.mul(0x100001);
+  const exp = web3.utils.toBN(headerBin[75]);
+  const mant = web3.utils.toBN(headerBin[72] + 256 * headerBin[73] + 256 * 256 * headerBin[74]);
+  const target = mant.mul(web3.utils.toBN(256).pow(exp.sub(new BN(3))));
+  const difficulty1 = web3.utils.toBN(0x00FFFFF).mul(web3.utils.toBN(256).pow(web3.utils.toBN(0x1e-3)));
+  const difficulty = difficulty1.divRound(target);
+  return difficulty.mul(new BN(0x100001));
 }
 
 const timeout = async (ms) => new Promise((resolve, reject) => setTimeout(resolve, ms));
@@ -123,6 +124,8 @@ const blockchainTimeoutSeconds = async (s) => {
     method: 'evm_increaseTime',
     params: [s],
     id: 0,
+  }, (err, result) => {
+    // adding callback to fix "callback is not a function" in web3 1.0 implementation
   });
 };
 
@@ -210,8 +213,7 @@ function makeSuperblock(headers, parentId, parentAccumulatedWork, _blockHeight, 
     throw new Error('Requires at least one header to build a superblock');
   }
   const blockHashes = headers.map(header => calcBlockSha256Hash(header));
-
-  const accumulatedWork = headers.reduce((work, header) => work.plus(getBlockDifficulty(header)), web3.toBigNumber(parentAccumulatedWork));
+  const accumulatedWork = headers.reduce((work, header) => work.add(getBlockDifficulty(header)), web3.utils.toBN(parentAccumulatedWork));
   const merkleRoot = makeMerkle(blockHashes);
   const timestamp = getBlockTimestamp(headers[headers.length - 1]);
   const prevTimestamp = _prevTimestamp;
