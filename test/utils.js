@@ -10,6 +10,7 @@ const bitcoin = require('bitcoinjs-lib');
 const BN = web3.utils.BN;
 
 const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000'
+const ZERO_BYTES32 = '0x00000000000000000000000000000000000000000000000000000000000000'
 
 const OPTIONS_SYSCOIN_REGTEST = {
   DURATION: 600,           // 10 minute
@@ -376,6 +377,7 @@ module.exports = {
   SYSCOIN_REGTEST,
   DEPOSITS,
   ZERO_ADDRESS,
+  ZERO_BYTES32,
 
   formatHexUint32: function (str) {
     // To format 32 bytes is 64 hexadecimal characters
