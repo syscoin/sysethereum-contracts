@@ -817,30 +817,30 @@ library SyscoinMessageLibrary {
     // @param _pos - starting position of the block header
 	// @param _proposedBlockHash - proposed block hash computing from block header bytes
     // @return - [ErrorCode, IsMergeMined]
-    function verifyBlockHeader(bytes _blockHeaderBytes, uint _pos, uint _proposedBlockHash) external view returns (uint, bool) {
+    function verifyBlockHeader(bytes _blockHeaderBytes, uint _pos, uint _proposedBlockHash) external view returns (uint) {
         BlockHeader memory blockHeader = parseHeaderBytes(_blockHeaderBytes, _pos);
         uint blockSha256Hash = blockHeader.blockHash;
 		// must confirm that the header hash passed in and computing hash matches
 		if(blockSha256Hash != _proposedBlockHash){
-			return (ERR_INVALID_HEADER_HASH, true);
+			return (ERR_INVALID_HEADER_HASH);
 		}
         uint target = targetFromBits(blockHeader.bits);
         if (_blockHeaderBytes.length > 80 && isMergeMined(_blockHeaderBytes, 0)) {
             AuxPoW memory ap = parseAuxPoW(_blockHeaderBytes, _pos);
             if (ap.blockHash > target) {
 
-                return (ERR_PROOF_OF_WORK_AUXPOW, true);
+                return (ERR_PROOF_OF_WORK_AUXPOW);
             }
             uint auxPoWCode = checkAuxPoW(blockSha256Hash, ap);
             if (auxPoWCode != 1) {
-                return (auxPoWCode, true);
+                return (auxPoWCode);
             }
-            return (0, true);
+            return (0);
         } else {
             if (_proposedBlockHash > target) {
-                return (ERR_PROOF_OF_WORK, false);
+                return (ERR_PROOF_OF_WORK);
             }
-            return (0, false);
+            return (0);
         }
     }
 

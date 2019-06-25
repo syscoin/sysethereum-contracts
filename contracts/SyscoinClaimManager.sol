@@ -162,7 +162,7 @@ contract SyscoinClaimManager is SyscoinDepositsManager, SyscoinErrorCodes {
     // @param _timestamp Timestamp of the last block in the superblock
     // @param _prevTimestamp Timestamp of the block when the last difficulty adjustment happened
     // @param _lastHash Hash of the last block in the superblock
-    // @param _lastBits Difficulty bits of the last block in the superblock
+    // @param _lastBits Previous difficulty bits used to verify accumulatedWork through difficulty calculation
     // @param _parentHash Id of the parent superblock
     // @return Error code and superblockHash
     function proposeSuperblock(

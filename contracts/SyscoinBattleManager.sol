@@ -31,7 +31,6 @@ contract SyscoinBattleManager is SyscoinErrorCodes {
         uint64 timestamp;
         uint32 bits;
         BlockInfoStatus status;
-        bytes powBlockHeader;
         bytes32 blockHash;
     }
 
@@ -81,6 +80,10 @@ contract SyscoinBattleManager is SyscoinErrorCodes {
     event RespondMerkleRootHashes(bytes32 superblockHash, bytes32 sessionId, address challenger, bytes32[] blockHashes);
     event QueryBlockHeader(bytes32 superblockHash, bytes32 sessionId, address submitter, bytes32 blockSha256Hash);
     event RespondBlockHeader(bytes32 superblockHash, bytes32 sessionId, address challenger, bytes32 blockSha256Hash);
+    event Difficulty(uint hashes, uint timestamp, uint work, uint accWork, uint32 newBits, uint32 prevBits);
+    event DifficultyEnd(uint work, uint accWork);
+    event DifficultyStep(uint work, uint32 bits);
+    event DifficultyAdjustment(uint parentTimestamp, uint prevTimestamp, uint32 bits);
 
     event ErrorBattle(bytes32 sessionId, uint err);
     modifier onlyFrom(address sender) {
@@ -263,20 +266,14 @@ contract SyscoinBattleManager is SyscoinErrorCodes {
         bytes32 blockHash,
         bytes blockHeader
     ) internal returns (uint) {
-        (uint err, bool isMergeMined) =
-            SyscoinMessageLibrary.verifyBlockHeader(blockHeader, 0, uint(blockHash));
+        uint err = SyscoinMessageLibrary.verifyBlockHeader(blockHeader, 0, uint(blockHash));
         if (err != 0) {
             return err;
         }
-        bytes memory powBlockHeader = (isMergeMined) ?
-            SyscoinMessageLibrary.sliceArray(blockHeader, blockHeader.length - 80, blockHeader.length) :
-            SyscoinMessageLibrary.sliceArray(blockHeader, 0, 80);
-
         blockInfo.timestamp = SyscoinMessageLibrary.getTimestamp(blockHeader);
         blockInfo.bits = SyscoinMessageLibrary.getBits(blockHeader);
         blockInfo.prevBlock = bytes32(SyscoinMessageLibrary.getHashPrevBlock(blockHeader));
         blockInfo.blockHash = blockHash;
-        blockInfo.powBlockHeader = powBlockHeader;
         return ERR_SUPERBLOCK_OK;
     }
 
@@ -358,9 +355,6 @@ contract SyscoinBattleManager is SyscoinErrorCodes {
         if (session.blocksInfo[blockSha256Hash].timestamp != lastTimestamp) {
             return ERR_SUPERBLOCK_BAD_TIMESTAMP;
         }
-        if (session.blocksInfo[blockSha256Hash].bits != lastBits) {
-            return ERR_SUPERBLOCK_BAD_BITS;
-        }
         if (prevTimestamp > lastTimestamp) {
             return ERR_SUPERBLOCK_BAD_TIMESTAMP;
         }
@@ -369,34 +363,35 @@ contract SyscoinBattleManager is SyscoinErrorCodes {
     }
 
     // @dev - Validate superblock accumulated work
-    function validateProofOfWork(BattleSession storage session) internal view returns (uint) {
+    function validateProofOfWork(BattleSession storage session) internal returns (uint) {
         uint accWork;
         bytes32 prevBlock;
         uint32 prevHeight;  
         uint32 proposedHeight;  
         uint prevTimestamp;
-        (, accWork, , prevTimestamp, , , prevBlock, ,,proposedHeight) = getSuperblockInfo(session.superblockHash);
-        uint parentTimestamp;
-        
         uint32 prevBits;
-       
-        uint work;    
-        (, work, parentTimestamp, , prevBlock, prevBits, , , ,prevHeight) = getSuperblockInfo(prevBlock);
+        uint prevSuperblockTimestamp;
+        uint work; 
+        (, accWork, , prevTimestamp, , prevBits,prevBlock,,,proposedHeight) = getSuperblockInfo(session.superblockHash);
+        
+        (, work, prevSuperblockTimestamp, ,prevBlock,, , , ,prevHeight) = getSuperblockInfo(prevBlock);
         
         if (proposedHeight != (prevHeight+uint32(session.blockHashes.length))) {
-            return ERR_SUPERBLOCK_BAD_BLOCKHEIGHT;
+            return proposedHeight;
         }      
-        uint ret = validateSuperblockProofOfWork(session, parentTimestamp, prevHeight, work, accWork, prevTimestamp, prevBits, prevBlock);
+        uint ret = validateSuperblockProofOfWork(session, prevHeight, work, accWork, prevTimestamp, prevSuperblockTimestamp, prevBits, prevBlock);
         if(ret != 0){
             return ret;
         }
         return ERR_SUPERBLOCK_OK;
     }
-    function validateSuperblockProofOfWork(BattleSession storage session, uint parentTimestamp, uint32 prevHeight, uint work, uint accWork, uint prevTimestamp, uint32 prevBits, bytes32 prevBlock) internal view returns (uint){
+    function validateSuperblockProofOfWork(BattleSession storage session, uint32 prevHeight, uint work, uint accWork, uint prevTimestamp, uint prevSuperblockTimestamp,  uint32 prevBits, bytes32 prevBlock) internal returns (uint){     
          uint32 idx = 0;
+        
          while (idx < session.blockHashes.length) {
             bytes32 blockSha256Hash = session.blockHashes[idx];
             uint32 bits = session.blocksInfo[blockSha256Hash].bits;
+            emit Difficulty(session.blockHashes.length, session.blocksInfo[blockSha256Hash].timestamp, work, accWork, bits, prevBits);
             if (session.blocksInfo[blockSha256Hash].prevBlock != prevBlock) {
                 return ERR_SUPERBLOCK_BAD_PARENT;
             }
@@ -409,19 +404,33 @@ contract SyscoinBattleManager is SyscoinErrorCodes {
                     newBits = prevBits;
                 }
                 else{
+                    uint parentTimestamp;
+                    // first block is difficulty adjustment, get last superblock last block timestamp
+                    if(idx == 0) {
+                        parentTimestamp = prevSuperblockTimestamp;
+                    }
+                    // otherwise get the previous block timestamp ie: 36000 would mean we check from 35999 (parent timestamp) back 360 (previous timestamp) blocks 
+                    else{
+                        parentTimestamp = session.blocksInfo[prevBlock].timestamp;
+                    }
+                    emit DifficultyAdjustment(parentTimestamp, prevTimestamp, prevBits);
                     newBits = SyscoinMessageLibrary.calculateDifficulty(int64(parentTimestamp) - int64(prevTimestamp), prevBits);
-                    prevTimestamp = parentTimestamp;
-                    prevBits = bits;
+                    emit DifficultyAdjustment(session.blocksInfo[blockSha256Hash].timestamp, prevTimestamp, newBits);
+                    prevTimestamp = session.blocksInfo[blockSha256Hash].timestamp;
+                    prevBits = newBits;
+                   
                 }
                 if (bits != newBits) {
                    return ERR_SUPERBLOCK_BAD_BITS;
                 }
             }
             work += SyscoinMessageLibrary.diffFromBits(bits);
+            emit DifficultyStep(work, bits);
             prevBlock = blockSha256Hash;
             parentTimestamp = session.blocksInfo[blockSha256Hash].timestamp;
             idx += 1;
         }
+        emit DifficultyEnd(work, accWork);
         if (net != SyscoinMessageLibrary.Network.REGTEST &&  work != accWork) {
             return ERR_SUPERBLOCK_BAD_ACCUMULATED_WORK;
         }       

@@ -88,7 +88,7 @@ contract SyscoinSuperblocks is SyscoinErrorCodes {
     // @param _timestamp Timestamp of the last block in the superblock
     // @param _prevTimestamp Timestamp of the block when the last difficulty adjustment happened (every 360 blocks)
     // @param _lastHash Hash of the last block in the superblock
-    // @param _lastBits Difficulty bits of the last block in the superblock
+    // @param _lastBits Previous difficulty bits used to verify accumulatedWork through difficulty calculation
     // @param _parentId Id of the parent superblock
     // @param _blockHeight Block height of last block in superblock   
     // @return Error code and superblockHash
