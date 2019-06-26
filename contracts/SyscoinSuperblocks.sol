@@ -16,7 +16,7 @@ contract SyscoinSuperblocks is SyscoinErrorCodes {
         bytes32 blocksMerkleRoot;
         uint accumulatedWork;
         uint timestamp;
-        uint prevTimestamp;
+        uint retargetPeriod;
         bytes32 lastHash;
         bytes32 parentId;
         address submitter;
@@ -86,7 +86,7 @@ contract SyscoinSuperblocks is SyscoinErrorCodes {
     // @param _blocksMerkleRoot Root of the merkle tree of blocks contained in a superblock
     // @param _accumulatedWork Accumulated proof of work of the last block in the superblock
     // @param _timestamp Timestamp of the last block in the superblock
-    // @param _prevTimestamp Timestamp of the block when the last difficulty adjustment happened (every 360 blocks)
+    // @param _retargetPeriod Retarget period of the difficulty adjustment (how long it took for difficulty to adjust the last 360 blocks)
     // @param _lastHash Hash of the last block in the superblock
     // @param _lastBits Previous difficulty bits used to verify accumulatedWork through difficulty calculation
     // @param _parentId Id of the parent superblock
@@ -96,7 +96,7 @@ contract SyscoinSuperblocks is SyscoinErrorCodes {
         bytes32 _blocksMerkleRoot,
         uint _accumulatedWork,
         uint _timestamp,
-        uint _prevTimestamp,
+        uint _retargetPeriod,
         bytes32 _lastHash,
         uint32 _lastBits,
         bytes32 _parentId,
@@ -105,7 +105,7 @@ contract SyscoinSuperblocks is SyscoinErrorCodes {
         require(bestSuperblock == 0);
         require(_parentId == 0);
 
-        bytes32 superblockHash = calcSuperblockHash(_blocksMerkleRoot, _accumulatedWork, _timestamp, _prevTimestamp, _lastHash, _lastBits, _parentId, _blockHeight);
+        bytes32 superblockHash = calcSuperblockHash(_blocksMerkleRoot, _accumulatedWork, _timestamp, _retargetPeriod, _lastHash, _lastBits, _parentId, _blockHeight);
         SuperblockInfo storage superblock = superblocks[superblockHash];
 
         require(superblock.status == Status.Unitialized);
@@ -115,7 +115,7 @@ contract SyscoinSuperblocks is SyscoinErrorCodes {
         superblock.blocksMerkleRoot = _blocksMerkleRoot;
         superblock.accumulatedWork = _accumulatedWork;
         superblock.timestamp = _timestamp;
-        superblock.prevTimestamp = _prevTimestamp;
+        superblock.retargetPeriod = _retargetPeriod;
         superblock.lastHash = _lastHash;
         superblock.parentId = _parentId;
         superblock.submitter = msg.sender;
@@ -145,7 +145,7 @@ contract SyscoinSuperblocks is SyscoinErrorCodes {
     // @param _blocksMerkleRoot Root of the merkle tree of blocks contained in a superblock
     // @param _accumulatedWork Accumulated proof of work of the last block in the superblock
     // @param _timestamp Timestamp of the last block in the superblock
-    // @param _prevTimestamp Timestamp of the block when the last difficulty adjustment happened (every 360 blocks)
+    // @param _retargetPeriod Retarget period of the difficulty adjustment (how long it took for difficulty to adjust the last 360 blocks)
     // @param _lastHash Hash of the last block in the superblock
     // @param _lastBits Difficulty bits of the last block in the superblock
     // @param _parentId Id of the parent superblock
@@ -155,7 +155,7 @@ contract SyscoinSuperblocks is SyscoinErrorCodes {
         bytes32 _blocksMerkleRoot,
         uint _accumulatedWork,
         uint _timestamp,
-        uint _prevTimestamp,
+        uint _retargetPeriod,
         bytes32 _lastHash,
         uint32 _lastBits,
         bytes32 _parentId,
@@ -173,14 +173,14 @@ contract SyscoinSuperblocks is SyscoinErrorCodes {
             return (ERR_SUPERBLOCK_BAD_PARENT, 0);
         }
 
-        bytes32 superblockHash = calcSuperblockHash(_blocksMerkleRoot, _accumulatedWork, _timestamp, _prevTimestamp, _lastHash, _lastBits, _parentId, _blockHeight);
+        bytes32 superblockHash = calcSuperblockHash(_blocksMerkleRoot, _accumulatedWork, _timestamp, _retargetPeriod, _lastHash, _lastBits, _parentId, _blockHeight);
         SuperblockInfo storage superblock = superblocks[superblockHash];
         if (superblock.status == Status.Unitialized) {
             indexSuperblock[indexNextSuperblock] = superblockHash;
             superblock.blocksMerkleRoot = _blocksMerkleRoot;
             superblock.accumulatedWork = _accumulatedWork;
             superblock.timestamp = _timestamp;
-            superblock.prevTimestamp = _prevTimestamp;
+            superblock.retargetPeriod = _retargetPeriod;
             superblock.lastHash = _lastHash;
             superblock.parentId = _parentId;
             superblock.index = indexNextSuperblock;
@@ -322,12 +322,12 @@ contract SyscoinSuperblocks is SyscoinErrorCodes {
     // @param _superblockHash - superblock containing block header
     // @param _untrustedTargetContract - the contract that is going to process the transaction
     function relayTx(
-        bytes memory _txBytes,
+        bytes _txBytes,
         uint _txIndex,
         uint[] _txSiblings,
-        bytes memory _syscoinBlockHeader,
+        bytes _syscoinBlockHeader,
         uint _syscoinBlockIndex,
-        uint[] memory _syscoinBlockSiblings,
+        uint[] _syscoinBlockSiblings,
         bytes32 _superblockHash,
         SyscoinTransactionProcessor _untrustedTargetContract
     ) public returns (uint) {
@@ -346,7 +346,7 @@ contract SyscoinSuperblocks is SyscoinErrorCodes {
                 emit RelayTransaction(bytes32(0), ret);
                 return ret;
             }
-            ProcessTransactionParams memory params = txParams[txHash];
+            ProcessTransactionParams storage params = txParams[txHash];
             params.superblockSubmitterAddress = superblocks[_superblockHash].submitter;
             txParams[txHash] = params;
             return verifyTxHelper(txHash);
@@ -354,7 +354,7 @@ contract SyscoinSuperblocks is SyscoinErrorCodes {
         emit RelayTransaction(bytes32(0), ERR_RELAY_VERIFY);
         return(ERR_RELAY_VERIFY);        
     }
-    function parseTxHelper(bytes memory _txBytes, uint txHash, SyscoinTransactionProcessor _untrustedTargetContract) private returns (uint) {
+    function parseTxHelper(bytes _txBytes, uint txHash, SyscoinTransactionProcessor _untrustedTargetContract) private returns (uint) {
         uint value;
         address destinationAddress;
         uint32 _assetGUID;
@@ -373,7 +373,7 @@ contract SyscoinSuperblocks is SyscoinErrorCodes {
         return 0;
     }
     function verifyTxHelper(uint txHash) private returns (uint) {
-        ProcessTransactionParams memory params = txParams[txHash];        
+        ProcessTransactionParams storage params = txParams[txHash];        
         uint returnCode = params.untrustedTargetContract.processTransaction(txHash, params.value, params.destinationAddress, params.assetGUID, params.superblockSubmitterAddress);
         emit RelayTransaction(bytes32(txHash), returnCode);
         return (returnCode);
@@ -390,10 +390,10 @@ contract SyscoinSuperblocks is SyscoinErrorCodes {
     // @return - SHA-256 hash of _txBytes if the transaction is in the block, 0 otherwise
     // TODO: this can probably be made private
     function verifyTx(
-        bytes memory _txBytes,
+        bytes _txBytes,
         uint _txIndex,
-        uint[] memory _siblings,
-        bytes memory _txBlockHeaderBytes,
+        uint[] _siblings,
+        bytes _txBlockHeaderBytes,
         bytes32 _txsuperblockHash
     ) public returns (uint) {
         uint txHash = SyscoinMessageLibrary.dblShaFlip(_txBytes);
@@ -428,8 +428,8 @@ contract SyscoinSuperblocks is SyscoinErrorCodes {
     function helperVerifyHash(
         uint256 _txHash,
         uint _txIndex,
-        uint[] memory _siblings,
-        bytes memory _blockHeaderBytes,
+        uint[] _siblings,
+        bytes _blockHeaderBytes,
         bytes32 _txsuperblockHash
     ) private returns (uint) {
 
@@ -455,7 +455,7 @@ contract SyscoinSuperblocks is SyscoinErrorCodes {
     // @param _blocksMerkleRoot Root of the merkle tree of blocks contained in a superblock
     // @param _accumulatedWork Accumulated proof of work of the last block in the superblock
     // @param _timestamp Timestamp of the last block in the superblock
-    // @param _prevTimestamp Timestamp of the block when the last difficulty adjustment happened (every 360 blocks)
+    // @param _retargetPeriod Retarget period of the difficulty adjustment (how long it took for difficulty to adjust the last 360 blocks)
     // @param _lastHash Hash of the last block in the superblock
     // @param _lastBits Difficulty bits of the last block in the superblock
     // @param _parentId Id of the parent superblock
@@ -465,7 +465,7 @@ contract SyscoinSuperblocks is SyscoinErrorCodes {
         bytes32 _blocksMerkleRoot,
         uint _accumulatedWork,
         uint _timestamp,
-        uint _prevTimestamp,
+        uint _retargetPeriod,
         bytes32 _lastHash,
         uint32 _lastBits,
         bytes32 _parentId,
@@ -475,7 +475,7 @@ contract SyscoinSuperblocks is SyscoinErrorCodes {
             _blocksMerkleRoot,
             _accumulatedWork,
             _timestamp,
-            _prevTimestamp,
+            _retargetPeriod,
             _lastHash,
             _lastBits,
             _parentId,
@@ -496,7 +496,7 @@ contract SyscoinSuperblocks is SyscoinErrorCodes {
     //   bytes32 _blocksMerkleRoot,
     //   uint _accumulatedWork,
     //   uint _timestamp,
-    //   uint _prevTimestamp,
+    //   uint _retargetPeriod,
     //   bytes32 _lastHash,
     //   uint32 _lastBits,
     //   bytes32 _parentId,
@@ -508,7 +508,7 @@ contract SyscoinSuperblocks is SyscoinErrorCodes {
         bytes32 _blocksMerkleRoot,
         uint _accumulatedWork,
         uint _timestamp,
-        uint _prevTimestamp,
+        uint _retargetPeriod,
         bytes32 _lastHash,
         uint32 _lastBits,
         bytes32 _parentId,
@@ -521,7 +521,7 @@ contract SyscoinSuperblocks is SyscoinErrorCodes {
             superblock.blocksMerkleRoot,
             superblock.accumulatedWork,
             superblock.timestamp,
-            superblock.prevTimestamp,
+            superblock.retargetPeriod,
             superblock.lastHash,
             superblock.lastBits,
             superblock.parentId,
@@ -556,9 +556,9 @@ contract SyscoinSuperblocks is SyscoinErrorCodes {
         return superblocks[_superblockHash].timestamp;
     }
 
-    // @dev - Return superblock prevTimestamp
-    function getSuperblockPrevTimestamp(bytes32 _superblockHash) public view returns (uint) {
-        return superblocks[_superblockHash].prevTimestamp;
+    // @dev - Return superblock retargetPeriod
+    function getSuperblockRetargetPeriod(bytes32 _superblockHash) public view returns (uint) {
+        return superblocks[_superblockHash].retargetPeriod;
     }
 
     // @dev - Return superblock last block hash

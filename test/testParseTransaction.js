@@ -1,7 +1,7 @@
 const utils = require('./utils');
 const SyscoinMessageLibraryForTests = artifacts.require('SyscoinMessageLibraryForTests');
 const bitcoin = require('bitcoinjs-lib');
-
+const truffleAssert = require('truffle-assertions');
 contract('testParseTransaction', (accounts) => {
   let syscoinMessageLibraryForTests;
   const keys = [
@@ -22,7 +22,7 @@ contract('testParseTransaction', (accounts) => {
     tx.version = 0x01;
     const txData = `0x${tx.toHex()}`;
     const [ ret, amount, inputEthAddress, assetGUID ] = await syscoinMessageLibraryForTests.parseTransaction(txData);
-    assert.equal(ret, 10170, 'Parsed');
+    assert.equal(ret, 10170, 'Error Parsing, wrong version');
     assert.equal(amount.toNumber(), 0, 'Amount burned');
     
   });
@@ -34,14 +34,10 @@ contract('testParseTransaction', (accounts) => {
         ['OP_RETURN', 1000001, utils.ethAddressFromKeyPairRaw(keys[1])],
       ],
     });
-    tx.version = 0x7401;
+    tx.version = 0x7407;
     const txData = `0x${tx.toHex()}`;
-    const [ ret, amount, inputEthAddress, assetGUID ] = await syscoinMessageLibraryForTests.parseTransaction(txData);
-    assert.equal(ret.toNumber(), 0, 'Parsed');
-    assert.equal(amount.toNumber(), 1000001, 'Amount burned');
-    
-    
-    assert.equal(inputEthAddress, utils.ethAddressFromKeyPair(keys[1]), 'Sender ethereum address');
+    await truffleAssert.reverts(syscoinMessageLibraryForTests.parseTransaction(txData));
+
   });
   
   it('Parse simple transaction without OP_RETURN', async () => {
@@ -53,11 +49,12 @@ contract('testParseTransaction', (accounts) => {
         [utils.syscoinAddressFromKeyPair(keys[0]), 1000002],
       ],
     });
-    tx.version = 0x7401;
+    tx.version = 0x7407;
     const txData = `0x${tx.toHex()}`;
-    const [ ret, amount, inputEthAddress, assetGUID ]  = await syscoinMessageLibraryForTests.parseTransaction(txData);
-    assert.equal(ret.toNumber(), 0, 'Parsed');
+    const [ ret, amount, inputEthAddress, assetGUID ] = await syscoinMessageLibraryForTests.parseTransaction(txData);
+    assert.equal(ret, 0, 'Parsing succeeded');
     assert.equal(amount.toNumber(), 0, 'Amount burned');
+
   });  
   it('Parse transaction with OP_RETURN in vout 1', async () => {
     const tx = utils.buildSyscoinTransaction({
@@ -68,11 +65,9 @@ contract('testParseTransaction', (accounts) => {
         ['OP_RETURN', 1000001, utils.ethAddressFromKeyPairRaw(keys[1])],
       ],
     });
-    tx.version = 0x7401;
+    tx.version = 0x7407;
     const txData = `0x${tx.toHex()}`;
-    const [ ret, amount, inputEthAddress, assetGUID ]  = await syscoinMessageLibraryForTests.parseTransaction(txData);
-    assert.equal(ret.toNumber(), 0, 'Parsed');
-    assert.equal(amount.toNumber(), 1000001, 'Amount burned');
+    await truffleAssert.reverts(syscoinMessageLibraryForTests.parseTransaction(txData));
     
   });
   it('Parse transaction with OP_RETURN', async () => {
@@ -84,13 +79,9 @@ contract('testParseTransaction', (accounts) => {
         [utils.syscoinAddressFromKeyPair(keys[0]), 1000002],
       ],
     });
-    tx.version = 0x7401;
+    tx.version = 0x7407;
     const txData = `0x${tx.toHex()}`;
     
-    const [ ret, amount, inputEthAddress, assetGUID ] = await syscoinMessageLibraryForTests.parseTransaction(txData);
-    assert.equal(ret.toNumber(), 0, 'Parsed');
-    assert.equal(amount.toNumber(), 1000001, 'Amount burned');
-    
-    assert.equal(inputEthAddress, utils.ethAddressFromKeyPair(keys[1]), 'Sender ethereum address');
+    await truffleAssert.reverts(syscoinMessageLibraryForTests.parseTransaction(txData));
   });
 });

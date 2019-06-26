@@ -10,9 +10,9 @@ contract('testSyscoinTokenProcessTransaction', function(accounts) {
   const value = 905853205327;
 
   it("processTransaction success", async () => {
-    let syscoinToken = await SyscoinToken.new(trustedRelayerContract, 0, "SyscoinToken", 8, "SYSX");
+    let syscoinToken = await SyscoinToken.new(trustedRelayerContract, 1702063431, "SyscoinToken", 8, "SYSX");
     const superblockSubmitterAddress = accounts[4];
-    await syscoinToken.processTransaction(txHash, value, address, 0, superblockSubmitterAddress);
+    await syscoinToken.processTransaction(txHash, value, address, 1702063431, superblockSubmitterAddress);
 
     const superblockSubmitterFee = 905853205; 
     const userValue = value - superblockSubmitterFee;
@@ -26,9 +26,9 @@ contract('testSyscoinTokenProcessTransaction', function(accounts) {
   });
 
   it("processTransaction fail - tx already processed", async () => {
-    let syscoinToken = await SyscoinToken.new(trustedRelayerContract,0, "SyscoinToken", 8, "SYSX");
+    let syscoinToken = await SyscoinToken.new(trustedRelayerContract,1702063431, "SyscoinToken", 8, "SYSX");
     const superblockSubmitterAddress = accounts[4];
-    await syscoinToken.processTransaction(txHash, value, address, 0, superblockSubmitterAddress);
+    await syscoinToken.processTransaction(txHash, value, address, 1702063431, superblockSubmitterAddress);
 
     await truffleAssert.reverts(syscoinToken.processTransaction(txHash, value, address, 0, superblockSubmitterAddress));
   });
