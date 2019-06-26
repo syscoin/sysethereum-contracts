@@ -9,14 +9,14 @@ contract('testSyscoinTokenDoUnlockRequires', function(accounts) {
     await syscoinToken.assign(accounts[0], 3000000000);
   
     // unlock an amount below min value.
-    await truffleAssert.reverts(syscoinToken.burn(200000000, 1702063431, 0x004322ec9eb713f37cf8d701d819c165549d53d14e));
+    await truffleAssert.reverts(syscoinToken.burn(200000000, 1702063431, "0x004322ec9eb713f37cf8d701d819c165549d53d14e"));
 
 
     // unlock an amount greater than user value.
-    await truffleAssert.reverts(syscoinToken.burn(200000000000, 1702063431, 0x004322ec9eb713f37cf8d701d819c165549d53d14e));
+    await truffleAssert.reverts(syscoinToken.burn(200000000000, 1702063431, "0x004322ec9eb713f37cf8d701d819c165549d53d14e"));
     
     // bad asset guid
-    await truffleAssert.reverts(syscoinToken.burn(2000000000, 1702063430, 0x004322ec9eb713f37cf8d701d819c165549d53d14e));
+    await truffleAssert.reverts(syscoinToken.burn(2000000000, 1702063430, "0x004322ec9eb713f37cf8d701d819c165549d53d14e"));
     
   });
 });
