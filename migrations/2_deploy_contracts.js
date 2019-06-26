@@ -19,7 +19,7 @@ const SUPERBLOCK_OPTIONS_PRODUCTION = {
   TIMEOUT: 600,     // 10 minutes
   CONFIRMATIONS: 3, // Superblocks required to confirm semi approved superblock
   REWARD: 1000000000000000000,        // Monetary reward for opponent in case a battle is lost
-  ASSETGUID: 0
+  ASSETGUID: 1172462264
 };
 
 const SUPERBLOCK_OPTIONS_INTEGRATION_FAST_SYNC = {
@@ -133,7 +133,7 @@ module.exports = function(deployer, network) {
     } else if (network === 'ropsten') {
       await deployIntegration(deployer, SYSCOIN_MAINNET, SUPERBLOCK_OPTIONS_INTEGRATION_FAST_SYNC);
     } else if (network === 'rinkeby') {
-      await deployIntegration(deployer, SYSCOIN_MAINNET, SUPERBLOCK_OPTIONS_INTEGRATION_FAST_SYNC);
+      await deployIntegration(deployer, SYSCOIN_MAINNET, SUPERBLOCK_OPTIONS_PRODUCTION);
     } else if (network === 'mainnet') {
       await deployIntegration(deployer, SYSCOIN_MAINNET, SUPERBLOCK_OPTIONS_PRODUCTION);
     } else if (network === 'integrationSyscoinRegtest') {
