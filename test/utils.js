@@ -7,7 +7,10 @@ const bitcoreLib = require('bitcore-lib');
 const ECDSA = bitcoreLib.crypto.ECDSA;
 const bitcoreMessage = require('bitcore-message');
 const bitcoin = require('bitcoinjs-lib');
+const BN = web3.utils.BN;
 
+const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000'
+const ZERO_BYTES32 = '0x00000000000000000000000000000000000000000000000000000000000000'
 
 const OPTIONS_SYSCOIN_REGTEST = {
   DURATION: 600,           // 10 minute
@@ -106,12 +109,12 @@ function getBlockDifficultyBits(blockHeader) {
 // Get difficulty from syscoin block header
 function getBlockDifficulty(blockHeader) {
   const headerBin = module.exports.fromHex(blockHeader).slice(0, 80);
-  const exp = web3.toBigNumber(headerBin[75]);
-  const mant = web3.toBigNumber(headerBin[72] + 256 * headerBin[73] + 256 * 256 * headerBin[74]);
-  const target = mant.mul(web3.toBigNumber(256).pow(exp.minus(3)));
-  const difficulty1 = web3.toBigNumber(0x00FFFFF).mul(web3.toBigNumber(256).pow(web3.toBigNumber(0x1e-3)));
-  const difficulty = difficulty1.divToInt(target);
-  return difficulty.mul(0x100001);
+  const exp = web3.utils.toBN(headerBin[75]);
+  const mant = web3.utils.toBN(headerBin[72] + 256 * headerBin[73] + 256 * 256 * headerBin[74]);
+  const target = mant.mul(web3.utils.toBN(256).pow(exp.sub(new BN(3))));
+  const difficulty1 = web3.utils.toBN(0x00FFFFF).mul(web3.utils.toBN(256).pow(web3.utils.toBN(0x1e-3)));
+  const difficulty = difficulty1.divRound(target);
+  return difficulty.mul(new BN(0x100001));
 }
 
 const timeout = async (ms) => new Promise((resolve, reject) => setTimeout(resolve, ms));
@@ -122,6 +125,8 @@ const blockchainTimeoutSeconds = async (s) => {
     method: 'evm_increaseTime',
     params: [s],
     id: 0,
+  }, (err, result) => {
+    // adding callback to fix "callback is not a function" in web3 1.0 implementation
   });
 };
 
@@ -221,7 +226,7 @@ function makeSuperblock(headers, parentId, parentAccumulatedWork, _blockHeight, 
   }
   const blockHashes = headers.map(header => calcBlockSha256Hash(header));
   const strippedHashes =  blockHashes.map(x => x.slice(2)); // <- remove prefix '0x'
-  const accumulatedWork = headers.reduce((work, header) => work.plus(getBlockDifficulty(header)), web3.toBigNumber(parentAccumulatedWork));
+  const accumulatedWork = headers.reduce((work, header) => work.add(getBlockDifficulty(header)), web3.utils.toBN(parentAccumulatedWork));
   const merkleRoot = makeMerkle(blockHashes);
   const timestamp = getBlockTimestamp(headers[headers.length - 1]);
   const retargetPeriod = _retargetPeriod;
@@ -358,7 +363,7 @@ function publicKeyHashFromKeyPair(keyPair) {
 
 function ethAddressFromKeyPair(keyPair) {
   const uncompressedPublicKey = bitcoin.ECPair.fromPublicKey(keyPair.publicKey, { compressed: false });
-  return `0x${Buffer.from(keccak256.arrayBuffer(uncompressedPublicKey.publicKey.slice(1))).slice(12).toString('hex')}`;
+  return web3.utils.toChecksumAddress(`0x${Buffer.from(keccak256.arrayBuffer(uncompressedPublicKey.publicKey.slice(1))).slice(12).toString('hex')}`);
 }
 function ethAddressFromKeyPairRaw(keyPair) {
   const uncompressedPublicKey = bitcoin.ECPair.fromPublicKey(keyPair.publicKey, { compressed: false });
@@ -388,6 +393,8 @@ module.exports = {
   SYSCOIN_TESTNET,
   SYSCOIN_REGTEST,
   DEPOSITS,
+  ZERO_ADDRESS,
+  ZERO_BYTES32,
 
   formatHexUint32: function (str) {
     // To format 32 bytes is 64 hexadecimal characters

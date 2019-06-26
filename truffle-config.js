@@ -1,4 +1,6 @@
 var HDWalletProvider = require("truffle-hdwallet-provider");
+const fs = require('fs');
+const mainnet_mnemonic = process.env.MNEMONIC;
 var mnenomic = "cup aisle bright dice when flame left assume laptop lock cry brown";
 module.exports = {
   networks: {
@@ -11,7 +13,7 @@ module.exports = {
     },
     mainnet: {
       provider:   function () {
-         return new HDWalletProvider(mnenomic, "https://mainnet.infura.io/v3/d178aecf49154b12be98e68e998cfb8d");
+         return new HDWalletProvider(mainnet_mnemonic, "https://mainnet.infura.io/v3/d178aecf49154b12be98e68e998cfb8d");
       },
       network_id: "1"
     },

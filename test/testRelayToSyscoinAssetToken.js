@@ -11,10 +11,10 @@ contract('testRelayToSyscoinAssetToken', function(accounts) {
   const txData = '0x077400000001017016f189c5594d5787d42ab53c9085e06d32a74f5d858f966f47036e799c16df0100000000ffffffff0400000000000000003b6a0465736d4708000000003b9aca00145a714c3ed4ce4f297679e733f3c476b24d8895e50100147f0618238b7a35f78a3338332822ee1c0de9636330750000000000001600147f0618238b7a35f78a3338332822ee1c0de9636330750000000000001600147f0618238b7a35f78a3338332822ee1c0de9636304eb0a54020000001600147f0618238b7a35f78a3338332822ee1c0de963630247304402203d7529bd258223c55729fa8adf417a500746aeef2730223791a45134c133a07302201dd4f7f36866865b29c71993239c0be140de43438e9f19d51637cd96b69ee731012102a1376a9732077c2432e3c50f039fdb3b7fab50871d48d36a6e34d2fc87250cc300000000';
   const value = 1000000000;
   // passed into syscoin burn function
-  const address = '0x5a714c3ed4ce4f297679e733f3c476b24d8895e5';
+  const address = web3.utils.toChecksumAddress('0x5a714c3ed4ce4f297679e733f3c476b24d8895e5');
   it('test mint and burn asset', async () => {
     let syscoinToken = await SyscoinToken.new(trustedRelayerContract, 1702063431, "SyscoinTokenAsset", 8, "SYSASSETX");
-    const [ ret, amount, inputEthAddress, assetGUID ]  = await syscoinMessageLibraryForTests.parseTransaction(txData);
+    const [ ret, amount, inputEthAddress, assetGUID ]  = Object.values(await syscoinMessageLibraryForTests.parseTransaction(txData));
     assert.equal(assetGUID,1702063431);
     assert.equal(inputEthAddress,address);
     await syscoinToken.processTransaction(txHash, amount, inputEthAddress, assetGUID, superblockSubmitterAddress);
