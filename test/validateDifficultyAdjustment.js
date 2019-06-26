@@ -207,9 +207,8 @@ contract('validateDifficultyAdjustment', (accounts) => {
       assert.ok(utils.findEvent(result.logs, 'RespondLastBlockHeader'), 'Respond last block header');
 
       // Verify superblock
-      console.log("before verify");
+  
       result = await battleManager.verifySuperblock(battleSessionId, { from: challenger });
-      console.log("after verify");
       const errorBattleEvent = utils.findEvent(result.logs, 'ErrorBattle');
       assert.ok(errorBattleEvent, 'Error verifying superblock');
       assert.equal(errorBattleEvent.args.err, '50130', 'Bad bits');
