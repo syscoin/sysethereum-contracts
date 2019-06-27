@@ -1,4 +1,4 @@
-pragma solidity ^0.4.19;
+pragma solidity ^0.4.26;
 
 // Interface contract to be implemented by SyscoinToken
 contract SyscoinTransactionProcessor {

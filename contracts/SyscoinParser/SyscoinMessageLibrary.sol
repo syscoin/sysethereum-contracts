@@ -100,7 +100,7 @@ import "../SyscoinTransactionProcessor.sol";
 // Addresses are the scriptHash with a version prefix of 5, encoded as
 // Base58check. These addresses begin with a '3'.
 
-pragma solidity ^0.4.19;
+pragma solidity ^0.4.26;
 
 // parse a raw Syscoin transaction byte array
 library SyscoinMessageLibrary {
