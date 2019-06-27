@@ -51,9 +51,6 @@ async function deployDevelopment(deployer, networkId, superblockOptions) {
 
   await deployer.deploy(SyscoinSuperblocks);
 
-  await deployer.deploy(SyscoinTokenForTests,
-    SyscoinSuperblocks.address,0, "SyscoinToken", 8, "SYSX"
-  );
 
   await deployer.deploy(SyscoinBattleManager,
     networkId,
@@ -89,11 +86,6 @@ async function deployIntegration(deployer,  networkId, superblockOptions) {
   await deployer.link(SyscoinMessageLibrary, [SyscoinSuperblocks, SyscoinBattleManager, SyscoinClaimManager]);
 
   await deployer.deploy(SyscoinSuperblocks, {gas: 5000000});
-
-  await deployer.deploy(SyscoinToken,
-    SyscoinSuperblocks.address,0,"SyscoinToken", 8, "SYSX",
-    {gas: 2000000 }
-  );
 
   await deployer.deploy(SyscoinToken,
     SyscoinSuperblocks.address,superblockOptions.ASSETGUID,"SyscoinTokenAsset", 8, "SYSXASSET",
