@@ -574,6 +574,27 @@ contract SyscoinBattleManager is SyscoinErrorCodes {
         return sessions[sessionId].blockHashes;
     }
 
+    function getSuperblockBySession(bytes32 sessionId) public view returns (bytes32) {
+        return sessions[sessionId].superblockHash;
+    }
+    function getMissingBlockSiblings(bytes32 sessionId) public view returns (uint[]) {
+        uint i;
+        uint count = 0;
+        for(i = 0;i<sessions[sessionId].blockSiblings.length;i++){
+            if(!sessions[sessionId].blockSiblings[i].exists){
+                count++;     
+            }
+        }
+        uint[] memory missingSiblings = new uint[](count);
+        count = 0;
+        for(i = 0;i<sessions[sessionId].blockSiblings.length;i++){
+            if(!sessions[sessionId].blockSiblings[i].exists){
+                missingSiblings[count] = i;
+                count++;        
+            }
+        }
+        return missingSiblings;
+    }
     // @dev - To be called when a battle sessions  was decided
     function sessionDecided(bytes32 sessionId, bytes32 superblockHash, address winner, address loser) internal {
         trustedSyscoinClaimManager.sessionDecided(sessionId, superblockHash, winner, loser);
