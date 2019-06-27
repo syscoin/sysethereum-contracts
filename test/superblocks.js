@@ -90,10 +90,10 @@ contract('SyscoinSuperblocks', (accounts) => {
     let id2;
     let id3;
     const merkleRoot = utils.makeMerkle(['0x0000000000000000000000000000000000000000000000000000000000000000']);
-    const accumulatedWork = 0;
+    const accumulatedWork = 1;
     const timestamp = 1;
-    const retargetPeriod = 0;
-    const lastBits = 0;
+    const retargetPeriod = 1;
+    const lastBits = 1;
     const lastHash = '0x0000000000000000000000000000000000000000000000000000000000000000';
     const parentHash = '0x0000000000000000000000000000000000000000000000000000000000000000';
     before(async () => {
@@ -172,7 +172,7 @@ contract('SyscoinSuperblocks', (accounts) => {
     const accumulatedWork = 0;
     const timestamp = Math.floor((new Date()).getTime() / 1000);
     const retargetPeriod = timestamp - 1;
-    const lastBits = 0;
+    const lastBits = 1;
     const lastHash = '0x00';
     const parentHash = '0x00';
     before(async () => {

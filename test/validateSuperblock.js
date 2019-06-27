@@ -18,7 +18,7 @@ contract('validateSuperblocks', (accounts) => {
       `0000003040c32bf1f3e190842b1c5e8a24428dfb8cd200023424f6cc38ec90e4e900000095d0f7925a33a31b240131a93fcdb414cb5b28045430609bf337d5a5142247048045ef5bf0ff0f1e6d720000`,
       `000000302e5c540fc89b052a6d97b3aaad50a4f5b95a9a4d92213bf22ee99bc9a80c0000ddcca38b8f7cfb8835615509a1c63cdb0e2ea184397dcf9677409ac6758fcd308045ef5bf0ff0f1e90ba0000`
     ];
-    const initAccumulatedWork = 0;
+    const initAccumulatedWork = 1;
     const initParentHash = '0x0000000000000000000000000000000000000000000000000000000000000000';
     const genesisSuperblock = utils.makeSuperblock(genesisHeaders, initParentHash, initAccumulatedWork, 2);
 

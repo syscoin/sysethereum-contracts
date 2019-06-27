@@ -439,7 +439,15 @@ contract SyscoinBattleManager is SyscoinErrorCodes {
         uint32 prevBits;
         uint prevWork; 
         (, accWork, , retargetPeriod, , prevBits,prevBlock,,,proposedHeight) = getSuperblockInfo(session.superblockHash);
-        
+        if(accWork <= 0){
+            return ERR_SUPERBLOCK_BAD_ACCUMULATED_WORK;
+        } 
+        if(prevBits <= 0){
+            return ERR_SUPERBLOCK_BAD_BITS;
+        }  
+        if(retargetPeriod <= 0){
+            return ERR_SUPERBLOCK_BAD_RETARGET;
+        }   
         (, prevWork, , ,,, , , ,prevHeight) = getSuperblockInfo(prevBlock);
         
         if (proposedHeight != (prevHeight+uint32(session.blockHashes.length))) {

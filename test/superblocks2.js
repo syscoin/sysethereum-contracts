@@ -19,7 +19,7 @@ contract('SyscoinSuperblocks2', function(accounts) {
   ];
   const hashes = headers.map(utils.calcBlockSha256Hash);
   const initParentId = '0x0000000000000000000000000000000000000000000000000000000000000000';
-  const initAccumulatedWork = 0;
+  const initAccumulatedWork = 1;
   const genesisSuperblock = utils.makeSuperblock(headers, initParentId, initAccumulatedWork, 5);
   it('Initialize', async () => {
     let result;

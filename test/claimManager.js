@@ -23,7 +23,7 @@ contract('SyscoinClaimManager', (accounts) => {
     await claimManager.makeDeposit({ value: utils.DEPOSITS.MIN_CHALLENGE_DEPOSIT, from: challenger });
   }
 
-  const initAccumulatedWork = 0;
+  const initAccumulatedWork = 1;
   const initParentId = '0x0000000000000000000000000000000000000000000000000000000000000000';
   const genesisHeaders = [
     `0000003040c32bf1f3e190842b1c5e8a24428dfb8cd200023424f6cc38ec90e4e900000095d0f7925a33a31b240131a93fcdb414cb5b28045430609bf337d5a5142247048045ef5bf0ff0f1e6d720000`,

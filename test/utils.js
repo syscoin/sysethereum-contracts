@@ -220,7 +220,7 @@ function calcSuperblockHash(merkleRoot, accumulatedWork, timestamp, retargetPeri
 }
 
 // Construct a superblock from an array of block headers
-function makeSuperblock(headers, parentId, parentAccumulatedWork, _blockHeight, _retargetPeriod=0) {
+function makeSuperblock(headers, parentId, parentAccumulatedWork, _blockHeight, _retargetPeriod=1) {
   if (headers.length < 1) {
     throw new Error('Requires at least one header to build a superblock');
   }
@@ -411,7 +411,7 @@ module.exports = {
     const genesisSuperblock = makeSuperblock(
       headers.slice(0, 1), // header 120
       '0x0000000000000000000000000000000000000000000000000000000000000000',
-      0,            // accumulated work block 120
+      1,            // accumulated work block 120
       1553880473,    // timestamp block 120,
       120
     );
