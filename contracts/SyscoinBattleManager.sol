@@ -83,10 +83,6 @@ contract SyscoinBattleManager is SyscoinErrorCodes {
     event QueryBlockHeaderProof(bytes32 sessionId, address submitter);
     event RespondBlockHeaderProof(bytes32 sessionId, address challenger);
     event RespondLastBlockHeader(bytes32 superblockHash, bytes32 blockSha256Hash);
-    event Difficulty(uint hashes, uint timestamp, uint work, uint accWork, uint32 newBits, uint32 prevBits);
-    event DifficultyEnd(uint work, uint accWork);
-    event DifficultyStep(uint work, uint32 bits);
-    event DifficultyAdjustment(uint retargetPeriod, uint32 bits);
 
     event ErrorBattle(bytes32 sessionId, uint err);
     modifier onlyFrom(address sender) {
@@ -467,7 +463,6 @@ contract SyscoinBattleManager is SyscoinErrorCodes {
          while (idx < session.blockHashes.length) {
             if (net != SyscoinMessageLibrary.Network.REGTEST) {
                 if((prevHeight+idx+1) % SyscoinMessageLibrary.difficultyAdjustmentInterval() == 0){
-                    emit DifficultyAdjustment(retargetPeriod, prevBits);
                     prevBits = SyscoinMessageLibrary.calculateDifficulty(int64(retargetPeriod), prevBits);
                     // ensure last block bits is consistent with the difficulty adjustment with bits set inside of superblock
                     if(session.lastBlockInfo.bits != prevBits){
@@ -477,11 +472,9 @@ contract SyscoinBattleManager is SyscoinErrorCodes {
             }
             if(prevBits > 0){
                 prevWork += SyscoinMessageLibrary.diffFromBits(prevBits);
-                emit DifficultyStep(prevWork, prevBits);
             }
             idx += 1;
         }
-        emit DifficultyEnd(prevWork, accWork);
         if (net != SyscoinMessageLibrary.Network.REGTEST && prevWork != accWork) {
             return ERR_SUPERBLOCK_BAD_ACCUMULATED_WORK;
         }       
