@@ -27,7 +27,7 @@ contract('SyscoinSuperblocks2', function(accounts) {
       genesisSuperblock.merkleRoot,
       genesisSuperblock.accumulatedWork,
       genesisSuperblock.timestamp,
-      genesisSuperblock.prevTimestamp,
+      genesisSuperblock.retargetPeriod,
       genesisSuperblock.lastHash,
       genesisSuperblock.lastBits,
       genesisSuperblock.parentId,
@@ -56,7 +56,7 @@ contract('SyscoinSuperblocks2', function(accounts) {
     assert.equal(superblock[0], genesisSuperblock.merkleRoot, 'Merkle root');
     assert.equal(superblock[1].toString(10), genesisSuperblock.accumulatedWork.toString(10), 'Accumulated work');
     assert.equal(superblock[2], genesisSuperblock.timestamp, 'Last block timestamp');
-    assert.equal(superblock[3], genesisSuperblock.prevTimestamp, 'Prev difficulty adjustment timestamp');
+    assert.equal(superblock[3], genesisSuperblock.retargetPeriod, 'Difficulty adjustment retarget period');
     assert.equal(superblock[4], genesisSuperblock.lastHash, 'Last block hash');
     assert.equal(superblock[5], genesisSuperblock.lastBits, 'Last block difficulty bits');
     assert.equal(superblock[6], genesisSuperblock.parentId, 'Parent superblock');

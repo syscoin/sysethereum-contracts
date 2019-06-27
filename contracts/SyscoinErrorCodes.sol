@@ -4,6 +4,7 @@ pragma solidity ^0.4.19;
 contract SyscoinErrorCodes {
     // Error codes
     uint constant ERR_SUPERBLOCK_OK = 0;
+    uint constant ERR_SUPERBLOCK_MISSING_SIBLINGS = 1;
     uint constant ERR_SUPERBLOCK_BAD_STATUS = 50020;
     uint constant ERR_SUPERBLOCK_BAD_SYSCOIN_STATUS = 50025;
     uint constant ERR_SUPERBLOCK_NO_TIMEOUT = 50030;
@@ -25,7 +26,10 @@ contract SyscoinErrorCodes {
     uint constant ERR_SUPERBLOCK_BAD_BITS = 50130;
     uint constant ERR_SUPERBLOCK_MISSING_CONFIRMATIONS = 50140;
     uint constant ERR_SUPERBLOCK_BAD_LASTBLOCK = 50150;
-    uint constant ERR_SUPERBLOCK_BAD_BLOCKHEIGHT = 50160;
+    uint constant ERR_SUPERBLOCK_BAD_LASTBLOCK_STATUS = 50160;
+    uint constant ERR_SUPERBLOCK_BAD_BLOCKHEIGHT = 50170;
+    uint constant ERR_SUPERBLOCK_INVALID_ACCUMULATED_WORK = 50180;
+    uint constant ERR_SUPERBLOCK_BAD_PREVBLOCK = 50190;
 
     // error codes for verifyTx
     uint constant ERR_BAD_FEE = 20010;
@@ -44,6 +48,6 @@ contract SyscoinErrorCodes {
     uint constant public minProposalDeposit = challengeCost + minReward;
     uint constant public minChallengeDeposit = superblockCost + minReward;
     uint constant public respondMerkleRootHashesCost = 378000; // TODO: measure this with 60 hashes
-    uint constant public respondBlockHeaderCost = 40000;
+    uint constant public respondBlockHeaderProofCost = 40000;
     uint constant public verifySuperblockCost = 220000;
 }

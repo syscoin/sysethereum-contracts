@@ -64,7 +64,7 @@ contract SyscoinMessageLibraryForTests {
 
     // @dev - Converts a bytes of size 4 to uint32,
     // e.g. for input [0x01, 0x02, 0x03 0x04] returns 0x01020304
-    function bytesToUint32(bytes memory input, uint pos) internal pure returns (uint32 result) {
+    function bytesToUint32(bytes input, uint pos) internal pure returns (uint32 result) {
         result = uint32(input[pos])*(2**24) + uint32(input[pos + 1])*(2**16) + uint32(input[pos + 2])*(2**8) + uint32(input[pos + 3]);
     }
 
@@ -98,7 +98,7 @@ contract SyscoinMessageLibraryForTests {
     uint constant ERR_NO_PREV_BLOCK = 10030;
     uint constant ERR_BLOCK_ALREADY_EXISTS = 10040;
     uint constant ERR_INVALID_HEADER = 10050;
-    uint constant ERR_COINBASE_INDEX = 10060; // coinbase tx index within Litecoin merkle isn't 0
+    uint constant ERR_COINBASE_INDEX = 10060; // coinbase tx index within Bitcoin merkle isn't 0
     uint constant ERR_NOT_MERGE_MINED = 10070; // trying to check AuxPoW on a block that wasn't merge mined
     uint constant ERR_FOUND_TWICE = 10080; // 0xfabe6d6d found twice
     uint constant ERR_NO_MERGE_HEADER = 10090; // 0xfabe6d6d not found

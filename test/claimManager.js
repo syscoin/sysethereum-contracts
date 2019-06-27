@@ -7,7 +7,7 @@ contract('SyscoinClaimManager', (accounts) => {
   let claimManager;
   let battleManager;
   let superblocks;
-
+  let proposedSuperblock;
   async function initSuperblockChain() {
     ({
       superblocks,
@@ -54,18 +54,17 @@ contract('SyscoinClaimManager', (accounts) => {
     });
 
     it('Propose', async () => {
-      let proposedSuperblock = utils.makeSuperblock(
+      proposedSuperblock = utils.makeSuperblock(
         headers.slice(0, 3),
         genesisSuperblock.superblockHash,
         genesisSuperblock.accumulatedWork,
         2
       );
-
       result = await claimManager.proposeSuperblock(
         proposedSuperblock.merkleRoot,
         proposedSuperblock.accumulatedWork,
         proposedSuperblock.timestamp,
-        proposedSuperblock.prevTimestamp,
+        proposedSuperblock.retargetPeriod,
         proposedSuperblock.lastHash,
         proposedSuperblock.lastBits,
         proposedSuperblock.parentId,
@@ -94,18 +93,17 @@ contract('SyscoinClaimManager', (accounts) => {
     });
 
     it('Propose fork', async () => {
-      const proposedSuperblock = utils.makeSuperblock(
+      proposedSuperblock = utils.makeSuperblock(
         headers.slice(0, 2),
         genesisSuperblock.superblockHash,
         genesisSuperblock.accumulatedWork,
         4
       );
-
       result = await claimManager.proposeSuperblock(
         proposedSuperblock.merkleRoot,
         proposedSuperblock.accumulatedWork,
         proposedSuperblock.timestamp,
-        proposedSuperblock.prevTimestamp,
+        proposedSuperblock.retargetPeriod,
         proposedSuperblock.lastHash,
         proposedSuperblock.lastBits,
         proposedSuperblock.parentId,
@@ -141,12 +139,12 @@ contract('SyscoinClaimManager', (accounts) => {
     });
     
     it('Propose', async () => {
-      const proposedSuperblock = utils.makeSuperblock(headers.slice(0, 2), genesisSuperblock.superblockHash, genesisSuperblock.accumulatedWork, 4);
+      proposedSuperblock = utils.makeSuperblock(headers.slice(0, 2), genesisSuperblock.superblockHash, genesisSuperblock.accumulatedWork, 4);
       result = await claimManager.proposeSuperblock(
         proposedSuperblock.merkleRoot,
         proposedSuperblock.accumulatedWork,
         proposedSuperblock.timestamp,
-        proposedSuperblock.prevTimestamp,
+        proposedSuperblock.retargetPeriod,
         proposedSuperblock.lastHash,
         proposedSuperblock.lastBits,
         proposedSuperblock.parentId,
@@ -181,23 +179,15 @@ contract('SyscoinClaimManager', (accounts) => {
     });
 
     it('Query and reply block header', async () => {
-      await claimManager.makeDeposit({ value: utils.DEPOSITS.RESPOND_HEADER_COST, from: challenger });
-      result = await battleManager.queryBlockHeader(proposedSuperblockHash, battleSessionId, hashes[0], { from: challenger });
-      assert.ok(utils.findEvent(result.logs, 'QueryBlockHeader'), 'Query block header');
+      await claimManager.makeDeposit({ value: utils.DEPOSITS.RESPOND_HEADER_PROOF_COST, from: challenger });
+      result = await battleManager.queryBlockHeaderProof(battleSessionId, { from: challenger });
+      assert.ok(utils.findEvent(result.logs, 'QueryBlockHeaderProof'), 'Query block header');
 
-      await claimManager.makeDeposit({ value: utils.DEPOSITS.RESPOND_HEADER_COST, from: submitter });
-      result = await battleManager.respondBlockHeader(proposedSuperblockHash, battleSessionId, `0x${headers[0]}`, { from: submitter });
-
-      assert.ok(utils.findEvent(result.logs, 'RespondBlockHeader'), 'Respond block header');
+      await claimManager.makeDeposit({ value: utils.DEPOSITS.RESPOND_HEADER_PROOF_COST, from: submitter });
+      result = await battleManager.respondBlockHeaderProof(battleSessionId, proposedSuperblock.blockSiblingsMap , 0, 2, `0x${headers[1]}`, { from: submitter });
+      assert.ok(utils.findEvent(result.logs, 'RespondBlockHeaderProof'), 'Respond block header proof');
+      assert.ok(utils.findEvent(result.logs, 'RespondLastBlockHeader'), 'Respond last block header');
       
-      await claimManager.makeDeposit({ value: utils.DEPOSITS.RESPOND_HEADER_COST, from: challenger });      
-      result = await battleManager.queryBlockHeader(proposedSuperblockHash, battleSessionId, hashes[1], { from: challenger });
-      assert.ok(utils.findEvent(result.logs, 'QueryBlockHeader'), 'Query block header');
-
-      await claimManager.makeDeposit({ value: utils.DEPOSITS.RESPOND_HEADER_COST, from: submitter });
-      result = await battleManager.respondBlockHeader(proposedSuperblockHash, battleSessionId, `0x${headers[1]}`, { from: submitter });
-
-      assert.ok(utils.findEvent(result.logs, 'RespondBlockHeader'), 'Respond block header');
     });
 
     it('Verify superblock', async () => {
@@ -226,7 +216,7 @@ contract('SyscoinClaimManager', (accounts) => {
     });
   
     it('Propose', async () => {
-      const proposeSuperblock = utils.makeSuperblock(
+      proposeSuperblock = utils.makeSuperblock(
         headers,
         genesisSuperblock.superblockHash,
         genesisSuperblock.accumulatedWork,
@@ -237,7 +227,7 @@ contract('SyscoinClaimManager', (accounts) => {
         proposeSuperblock.merkleRoot,
         proposeSuperblock.accumulatedWork,
         proposeSuperblock.timestamp,
-        proposeSuperblock.prevTimestamp,
+        proposeSuperblock.retargetPeriod,
         proposeSuperblock.lastHash,
         proposeSuperblock.lastBits,
         proposeSuperblock.parentId,
@@ -272,19 +262,16 @@ contract('SyscoinClaimManager', (accounts) => {
       const result = await battleManager.respondMerkleRootHashes(proposedSuperblockHash, battleSessionId, hashes, { from: submitter });
       assert.ok(utils.findEvent(result.logs, 'RespondMerkleRootHashes'), 'Respond merkle root hashes');
     });
-    
-    hashes.forEach((hash, idx) => {
-      it(`Query block header ${hash.slice(0, 20)}..`, async () => {
-        const result = await battleManager.queryBlockHeader(proposedSuperblockHash, battleSessionId, hash, { from: challenger });
-        assert.ok(utils.findEvent(result.logs, 'QueryBlockHeader'), 'Query block header');
-      });
+    it('Query block header', async () => {
+      const result = await battleManager.queryBlockHeaderProof(battleSessionId, { from: challenger });
+      assert.ok(utils.findEvent(result.logs, 'QueryBlockHeaderProof'), 'Query block header');
+    });   
+    it('Answer blocks header', async () => {
+      await claimManager.makeDeposit({ value: utils.DEPOSITS.RESPOND_HEADER_PROOF_COST, from: submitter });
+      result = await battleManager.respondBlockHeaderProof(battleSessionId, proposeSuperblock.blockSiblingsMap, 0, headers.length, `0x${headers[headers.length-1]}`, { from: submitter });
 
-      it(`Answer blocks header ${hash.slice(0, 20)}..`, async () => {
-        await claimManager.makeDeposit({ value: utils.DEPOSITS.RESPOND_HEADER_COST, from: submitter });
-        result = await battleManager.respondBlockHeader(proposedSuperblockHash, battleSessionId, `0x${headers[idx]}`, { from: submitter });
-
-        assert.ok(utils.findEvent(result.logs, 'RespondBlockHeader'), 'Respond block header');
-      });
+      assert.ok(utils.findEvent(result.logs, 'RespondBlockHeaderProof'), 'Respond block header');
+      assert.ok(utils.findEvent(result.logs, 'RespondLastBlockHeader'), 'Respond last block header');
     });
 
     it('Verify superblock', async () => {
@@ -331,7 +318,7 @@ contract('SyscoinClaimManager', (accounts) => {
         proposeSuperblock.merkleRoot,
         proposeSuperblock.accumulatedWork,
         proposeSuperblock.timestamp,
-        proposeSuperblock.prevTimestamp,
+        proposeSuperblock.retargetPeriod,
         proposeSuperblock.lastHash,
         proposeSuperblock.lastBits,
         proposeSuperblock.parentId,
@@ -402,9 +389,9 @@ contract('SyscoinClaimManager', (accounts) => {
       result = await battleManager.respondMerkleRootHashes(proposedSuperblockHash, battleSessionId, hashes.slice(0, 2), { from: submitter });
       assert.ok(utils.findEvent(result.logs, 'RespondMerkleRootHashes'), 'Respond merkle root hashes');
 
-      await claimManager.makeDeposit({ value: utils.DEPOSITS.RESPOND_HEADER_COST, from: challenger });
-      result = await battleManager.queryBlockHeader(proposedSuperblockHash, battleSessionId, hashes[0], { from: challenger });
-      assert.ok(utils.findEvent(result.logs, 'QueryBlockHeader'), 'Query block header');
+      await claimManager.makeDeposit({ value: utils.DEPOSITS.RESPOND_HEADER_PROOF_COST, from: challenger });
+      result = await battleManager.queryBlockHeaderProof(battleSessionId, { from: challenger });
+      assert.ok(utils.findEvent(result.logs, 'QueryBlockHeaderProof'), 'Query block header');
       
       result = await battleManager.timeout(battleSessionId, { from: challenger });
       assert.ok(utils.findEvent(result.logs, 'ErrorBattle'), 'Timeout too early');
@@ -426,14 +413,15 @@ contract('SyscoinClaimManager', (accounts) => {
       result = await battleManager.respondMerkleRootHashes(proposedSuperblockHash, battleSessionId, hashes.slice(0, 2), { from: submitter });
       assert.ok(utils.findEvent(result.logs, 'RespondMerkleRootHashes'), 'Respond merkle root hashes');
 
-      await claimManager.makeDeposit({ value: utils.DEPOSITS.RESPOND_HEADER_COST, from: challenger });
-      result = await battleManager.queryBlockHeader(proposedSuperblockHash, battleSessionId, hashes[0], { from: challenger });
-      assert.ok(utils.findEvent(result.logs, 'QueryBlockHeader'), 'Query block header');
+      await claimManager.makeDeposit({ value: utils.DEPOSITS.RESPOND_HEADER_PROOF_COST, from: challenger });
+      result = await battleManager.queryBlockHeaderProof(battleSessionId, { from: challenger });
+      assert.ok(utils.findEvent(result.logs, 'QueryBlockHeaderProof'), 'Query block header');
 
-      await claimManager.makeDeposit({ value: utils.DEPOSITS.RESPOND_HEADER_COST, from: submitter });
-      result = await battleManager.respondBlockHeader(proposedSuperblockHash, battleSessionId, `0x${headers[0]}`, { from: submitter });
+      await claimManager.makeDeposit({ value: utils.DEPOSITS.RESPOND_HEADER_PROOF_COST, from: submitter });
+      result = await battleManager.respondBlockHeaderProof(battleSessionId, proposeSuperblock.blockSiblingsMap, 0, 2, `0x${headers[1]}`, { from: submitter });
 
-      assert.ok(utils.findEvent(result.logs, 'RespondBlockHeader'), 'Respond block header');
+      assert.ok(utils.findEvent(result.logs, 'RespondBlockHeaderProof'), 'Respond block header');
+      assert.ok(utils.findEvent(result.logs, 'RespondLastBlockHeader'), 'Respond last block header');
       
       result = await battleManager.timeout(battleSessionId, { from: submitter });
       assert.ok(utils.findEvent(result.logs, 'ErrorBattle'), 'Timeout too early');
@@ -458,22 +446,14 @@ contract('SyscoinClaimManager', (accounts) => {
       result = await battleManager.respondMerkleRootHashes(proposedSuperblockHash, battleSessionId, hashes.slice(0, 2), { from: submitter });
       assert.ok(utils.findEvent(result.logs, 'RespondMerkleRootHashes'), 'Respond merkle root hashes');
 
-      await claimManager.makeDeposit({ value: utils.DEPOSITS.RESPOND_HEADER_COST, from: challenger });
-      result = await battleManager.queryBlockHeader(proposedSuperblockHash, battleSessionId, hashes[0], { from: challenger });
-      assert.ok(utils.findEvent(result.logs, 'QueryBlockHeader'), 'Query block header');
+      await claimManager.makeDeposit({ value: utils.DEPOSITS.RESPOND_HEADER_PROOF_COST, from: challenger });
+      result = await battleManager.queryBlockHeaderProof(battleSessionId, { from: challenger });
+      assert.ok(utils.findEvent(result.logs, 'QueryBlockHeaderProof'), 'Query block header');
 
-      await claimManager.makeDeposit({ value: utils.DEPOSITS.RESPOND_HEADER_COST, from: submitter });
-      result = await battleManager.respondBlockHeader(proposedSuperblockHash, battleSessionId, `0x${headers[0]}`, { from: submitter });
+      result = await battleManager.respondBlockHeaderProof(battleSessionId, proposeSuperblock.blockSiblingsMap, 0, 2, `0x${headers[1]}`, { from: submitter });
 
-      assert.ok(utils.findEvent(result.logs, 'RespondBlockHeader'), 'Respond block header');
-      
-      await claimManager.makeDeposit({ value: utils.DEPOSITS.RESPOND_HEADER_COST, from: challenger });
-      result = await battleManager.queryBlockHeader(proposedSuperblockHash, battleSessionId, hashes[1], { from: challenger });
-      assert.ok(utils.findEvent(result.logs, 'QueryBlockHeader'), 'Query block header');
-
-      result = await battleManager.respondBlockHeader(proposedSuperblockHash, battleSessionId, `0x${headers[1]}`, { from: submitter });
-
-      assert.ok(utils.findEvent(result.logs, 'RespondBlockHeader'), 'Respond block header');
+      assert.ok(utils.findEvent(result.logs, 'RespondBlockHeaderProof'), 'Respond block header');
+      assert.ok(utils.findEvent(result.logs, 'RespondLastBlockHeader'), 'Respond last block header');
 
       result = await battleManager.verifySuperblock(battleSessionId, { from: challenger });
       assert.ok(utils.findEvent(result.logs, 'ChallengerConvicted'), 'Should convict challenger');
@@ -488,7 +468,7 @@ contract('SyscoinClaimManager', (accounts) => {
         proposeSuperblock.merkleRoot,
         proposeSuperblock.accumulatedWork,
         proposeSuperblock.timestamp,
-        proposeSuperblock.prevTimestamp,
+        proposeSuperblock.retargetPeriod,
         proposeSuperblock.lastHash,
         proposeSuperblock.lastBits,
         proposeSuperblock.parentId,
@@ -503,7 +483,7 @@ contract('SyscoinClaimManager', (accounts) => {
         proposeSuperblock.merkleRoot,
         proposeSuperblock.accumulatedWork,
         proposeSuperblock.timestamp,
-        proposeSuperblock.prevTimestamp,
+        proposeSuperblock.retargetPeriod,
         proposeSuperblock.lastHash,
         proposeSuperblock.lastBits,
         proposeSuperblock.parentId,
