@@ -17,7 +17,7 @@ async function challengeNextSuperblock(from, toChallenge, deposit) {
     console.log(`Making a challenge from: ${challenger}`);
     let balance = await cm.getDeposit(challenger);
     if (typeof deposit === 'string' || balance.toNumber() === 0) {
-      const amount = typeof deposit === 'string' ? web3.toBigNumber(deposit) : 1000;
+      const amount = typeof deposit === 'string' ? web3.utils.toBN(deposit) : 1000;
       await cm.makeDeposit({ from: challenger, value: amount });
       balance = await cm.getDeposit(challenger);
     }
