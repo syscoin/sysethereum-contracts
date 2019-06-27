@@ -820,12 +820,11 @@ library SyscoinMessageLibrary {
     int64 constant TARGET_TIMESPAN_DIV_4 = TARGET_TIMESPAN / int64(4);
     int64 constant TARGET_TIMESPAN_MUL_4 = TARGET_TIMESPAN * int64(4);
     int64 constant TARGET_TIMESPAN_ADJUSTMENT =  int64(360);  // 6 hour
-    uint constant INITIAL_CHAIN_WORK =  0x100001; 
     uint constant POW_LIMIT = 0x00000fffffffffffffffffffffffffffffffffffffffffffffffffffffffffff;
 
     // @dev - Calculate difficulty from compact representation (bits) found in block
     function diffFromBits(uint32 bits) external pure returns (uint) {
-        return targetToDiff(targetFromBits(bits))*INITIAL_CHAIN_WORK;
+        return targetToDiff(targetFromBits(bits));
     }
     
     function difficultyAdjustmentInterval() external pure returns (int64) {

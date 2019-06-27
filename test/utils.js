@@ -113,9 +113,9 @@ function getBlockDifficulty(blockHeader) {
   const mant = web3.utils.toBN(headerBin[72] + 256 * headerBin[73] + 256 * 256 * headerBin[74]);
   const target = mant.mul(web3.utils.toBN(256).pow(exp.sub(new BN(3))));
   const difficulty1 = web3.utils.toBN(0x00FFFFF).mul(web3.utils.toBN(256).pow(web3.utils.toBN(0x1e-3)));
-  const difficulty = difficulty1.divRound(target);
-  return difficulty.mul(new BN(0x100001));
-}
+  const difficulty = difficulty1.div(target);
+  return difficulty;
+} 
 
 const timeout = async (ms) => new Promise((resolve, reject) => setTimeout(resolve, ms));
 
