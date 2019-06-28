@@ -32,11 +32,7 @@ contract SyscoinBattleManager is SyscoinErrorCodes {
         BlockInfoStatus status;
         bytes32 blockHash;
     }
-    struct SiblingInfo{
-        uint[] siblings;
-        bool exists;
-    }
-
+    
     struct BattleSession {
         bytes32 id;
         bytes32 superblockHash;
@@ -285,6 +281,7 @@ contract SyscoinBattleManager is SyscoinErrorCodes {
 
     function doRespondBlockHeaderProof(BattleSession storage session, uint[] _siblingsMap) internal returns (uint) {      
         uint blockHashesLen = session.blockHashes.length;
+        require(session.blocksInfo[session.superblockHash].status == BlockInfoStatus.Verified);
         uint numHashesPerProof = (_siblingsMap.length / blockHashesLen);
         uint i;
         uint index;

@@ -331,7 +331,6 @@ contract('approveDescendant', (accounts) => {
             await claimManager.makeDeposit({ value: utils.DEPOSITS.VERIFY_SUPERBLOCK_COST, from: submitter });
             result = await battleManager.respondMerkleRootHashes(superblock2Id, session1, superblock2Hashes, { from: submitter });
             assert.ok(utils.findEvent(result.logs, 'RespondMerkleRootHashes'), 'Respond merkle root hashes');
-            console.log("res0 " + JSON.stringify(result));
         });
 
         it('Query and reply block header', async () => {
