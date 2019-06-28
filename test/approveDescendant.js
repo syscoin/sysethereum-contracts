@@ -123,7 +123,7 @@ contract('approveDescendant', (accounts) => {
             await claimManager.makeDeposit({ value: utils.DEPOSITS.RESPOND_HEADER_PROOF_COST, from: submitter });
             result = await battleManager.respondLastBlockHeader(session1, `0x${superblock1Headers[2]}`, { from: submitter });
             assert.ok(utils.findEvent(result.logs, 'RespondLastBlockHeader'), 'Respond last block header');
-            result = await battleManager.respondBlockHeaderProof(session1, superblock1.blockSiblingsMap, 0, 3, { from: submitter });
+            result = await battleManager.respondBlockHeaderProof(session1, superblock1.blockSiblingsMap, { from: submitter });
             assert.ok(utils.findEvent(result.logs, 'RespondBlockHeaderProof'), 'Respond block header');
             
         });
@@ -278,7 +278,7 @@ contract('approveDescendant', (accounts) => {
             await claimManager.makeDeposit({ value: utils.DEPOSITS.RESPOND_HEADER_PROOF_COST, from: submitter });
             result = await battleManager.respondLastBlockHeader(session1, `0x${superblock1Headers[2]}`, { from: submitter });
             assert.ok(utils.findEvent(result.logs, 'RespondLastBlockHeader'), 'Respond last block header');
-            result = await battleManager.respondBlockHeaderProof(session1, superblock1.blockSiblingsMap, 0, 3, { from: submitter });
+            result = await battleManager.respondBlockHeaderProof(session1, superblock1.blockSiblingsMap, { from: submitter });
             assert.ok(utils.findEvent(result.logs, 'RespondBlockHeaderProof'), 'Respond block header');
             
         });
@@ -331,6 +331,7 @@ contract('approveDescendant', (accounts) => {
             await claimManager.makeDeposit({ value: utils.DEPOSITS.VERIFY_SUPERBLOCK_COST, from: submitter });
             result = await battleManager.respondMerkleRootHashes(superblock2Id, session1, superblock2Hashes, { from: submitter });
             assert.ok(utils.findEvent(result.logs, 'RespondMerkleRootHashes'), 'Respond merkle root hashes');
+            console.log("res0 " + JSON.stringify(result));
         });
 
         it('Query and reply block header', async () => {
@@ -341,7 +342,7 @@ contract('approveDescendant', (accounts) => {
             await claimManager.makeDeposit({ value: utils.DEPOSITS.RESPOND_HEADER_PROOF_COST, from: submitter });
             result = await battleManager.respondLastBlockHeader(session1, `0x${superblock2Headers[2]}`, { from: submitter });
             assert.ok(utils.findEvent(result.logs, 'RespondLastBlockHeader'), 'Respond last block header');
-            result = await battleManager.respondBlockHeaderProof(session1, superblock2.blockSiblingsMap, 0, 3, { from: submitter });
+            result = await battleManager.respondBlockHeaderProof(session1, superblock2.blockSiblingsMap, { from: submitter });
             assert.ok(utils.findEvent(result.logs, 'RespondBlockHeaderProof'), 'Respond block header');
         });
 

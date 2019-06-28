@@ -92,7 +92,7 @@ contract('validateDifficultyAdjustment', (accounts) => {
 
       result = await battleManager.respondLastBlockHeader(battleSessionId, `0x${headers[2]}`, { from: submitter });
       assert.ok(utils.findEvent(result.logs, 'RespondLastBlockHeader'), 'Respond last block header');
-      result = await battleManager.respondBlockHeaderProof(battleSessionId, proposedSuperblock.blockSiblingsMap, 0, 3, { from: submitter });
+      result = await battleManager.respondBlockHeaderProof(battleSessionId, proposedSuperblock.blockSiblingsMap, { from: submitter });
       assert.ok(utils.findEvent(result.logs, 'RespondBlockHeaderProof'), 'Respond block header');
       // Verify diff change and challenger is at fault (its actually valid)
       result = await battleManager.verifySuperblock(battleSessionId, { from: submitter });
@@ -146,7 +146,7 @@ contract('validateDifficultyAdjustment', (accounts) => {
 
       result = await battleManager.respondLastBlockHeader(battleSessionId, `0x${headers[2]}`, { from: submitter });
       assert.ok(utils.findEvent(result.logs, 'RespondLastBlockHeader'), 'Respond last block header');
-      result = await battleManager.respondBlockHeaderProof(battleSessionId, proposedSuperblock.blockSiblingsMap, 0, 3, { from: submitter });
+      result = await battleManager.respondBlockHeaderProof(battleSessionId, proposedSuperblock.blockSiblingsMap, { from: submitter });
       assert.ok(utils.findEvent(result.logs, 'RespondBlockHeaderProof'), 'Respond block header');
 
       // Verify superblock
@@ -207,7 +207,7 @@ contract('validateDifficultyAdjustment', (accounts) => {
 
       result = await battleManager.respondLastBlockHeader(battleSessionId, `0x${headers[2]}`, { from: submitter });
       assert.ok(utils.findEvent(result.logs, 'RespondLastBlockHeader'), 'Respond last block header');
-      result = await battleManager.respondBlockHeaderProof(battleSessionId, proposedSuperblock.blockSiblingsMap, 0, 3, { from: submitter });
+      result = await battleManager.respondBlockHeaderProof(battleSessionId, proposedSuperblock.blockSiblingsMap, { from: submitter });
       assert.ok(utils.findEvent(result.logs, 'RespondBlockHeaderProof'), 'Respond block header');
 
 

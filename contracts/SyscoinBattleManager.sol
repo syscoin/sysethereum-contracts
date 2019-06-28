@@ -48,7 +48,6 @@ contract SyscoinBattleManager is SyscoinErrorCodes {
         uint actionsCounter;              // Counter session actions
 
         bytes32[] blockHashes;            // Block hashes
-        SiblingInfo[] blockSiblings;
         mapping (bytes32 => BlockInfo) blocksInfo;
 
         ChallengeState challengeState;    // Claim state
@@ -192,7 +191,6 @@ contract SyscoinBattleManager is SyscoinErrorCodes {
                 return err;
             }
             session.blockHashes = blockHashes;
-            session.blockSiblings.length = blockHashes.length;
             session.challengeState = ChallengeState.RespondMerkleRootHashes;
             return ERR_SUPERBLOCK_OK;
         }
@@ -285,53 +283,30 @@ contract SyscoinBattleManager is SyscoinErrorCodes {
         return a;
     }
 
-    function doRespondBlockHeaderProof(BattleSession storage session, uint startingIndex, uint count, uint[] _siblingsMap) internal returns (uint) {      
-        uint numHashesPerProof = (_siblingsMap.length / count);
-        bool filled = session.blockSiblings.length > 0;
+    function doRespondBlockHeaderProof(BattleSession storage session, uint[] _siblingsMap) internal returns (uint) {      
+        uint blockHashesLen = session.blockHashes.length;
+        uint numHashesPerProof = (_siblingsMap.length / blockHashesLen);
         uint i;
         uint index;
- 
-        for(i = startingIndex;i < (startingIndex+count);i++){
-            index = (i-startingIndex)*numHashesPerProof;
-            uint[] memory sliceSiblings = getSlice(index, index+(numHashesPerProof - 1), _siblingsMap);
-            assert(sliceSiblings.length == numHashesPerProof);
-            session.blockSiblings[i].siblings = sliceSiblings;
-            session.blockSiblings[i].exists = true;
-        }
-        for(i =0;i<session.blockSiblings.length;i++){
-            if(!session.blockSiblings[i].exists){
-                filled = false;
-                break;
-            }
-        }
-        if(filled){
-           return doVerifyBlockHeaderProof(session); 
-        }
-        return ERR_SUPERBLOCK_MISSING_SIBLINGS;
-    }
-    function doVerifyBlockHeaderProof(BattleSession storage session) internal returns (uint) {
-        // Verify sb Merkle root committed by block hash
-        uint i;
         (bytes32 merkleRoot, , , , , , , ,,) = getSuperblockInfo(session.superblockHash);
-        assert(session.blockSiblings.length == session.blockHashes.length);
-        require(session.blocksInfo[session.superblockHash].status == BlockInfoStatus.Verified);
-        if(session.blockHashes.length > 1){
-            for(i = 0;i < session.blockHashes.length;i++){
-                if (bytes32(SyscoinMessageLibrary.computeMerkle(uint(session.blockHashes[i]), i, session.blockSiblings[i].siblings)) != merkleRoot) {
+        if(blockHashesLen > 1){
+            for(i = 0;i < blockHashesLen;i++){
+                index = i*numHashesPerProof;
+                uint[] memory sliceSiblings = getSlice(index, index+(numHashesPerProof - 1), _siblingsMap);
+                if (bytes32(SyscoinMessageLibrary.computeMerkle(uint(session.blockHashes[i]), i, sliceSiblings)) != merkleRoot)
                     return (ERR_MERKLE_ROOT);
-                }
             }
         }
         else if(merkleRoot != session.blockHashes[0]){
             return (ERR_MERKLE_ROOT);
         }
-       
         session.challengeState = ChallengeState.PendingVerification;
         session.actionsCounter += 1;
         session.lastActionTimestamp = block.timestamp;
         session.lastActionClaimant = session.actionsCounter;
         
         emit RespondBlockHeaderProof(session.superblockHash, session.challenger);
+
         return ERR_SUPERBLOCK_OK;
     }
     // @dev - Verify block header sent by challenger
@@ -385,12 +360,10 @@ contract SyscoinBattleManager is SyscoinErrorCodes {
     // @dev - For the submitter to respond to challenger queries
     function respondBlockHeaderProof(
         bytes32 sessionId,
-        uint[] _siblingsMap,
-        uint startingIndex,
-        uint count
+        uint[] _siblingsMap
     ) onlyClaimant(sessionId) public {
         BattleSession storage session = sessions[sessionId];
-        (uint err) = doRespondBlockHeaderProof(session, startingIndex, count, _siblingsMap);
+        (uint err) = doRespondBlockHeaderProof(session,  _siblingsMap);
         if (err != ERR_SUPERBLOCK_OK && err != ERR_SUPERBLOCK_MISSING_SIBLINGS) {
             emit ErrorBattle(sessionId, err);
         } 
@@ -589,24 +562,6 @@ contract SyscoinBattleManager is SyscoinErrorCodes {
     }
     function getSessionChallengeState(bytes32 sessionId) public view returns (ChallengeState) {
         return sessions[sessionId].challengeState;
-    }
-    function getMissingBlockSiblings(bytes32 sessionId) public view returns (uint[]) {
-        uint i;
-        uint count = 0;
-        for(i = 0;i<sessions[sessionId].blockSiblings.length;i++){
-            if(!sessions[sessionId].blockSiblings[i].exists){
-                count++;     
-            }
-        }
-        uint[] memory missingSiblings = new uint[](count);
-        count = 0;
-        for(i = 0;i<sessions[sessionId].blockSiblings.length;i++){
-            if(!sessions[sessionId].blockSiblings[i].exists){
-                missingSiblings[count] = i;
-                count++;        
-            }
-        }
-        return missingSiblings;
     }
     // @dev - To be called when a battle sessions  was decided
     function sessionDecided(bytes32 sessionId, bytes32 superblockHash, address winner, address loser) internal {

@@ -329,7 +329,7 @@ contract('rejectClaim', (accounts) => {
 
             result = await battleManager.respondLastBlockHeader(session1, `0x${superblockR0Headers[1]}`, { from: submitter });
             assert.ok(utils.findEvent(result.logs, 'RespondLastBlockHeader'), 'Respond last block header');
-            result = await battleManager.respondBlockHeaderProof(session1, superblockR0.blockSiblingsMap, 0, 2, { from: submitter });
+            result = await battleManager.respondBlockHeaderProof(session1, superblockR0.blockSiblingsMap, { from: submitter });
             assert.ok(utils.findEvent(result.logs, 'RespondBlockHeaderProof'), 'Respond block header');
         });
 
