@@ -225,14 +225,14 @@ contract('SyscoinClaimManager', (accounts) => {
       );
 
       result = await claimManager.proposeSuperblock(
-        proposeSuperblock.merkleRoot,
-        proposeSuperblock.accumulatedWork,
-        proposeSuperblock.timestamp,
-        proposeSuperblock.retargetPeriod,
-        proposeSuperblock.lastHash,
-        proposeSuperblock.lastBits,
-        proposeSuperblock.parentId,
-        proposeSuperblock.blockHeight,
+        proposedSuperblock.merkleRoot,
+        proposedSuperblock.accumulatedWork,
+        proposedSuperblock.timestamp,
+        proposedSuperblock.retargetPeriod,
+        proposedSuperblock.lastHash,
+        proposedSuperblock.lastBits,
+        proposedSuperblock.parentId,
+        proposedSuperblock.blockHeight,
         { from: submitter },
       );
 
@@ -292,7 +292,6 @@ contract('SyscoinClaimManager', (accounts) => {
     let genesisSuperblockHash;
     let proposedSuperblockHash;
     let battleSessionId;
-    let proposeSuperblock;
     const beginNewChallenge = async () => {
       let result;
       ({
@@ -317,14 +316,14 @@ contract('SyscoinClaimManager', (accounts) => {
         4
       );
       result = await claimManager.proposeSuperblock(
-        proposeSuperblock.merkleRoot,
-        proposeSuperblock.accumulatedWork,
-        proposeSuperblock.timestamp,
-        proposeSuperblock.retargetPeriod,
-        proposeSuperblock.lastHash,
-        proposeSuperblock.lastBits,
-        proposeSuperblock.parentId,
-        proposeSuperblock.blockHeight,
+        proposedSuperblock.merkleRoot,
+        proposedSuperblock.accumulatedWork,
+        proposedSuperblock.timestamp,
+        proposedSuperblock.retargetPeriod,
+        proposedSuperblock.lastHash,
+        proposedSuperblock.lastBits,
+        proposedSuperblock.parentId,
+        proposedSuperblock.blockHeight,
         { from: submitter },
       );
       const superblockClaimCreatedEvent = utils.findEvent(result.logs, 'SuperblockClaimCreated');
@@ -467,14 +466,14 @@ contract('SyscoinClaimManager', (accounts) => {
       // Tried to repropose valid superblock
       await claimManager.makeDeposit({ value: utils.DEPOSITS.MIN_PROPOSAL_DEPOSIT, from: submitter });
       await truffleAssert.reverts(claimManager.proposeSuperblock(
-        proposeSuperblock.merkleRoot,
-        proposeSuperblock.accumulatedWork,
-        proposeSuperblock.timestamp,
-        proposeSuperblock.retargetPeriod,
-        proposeSuperblock.lastHash,
-        proposeSuperblock.lastBits,
-        proposeSuperblock.parentId,
-        proposeSuperblock.blockHeight,
+        proposedSuperblock.merkleRoot,
+        proposedSuperblock.accumulatedWork,
+        proposedSuperblock.timestamp,
+        proposedSuperblock.retargetPeriod,
+        proposedSuperblock.lastHash,
+        proposedSuperblock.lastBits,
+        proposedSuperblock.parentId,
+        proposedSuperblock.blockHeight,
         { from: submitter },
       ));
     
@@ -482,14 +481,14 @@ contract('SyscoinClaimManager', (accounts) => {
       // Tried to repropose valid superblock
       await claimManager.makeDeposit({ value: utils.DEPOSITS.MIN_PROPOSAL_DEPOSIT, from: challenger });
       await truffleAssert.reverts(claimManager.proposeSuperblock(
-        proposeSuperblock.merkleRoot,
-        proposeSuperblock.accumulatedWork,
-        proposeSuperblock.timestamp,
-        proposeSuperblock.retargetPeriod,
-        proposeSuperblock.lastHash,
-        proposeSuperblock.lastBits,
-        proposeSuperblock.parentId,
-        proposeSuperblock.blockHeight,
+        proposedSuperblock.merkleRoot,
+        proposedSuperblock.accumulatedWork,
+        proposedSuperblock.timestamp,
+        proposedSuperblock.retargetPeriod,
+        proposedSuperblock.lastHash,
+        proposedSuperblock.lastBits,
+        proposedSuperblock.parentId,
+        proposedSuperblock.blockHeight,
         { from: challenger },
       ));
 
