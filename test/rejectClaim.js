@@ -326,10 +326,11 @@ contract('rejectClaim', (accounts) => {
             assert.ok(utils.findEvent(result.logs, 'QueryBlockHeaderProof'), 'Query block header');
 
             await claimManager.makeDeposit({ value: utils.DEPOSITS.RESPOND_HEADER_PROOF_COST, from: submitter });
-            result = await battleManager.respondBlockHeaderProof(session1, superblockR0.blockSiblingsMap, 0, 2, `0x${superblockR0Headers[1]}`, { from: submitter });
 
-            assert.ok(utils.findEvent(result.logs, 'RespondBlockHeaderProof'), 'Respond block header');
+            result = await battleManager.respondLastBlockHeader(session1, `0x${superblockR0Headers[1]}`, { from: submitter });
             assert.ok(utils.findEvent(result.logs, 'RespondLastBlockHeader'), 'Respond last block header');
+            result = await battleManager.respondBlockHeaderProof(session1, superblockR0.blockSiblingsMap, 0, 2, { from: submitter });
+            assert.ok(utils.findEvent(result.logs, 'RespondBlockHeaderProof'), 'Respond block header');
         });
 
         it('Verify forked superblock', async () => {

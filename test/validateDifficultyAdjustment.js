@@ -89,9 +89,11 @@ contract('validateDifficultyAdjustment', (accounts) => {
       assert.ok(utils.findEvent(result.logs, 'QueryBlockHeaderProof'), 'Query block header');
       
       await claimManager.makeDeposit({ value: utils.DEPOSITS.RESPOND_HEADER_PROOF_COST, from: challenger });
-      result = await battleManager.respondBlockHeaderProof(battleSessionId, proposedSuperblock.blockSiblingsMap, 0, 3, `0x${headers[2]}`, { from: submitter });
-      assert.ok(utils.findEvent(result.logs, 'RespondBlockHeaderProof'), 'Respond block header');
+
+      result = await battleManager.respondLastBlockHeader(battleSessionId, `0x${headers[2]}`, { from: submitter });
       assert.ok(utils.findEvent(result.logs, 'RespondLastBlockHeader'), 'Respond last block header');
+      result = await battleManager.respondBlockHeaderProof(battleSessionId, proposedSuperblock.blockSiblingsMap, 0, 3, { from: submitter });
+      assert.ok(utils.findEvent(result.logs, 'RespondBlockHeaderProof'), 'Respond block header');
       // Verify diff change and challenger is at fault (its actually valid)
       result = await battleManager.verifySuperblock(battleSessionId, { from: submitter });
       assert.ok(utils.findEvent(result.logs, 'ChallengerConvicted'), 'Challenger failed');
@@ -140,10 +142,12 @@ contract('validateDifficultyAdjustment', (accounts) => {
       assert.ok(utils.findEvent(result.logs, 'QueryBlockHeaderProof'), 'Query block header');
 
       await claimManager.makeDeposit({ value: utils.DEPOSITS.RESPOND_HEADER_PROOF_COST, from: submitter });
-      result = await battleManager.respondBlockHeaderProof(battleSessionId, proposedSuperblock.blockSiblingsMap, 0, 3, `0x${headers[2]}`, { from: submitter });
 
-      assert.ok(utils.findEvent(result.logs, 'RespondBlockHeaderProof'), 'Respond block header');
+
+      result = await battleManager.respondLastBlockHeader(battleSessionId, `0x${headers[2]}`, { from: submitter });
       assert.ok(utils.findEvent(result.logs, 'RespondLastBlockHeader'), 'Respond last block header');
+      result = await battleManager.respondBlockHeaderProof(battleSessionId, proposedSuperblock.blockSiblingsMap, 0, 3, { from: submitter });
+      assert.ok(utils.findEvent(result.logs, 'RespondBlockHeaderProof'), 'Respond block header');
 
       // Verify superblock
       result = await battleManager.verifySuperblock(battleSessionId, { from: challenger });
@@ -200,10 +204,12 @@ contract('validateDifficultyAdjustment', (accounts) => {
       assert.ok(utils.findEvent(result.logs, 'QueryBlockHeaderProof'), 'Query block header');
 
       await claimManager.makeDeposit({ value: utils.DEPOSITS.RESPOND_HEADER_PROOF_COST, from: submitter });
-      result = await battleManager.respondBlockHeaderProof(battleSessionId, proposedSuperblock.blockSiblingsMap, 0, 3, `0x${headers[2]}`, { from: submitter });
 
-      assert.ok(utils.findEvent(result.logs, 'RespondBlockHeaderProof'), 'Respond block header');
+      result = await battleManager.respondLastBlockHeader(battleSessionId, `0x${headers[2]}`, { from: submitter });
       assert.ok(utils.findEvent(result.logs, 'RespondLastBlockHeader'), 'Respond last block header');
+      result = await battleManager.respondBlockHeaderProof(battleSessionId, proposedSuperblock.blockSiblingsMap, 0, 3, { from: submitter });
+      assert.ok(utils.findEvent(result.logs, 'RespondBlockHeaderProof'), 'Respond block header');
+
 
       // Verify superblock
   

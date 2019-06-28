@@ -93,10 +93,12 @@ contract('validateSuperblocks', (accounts) => {
       assert.ok(utils.findEvent(result.logs, 'QueryBlockHeaderProof'), 'Query block header');
 
       await claimManager.makeDeposit({ value: utils.DEPOSITS.RESPOND_HEADER_PROOF_COST, from: submitter });
-      result = await battleManager.respondBlockHeaderProof(battleSessionId, proposedSuperblock.blockSiblingsMap, 0, 1, `0x${headers[0]}`, { from: submitter });
 
-      assert.ok(utils.findEvent(result.logs, 'RespondBlockHeaderProof'), 'Respond block header');
+      result = await battleManager.respondLastBlockHeader(battleSessionId, `0x${headers[0]}`, { from: submitter });
       assert.ok(utils.findEvent(result.logs, 'RespondLastBlockHeader'), 'Respond last block header');
+      result = await battleManager.respondBlockHeaderProof(battleSessionId, proposedSuperblock.blockSiblingsMap, 0, 1, { from: submitter });
+      assert.ok(utils.findEvent(result.logs, 'RespondBlockHeaderProof'), 'Respond block header');
+
 
       // Verify superblock
       result = await battleManager.verifySuperblock(battleSessionId, { from: submitter });
@@ -149,10 +151,10 @@ contract('validateSuperblocks', (accounts) => {
       assert.ok(utils.findEvent(result.logs, 'QueryBlockHeaderProof'), 'Query block header');
 
       await claimManager.makeDeposit({ value: utils.DEPOSITS.RESPOND_HEADER_PROOF_COST, from: submitter });
-      result = await battleManager.respondBlockHeaderProof(battleSessionId, proposedSuperblock.blockSiblingsMap, 0, 1, `0x${headers[0]}`, { from: submitter });
-
-      assert.ok(utils.findEvent(result.logs, 'RespondBlockHeaderProof'), 'Respond block header');
+      result = await battleManager.respondLastBlockHeader(battleSessionId, `0x${headers[0]}`, { from: submitter });
       assert.ok(utils.findEvent(result.logs, 'RespondLastBlockHeader'), 'Respond last block header');
+      result = await battleManager.respondBlockHeaderProof(battleSessionId, proposedSuperblock.blockSiblingsMap, 0, 1, { from: submitter });
+      assert.ok(utils.findEvent(result.logs, 'RespondBlockHeaderProof'), 'Respond block header');
 
       // Verify superblock
       result = await battleManager.verifySuperblock(battleSessionId, { from: challenger });
