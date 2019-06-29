@@ -14,7 +14,7 @@ const SYSCOIN_MAINNET = 0;
 const SYSCOIN_REGTEST = 2;
 
 const SUPERBLOCK_OPTIONS_PRODUCTION = {
-  DURATION: 3600,   // 60 minutes
+  DURATION: 60,   // 60 blocks per superblock
   DELAY: 3 * 3600,  // 3 hours
   TIMEOUT: 600,     // 10 minutes
   CONFIRMATIONS: 3, // Superblocks required to confirm semi approved superblock
@@ -23,7 +23,7 @@ const SUPERBLOCK_OPTIONS_PRODUCTION = {
 };
 
 const SUPERBLOCK_OPTIONS_INTEGRATION_FAST_SYNC = {
-  DURATION: 600,    // 10 minutes
+  DURATION: 10,    // 10 blocks per superblock
   DELAY: 300,       // 5 minutes
   TIMEOUT: 300,      // 5 minutes
   CONFIRMATIONS: 3, // Superblocks required to confirm semi approved superblock
@@ -32,7 +32,7 @@ const SUPERBLOCK_OPTIONS_INTEGRATION_FAST_SYNC = {
 };
 
 const SUPERBLOCK_OPTIONS_LOCAL = {
-  DURATION: 60,     // 1 minute
+  DURATION: 60,     // 10 blocks per superblock
   DELAY: 60,        // 1 minute
   TIMEOUT: 30,      // 30 seconds
   CONFIRMATIONS: 1, // Superblocks required to confirm semi approved superblock

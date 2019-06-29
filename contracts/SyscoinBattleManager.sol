@@ -54,7 +54,7 @@ contract SyscoinBattleManager is SyscoinErrorCodes {
 
 
 
-    uint public superblockDuration;         // Superblock duration (in seconds)
+    uint public superblockDuration;         // Superblock duration (in blocks)
     uint public superblockTimeout;          // Timeout action (in seconds)
 
 
@@ -96,7 +96,7 @@ contract SyscoinBattleManager is SyscoinErrorCodes {
     // @dev – Configures the contract managing superblocks battles
     // @param _network Network type to use for block difficulty validation
     // @param _superblocks Contract that manages superblocks
-    // @param _superblockDuration Superblock duration (in seconds)
+    // @param _superblockDuration Superblock duration (in blocks)
     // @param _superblockTimeout Time to wait for challenges (in seconds)
     constructor(
         SyscoinMessageLibrary.Network _network,
@@ -180,7 +180,7 @@ contract SyscoinBattleManager is SyscoinErrorCodes {
             if (lastHash != blockHashes[blockHashes.length - 1]){
                 return ERR_SUPERBLOCK_BAD_LASTBLOCK;
             }
-            if(proposedHeight > 40000 && blockHashes.length != 60){
+            if(proposedHeight > 40000 && blockHashes.length != superblockDuration){
                 return ERR_SUPERBLOCK_BAD_BLOCKHEIGHT;
             }
             if (merkleRoot != SyscoinMessageLibrary.makeMerkle(blockHashes)) {
@@ -372,7 +372,7 @@ contract SyscoinBattleManager is SyscoinErrorCodes {
         }    
         (, prevWork, ,, , ,,prevHeight) = getSuperblockInfo(prevBlock);
         heightDiff = proposedHeight - prevHeight;
-        if (proposedHeight > 40000 && heightDiff != 60) {
+        if (proposedHeight > 40000 && heightDiff != superblockDuration) {
             return ERR_SUPERBLOCK_BAD_BLOCKHEIGHT;
         } 
         if (proposedHeight <= prevHeight) {
