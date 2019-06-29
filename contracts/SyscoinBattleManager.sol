@@ -285,8 +285,10 @@ contract SyscoinBattleManager is SyscoinErrorCodes {
                 return (ERR_SUPERBLOCK_BAD_LASTBLOCK);
             }
             BlockInfo storage blockInfo = session.blocksInfo[session.superblockHash];
-            if(blockInfo.status == BlockInfoStatus.Verified)
-               return ERR_SUPERBLOCK_OK;
+            if (blockInfo.status != BlockInfoStatus.Requested) {
+                return (ERR_SUPERBLOCK_BAD_SYSCOIN_STATUS);
+            }
+
 			// pass in blockSha256Hash here instead of proposedScryptHash because we
             // don't need a proposed hash (we already calculated it here, syscoin uses 
             // sha256 just like bitcoin)
