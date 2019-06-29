@@ -16,12 +16,10 @@ contract SyscoinSuperblocks is SyscoinErrorCodes {
         bytes32 blocksMerkleRoot;
         uint accumulatedWork;
         uint timestamp;
-        uint retargetPeriod;
         bytes32 lastHash;
         bytes32 parentId;
         address submitter;
         bytes32 ancestors;
-        uint32 lastBits;
         uint32 index;
         uint32 height;
         uint32 blockHeight;
@@ -86,9 +84,7 @@ contract SyscoinSuperblocks is SyscoinErrorCodes {
     // @param _blocksMerkleRoot Root of the merkle tree of blocks contained in a superblock
     // @param _accumulatedWork Accumulated proof of work of the last block in the superblock
     // @param _timestamp Timestamp of the last block in the superblock
-    // @param _retargetPeriod Retarget period of the difficulty adjustment (how long it took for difficulty to adjust the last 360 blocks)
     // @param _lastHash Hash of the last block in the superblock
-    // @param _lastBits Previous difficulty bits used to verify accumulatedWork through difficulty calculation
     // @param _parentId Id of the parent superblock
     // @param _blockHeight Block height of last block in superblock   
     // @return Error code and superblockHash
@@ -96,16 +92,14 @@ contract SyscoinSuperblocks is SyscoinErrorCodes {
         bytes32 _blocksMerkleRoot,
         uint _accumulatedWork,
         uint _timestamp,
-        uint _retargetPeriod,
         bytes32 _lastHash,
-        uint32 _lastBits,
         bytes32 _parentId,
         uint32 _blockHeight
     ) public returns (uint, bytes32) {
         require(bestSuperblock == 0);
         require(_parentId == 0);
 
-        bytes32 superblockHash = calcSuperblockHash(_blocksMerkleRoot, _accumulatedWork, _timestamp, _retargetPeriod, _lastHash, _lastBits, _parentId, _blockHeight);
+        bytes32 superblockHash = calcSuperblockHash(_blocksMerkleRoot, _accumulatedWork, _timestamp, _lastHash, _parentId, _blockHeight);
         SuperblockInfo storage superblock = superblocks[superblockHash];
 
         require(superblock.status == Status.Unitialized);
@@ -115,13 +109,11 @@ contract SyscoinSuperblocks is SyscoinErrorCodes {
         superblock.blocksMerkleRoot = _blocksMerkleRoot;
         superblock.accumulatedWork = _accumulatedWork;
         superblock.timestamp = _timestamp;
-        superblock.retargetPeriod = _retargetPeriod;
         superblock.lastHash = _lastHash;
         superblock.parentId = _parentId;
         superblock.submitter = msg.sender;
         superblock.index = indexNextSuperblock;
         superblock.height = 1;
-        superblock.lastBits = _lastBits;
         superblock.status = Status.Approved;
         superblock.ancestors = 0x0;
         superblock.blockHeight = _blockHeight;
@@ -145,9 +137,7 @@ contract SyscoinSuperblocks is SyscoinErrorCodes {
     // @param _blocksMerkleRoot Root of the merkle tree of blocks contained in a superblock
     // @param _accumulatedWork Accumulated proof of work of the last block in the superblock
     // @param _timestamp Timestamp of the last block in the superblock
-    // @param _retargetPeriod Retarget period of the difficulty adjustment (how long it took for difficulty to adjust the last 360 blocks)
     // @param _lastHash Hash of the last block in the superblock
-    // @param _lastBits Difficulty bits of the last block in the superblock
     // @param _parentId Id of the parent superblock
     // @param _blockHeight Block height of last block in superblock
     // @return Error code and superblockHash
@@ -155,9 +145,7 @@ contract SyscoinSuperblocks is SyscoinErrorCodes {
         bytes32 _blocksMerkleRoot,
         uint _accumulatedWork,
         uint _timestamp,
-        uint _retargetPeriod,
         bytes32 _lastHash,
-        uint32 _lastBits,
         bytes32 _parentId,
         uint32 _blockHeight,
         address submitter
@@ -173,19 +161,17 @@ contract SyscoinSuperblocks is SyscoinErrorCodes {
             return (ERR_SUPERBLOCK_BAD_PARENT, 0);
         }
 
-        bytes32 superblockHash = calcSuperblockHash(_blocksMerkleRoot, _accumulatedWork, _timestamp, _retargetPeriod, _lastHash, _lastBits, _parentId, _blockHeight);
+        bytes32 superblockHash = calcSuperblockHash(_blocksMerkleRoot, _accumulatedWork, _timestamp, _lastHash, _parentId, _blockHeight);
         SuperblockInfo storage superblock = superblocks[superblockHash];
         if (superblock.status == Status.Unitialized) {
             indexSuperblock[indexNextSuperblock] = superblockHash;
             superblock.blocksMerkleRoot = _blocksMerkleRoot;
             superblock.accumulatedWork = _accumulatedWork;
             superblock.timestamp = _timestamp;
-            superblock.retargetPeriod = _retargetPeriod;
             superblock.lastHash = _lastHash;
             superblock.parentId = _parentId;
             superblock.index = indexNextSuperblock;
             superblock.height = parent.height + 1;
-            superblock.lastBits = _lastBits;
             superblock.blockHeight = _blockHeight;
             superblock.ancestors = updateAncestors(parent.ancestors, parent.index, parent.height);
             indexNextSuperblock++; 
@@ -455,9 +441,7 @@ contract SyscoinSuperblocks is SyscoinErrorCodes {
     // @param _blocksMerkleRoot Root of the merkle tree of blocks contained in a superblock
     // @param _accumulatedWork Accumulated proof of work of the last block in the superblock
     // @param _timestamp Timestamp of the last block in the superblock
-    // @param _retargetPeriod Retarget period of the difficulty adjustment (how long it took for difficulty to adjust the last 360 blocks)
     // @param _lastHash Hash of the last block in the superblock
-    // @param _lastBits Difficulty bits of the last block in the superblock
     // @param _parentId Id of the parent superblock
     // @param _blockHeight Block height of last block in superblock   
     // @return Superblock id
@@ -465,9 +449,7 @@ contract SyscoinSuperblocks is SyscoinErrorCodes {
         bytes32 _blocksMerkleRoot,
         uint _accumulatedWork,
         uint _timestamp,
-        uint _retargetPeriod,
         bytes32 _lastHash,
-        uint32 _lastBits,
         bytes32 _parentId,
         uint32 _blockHeight
     ) public pure returns (bytes32) {
@@ -475,9 +457,7 @@ contract SyscoinSuperblocks is SyscoinErrorCodes {
             _blocksMerkleRoot,
             _accumulatedWork,
             _timestamp,
-            _retargetPeriod,
             _lastHash,
-            _lastBits,
             _parentId,
             _blockHeight
         ));
@@ -496,9 +476,7 @@ contract SyscoinSuperblocks is SyscoinErrorCodes {
     //   bytes32 _blocksMerkleRoot,
     //   uint _accumulatedWork,
     //   uint _timestamp,
-    //   uint _retargetPeriod,
     //   bytes32 _lastHash,
-    //   uint32 _lastBits,
     //   bytes32 _parentId,
     //   address _submitter,
     //   Status _status,
@@ -508,9 +486,7 @@ contract SyscoinSuperblocks is SyscoinErrorCodes {
         bytes32 _blocksMerkleRoot,
         uint _accumulatedWork,
         uint _timestamp,
-        uint _retargetPeriod,
         bytes32 _lastHash,
-        uint32 _lastBits,
         bytes32 _parentId,
         address _submitter,
         Status _status,
@@ -521,9 +497,7 @@ contract SyscoinSuperblocks is SyscoinErrorCodes {
             superblock.blocksMerkleRoot,
             superblock.accumulatedWork,
             superblock.timestamp,
-            superblock.retargetPeriod,
             superblock.lastHash,
-            superblock.lastBits,
             superblock.parentId,
             superblock.submitter,
             superblock.status,
@@ -554,11 +528,6 @@ contract SyscoinSuperblocks is SyscoinErrorCodes {
     // @dev - Return superblock timestamp
     function getSuperblockTimestamp(bytes32 _superblockHash) public view returns (uint) {
         return superblocks[_superblockHash].timestamp;
-    }
-
-    // @dev - Return superblock retargetPeriod
-    function getSuperblockRetargetPeriod(bytes32 _superblockHash) public view returns (uint) {
-        return superblocks[_superblockHash].retargetPeriod;
     }
 
     // @dev - Return superblock last block hash

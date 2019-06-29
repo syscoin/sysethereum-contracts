@@ -92,9 +92,7 @@ contract('rejectClaim', (accounts) => {
                 superblock1.merkleRoot,
                 superblock1.accumulatedWork,
                 superblock1.timestamp,
-                superblock1.retargetPeriod,
                 superblock1.lastHash,
-                superblock1.lastBits,
                 superblock1.parentId,
                 superblock1.blockHeight,
                 { from: submitter },
@@ -110,9 +108,7 @@ contract('rejectClaim', (accounts) => {
                 superblock1.merkleRoot,
                 superblock1.accumulatedWork,
                 superblock1.timestamp,
-                superblock1.retargetPeriod,
                 superblock1.lastHash,
-                superblock1.lastBits,
                 superblock1.parentId,
                 superblock1.blockHeight,
                 { from: submitter },
@@ -124,9 +120,7 @@ contract('rejectClaim', (accounts) => {
                 superblock1.merkleRoot,
                 superblock1.accumulatedWork,
                 superblock1.timestamp,
-                superblock1.retargetPeriod,
                 superblock1.lastHash,
-                superblock1.lastBits,
                 superblock1.parentId,
                 superblock1.blockHeight,
                 { from: challenger },
@@ -147,9 +141,7 @@ contract('rejectClaim', (accounts) => {
                 superblock1.merkleRoot,
                 superblock1.accumulatedWork,
                 superblock1.timestamp,
-                superblock1.retargetPeriod,
                 superblock1.lastHash,
-                superblock1.lastBits,
                 superblock1.parentId,
                 superblock1.blockHeight,
                 { from: submitter },
@@ -161,9 +153,7 @@ contract('rejectClaim', (accounts) => {
                 superblock1.merkleRoot,
                 superblock1.accumulatedWork,
                 superblock1.timestamp,
-                superblock1.retargetPeriod,
                 superblock1.lastHash,
-                superblock1.lastBits,
                 superblock1.parentId,
                 superblock1.blockHeight,
                 { from: challenger },
@@ -181,9 +171,7 @@ contract('rejectClaim', (accounts) => {
                 superblockR0.merkleRoot,
                 superblockR0.accumulatedWork,
                 superblockR0.timestamp,
-                superblockR0.retargetPeriod,
                 superblockR0.lastHash,
-                superblockR0.lastBits,
                 superblockR0.parentId,
                 superblockR0.blockHeight,
                 { from: submitter },
@@ -205,9 +193,7 @@ contract('rejectClaim', (accounts) => {
                 superblock2.merkleRoot,
                 superblock2.accumulatedWork,
                 superblock2.timestamp,
-                superblock2.retargetPeriod,
                 superblock2.lastHash,
-                superblock2.lastBits,
                 superblock2.parentId,
                 superblock2.blockHeight,
                 { from: submitter },
@@ -235,9 +221,7 @@ contract('rejectClaim', (accounts) => {
                 superblock3.merkleRoot,
                 superblock3.accumulatedWork,
                 superblock3.timestamp,
-                superblock3.retargetPeriod,
                 superblock3.lastHash,
-                superblock3.lastBits,
                 superblock3.parentId,
                 superblock3.blockHeight,
                 { from: submitter },
@@ -260,9 +244,7 @@ contract('rejectClaim', (accounts) => {
                 superblock4.merkleRoot,
                 superblock4.accumulatedWork,
                 superblock4.timestamp,
-                superblock4.retargetPeriod,
                 superblock4.lastHash,
-                superblock4.lastBits,
                 superblock4.parentId,
                 superblock4.blockHeight,
                 { from: submitter },
@@ -321,16 +303,14 @@ contract('rejectClaim', (accounts) => {
         });
 
         it('Query and reply block header', async () => {
-            await claimManager.makeDeposit({ value: utils.DEPOSITS.RESPOND_HEADER_PROOF_COST, from: challenger });
-            result = await battleManager.queryBlockHeaderProof(session1, { from: challenger });
-            assert.ok(utils.findEvent(result.logs, 'QueryBlockHeaderProof'), 'Query block header');
+            await claimManager.makeDeposit({ value: utils.DEPOSITS.RESPOND_LAST_HEADER_COST, from: challenger });
+            result = await battleManager.queryLastBlockHeader(session1, { from: challenger });
+            assert.ok(utils.findEvent(result.logs, 'QueryLastBlockHeader'), 'Query block header');
 
-            await claimManager.makeDeposit({ value: utils.DEPOSITS.RESPOND_HEADER_PROOF_COST, from: submitter });
+            await claimManager.makeDeposit({ value: utils.DEPOSITS.RESPOND_LAST_HEADER_COST, from: submitter });
 
             result = await battleManager.respondLastBlockHeader(session1, `0x${superblockR0Headers[1]}`, { from: submitter });
             assert.ok(utils.findEvent(result.logs, 'RespondLastBlockHeader'), 'Respond last block header');
-            result = await battleManager.respondBlockHeaderProof(session1, superblockR0.blockSiblingsMap, { from: submitter });
-            assert.ok(utils.findEvent(result.logs, 'RespondBlockHeaderProof'), 'Respond block header');
         });
 
         it('Verify forked superblock', async () => {
@@ -358,9 +338,7 @@ contract('rejectClaim', (accounts) => {
                 superblockR1.merkleRoot,
                 superblockR1.accumulatedWork,
                 superblockR1.timestamp,
-                superblockR1.retargetPeriod,
                 superblockR1.lastHash,
-                superblockR1.lastBits,
                 superblockR1.parentId,
                 superblockR1.blockHeight,
                 { from: submitter },

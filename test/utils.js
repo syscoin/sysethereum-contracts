@@ -31,7 +31,7 @@ const DEPOSITS = {
     MIN_PROPOSAL_DEPOSIT: 34000+1000000000000000000,
     MIN_CHALLENGE_DEPOSIT: 440000+1000000000000000000,
     RESPOND_MERKLE_COST: 378000, // TODO: measure this with 60 hashes
-    RESPOND_HEADER_PROOF_COST: 40000,
+    RESPOND_LAST_HEADER_COST: 40000,
     VERIFY_SUPERBLOCK_COST: 220000
 };
 
@@ -203,15 +203,13 @@ function makeMerkleProofMap (blockHashes) {
   }
   
 // Calculate a superblock id
-function calcSuperblockHash(merkleRoot, accumulatedWork, timestamp, retargetPeriod, lastHash, lastBits, parentId, blockHeight) {
+function calcSuperblockHash(merkleRoot, accumulatedWork, timestamp, lastHash, parentId, blockHeight) {
   return `0x${Buffer.from(keccak256.arrayBuffer(
     Buffer.concat([
       module.exports.fromHex(merkleRoot),
       module.exports.fromHex(toUint256(accumulatedWork)),
       module.exports.fromHex(toUint256(timestamp)),
-      module.exports.fromHex(toUint256(retargetPeriod)),
       module.exports.fromHex(lastHash),
-      module.exports.fromHex(toUint32(lastBits)),
       module.exports.fromHex(parentId),
       module.exports.fromHex(toUint32(blockHeight))
     ])
@@ -219,7 +217,7 @@ function calcSuperblockHash(merkleRoot, accumulatedWork, timestamp, retargetPeri
 }
 
 // Construct a superblock from an array of block headers
-function makeSuperblock(headers, parentId, parentAccumulatedWork, _blockHeight, _retargetPeriod=1) {
+function makeSuperblock(headers, parentId, parentAccumulatedWork, _blockHeight) {
   if (headers.length < 1) {
     throw new Error('Requires at least one header to build a superblock');
   }
@@ -228,8 +226,6 @@ function makeSuperblock(headers, parentId, parentAccumulatedWork, _blockHeight, 
   const accumulatedWork = headers.reduce((work, header) => work.add(getBlockDifficulty(header)), web3.utils.toBN(parentAccumulatedWork));
   const merkleRoot = makeMerkle(blockHashes);
   const timestamp = getBlockTimestamp(headers[headers.length - 1]);
-  const retargetPeriod = _retargetPeriod;
-  const lastBits = getBlockDifficultyBits(headers[headers.length - 1]);
   const lastHash = calcBlockSha256Hash(headers[headers.length - 1]);
   let blockSiblingsMap = makeMerkleProofMap(strippedHashes);
   if(blockSiblingsMap.length == 0){
@@ -239,17 +235,13 @@ function makeSuperblock(headers, parentId, parentAccumulatedWork, _blockHeight, 
     merkleRoot,
     accumulatedWork,
     timestamp,
-    retargetPeriod,
     lastHash,
-    lastBits,
     parentId,
     superblockHash: calcSuperblockHash(
       merkleRoot,
       accumulatedWork,
       timestamp,
-      retargetPeriod,
       lastHash,
-      lastBits,
       parentId,
       _blockHeight
     ),
@@ -314,9 +306,7 @@ async function initSuperblockChain(options) {
     options.genesisSuperblock.merkleRoot,
     options.genesisSuperblock.accumulatedWork,
     options.genesisSuperblock.timestamp,
-    options.genesisSuperblock.retargetPeriod,
     options.genesisSuperblock.lastHash,
-    options.genesisSuperblock.lastBits,
     options.genesisSuperblock.parentId,
     options.genesisSuperblock.blockHeight,
     { from: options.from },
@@ -419,9 +409,7 @@ module.exports = {
       genesisSuperblock.merkleRoot,
       genesisSuperblock.accumulatedWork,
       genesisSuperblock.timestamp,
-      genesisSuperblock.retargetPeriod,
       genesisSuperblock.lastHash,
-      genesisSuperblock.lastBits,
       genesisSuperblock.parentId,
       genesisSuperblock.blockHeight,
       { from: sender },
@@ -442,9 +430,7 @@ module.exports = {
       proposedSuperblock.merkleRoot,
       proposedSuperblock.accumulatedWork,
       proposedSuperblock.timestamp,
-      proposedSuperblock.retargetPeriod,
       proposedSuperblock.lastHash,
-      proposedSuperblock.lastBits,
       proposedSuperblock.parentId,
       proposedSuperblock.blockHeight,
       { from: sender },

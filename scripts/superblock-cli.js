@@ -240,9 +240,7 @@ async function displaySuperblocksStatus({ superblockHash, fromBlock, toBlock }) 
         blocksMerkleRoot,
         accumulatedWork,
         timestamp,
-        retargetPeriod,
         lastHash,
-        lastBits,
         parentId,
         submitter,
         status,
@@ -258,7 +256,6 @@ async function displaySuperblocksStatus({ superblockHash, fromBlock, toBlock }) 
       console.log(`Last block Timestamp: ${new Date(timestamp * 1000)}`);
       console.log(`Status: ${statusToText(status)}`);
       console.log(`Block Height: ${blockHeight}`);
-      console.log(`Last Difficulty Adjustment Retarget period: ${new Date(retargetPeriod * 1000)}`);
       console.log(`Superblock submitted: ${new Date(claim.createdAt * 1000)}`);
       console.log(`Challengers: ${challengers.length}`);
       console.log(`Challengers Timeout: ${new Date(claim.challengeTimeout * 1000)}`);

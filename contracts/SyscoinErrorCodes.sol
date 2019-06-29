@@ -49,6 +49,6 @@ contract SyscoinErrorCodes {
     uint constant public minProposalDeposit = challengeCost + minReward;
     uint constant public minChallengeDeposit = superblockCost + minReward;
     uint constant public respondMerkleRootHashesCost = 378000; // TODO: measure this with 60 hashes
-    uint constant public respondBlockHeaderProofCost = 40000;
+    uint constant public respondLastBlockHeaderCost = 40000;
     uint constant public verifySuperblockCost = 220000;
 }
