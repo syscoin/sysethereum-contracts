@@ -1,4 +1,4 @@
-pragma solidity ^0.4.19;
+pragma solidity >=0.5.0 <0.6.0;
 
 import "./SyscoinParser/SyscoinMessageLibrary.sol";
 import "./SyscoinErrorCodes.sol";
@@ -75,7 +75,7 @@ contract SyscoinSuperblocks is SyscoinErrorCodes {
     // Once trustedClaimManager has been set, it cannot be changed.
     // @param _claimManager - address of the ClaimManager contract to be associated with
     function setClaimManager(address _claimManager) public {
-        require(address(trustedClaimManager) == 0x0 && _claimManager != 0x0);
+        require(address(trustedClaimManager) == address(0) && _claimManager != address(0));
         trustedClaimManager = _claimManager;
     }
 
@@ -169,7 +169,7 @@ contract SyscoinSuperblocks is SyscoinErrorCodes {
 
         SuperblockInfo storage parent = superblocks[_parentId];
         if (parent.status != Status.SemiApproved && parent.status != Status.Approved) {
-            emit ErrorSuperblock(superblockHash, ERR_SUPERBLOCK_BAD_PARENT);
+            emit ErrorSuperblock(bytes32(0), ERR_SUPERBLOCK_BAD_PARENT);
             return (ERR_SUPERBLOCK_BAD_PARENT, 0);
         }
 
@@ -322,12 +322,12 @@ contract SyscoinSuperblocks is SyscoinErrorCodes {
     // @param _superblockHash - superblock containing block header
     // @param _untrustedTargetContract - the contract that is going to process the transaction
     function relayTx(
-        bytes _txBytes,
+        bytes memory _txBytes,
         uint _txIndex,
-        uint[] _txSiblings,
-        bytes _syscoinBlockHeader,
+        uint[] memory _txSiblings,
+        bytes memory _syscoinBlockHeader,
         uint _syscoinBlockIndex,
-        uint[] _syscoinBlockSiblings,
+        uint[] memory _syscoinBlockSiblings,
         bytes32 _superblockHash,
         SyscoinTransactionProcessor _untrustedTargetContract
     ) public returns (uint) {
@@ -354,7 +354,7 @@ contract SyscoinSuperblocks is SyscoinErrorCodes {
         emit RelayTransaction(bytes32(0), ERR_RELAY_VERIFY);
         return(ERR_RELAY_VERIFY);        
     }
-    function parseTxHelper(bytes _txBytes, uint txHash, SyscoinTransactionProcessor _untrustedTargetContract) private returns (uint) {
+    function parseTxHelper(bytes memory _txBytes, uint txHash, SyscoinTransactionProcessor _untrustedTargetContract) private returns (uint) {
         uint value;
         address destinationAddress;
         uint32 _assetGUID;
@@ -390,10 +390,10 @@ contract SyscoinSuperblocks is SyscoinErrorCodes {
     // @return - SHA-256 hash of _txBytes if the transaction is in the block, 0 otherwise
     // TODO: this can probably be made private
     function verifyTx(
-        bytes _txBytes,
+        bytes memory _txBytes,
         uint _txIndex,
-        uint[] _siblings,
-        bytes _txBlockHeaderBytes,
+        uint[] memory _siblings,
+        bytes memory _txBlockHeaderBytes,
         bytes32 _txsuperblockHash
     ) public returns (uint) {
         uint txHash = SyscoinMessageLibrary.dblShaFlip(_txBytes);
@@ -428,8 +428,8 @@ contract SyscoinSuperblocks is SyscoinErrorCodes {
     function helperVerifyHash(
         uint256 _txHash,
         uint _txIndex,
-        uint[] _siblings,
-        bytes _blockHeaderBytes,
+        uint[] memory _siblings,
+        bytes memory _blockHeaderBytes,
         bytes32 _txsuperblockHash
     ) private returns (uint) {
 
@@ -587,7 +587,7 @@ contract SyscoinSuperblocks is SyscoinErrorCodes {
     }
 
     // @dev - Calculate Merkle root from Syscoin block hashes
-    function makeMerkle(bytes32[] hashes) public pure returns (bytes32) {
+    function makeMerkle(bytes32[] memory hashes) public pure returns (bytes32) {
         return SyscoinMessageLibrary.makeMerkle(hashes);
     }
 
@@ -644,13 +644,13 @@ contract SyscoinSuperblocks is SyscoinErrorCodes {
     // (bestSuperblock-1) - ((bestSuperblock-1) % 78125)
     //
     // @return - list of up to 9 ancestor supeerblock id
-    function getSuperblockLocator() public view returns (bytes32[9]) {
+    function getSuperblockLocator() public view returns (bytes32[9] memory) {
         bytes32[9] memory locator;
         locator[0] = bestSuperblock;
         bytes32 ancestors = getSuperblockAncestors(bestSuperblock);
         uint i = NUM_ANCESTOR_DEPTHS;
         while (i > 0) {
-            locator[i] = indexSuperblock[uint32(ancestors & 0xFFFFFFFF)];
+            locator[i] = indexSuperblock[uint32(uint256(ancestors) & uint256(0xFFFFFFFF))];
             ancestors >>= 32;
             --i;
         }
@@ -661,10 +661,10 @@ contract SyscoinSuperblocks is SyscoinErrorCodes {
     function getSuperblockAncestor(bytes32 superblockHash, uint index) internal view returns (bytes32) {
         bytes32 ancestors = superblocks[superblockHash].ancestors;
         uint32 ancestorsIndex =
-            uint32(ancestors[4*index + 0]) * 0x1000000 +
-            uint32(ancestors[4*index + 1]) * 0x10000 +
-            uint32(ancestors[4*index + 2]) * 0x100 +
-            uint32(ancestors[4*index + 3]) * 0x1;
+            uint32(uint8(ancestors[4*index + 0])) * 0x1000000 +
+            uint32(uint8(ancestors[4*index + 1])) * 0x10000 +
+            uint32(uint8(ancestors[4*index + 2])) * 0x100 +
+            uint32(uint8(ancestors[4*index + 3])) * 0x1;
         return indexSuperblock[ancestorsIndex];
     }
 
