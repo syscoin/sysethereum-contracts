@@ -47,6 +47,7 @@ contract SyscoinToken is HumanStandardToken(0, "SyscoinToken", 8, "SYSX"), Sysco
         public returns (uint) {
             
         require(msg.sender == trustedRelayerContract);
+        require (assetGUID > 0);
         require (assetGUID == _assetGUID);
             
             
@@ -80,6 +81,7 @@ contract SyscoinToken is HumanStandardToken(0, "SyscoinToken", 8, "SYSX"), Sysco
     }
     // keyhash or scripthash for syscoinWitnessProgram
     function burn(uint _value, uint32 _assetGUID, bytes) payable public returns (bool success) {
+        require (assetGUID > 0);
         require (assetGUID == _assetGUID);
         require (_value >= MIN_UNLOCK_VALUE);
         require (balances[msg.sender] >= _value);  
