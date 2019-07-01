@@ -176,11 +176,11 @@ contract SyscoinBattleManager is SyscoinErrorCodes {
         }
         require(session.blockHashes.length == 0);
         if (session.challengeState == ChallengeState.QueryMerkleRootHashes) {
-            (bytes32 merkleRoot, , , bytes32 lastHash, , ,,uint32 proposedHeight) = getSuperblockInfo(session.superblockHash);
+            (bytes32 merkleRoot, , , bytes32 lastHash, , ,) = getSuperblockInfo(session.superblockHash);
             if (lastHash != blockHashes[blockHashes.length - 1]){
                 return ERR_SUPERBLOCK_BAD_LASTBLOCK;
             }
-            if(proposedHeight > 40000 && blockHashes.length != superblockDuration){
+            if(net != SyscoinMessageLibrary.Network.REGTEST && blockHashes.length != superblockDuration){
                 return ERR_SUPERBLOCK_BAD_BLOCKHEIGHT;
             }
             if (merkleRoot != SyscoinMessageLibrary.makeMerkle(blockHashes)) {
@@ -217,14 +217,13 @@ contract SyscoinBattleManager is SyscoinErrorCodes {
             return ERR_SUPERBLOCK_MIN_DEPOSIT;
         }
         if (session.challengeState == ChallengeState.RespondMerkleRootHashes) {
-            BlockInfoStatus blocksInfoStatus = session.blocksInfo[session.superblockHash].status;
-            require(blocksInfoStatus == BlockInfoStatus.Uninitialized);
+            require(session.blocksInfo[session.superblockHash].status == BlockInfoStatus.Uninitialized);
             uint err = bondDeposit(session.superblockHash, msg.sender, respondLastBlockHeaderCost);
             if (err != ERR_SUPERBLOCK_OK) {
                 return err;
             }
             session.challengeState = ChallengeState.QueryLastBlockHeader;
-            blocksInfoStatus = BlockInfoStatus.Requested;
+            session.blocksInfo[session.superblockHash].status = BlockInfoStatus.Requested;
             return ERR_SUPERBLOCK_OK;
         }
         return ERR_SUPERBLOCK_BAD_STATUS;
@@ -332,7 +331,7 @@ contract SyscoinBattleManager is SyscoinErrorCodes {
         uint prevTimestamp;
         bytes32 parentId;
         bytes32 lastBlockHash;
-        (, , lastTimestamp, lastBlockHash, parentId,,,) = getSuperblockInfo(session.superblockHash);
+        (, , lastTimestamp, lastBlockHash, parentId,,) = getSuperblockInfo(session.superblockHash);
         bytes32 blockSha256Hash = session.blockHashes[session.blockHashes.length - 1];
         BlockInfo storage blockInfo = session.blocksInfo[session.superblockHash];
         if(session.blockHashes.length > 2){
@@ -351,7 +350,7 @@ contract SyscoinBattleManager is SyscoinErrorCodes {
         if (blockInfo.status != BlockInfoStatus.Verified) {
             return ERR_SUPERBLOCK_BAD_LASTBLOCK_STATUS;
         }
-        (, ,prevTimestamp , ,, , ,) = getSuperblockInfo(parentId);
+        (, ,prevTimestamp , ,, , ) = getSuperblockInfo(parentId);
         
         if (prevTimestamp > lastTimestamp) {
             return ERR_SUPERBLOCK_BAD_TIMESTAMP;
@@ -363,28 +362,22 @@ contract SyscoinBattleManager is SyscoinErrorCodes {
     function validateProofOfWork(BattleSession storage session) internal view returns (uint) {
         uint accWork;
         bytes32 prevBlock;
-        uint32 prevHeight;  
-        uint32 proposedHeight; 
-        uint32 heightDiff; 
-        uint prevWork; 
-        (, accWork, ,,prevBlock,,,proposedHeight) = getSuperblockInfo(session.superblockHash);
-        BlockInfo storage blockInfo = session.blocksInfo[session.superblockHash];
+        uint heightDiff = superblockDuration; 
+        uint prevWork;
+        bytes32 superblockHash = session.superblockHash;
+        (, accWork, ,,prevBlock,,) = getSuperblockInfo(superblockHash);
+        BlockInfo storage blockInfo = session.blocksInfo[superblockHash];
         if(accWork <= 0){
             return ERR_SUPERBLOCK_BAD_ACCUMULATED_WORK;
         }    
-        (, prevWork, ,, , ,,prevHeight) = getSuperblockInfo(prevBlock);
-        heightDiff = proposedHeight - prevHeight;
-        if (proposedHeight > 40000 && heightDiff != superblockDuration) {
-            return ERR_SUPERBLOCK_BAD_BLOCKHEIGHT;
-        } 
-        if (proposedHeight <= prevHeight) {
-            return ERR_SUPERBLOCK_BAD_BLOCKHEIGHT;
-        }        
+        (, prevWork, ,, , ,) = getSuperblockInfo(prevBlock);
+        if(net == SyscoinMessageLibrary.Network.REGTEST)
+            heightDiff = session.blockHashes.length;
+         
         if(accWork <= prevWork){
             return ERR_SUPERBLOCK_INVALID_ACCUMULATED_WORK;
         }
-        
-        uint newWork = prevWork + (SyscoinMessageLibrary.diffFromBits(blockInfo.bits)*uint(heightDiff));
+        uint newWork = prevWork + (SyscoinMessageLibrary.diffFromBits(blockInfo.bits)*heightDiff);
         if (net != SyscoinMessageLibrary.Network.REGTEST && newWork != accWork) {
             return ERR_SUPERBLOCK_BAD_ACCUMULATED_WORK;
         }   
@@ -505,8 +498,7 @@ contract SyscoinBattleManager is SyscoinErrorCodes {
         bytes32 _lastHash,
         bytes32 _parentId,
         address _submitter,
-        SyscoinSuperblocks.Status _status,
-        uint32 _height
+        SyscoinSuperblocks.Status _status
     ) {
         return trustedSuperblocks.getSuperblock(superblockHash);
     }

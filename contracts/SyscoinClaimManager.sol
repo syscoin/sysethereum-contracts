@@ -168,8 +168,7 @@ contract SyscoinClaimManager is SyscoinDepositsManager, SyscoinErrorCodes {
         uint _accumulatedWork,
         uint _timestamp,
         bytes32 _lastHash,
-        bytes32 _parentHash,
-        uint32 _blockHeight
+        bytes32 _parentHash
     ) public returns (uint, bytes32) {
         require(address(trustedSuperblocks) != 0);
 
@@ -186,7 +185,7 @@ contract SyscoinClaimManager is SyscoinDepositsManager, SyscoinErrorCodes {
         uint err;
         bytes32 superblockHash;
         (err, superblockHash) = trustedSuperblocks.propose(_blocksMerkleRoot, _accumulatedWork,
-            _timestamp, _lastHash, _parentHash, _blockHeight,msg.sender);
+            _timestamp, _lastHash, _parentHash,msg.sender);
         if (err != 0) {
             emit ErrorClaim(superblockHash, err);
             return (err, superblockHash);
@@ -216,7 +215,6 @@ contract SyscoinClaimManager is SyscoinDepositsManager, SyscoinErrorCodes {
                 revert();
             }
         }
-
 
         claim.superblockHash = superblockHash;
         claim.submitter = msg.sender;
@@ -656,8 +654,7 @@ contract SyscoinClaimManager is SyscoinDepositsManager, SyscoinErrorCodes {
         bytes32 _lastHash,
         bytes32 _parentId,
         address _submitter,
-        SyscoinSuperblocks.Status _status,
-        uint32 _height
+        SyscoinSuperblocks.Status _status
     ) {
         return trustedSuperblocks.getSuperblock(superblockHash);
     }

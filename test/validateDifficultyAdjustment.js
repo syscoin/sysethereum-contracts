@@ -23,12 +23,11 @@ contract('validateDifficultyAdjustment', (accounts) => {
     ];
     const initAccumulatedWork = web3.utils.toBN("0x0000000000000000000000000000000000000000000786f7e33013f43c0af7d0");
     const initParentHash = '0x0000000000000000000000000000000000000000000000000000000000000000';
-    const genesisSuperblock = utils.makeSuperblock(genesisHeaders, initParentHash, initAccumulatedWork, 35999);
+    const genesisSuperblock = utils.makeSuperblock(genesisHeaders, initParentHash, initAccumulatedWork);
     const hashes = headers.map(header => utils.calcBlockSha256Hash(header));
     proposedSuperblock = utils.makeSuperblock(headers,
       genesisSuperblock.superblockHash,
-      genesisSuperblock.accumulatedWork,
-      36001
+      genesisSuperblock.accumulatedWork
     );
 
     beforeEach(async () => {
@@ -37,7 +36,7 @@ contract('validateDifficultyAdjustment', (accounts) => {
         claimManager,
         battleManager,
       } = await utils.initSuperblockChain({
-        network: utils.SYSCOIN_MAINNET,
+        network: utils.SYSCOIN_REGTEST,
         genesisSuperblock,
         params: utils.OPTIONS_SYSCOIN_REGTEST,
         from: owner,
@@ -55,7 +54,6 @@ contract('validateDifficultyAdjustment', (accounts) => {
         proposedSuperblock.timestamp,
         proposedSuperblock.lastHash,
         proposedSuperblock.parentId,
-        proposedSuperblock.blockHeight,
         { from: submitter },
       );
 

@@ -34,10 +34,10 @@ contract('approveDescendant', (accounts) => {
     const superblock1Hashes = superblock1Headers.map(utils.calcBlockSha256Hash);
     const superblock2Hashes = superblock2Headers.map(utils.calcBlockSha256Hash);
 
-    const superblock0 = utils.makeSuperblock(superblock0Headers, initParentId, 0, 0);
-    const superblock1 = utils.makeSuperblock(superblock1Headers, superblock0.superblockHash, superblock0.accumulatedWork, 3);
-    const superblock2 = utils.makeSuperblock(superblock2Headers, superblock1.superblockHash, superblock1.accumulatedWork, 6);
-    const superblock3 = utils.makeSuperblock(superblock3Headers, superblock2.superblockHash, superblock2.accumulatedWork, 9);
+    const superblock0 = utils.makeSuperblock(superblock0Headers, initParentId, 0);
+    const superblock1 = utils.makeSuperblock(superblock1Headers, superblock0.superblockHash, superblock0.accumulatedWork);
+    const superblock2 = utils.makeSuperblock(superblock2Headers, superblock1.superblockHash, superblock1.accumulatedWork);
+    const superblock3 = utils.makeSuperblock(superblock3Headers, superblock2.superblockHash, superblock2.accumulatedWork);
 
     async function initSuperblockChain() {
         ({
@@ -84,7 +84,6 @@ contract('approveDescendant', (accounts) => {
                 superblock1.timestamp,
                 superblock1.lastHash,
                 superblock1.parentId,
-                superblock1.blockHeight,
                 { from: submitter },
             );
             const superblockClaimCreatedEvent = utils.findEvent(result.logs, 'SuperblockClaimCreated');
@@ -147,7 +146,6 @@ contract('approveDescendant', (accounts) => {
                 superblock2.timestamp,
                 superblock2.lastHash,
                 superblock2.parentId,
-                superblock2.blockHeight,
                 { from: submitter },
             );
             const superblockClaimCreatedEvent = utils.findEvent(result.logs, 'SuperblockClaimCreated');
@@ -175,7 +173,6 @@ contract('approveDescendant', (accounts) => {
                 superblock3.timestamp,
                 superblock3.lastHash,
                 superblock3.parentId,
-                superblock3.blockHeight,
                 { from: submitter },
             );
             const superblockClaimCreatedEvent = utils.findEvent(result.logs, 'SuperblockClaimCreated');
@@ -234,7 +231,6 @@ contract('approveDescendant', (accounts) => {
                 superblock1.timestamp,
                 superblock1.lastHash,
                 superblock1.parentId,
-                superblock1.blockHeight,
                 { from: submitter },
             );
             const superblockClaimCreatedEvent = utils.findEvent(result.logs, 'SuperblockClaimCreated');
@@ -294,7 +290,6 @@ contract('approveDescendant', (accounts) => {
                 superblock2.timestamp,
                 superblock2.lastHash,
                 superblock2.parentId,
-                superblock2.blockHeight,
                 { from: submitter },
             );
             const superblockClaimCreatedEvent = utils.findEvent(result.logs, 'SuperblockClaimCreated');
@@ -353,7 +348,6 @@ contract('approveDescendant', (accounts) => {
                 superblock3.timestamp,
                 superblock3.lastHash,
                 superblock3.parentId,
-                superblock3.blockHeight,
                 { from: submitter },
             );
             const superblockClaimCreatedEvent = utils.findEvent(result.logs, 'SuperblockClaimCreated');

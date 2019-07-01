@@ -20,7 +20,7 @@ contract('SyscoinSuperblocks2', function(accounts) {
   const hashes = headers.map(utils.calcBlockSha256Hash);
   const initParentId = '0x0000000000000000000000000000000000000000000000000000000000000000';
   const initAccumulatedWork = 1;
-  const genesisSuperblock = utils.makeSuperblock(headers, initParentId, initAccumulatedWork, 5);
+  const genesisSuperblock = utils.makeSuperblock(headers, initParentId, initAccumulatedWork);
   it('Initialize', async () => {
     let result;
     result = await superblocks.initialize(
@@ -29,7 +29,6 @@ contract('SyscoinSuperblocks2', function(accounts) {
       genesisSuperblock.timestamp,
       genesisSuperblock.lastHash,
       genesisSuperblock.parentId,
-      genesisSuperblock.blockHeight,
       { from: user }
     );
 
@@ -50,7 +49,7 @@ contract('SyscoinSuperblocks2', function(accounts) {
 
 
     // 2 keys per returned var
-    assert.equal(Object.keys(superblock).length, 16, 'Have enough data');
+    assert.equal(Object.keys(superblock).length, 14, 'Have enough data');
     assert.equal(superblock[0], genesisSuperblock.merkleRoot, 'Merkle root');
     assert.equal(superblock[1].toString(10), genesisSuperblock.accumulatedWork.toString(10), 'Accumulated work');
     assert.equal(superblock[2], genesisSuperblock.timestamp, 'Last block timestamp');
@@ -58,6 +57,5 @@ contract('SyscoinSuperblocks2', function(accounts) {
     assert.equal(superblock[4], genesisSuperblock.parentId, 'Parent superblock');
     assert.equal(superblock[5], user, 'Submitter');
     assert.equal(superblock[6].toString(10), 4, 'Superblock status'); // Approved
-    assert.equal(superblock[7], 5, 'block height');
   });
 });

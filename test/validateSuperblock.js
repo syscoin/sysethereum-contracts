@@ -20,7 +20,7 @@ contract('validateSuperblocks', (accounts) => {
     ];
     const initAccumulatedWork = 1;
     const initParentHash = '0x0000000000000000000000000000000000000000000000000000000000000000';
-    const genesisSuperblock = utils.makeSuperblock(genesisHeaders, initParentHash, initAccumulatedWork, 2);
+    const genesisSuperblock = utils.makeSuperblock(genesisHeaders, initParentHash, initAccumulatedWork);
 
     const headers = [
       `0000003071a534b46710b515806719a97a38c187624bedfaefd0e1d3d37daaa5c10b00000ffc785adb93908ce3474201293870b26820d301494dd92993ed55f5fa5a4a908145ef5bf0ff0f1e14820000`
@@ -28,9 +28,7 @@ contract('validateSuperblocks', (accounts) => {
     const hashes = headers.map(header => utils.calcBlockSha256Hash(header));
     proposedSuperblock = utils.makeSuperblock(headers,
       genesisSuperblock.superblockHash,
-      genesisSuperblock.accumulatedWork,
-      3,
-      genesisSuperblock.timestamp,
+      genesisSuperblock.accumulatedWork
     );
 
     beforeEach(async () => {
@@ -39,7 +37,7 @@ contract('validateSuperblocks', (accounts) => {
         claimManager,
         battleManager,
       } = await utils.initSuperblockChain({
-        network: utils.SYSCOIN_MAINNET,
+        network: utils.SYSCOIN_REGTEST,
         genesisSuperblock,
         params: utils.OPTIONS_SYSCOIN_REGTEST,
         from: owner,
@@ -59,7 +57,6 @@ contract('validateSuperblocks', (accounts) => {
         proposedSuperblock.timestamp,
         proposedSuperblock.lastHash,
         proposedSuperblock.parentId,
-        proposedSuperblock.blockHeight,
         { from: submitter },
       );
 
@@ -114,7 +111,6 @@ contract('validateSuperblocks', (accounts) => {
         proposedSuperblock.timestamp + 1,
         proposedSuperblock.lastHash,
         proposedSuperblock.parentId,
-        proposedSuperblock.blockHeight,
         { from: submitter },
       );
 
@@ -169,7 +165,6 @@ contract('validateSuperblocks', (accounts) => {
         proposedSuperblock.timestamp + 1,
         utils.ZERO_BYTES32, // proposedSuperblock.lastHash,
         proposedSuperblock.parentId,
-        proposedSuperblock.blockHeight,
         { from: submitter },
       );
 
@@ -212,7 +207,6 @@ contract('validateSuperblocks', (accounts) => {
         proposedSuperblock.timestamp + 1,
         utils.ZERO_BYTES32, // proposedSuperblock.lastHash,
         proposedSuperblock.parentId,
-        proposedSuperblock.blockHeight,
         { from: submitter },
       ));
 
@@ -226,7 +220,6 @@ contract('validateSuperblocks', (accounts) => {
 
         utils.ZERO_BYTES32, // proposedSuperblock.lastHash,
         proposedSuperblock.parentId,
-        proposedSuperblock.blockHeight,
         { from: challenger },
       );
 
@@ -241,7 +234,6 @@ contract('validateSuperblocks', (accounts) => {
         proposedSuperblock.timestamp + 1,
         utils.ZERO_BYTES32, // proposedSuperblock.lastHash,
         proposedSuperblock.parentId,
-        proposedSuperblock.blockHeight,
         { from: challenger },
       ));
 

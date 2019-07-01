@@ -203,21 +203,20 @@ function makeMerkleProofMap (blockHashes) {
   }
   
 // Calculate a superblock id
-function calcSuperblockHash(merkleRoot, accumulatedWork, timestamp, lastHash, parentId, blockHeight) {
+function calcSuperblockHash(merkleRoot, accumulatedWork, timestamp, lastHash, parentId) {
   return `0x${Buffer.from(keccak256.arrayBuffer(
     Buffer.concat([
       module.exports.fromHex(merkleRoot),
       module.exports.fromHex(toUint256(accumulatedWork)),
       module.exports.fromHex(toUint256(timestamp)),
       module.exports.fromHex(lastHash),
-      module.exports.fromHex(parentId),
-      module.exports.fromHex(toUint32(blockHeight))
+      module.exports.fromHex(parentId)
     ])
   )).toString('hex')}`;
 }
 
 // Construct a superblock from an array of block headers
-function makeSuperblock(headers, parentId, parentAccumulatedWork, _blockHeight) {
+function makeSuperblock(headers, parentId, parentAccumulatedWork) {
   if (headers.length < 1) {
     throw new Error('Requires at least one header to build a superblock');
   }
@@ -242,13 +241,11 @@ function makeSuperblock(headers, parentId, parentAccumulatedWork, _blockHeight) 
       accumulatedWork,
       timestamp,
       lastHash,
-      parentId,
-      _blockHeight
+      parentId
     ),
     blockHeaders: headers,
     blockHashes: strippedHashes, 
     blockSiblingsMap: blockSiblingsMap,
-    blockHeight: _blockHeight
   };
 }
 
@@ -308,7 +305,6 @@ async function initSuperblockChain(options) {
     options.genesisSuperblock.timestamp,
     options.genesisSuperblock.lastHash,
     options.genesisSuperblock.parentId,
-    options.genesisSuperblock.blockHeight,
     { from: options.from },
   );
   return {
@@ -411,7 +407,6 @@ module.exports = {
       genesisSuperblock.timestamp,
       genesisSuperblock.lastHash,
       genesisSuperblock.parentId,
-      genesisSuperblock.blockHeight,
       { from: sender },
     );
 
@@ -432,7 +427,6 @@ module.exports = {
       proposedSuperblock.timestamp,
       proposedSuperblock.lastHash,
       proposedSuperblock.parentId,
-      proposedSuperblock.blockHeight,
       { from: sender },
     );
 

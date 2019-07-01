@@ -22,7 +22,6 @@ contract SyscoinSuperblocks is SyscoinErrorCodes {
         bytes32 ancestors;
         uint32 index;
         uint32 height;
-        uint32 blockHeight;
         Status status;
     }
 
@@ -85,21 +84,20 @@ contract SyscoinSuperblocks is SyscoinErrorCodes {
     // @param _accumulatedWork Accumulated proof of work of the last block in the superblock
     // @param _timestamp Timestamp of the last block in the superblock
     // @param _lastHash Hash of the last block in the superblock
-    // @param _parentId Id of the parent superblock
-    // @param _blockHeight Block height of last block in superblock   
+    // @param _parentId Id of the parent superblock  
     // @return Error code and superblockHash
     function initialize(
         bytes32 _blocksMerkleRoot,
         uint _accumulatedWork,
         uint _timestamp,
         bytes32 _lastHash,
-        bytes32 _parentId,
-        uint32 _blockHeight
+        bytes32 _parentId
     ) public returns (uint, bytes32) {
         require(bestSuperblock == 0);
+        require(bestSuperblockSemiApproved == 0);
         require(_parentId == 0);
 
-        bytes32 superblockHash = calcSuperblockHash(_blocksMerkleRoot, _accumulatedWork, _timestamp, _lastHash, _parentId, _blockHeight);
+        bytes32 superblockHash = calcSuperblockHash(_blocksMerkleRoot, _accumulatedWork, _timestamp, _lastHash, _parentId);
         SuperblockInfo storage superblock = superblocks[superblockHash];
 
         require(superblock.status == Status.Unitialized);
@@ -116,7 +114,6 @@ contract SyscoinSuperblocks is SyscoinErrorCodes {
         superblock.height = 1;
         superblock.status = Status.Approved;
         superblock.ancestors = 0x0;
-        superblock.blockHeight = _blockHeight;
         indexNextSuperblock++;
 
         emit NewSuperblock(superblockHash, msg.sender);
@@ -139,7 +136,6 @@ contract SyscoinSuperblocks is SyscoinErrorCodes {
     // @param _timestamp Timestamp of the last block in the superblock
     // @param _lastHash Hash of the last block in the superblock
     // @param _parentId Id of the parent superblock
-    // @param _blockHeight Block height of last block in superblock
     // @return Error code and superblockHash
     function propose(
         bytes32 _blocksMerkleRoot,
@@ -147,7 +143,6 @@ contract SyscoinSuperblocks is SyscoinErrorCodes {
         uint _timestamp,
         bytes32 _lastHash,
         bytes32 _parentId,
-        uint32 _blockHeight,
         address submitter
     ) public returns (uint, bytes32) {
         if (msg.sender != trustedClaimManager) {
@@ -161,7 +156,7 @@ contract SyscoinSuperblocks is SyscoinErrorCodes {
             return (ERR_SUPERBLOCK_BAD_PARENT, 0);
         }
 
-        bytes32 superblockHash = calcSuperblockHash(_blocksMerkleRoot, _accumulatedWork, _timestamp, _lastHash, _parentId, _blockHeight);
+        bytes32 superblockHash = calcSuperblockHash(_blocksMerkleRoot, _accumulatedWork, _timestamp, _lastHash, _parentId);
         SuperblockInfo storage superblock = superblocks[superblockHash];
         if (superblock.status == Status.Unitialized) {
             indexSuperblock[indexNextSuperblock] = superblockHash;
@@ -172,7 +167,6 @@ contract SyscoinSuperblocks is SyscoinErrorCodes {
             superblock.parentId = _parentId;
             superblock.index = indexNextSuperblock;
             superblock.height = parent.height + 1;
-            superblock.blockHeight = _blockHeight;
             superblock.ancestors = updateAncestors(parent.ancestors, parent.index, parent.height);
             indexNextSuperblock++; 
         }
@@ -207,10 +201,12 @@ contract SyscoinSuperblocks is SyscoinErrorCodes {
             return ERR_SUPERBLOCK_BAD_PARENT;
         }
         superblock.status = Status.Approved;
+        
         if (superblock.accumulatedWork > bestSuperblockAccumulatedWork) {
             bestSuperblock = _superblockHash;
             bestSuperblockAccumulatedWork = superblock.accumulatedWork;
         }
+        
         emit ApprovedSuperblock(_superblockHash, _validator);
         return ERR_SUPERBLOCK_OK;
     }
@@ -263,6 +259,7 @@ contract SyscoinSuperblocks is SyscoinErrorCodes {
             return (ERR_SUPERBLOCK_BAD_STATUS, 0);
         }
         superblock.status = Status.SemiApproved;
+                
         emit SemiApprovedSuperblock(_superblockHash, _validator);
         return (ERR_SUPERBLOCK_OK, _superblockHash);
     }
@@ -442,24 +439,21 @@ contract SyscoinSuperblocks is SyscoinErrorCodes {
     // @param _accumulatedWork Accumulated proof of work of the last block in the superblock
     // @param _timestamp Timestamp of the last block in the superblock
     // @param _lastHash Hash of the last block in the superblock
-    // @param _parentId Id of the parent superblock
-    // @param _blockHeight Block height of last block in superblock   
+    // @param _parentId Id of the parent superblock 
     // @return Superblock id
     function calcSuperblockHash(
         bytes32 _blocksMerkleRoot,
         uint _accumulatedWork,
         uint _timestamp,
         bytes32 _lastHash,
-        bytes32 _parentId,
-        uint32 _blockHeight
+        bytes32 _parentId
     ) public pure returns (bytes32) {
         return keccak256(abi.encodePacked(
             _blocksMerkleRoot,
             _accumulatedWork,
             _timestamp,
             _lastHash,
-            _parentId,
-            _blockHeight
+            _parentId
         ));
     }
 
@@ -469,7 +463,15 @@ contract SyscoinSuperblocks is SyscoinErrorCodes {
     function getBestSuperblock() public view returns (bytes32) {
         return bestSuperblock;
     }
-
+    // @dev - Returns the confirmed semi-approved superblock with the most accumulated work
+    //
+    // @return Best semi-approved superblock hash
+    function getBestSuperblockSemiApproved() public view returns (bytes32) {
+        return bestSuperblockSemiApproved;
+    }
+    function getBestSuperblockAccumulatedWork() public view returns (uint) {
+        return bestSuperblockAccumulatedWork;
+    }
     // @dev - Returns the superblock data for the supplied superblock hash
     //
     // @return {
@@ -480,7 +482,6 @@ contract SyscoinSuperblocks is SyscoinErrorCodes {
     //   bytes32 _parentId,
     //   address _submitter,
     //   Status _status,
-    //   uint32 _blockHeight,
     // }  Superblock data
     function getSuperblock(bytes32 superblockHash) public view returns (
         bytes32 _blocksMerkleRoot,
@@ -489,8 +490,7 @@ contract SyscoinSuperblocks is SyscoinErrorCodes {
         bytes32 _lastHash,
         bytes32 _parentId,
         address _submitter,
-        Status _status,
-        uint32 _blockHeight
+        Status _status
     ) {
         SuperblockInfo storage superblock = superblocks[superblockHash];
         return (
@@ -500,8 +500,7 @@ contract SyscoinSuperblocks is SyscoinErrorCodes {
             superblock.lastHash,
             superblock.parentId,
             superblock.submitter,
-            superblock.status,
-            superblock.blockHeight
+            superblock.status
         );
     }
 
@@ -563,7 +562,9 @@ contract SyscoinSuperblocks is SyscoinErrorCodes {
     function isApproved(bytes32 _superblockHash) public view returns (bool) {
         return (getSuperblockStatus(_superblockHash) == Status.Approved);
     }
-
+    function isSemiApproved(bytes32 _superblockHash) public view returns (bool) {
+        return (getSuperblockStatus(_superblockHash) == Status.SemiApproved);
+    }
     function getChainHeight() public view returns (uint) {
         return superblocks[bestSuperblock].height;
     }
@@ -648,7 +649,7 @@ contract SyscoinSuperblocks is SyscoinErrorCodes {
     // @dev - return superblock hash at a given height in superblock main chain
     //
     // @param _height - superblock height
-    // @return - hash corresponding to block of height _blockHeight
+    // @return - hash corresponding to block of height _height
     function getSuperblockAt(uint _height) public view returns (bytes32) {
         bytes32 superblockHash = bestSuperblock;
         uint index = NUM_ANCESTOR_DEPTHS - 1;
