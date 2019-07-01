@@ -45,14 +45,14 @@ contract('rejectClaim', (accounts) => {
     const superblockR0Hashes = superblockR0Headers.map(utils.calcBlockSha256Hash);
     const superblockR1Hashes = superblockR1Headers.map(utils.calcBlockSha256Hash);
 
-    const superblock0 = utils.makeSuperblock(superblock0Headers, initParentId, 2, 1);
-    const superblock1 = utils.makeSuperblock(superblock1Headers, superblock0.superblockHash, 8, 4);
-    const superblock2 = utils.makeSuperblock(superblock2Headers, superblock1.superblockHash, 14, 7);
-    const superblock3 = utils.makeSuperblock(superblock3Headers, superblock2.superblockHash, 20, 10);
-    const superblock4 = utils.makeSuperblock(superblock4Headers, superblock3.superblockHash, 26, 13);
+    const superblock0 = utils.makeSuperblock(superblock0Headers, initParentId, 2);
+    const superblock1 = utils.makeSuperblock(superblock1Headers, superblock0.superblockHash, 8);
+    const superblock2 = utils.makeSuperblock(superblock2Headers, superblock1.superblockHash, 14);
+    const superblock3 = utils.makeSuperblock(superblock3Headers, superblock2.superblockHash, 20);
+    const superblock4 = utils.makeSuperblock(superblock4Headers, superblock3.superblockHash, 26);
 
-    const superblockR0 = utils.makeSuperblock(superblockR0Headers, superblock0.superblockHash, 4, 3);
-    const superblockR1 = utils.makeSuperblock(superblockR1Headers, superblockR0.superblockHash, 6, 4);
+    const superblockR0 = utils.makeSuperblock(superblockR0Headers, superblock0.superblockHash, 4);
+    const superblockR1 = utils.makeSuperblock(superblockR1Headers, superblockR0.superblockHash, 6);
 
     describe('Propose superblocks and reject fork', () => {
         let superblock0Id;
@@ -94,7 +94,6 @@ contract('rejectClaim', (accounts) => {
                 superblock1.timestamp,
                 superblock1.lastHash,
                 superblock1.parentId,
-                superblock1.blockHeight,
                 { from: submitter },
             );
             const superblockClaimCreatedEvent = utils.findEvent(result.logs, 'SuperblockClaimCreated');
@@ -110,7 +109,6 @@ contract('rejectClaim', (accounts) => {
                 superblock1.timestamp,
                 superblock1.lastHash,
                 superblock1.parentId,
-                superblock1.blockHeight,
                 { from: submitter },
             ));
            
@@ -122,7 +120,6 @@ contract('rejectClaim', (accounts) => {
                 superblock1.timestamp,
                 superblock1.lastHash,
                 superblock1.parentId,
-                superblock1.blockHeight,
                 { from: challenger },
             ));
             
@@ -143,7 +140,6 @@ contract('rejectClaim', (accounts) => {
                 superblock1.timestamp,
                 superblock1.lastHash,
                 superblock1.parentId,
-                superblock1.blockHeight,
                 { from: submitter },
             ));
            
@@ -155,7 +151,6 @@ contract('rejectClaim', (accounts) => {
                 superblock1.timestamp,
                 superblock1.lastHash,
                 superblock1.parentId,
-                superblock1.blockHeight,
                 { from: challenger },
             ));
 
@@ -173,7 +168,6 @@ contract('rejectClaim', (accounts) => {
                 superblockR0.timestamp,
                 superblockR0.lastHash,
                 superblockR0.parentId,
-                superblockR0.blockHeight,
                 { from: submitter },
             );
             const superblockClaimCreatedEvent = utils.findEvent(result.logs, 'SuperblockClaimCreated')
@@ -195,7 +189,6 @@ contract('rejectClaim', (accounts) => {
                 superblock2.timestamp,
                 superblock2.lastHash,
                 superblock2.parentId,
-                superblock2.blockHeight,
                 { from: submitter },
             );
             const superblockClaimCreatedEvent = utils.findEvent(result.logs, 'SuperblockClaimCreated');
@@ -223,7 +216,6 @@ contract('rejectClaim', (accounts) => {
                 superblock3.timestamp,
                 superblock3.lastHash,
                 superblock3.parentId,
-                superblock3.blockHeight,
                 { from: submitter },
             );
             const superblockClaimCreatedEvent = utils.findEvent(result.logs, 'SuperblockClaimCreated');
@@ -246,7 +238,6 @@ contract('rejectClaim', (accounts) => {
                 superblock4.timestamp,
                 superblock4.lastHash,
                 superblock4.parentId,
-                superblock4.blockHeight,
                 { from: submitter },
             );
             const superblockClaimCreatedEvent = utils.findEvent(result.logs, 'SuperblockClaimCreated');
@@ -340,7 +331,6 @@ contract('rejectClaim', (accounts) => {
                 superblockR1.timestamp,
                 superblockR1.lastHash,
                 superblockR1.parentId,
-                superblockR1.blockHeight,
                 { from: submitter },
             );
             assert.equal(result.logs[1].event, 'SuperblockClaimCreated', 'New superblock proposed');

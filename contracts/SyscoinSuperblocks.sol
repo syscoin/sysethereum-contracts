@@ -94,7 +94,6 @@ contract SyscoinSuperblocks is SyscoinErrorCodes {
         bytes32 _parentId
     ) public returns (uint, bytes32) {
         require(bestSuperblock == 0);
-        require(bestSuperblockSemiApproved == 0);
         require(_parentId == 0);
 
         bytes32 superblockHash = calcSuperblockHash(_blocksMerkleRoot, _accumulatedWork, _timestamp, _lastHash, _parentId);
@@ -462,12 +461,6 @@ contract SyscoinSuperblocks is SyscoinErrorCodes {
     // @return Best superblock hash
     function getBestSuperblock() public view returns (bytes32) {
         return bestSuperblock;
-    }
-    // @dev - Returns the confirmed semi-approved superblock with the most accumulated work
-    //
-    // @return Best semi-approved superblock hash
-    function getBestSuperblockSemiApproved() public view returns (bytes32) {
-        return bestSuperblockSemiApproved;
     }
     function getBestSuperblockAccumulatedWork() public view returns (uint) {
         return bestSuperblockAccumulatedWork;

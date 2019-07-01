@@ -37,7 +37,7 @@ contract('SyscoinClaimManager', (accounts) => {
     `0000003068e7376ba9e2e7dc38ff3fa060ad8a07876c574e5356d2f6d82736e90f020000af6b356754b9d70e7215179f650e7bf6133f82b89145e6643e3a4bbac21ab9cc8445ef5bf0ff0f1edb180000`,
   ];
   const hashes = headers.map(utils.calcBlockSha256Hash);
-  const genesisSuperblock = utils.makeSuperblock(genesisHeaders, initParentId, initAccumulatedWork, 2);
+  const genesisSuperblock = utils.makeSuperblock(genesisHeaders, initParentId, initAccumulatedWork);
   describe('Confirm superblock after timeout', () => {
     let genesisSuperblockHash;
     let proposedSuperblockHash;
@@ -57,8 +57,7 @@ contract('SyscoinClaimManager', (accounts) => {
       proposedSuperblock = utils.makeSuperblock(
         headers.slice(0, 3),
         genesisSuperblock.superblockHash,
-        genesisSuperblock.accumulatedWork,
-        2
+        genesisSuperblock.accumulatedWork
       );
       result = await claimManager.proposeSuperblock(
         proposedSuperblock.merkleRoot,
@@ -66,7 +65,6 @@ contract('SyscoinClaimManager', (accounts) => {
         proposedSuperblock.timestamp,
         proposedSuperblock.lastHash,
         proposedSuperblock.parentId,
-        proposedSuperblock.blockHeight,
         { from: submitter },
       );
 
@@ -94,8 +92,7 @@ contract('SyscoinClaimManager', (accounts) => {
       proposedSuperblock = utils.makeSuperblock(
         headers.slice(0, 2),
         genesisSuperblock.superblockHash,
-        genesisSuperblock.accumulatedWork,
-        4
+        genesisSuperblock.accumulatedWork
       );
       result = await claimManager.proposeSuperblock(
         proposedSuperblock.merkleRoot,
@@ -103,7 +100,6 @@ contract('SyscoinClaimManager', (accounts) => {
         proposedSuperblock.timestamp,
         proposedSuperblock.lastHash,
         proposedSuperblock.parentId,
-        proposedSuperblock.blockHeight,
         { from: submitter },
       );
 
@@ -135,14 +131,13 @@ contract('SyscoinClaimManager', (accounts) => {
     });
     
     it('Propose', async () => {
-      proposedSuperblock = utils.makeSuperblock(headers.slice(0, 2), genesisSuperblock.superblockHash, genesisSuperblock.accumulatedWork, 4);
+      proposedSuperblock = utils.makeSuperblock(headers.slice(0, 2), genesisSuperblock.superblockHash, genesisSuperblock.accumulatedWork);
       result = await claimManager.proposeSuperblock(
         proposedSuperblock.merkleRoot,
         proposedSuperblock.accumulatedWork,
         proposedSuperblock.timestamp,
         proposedSuperblock.lastHash,
         proposedSuperblock.parentId,
-        proposedSuperblock.blockHeight,
         { from: submitter },
       );
 
@@ -213,8 +208,7 @@ contract('SyscoinClaimManager', (accounts) => {
       proposedSuperblock = utils.makeSuperblock(
         headers,
         genesisSuperblock.superblockHash,
-        genesisSuperblock.accumulatedWork,
-        7
+        genesisSuperblock.accumulatedWork
       );
 
       result = await claimManager.proposeSuperblock(
@@ -223,7 +217,6 @@ contract('SyscoinClaimManager', (accounts) => {
         proposedSuperblock.timestamp,
         proposedSuperblock.lastHash,
         proposedSuperblock.parentId,
-        proposedSuperblock.blockHeight,
         { from: submitter },
       );
 
@@ -302,8 +295,7 @@ contract('SyscoinClaimManager', (accounts) => {
       proposedSuperblock = utils.makeSuperblock(
         headers.slice(0, 2),
         genesisSuperblock.superblockHash,
-        genesisSuperblock.accumulatedWork,
-        4
+        genesisSuperblock.accumulatedWork
       );
       result = await claimManager.proposeSuperblock(
         proposedSuperblock.merkleRoot,
@@ -311,7 +303,6 @@ contract('SyscoinClaimManager', (accounts) => {
         proposedSuperblock.timestamp,
         proposedSuperblock.lastHash,
         proposedSuperblock.parentId,
-        proposedSuperblock.blockHeight,
         { from: submitter },
       );
       const superblockClaimCreatedEvent = utils.findEvent(result.logs, 'SuperblockClaimCreated');
@@ -455,7 +446,6 @@ contract('SyscoinClaimManager', (accounts) => {
         proposedSuperblock.timestamp,
         proposedSuperblock.lastHash,
         proposedSuperblock.parentId,
-        proposedSuperblock.blockHeight,
         { from: submitter },
       ));
     
@@ -468,7 +458,6 @@ contract('SyscoinClaimManager', (accounts) => {
         proposedSuperblock.timestamp,
         proposedSuperblock.lastHash,
         proposedSuperblock.parentId,
-        proposedSuperblock.blockHeight,
         { from: challenger },
       ));
 
