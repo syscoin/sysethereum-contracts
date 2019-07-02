@@ -1,5 +1,4 @@
 pragma solidity >=0.5.0 <0.6.0;
-pragma experimental "ABIEncoderV2";
 
 import './SyscoinClaimManager.sol';
 import './SyscoinErrorCodes.sol';
@@ -14,9 +13,8 @@ contract SyscoinBattleManager is SyscoinErrorCodes {
         Challenged,               // Claims was challenged
         QueryMerkleRootHashes,    // Challenger expecting block hashes
         RespondMerkleRootHashes,  // Block hashes were received and verified
-        QueryBlockHeaderProof,     // Challenger is requesting block hash proof
-        RespondBlockHeaderProof,   // All block hashes were received and verified by merkle commitment to superblock merkle root
-        PendingVerification,      // Pending superblock verification
+        QueryLastBlockHeader,     // Challenger is requesting last block header
+        PendingVerification,      // All block hashes were received and verified by merkle commitment to superblock merkle root set to pending superblock verification
         SuperblockVerified,       // Superblock verified
         SuperblockFailed          // Superblock not valid
     }
@@ -48,10 +46,9 @@ contract SyscoinBattleManager is SyscoinErrorCodes {
         uint lastActionClaimant;          // Number last action submitter
         uint lastActionChallenger;        // Number last action challenger
         uint actionsCounter;              // Counter session actions
-
         bytes32[] blockHashes;            // Block hashes
-        SiblingInfo[] blockSiblings;
-        BlockInfo lastBlockInfo;
+
+        mapping (bytes32 => BlockInfo) blocksInfo;
 
         ChallengeState challengeState;    // Claim state
     }
@@ -61,7 +58,7 @@ contract SyscoinBattleManager is SyscoinErrorCodes {
 
 
 
-    uint public superblockDuration;         // Superblock duration (in seconds)
+    uint public superblockDuration;         // Superblock duration (in blocks)
     uint public superblockTimeout;          // Timeout action (in seconds)
 
 
@@ -81,13 +78,8 @@ contract SyscoinBattleManager is SyscoinErrorCodes {
 
     event QueryMerkleRootHashes(bytes32 superblockHash, bytes32 sessionId, address submitter);
     event RespondMerkleRootHashes(bytes32 superblockHash, bytes32 sessionId, address challenger);
-    event QueryBlockHeaderProof(bytes32 sessionId, address submitter);
-    event RespondBlockHeaderProof(bytes32 sessionId, address challenger);
-    event RespondLastBlockHeader(bytes32 superblockHash, bytes32 blockSha256Hash);
-    event Difficulty(uint hashes, uint timestamp, uint work, uint accWork, uint32 newBits, uint32 prevBits);
-    event DifficultyEnd(uint work, uint accWork);
-    event DifficultyStep(uint work, uint32 bits);
-    event DifficultyAdjustment(uint retargetPeriod, uint32 bits);
+    event QueryLastBlockHeader(bytes32 sessionId);
+    event RespondLastBlockHeader(bytes32 sessionId, address challenger);
 
     event ErrorBattle(bytes32 sessionId, uint err);
     modifier onlyFrom(address sender) {
@@ -108,7 +100,7 @@ contract SyscoinBattleManager is SyscoinErrorCodes {
     // @dev – Configures the contract managing superblocks battles
     // @param _network Network type to use for block difficulty validation
     // @param _superblocks Contract that manages superblocks
-    // @param _superblockDuration Superblock duration (in seconds)
+    // @param _superblockDuration Superblock duration (in blocks)
     // @param _superblockTimeout Time to wait for challenges (in seconds)
     constructor(
         SyscoinMessageLibrary.Network _network,
@@ -130,8 +122,11 @@ contract SyscoinBattleManager is SyscoinErrorCodes {
     // @dev - Start a battle session
     function beginBattleSession(bytes32 superblockHash, address submitter, address challenger)
         onlyFrom(address(trustedSyscoinClaimManager)) public returns (bytes32) {
-        bytes32 sessionId = keccak256(abi.encode(superblockHash, msg.sender));
+        bytes32 sessionId = keccak256(abi.encode(superblockHash, msg.sender, challenger));
         BattleSession storage session = sessions[sessionId];
+        if(session.id != 0x0){
+            revert();
+        }
         session.id = sessionId;
         session.superblockHash = superblockHash;
         session.submitter = submitter;
@@ -185,9 +180,12 @@ contract SyscoinBattleManager is SyscoinErrorCodes {
         }
         require(session.blockHashes.length == 0);
         if (session.challengeState == ChallengeState.QueryMerkleRootHashes) {
-            (bytes32 merkleRoot, , , , bytes32 lastHash, , , ,,) = getSuperblockInfo(session.superblockHash);
+            (bytes32 merkleRoot, , , bytes32 lastHash, , ,) = getSuperblockInfo(session.superblockHash);
             if (lastHash != blockHashes[blockHashes.length - 1]){
                 return ERR_SUPERBLOCK_BAD_LASTBLOCK;
+            }
+            if(net != SyscoinMessageLibrary.Network.REGTEST && blockHashes.length != superblockDuration){
+                return ERR_SUPERBLOCK_BAD_BLOCKHEIGHT;
             }
             if (merkleRoot != SyscoinMessageLibrary.makeMerkle(blockHashes)) {
                 return ERR_SUPERBLOCK_INVALID_MERKLE;
@@ -197,7 +195,6 @@ contract SyscoinBattleManager is SyscoinErrorCodes {
                 return err;
             }
             session.blockHashes = blockHashes;
-            session.blockSiblings.length = blockHashes.length;
             session.challengeState = ChallengeState.RespondMerkleRootHashes;
             return ERR_SUPERBLOCK_OK;
         }
@@ -217,48 +214,37 @@ contract SyscoinBattleManager is SyscoinErrorCodes {
             emit RespondMerkleRootHashes(superblockHash, sessionId, session.challenger);
         }
     }
-    // @dev - Challenger makes a query for block proof
-    function doQueryBlockHeaderProof(BattleSession storage session) internal returns (uint) {
-        if (!hasDeposit(msg.sender, respondBlockHeaderProofCost)) {
+       
+    // @dev - Challenger makes a query for last block header
+    function doQueryLastBlockHeader(BattleSession storage session) internal returns (uint) {
+        if (!hasDeposit(msg.sender, respondLastBlockHeaderCost)) {
             return ERR_SUPERBLOCK_MIN_DEPOSIT;
         }
         if (session.challengeState == ChallengeState.RespondMerkleRootHashes) {
-            require(session.lastBlockInfo.status == BlockInfoStatus.Uninitialized);
-            uint err = bondDeposit(session.superblockHash, msg.sender, respondBlockHeaderProofCost);
+            require(session.blocksInfo[session.superblockHash].status == BlockInfoStatus.Uninitialized);
+            uint err = bondDeposit(session.superblockHash, msg.sender, respondLastBlockHeaderCost);
             if (err != ERR_SUPERBLOCK_OK) {
                 return err;
             }
-            session.lastBlockInfo.status = BlockInfoStatus.Requested;
-            session.challengeState = ChallengeState.QueryBlockHeaderProof;
+            session.challengeState = ChallengeState.QueryLastBlockHeader;
+            session.blocksInfo[session.superblockHash].status = BlockInfoStatus.Requested;
             return ERR_SUPERBLOCK_OK;
         }
         return ERR_SUPERBLOCK_BAD_STATUS;
     }
 
     // @dev - For the challenger to start a query
-    function queryBlockHeaderProof(bytes32 sessionId) onlyChallenger(sessionId) public {
+    function queryLastBlockHeader(bytes32 sessionId) onlyChallenger(sessionId) public {
         BattleSession storage session = sessions[sessionId];
-        uint err = doQueryBlockHeaderProof(session);
+        uint err = doQueryLastBlockHeader(session);
         if (err != ERR_SUPERBLOCK_OK) {
             emit ErrorBattle(sessionId, err);
         } else {
             session.actionsCounter += 1;
             session.lastActionTimestamp = block.timestamp;
             session.lastActionChallenger = session.actionsCounter;
-            emit QueryBlockHeaderProof(sessionId, session.submitter);
+            emit QueryLastBlockHeader(sessionId);
         }
-    }
-
-    // @dev - Verify that block timestamp is in the superblock timestamp interval
-    function verifyTimestamp(bytes32 superblockHash, bytes memory blockHeader) internal view returns (bool) {
-        uint blockTimestamp = SyscoinMessageLibrary.getTimestamp(blockHeader);
-        uint superblockTimestamp;
-
-        (, , superblockTimestamp, , , , , ,,) = getSuperblockInfo(superblockHash);
-
-        // Block timestamp to be within the expected timestamp of the superblock
-        return (blockTimestamp <= superblockTimestamp)
-            && (blockTimestamp / superblockDuration >= superblockTimestamp / superblockDuration - 1);
     }
 
     // @dev - Verify Syscoin block AuxPoW
@@ -278,81 +264,24 @@ contract SyscoinBattleManager is SyscoinErrorCodes {
         return ERR_SUPERBLOCK_OK;
     }
 
-
-    function getSlice(uint begin, uint end, uint[] memory siblingsArray) internal pure returns (uint[] memory) {
-        uint[] memory a = new uint[](end-begin+1);
-        uint i;
-        for(i=0;i<=end-begin;i++){
-            a[i] = uint[](siblingsArray)[i+begin];
-        }
-        return a;
-    }
-
-    function doRespondBlockHeaderProof(BattleSession storage session, uint startingIndex, uint count, uint[] memory _siblingsMap) internal returns (uint) {      
-        uint numHashesPerProof = (_siblingsMap.length / count);
-        bool filled = session.blockSiblings.length > 0;
-        uint i;
-        uint index;
- 
-        for(i = startingIndex;i < (startingIndex+count);i++){
-            index = (i-startingIndex)*numHashesPerProof;
-            uint[] memory sliceSiblings = getSlice(index, index+(numHashesPerProof - 1), _siblingsMap);
-            assert(sliceSiblings.length == numHashesPerProof);
-            session.blockSiblings[i].siblings = sliceSiblings;
-            session.blockSiblings[i].exists = true;
-        }
-        for(i =0;i<session.blockSiblings.length;i++){
-            if(!session.blockSiblings[i].exists){
-                filled = false;
-                break;
-            }
-        }
-        if(filled){
-           return doVerifyBlockHeaderProof(session); 
-        }
-        return ERR_SUPERBLOCK_MISSING_SIBLINGS;
-    }
-    function doVerifyBlockHeaderProof(BattleSession storage session) internal returns (uint) {
-        // Verify sb Merkle root committed by block hash
-        uint i;
-        (bytes32 merkleRoot, , , , , , , ,,) = getSuperblockInfo(session.superblockHash);
-        assert(session.blockSiblings.length == session.blockHashes.length);
-        if(session.blockHashes.length > 1){
-            for(i = 0;i < session.blockHashes.length;i++){
-                if (bytes32(SyscoinMessageLibrary.computeMerkle(uint(session.blockHashes[i]), i, session.blockSiblings[i].siblings)) != merkleRoot) {
-                    return (ERR_MERKLE_ROOT);
-                }
-            }
-        }
-        else if(merkleRoot != session.blockHashes[0]){
-            return (ERR_MERKLE_ROOT);
-        }
-        session.challengeState = ChallengeState.PendingVerification;
-        session.actionsCounter += 1;
-        session.lastActionTimestamp = block.timestamp;
-        session.lastActionClaimant = session.actionsCounter;
-        emit RespondBlockHeaderProof(session.superblockHash, session.challenger);
-        return ERR_SUPERBLOCK_OK;
-    }
     // @dev - Verify block header sent by challenger
-    function doVerifyBlockHeader(
+    function doVerifyLastBlockHeader(
         BattleSession storage session,
         bytes memory blockHeader
     ) internal returns (uint) {
-        if (!hasDeposit(msg.sender, respondBlockHeaderProofCost)) {
+        if (!hasDeposit(msg.sender, respondLastBlockHeaderCost)) {
             return (ERR_SUPERBLOCK_MIN_DEPOSIT);
         }
-        if (session.challengeState == ChallengeState.QueryBlockHeaderProof) {
+        if (session.challengeState == ChallengeState.QueryLastBlockHeader) {
             bytes32 blockSha256Hash = bytes32(SyscoinMessageLibrary.dblShaFlipMem(blockHeader, 0, 80));
             if(session.blockHashes[session.blockHashes.length-1] != blockSha256Hash){
                 return (ERR_SUPERBLOCK_BAD_LASTBLOCK);
             }
-            if (!verifyTimestamp(session.superblockHash, blockHeader)) {
-                return (ERR_SUPERBLOCK_BAD_TIMESTAMP);
+            BlockInfo storage blockInfo = session.blocksInfo[session.superblockHash];
+            if (blockInfo.status != BlockInfoStatus.Requested) {
+                return (ERR_SUPERBLOCK_BAD_SYSCOIN_STATUS);
             }
-            BlockInfo storage blockInfo = session.lastBlockInfo;
-            if(blockInfo.status == BlockInfoStatus.Verified)
-               return ERR_SUPERBLOCK_OK;
+
 			// pass in blockSha256Hash here instead of proposedScryptHash because we
             // don't need a proposed hash (we already calculated it here, syscoin uses 
             // sha256 just like bitcoin)
@@ -361,40 +290,31 @@ contract SyscoinBattleManager is SyscoinErrorCodes {
                 return (err);
             }
 
-            err = bondDeposit(session.superblockHash, msg.sender, respondBlockHeaderProofCost);
+            err = bondDeposit(session.superblockHash, msg.sender, respondLastBlockHeaderCost);
             if (err != ERR_SUPERBLOCK_OK) {
                 return (err);
             }
-           
+            session.challengeState = ChallengeState.PendingVerification;
             blockInfo.status = BlockInfoStatus.Verified;
-            emit RespondLastBlockHeader(session.superblockHash, blockSha256Hash);
             return (ERR_SUPERBLOCK_OK);
         }
         return (ERR_SUPERBLOCK_BAD_STATUS);
     }
-
-    // @dev - For the submitter to respond to challenger queries
-    function respondBlockHeaderProof(
+    function respondLastBlockHeader(
         bytes32 sessionId,
-        uint[] memory _siblingsMap,
-        uint startingIndex,
-        uint count,
         bytes memory blockHeader
-    ) onlyClaimant(sessionId) public {
+        ) onlyClaimant(sessionId) public {
         BattleSession storage session = sessions[sessionId];
-        uint256 err;
-        if(blockHeader.length > 0){
-            (err) = doVerifyBlockHeader(session, blockHeader);
-            if (err != 0) {
-                emit ErrorBattle(sessionId, err);
-                return;
-            }
-        }
-        (err) = doRespondBlockHeaderProof(session, startingIndex, count, _siblingsMap);
-        if (err != ERR_SUPERBLOCK_OK && err != ERR_SUPERBLOCK_MISSING_SIBLINGS) {
+        (uint err) = doVerifyLastBlockHeader(session, blockHeader);
+        if (err != 0) {
             emit ErrorBattle(sessionId, err);
-        } 
-    }
+        }else{
+            session.actionsCounter += 1;
+            session.lastActionTimestamp = block.timestamp;
+            session.lastActionClaimant = session.actionsCounter;
+            emit RespondLastBlockHeader(sessionId, session.challenger);
+        }
+    }     
 
     // @dev - Validate superblock information from last blocks
     function validateLastBlocks(BattleSession storage session) internal view returns (uint) {
@@ -405,11 +325,12 @@ contract SyscoinBattleManager is SyscoinErrorCodes {
         uint prevTimestamp;
         bytes32 parentId;
         bytes32 lastBlockHash;
-        (, , lastTimestamp, , lastBlockHash, , parentId,,,) = getSuperblockInfo(session.superblockHash);
+        (, , lastTimestamp, lastBlockHash, parentId,,) = getSuperblockInfo(session.superblockHash);
         bytes32 blockSha256Hash = session.blockHashes[session.blockHashes.length - 1];
+        BlockInfo storage blockInfo = session.blocksInfo[session.superblockHash];
         if(session.blockHashes.length > 2){
             bytes32 prevBlockSha256Hash = session.blockHashes[session.blockHashes.length - 2];
-            if(session.lastBlockInfo.prevBlock != prevBlockSha256Hash){
+            if(blockInfo.prevBlock != prevBlockSha256Hash){
                 return ERR_SUPERBLOCK_BAD_PREVBLOCK;
             }
 
@@ -417,13 +338,13 @@ contract SyscoinBattleManager is SyscoinErrorCodes {
         if(blockSha256Hash != lastBlockHash){
             return ERR_SUPERBLOCK_BAD_LASTBLOCK;
         }
-        if (session.lastBlockInfo.timestamp != lastTimestamp) {
+        if (blockInfo.timestamp != lastTimestamp) {
             return ERR_SUPERBLOCK_BAD_TIMESTAMP;
         }
-        if (session.lastBlockInfo.status != BlockInfoStatus.Verified) {
+        if (blockInfo.status != BlockInfoStatus.Verified) {
             return ERR_SUPERBLOCK_BAD_LASTBLOCK_STATUS;
         }
-        (, ,prevTimestamp , ,,, , , ,) = getSuperblockInfo(parentId);
+        (, ,prevTimestamp , ,, , ) = getSuperblockInfo(parentId);
         
         if (prevTimestamp > lastTimestamp) {
             return ERR_SUPERBLOCK_BAD_TIMESTAMP;
@@ -432,54 +353,29 @@ contract SyscoinBattleManager is SyscoinErrorCodes {
     }
 
     // @dev - Validate superblock accumulated work
-    function validateProofOfWork(BattleSession storage session) internal returns (uint) {
+    function validateProofOfWork(BattleSession storage session) internal view returns (uint) {
         uint accWork;
         bytes32 prevBlock;
-        uint32 prevHeight;  
-        uint32 proposedHeight;  
-        uint retargetPeriod;
-        uint32 prevBits;
-        uint prevWork; 
-        (, accWork, , retargetPeriod, , prevBits,prevBlock,,,proposedHeight) = getSuperblockInfo(session.superblockHash);
-        
-        (, prevWork, , ,,, , , ,prevHeight) = getSuperblockInfo(prevBlock);
-        
-        if (proposedHeight != (prevHeight+uint32(session.blockHashes.length))) {
-            return proposedHeight;
-        } 
+        uint heightDiff = superblockDuration; 
+        uint prevWork;
+        bytes32 superblockHash = session.superblockHash;
+        (, accWork, ,,prevBlock,,) = getSuperblockInfo(superblockHash);
+        BlockInfo storage blockInfo = session.blocksInfo[superblockHash];
+        if(accWork <= 0){
+            return ERR_SUPERBLOCK_BAD_ACCUMULATED_WORK;
+        }    
+        (, prevWork, ,, , ,) = getSuperblockInfo(prevBlock);
+        if(net == SyscoinMessageLibrary.Network.REGTEST)
+            heightDiff = session.blockHashes.length;
+         
         if(accWork <= prevWork){
             return ERR_SUPERBLOCK_INVALID_ACCUMULATED_WORK;
-        }   
-        uint ret = validateSuperblockProofOfWork(session, prevHeight, prevWork, accWork, retargetPeriod, prevBits);
-        if(ret != 0){
-            return ret;
         }
-        return ERR_SUPERBLOCK_OK;
-    }
-    function validateSuperblockProofOfWork(BattleSession storage session, uint32 prevHeight, uint prevWork, uint accWork, uint retargetPeriod, uint32 prevBits) internal returns (uint){     
-         uint32 idx = 0;
-         while (idx < session.blockHashes.length) {
-            if (net != SyscoinMessageLibrary.Network.REGTEST) {
-                if((prevHeight+idx+1) % SyscoinMessageLibrary.difficultyAdjustmentInterval() == 0){
-                    emit DifficultyAdjustment(retargetPeriod, prevBits);
-                    prevBits = SyscoinMessageLibrary.calculateDifficulty(int64(retargetPeriod), prevBits);
-                    // ensure last block bits is consistent with the difficulty adjustment with bits set inside of superblock
-                    if(session.lastBlockInfo.bits != prevBits){
-                        return ERR_SUPERBLOCK_BAD_BITS;
-                    }
-                }
-            }
-            if(prevBits > 0){
-                prevWork += SyscoinMessageLibrary.diffFromBits(prevBits);
-                emit DifficultyStep(prevWork, prevBits);
-            }
-            idx += 1;
-        }
-        emit DifficultyEnd(prevWork, accWork);
-        if (net != SyscoinMessageLibrary.Network.REGTEST && prevWork != accWork) {
+        uint newWork = prevWork + (SyscoinMessageLibrary.diffFromBits(blockInfo.bits)*heightDiff);
+        if (net != SyscoinMessageLibrary.Network.REGTEST && newWork != accWork) {
             return ERR_SUPERBLOCK_BAD_ACCUMULATED_WORK;
-        }       
-        return 0;
+        }   
+        return ERR_SUPERBLOCK_OK;
     }
     // @dev - Verify whether a superblock's data is consistent
     // Only should be called when all blocks header were submitted
@@ -572,6 +468,17 @@ contract SyscoinBattleManager is SyscoinErrorCodes {
         return sessions[sessionId].blockHashes;
     }
 
+    function getSuperblockBySession(bytes32 sessionId) public view returns (bytes32) {
+        return sessions[sessionId].superblockHash;
+    }
+
+    function getSessionStatus(bytes32 sessionId) public view returns (BlockInfoStatus) {
+        BattleSession storage session = sessions[sessionId];
+        return session.blocksInfo[session.superblockHash].status;
+    }
+    function getSessionChallengeState(bytes32 sessionId) public view returns (ChallengeState) {
+        return sessions[sessionId].challengeState;
+    }
     // @dev - To be called when a battle sessions  was decided
     function sessionDecided(bytes32 sessionId, bytes32 superblockHash, address winner, address loser) internal {
         trustedSyscoinClaimManager.sessionDecided(sessionId, superblockHash, winner, loser);
@@ -582,13 +489,10 @@ contract SyscoinBattleManager is SyscoinErrorCodes {
         bytes32 _blocksMerkleRoot,
         uint _accumulatedWork,
         uint _timestamp,
-        uint _retargetPeriod,
         bytes32 _lastHash,
-        uint32 _lastBits,
         bytes32 _parentId,
         address _submitter,
-        SyscoinSuperblocks.Status _status,
-        uint32 _height
+        SyscoinSuperblocks.Status _status
     ) {
         return trustedSuperblocks.getSuperblock(superblockHash);
     }

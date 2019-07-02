@@ -1,6 +1,7 @@
 var HDWalletProvider = require("truffle-hdwallet-provider");
 const fs = require('fs');
 const mainnet_mnemonic = process.env.MNEMONIC;
+const etherscanAPIKEY = process.env.ETHERSCAN;
 var mnenomic = "cup aisle bright dice when flame left assume laptop lock cry brown";
 module.exports = {
   networks: {
@@ -30,6 +31,12 @@ module.exports = {
       },
       network_id: "4",
     }
+  },
+  plugins: [
+    'truffle-plugin-verify'
+  ],
+  api_keys: {
+    etherscan: etherscanAPIKEY
   },
   solc: {
     optimizer: {

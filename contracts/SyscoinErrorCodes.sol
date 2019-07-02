@@ -30,6 +30,7 @@ contract SyscoinErrorCodes {
     uint constant ERR_SUPERBLOCK_BAD_BLOCKHEIGHT = 50170;
     uint constant ERR_SUPERBLOCK_INVALID_ACCUMULATED_WORK = 50180;
     uint constant ERR_SUPERBLOCK_BAD_PREVBLOCK = 50190;
+    uint constant ERR_SUPERBLOCK_BAD_RETARGET = 50200;
 
     // error codes for verifyTx
     uint constant ERR_BAD_FEE = 20010;
@@ -48,6 +49,6 @@ contract SyscoinErrorCodes {
     uint constant public minProposalDeposit = challengeCost + minReward;
     uint constant public minChallengeDeposit = superblockCost + minReward;
     uint constant public respondMerkleRootHashesCost = 378000; // TODO: measure this with 60 hashes
-    uint constant public respondBlockHeaderProofCost = 40000;
+    uint constant public respondLastBlockHeaderCost = 40000;
     uint constant public verifySuperblockCost = 220000;
 }

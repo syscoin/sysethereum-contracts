@@ -6,7 +6,7 @@ contract('testSyscoinTokenDoUnlock', function(accounts) {
   it('doUnlock does not fail', async () => {
    
     const trustedRelayerContract = accounts[0]; // Tell SyscoinToken to trust accounts[0] as it would be the relayer contract
-    let syscoinToken = await SyscoinToken.new(trustedRelayerContract, 1702063431, "SyscoinTokenAsset", 8, "SYSASSETX");
+    let syscoinToken = await SyscoinToken.new(trustedRelayerContract, 1702063431, "SyscoinToken", 8, "SYSX");
     await syscoinToken.assign(accounts[0], 2000000000);
     var balance = await syscoinToken.balanceOf(accounts[0]);
     assert.equal(balance, 2000000000, `SyscoinToken's ${accounts[0]} balance is not the expected one`);

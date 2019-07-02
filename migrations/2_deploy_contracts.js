@@ -14,29 +14,29 @@ const SYSCOIN_MAINNET = 0;
 const SYSCOIN_REGTEST = 2;
 
 const SUPERBLOCK_OPTIONS_PRODUCTION = {
-  DURATION: 3600,   // 60 minutes
+  DURATION: 60,   // 60 blocks per superblock
   DELAY: 3 * 3600,  // 3 hours
   TIMEOUT: 600,     // 10 minutes
   CONFIRMATIONS: 3, // Superblocks required to confirm semi approved superblock
-  REWARD: 1000000000000000000,        // Monetary reward for opponent in case a battle is lost
+  REWARD: "1000000000000000000",        // Monetary reward for opponent in case a battle is lost
   ASSETGUID: 1172462264
 };
 
 const SUPERBLOCK_OPTIONS_INTEGRATION_FAST_SYNC = {
-  DURATION: 600,    // 10 minutes
+  DURATION: 10,    // 10 blocks per superblock
   DELAY: 300,       // 5 minutes
   TIMEOUT: 300,      // 5 minutes
   CONFIRMATIONS: 3, // Superblocks required to confirm semi approved superblock
-  REWARD: 1000000000000000000,        // Monetary reward for opponent in case a battle is lost  
+  REWARD: "1000000000000000000",        // Monetary reward for opponent in case a battle is lost  
   ASSETGUID: 1172462264
 };
 
 const SUPERBLOCK_OPTIONS_LOCAL = {
-  DURATION: 60,     // 1 minute
+  DURATION: 60,     // 10 blocks per superblock
   DELAY: 60,        // 1 minute
   TIMEOUT: 30,      // 30 seconds
   CONFIRMATIONS: 1, // Superblocks required to confirm semi approved superblock
-  REWARD: 10,        // Monetary reward for opponent in case a battle is lost  
+  REWARD: "10",        // Monetary reward for opponent in case a battle is lost  
   ASSETGUID: 1172462264
 };
 
@@ -52,7 +52,7 @@ async function deployDevelopment(deployer, networkId, superblockOptions) {
   await deployer.deploy(SyscoinSuperblocks);
 
   await deployer.deploy(SyscoinTokenForTests,
-    SyscoinSuperblocks.address,0, "SyscoinToken", 8, "SYSX"
+    SyscoinSuperblocks.address,superblockOptions.ASSETGUID,"SyscoinToken", 8, "SYSX",
   );
 
   await deployer.deploy(SyscoinBattleManager,
@@ -91,12 +91,7 @@ async function deployIntegration(deployer,  networkId, superblockOptions) {
   await deployer.deploy(SyscoinSuperblocks, {gas: 5000000});
 
   await deployer.deploy(SyscoinToken,
-    SyscoinSuperblocks.address,0,"SyscoinToken", 8, "SYSX",
-    {gas: 2000000 }
-  );
-
-  await deployer.deploy(SyscoinToken,
-    SyscoinSuperblocks.address,superblockOptions.ASSETGUID,"SyscoinTokenAsset", 8, "SYSXASSET",
+    SyscoinSuperblocks.address,superblockOptions.ASSETGUID,"SyscoinToken", 8, "SYSX",
     {gas: 2000000 }
   );
   await deployer.deploy(SyscoinBattleManager,
