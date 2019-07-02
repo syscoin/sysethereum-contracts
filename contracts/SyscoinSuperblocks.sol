@@ -304,12 +304,12 @@ contract SyscoinSuperblocks is SyscoinErrorCodes {
     // @param _superblockHash - superblock containing block header
     // @param _untrustedTargetContract - the contract that is going to process the transaction
     function relayTx(
-        bytes _txBytes,
+        bytes memory _txBytes,
         uint _txIndex,
         uint[] memory _txSiblings,
         bytes memory _syscoinBlockHeader,
         uint _syscoinBlockIndex,
-        uint[] _syscoinBlockSiblings,
+        uint[] memory _syscoinBlockSiblings,
         bytes32 _superblockHash,
         SyscoinTransactionProcessor _untrustedTargetContract
     ) public returns (uint) {
@@ -336,7 +336,7 @@ contract SyscoinSuperblocks is SyscoinErrorCodes {
         emit RelayTransaction(bytes32(0), ERR_RELAY_VERIFY);
         return(ERR_RELAY_VERIFY);        
     }
-    function parseTxHelper(bytes _txBytes, uint txHash, SyscoinTransactionProcessor _untrustedTargetContract) private returns (uint) {
+    function parseTxHelper(bytes memory _txBytes, uint txHash, SyscoinTransactionProcessor _untrustedTargetContract) private returns (uint) {
         uint value;
         address destinationAddress;
         uint32 _assetGUID;
@@ -372,10 +372,10 @@ contract SyscoinSuperblocks is SyscoinErrorCodes {
     // @return - SHA-256 hash of _txBytes if the transaction is in the block, 0 otherwise
     // TODO: this can probably be made private
     function verifyTx(
-        bytes _txBytes,
+        bytes memory _txBytes,
         uint _txIndex,
-        uint[] _siblings,
-        bytes _txBlockHeaderBytes,
+        uint[] memory _siblings,
+        bytes memory _txBlockHeaderBytes,
         bytes32 _txsuperblockHash
     ) public returns (uint) {
         uint txHash = SyscoinMessageLibrary.dblShaFlip(_txBytes);
@@ -410,8 +410,8 @@ contract SyscoinSuperblocks is SyscoinErrorCodes {
     function helperVerifyHash(
         uint256 _txHash,
         uint _txIndex,
-        uint[] _siblings,
-        bytes _blockHeaderBytes,
+        uint[] memory _siblings,
+        bytes memory _blockHeaderBytes,
         bytes32 _txsuperblockHash
     ) private returns (uint) {
 

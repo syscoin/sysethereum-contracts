@@ -195,7 +195,6 @@ contract SyscoinBattleManager is SyscoinErrorCodes {
                 return err;
             }
             session.blockHashes = blockHashes;
-            session.blockSiblings.length = blockHashes.length;
             session.challengeState = ChallengeState.RespondMerkleRootHashes;
             return ERR_SUPERBLOCK_OK;
         }

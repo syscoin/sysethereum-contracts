@@ -226,10 +226,6 @@ function makeSuperblock(headers, parentId, parentAccumulatedWork) {
   const merkleRoot = makeMerkle(blockHashes);
   const timestamp = getBlockTimestamp(headers[headers.length - 1]);
   const lastHash = calcBlockSha256Hash(headers[headers.length - 1]);
-  let blockSiblingsMap = makeMerkleProofMap(strippedHashes);
-  if(blockSiblingsMap.length == 0){
-    blockSiblingsMap.push(merkleRoot);
-  }
   return {
     merkleRoot,
     accumulatedWork,
@@ -245,7 +241,6 @@ function makeSuperblock(headers, parentId, parentAccumulatedWork) {
     ),
     blockHeaders: headers,
     blockHashes: strippedHashes, 
-    blockSiblingsMap: blockSiblingsMap,
   };
 }
 
