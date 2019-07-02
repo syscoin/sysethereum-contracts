@@ -11,10 +11,11 @@
     "bitcore-message": "^1.0.4",
     "js-sha256": "^0.9.0",
     "js-sha3": "^0.8.0",
-    "openzeppelin-solidity": "^1.9.9",
-    "solc": "^0.4.23",
+    "openzeppelin-solidity": "^2.3.0",
+    "solc": "^0.5.10",
     "truffle-assertions": "^0.8.2",
     "truffle-hdwallet-provider": "^1.0.9",
+    "truffle-plugin-verify": "^0.3.1",
     "web3": "^1.0.0-beta.37"
   },
   "devDependencies": {},

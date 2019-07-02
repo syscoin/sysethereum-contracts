@@ -17,7 +17,7 @@ async function challengeNextSuperblock(from, toChallenge, deposit) {
     console.log(`Making a challenge from: ${challenger}`);
     let balance = await cm.getDeposit(challenger);
     if (typeof deposit === 'string' || balance.toNumber() === 0) {
-      const amount = typeof deposit === 'string' ? web3.toBigNumber(deposit) : 1000;
+      const amount = typeof deposit === 'string' ? web3.utils.toBN(deposit) : 1000;
       await cm.makeDeposit({ from: challenger, value: amount });
       balance = await cm.getDeposit(challenger);
     }
@@ -240,9 +240,7 @@ async function displaySuperblocksStatus({ superblockHash, fromBlock, toBlock }) 
         blocksMerkleRoot,
         accumulatedWork,
         timestamp,
-        prevTimestamp,
         lastHash,
-        lastBits,
         parentId,
         submitter,
         status,
@@ -258,7 +256,6 @@ async function displaySuperblocksStatus({ superblockHash, fromBlock, toBlock }) 
       console.log(`Last block Timestamp: ${new Date(timestamp * 1000)}`);
       console.log(`Status: ${statusToText(status)}`);
       console.log(`Block Height: ${blockHeight}`);
-      console.log(`Last Difficulty Adjustment Timestamp: ${new Date(prevTimestamp * 1000)}`);
       console.log(`Superblock submitted: ${new Date(claim.createdAt * 1000)}`);
       console.log(`Challengers: ${challengers.length}`);
       console.log(`Challengers Timeout: ${new Date(claim.challengeTimeout * 1000)}`);

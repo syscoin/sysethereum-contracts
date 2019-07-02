@@ -7,7 +7,6 @@ const bitcoreLib = require('bitcore-lib');
 const ECDSA = bitcoreLib.crypto.ECDSA;
 const bitcoreMessage = require('bitcore-message');
 const bitcoin = require('bitcoinjs-lib');
-const BN = web3.utils.BN;
 
 const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000'
 const ZERO_BYTES32 = '0x00000000000000000000000000000000000000000000000000000000000000'
@@ -32,7 +31,7 @@ const DEPOSITS = {
     MIN_PROPOSAL_DEPOSIT: 34000+1000000000000000000,
     MIN_CHALLENGE_DEPOSIT: 440000+1000000000000000000,
     RESPOND_MERKLE_COST: 378000, // TODO: measure this with 60 hashes
-    RESPOND_HEADER_COST: 40000,
+    RESPOND_LAST_HEADER_COST: 40000,
     VERIFY_SUPERBLOCK_COST: 220000
 };
 
@@ -111,11 +110,11 @@ function getBlockDifficulty(blockHeader) {
   const headerBin = module.exports.fromHex(blockHeader).slice(0, 80);
   const exp = web3.utils.toBN(headerBin[75]);
   const mant = web3.utils.toBN(headerBin[72] + 256 * headerBin[73] + 256 * 256 * headerBin[74]);
-  const target = mant.mul(web3.utils.toBN(256).pow(exp.sub(new BN(3))));
+  const target = mant.mul(web3.utils.toBN(256).pow(exp.sub(web3.utils.toBN(3))));
   const difficulty1 = web3.utils.toBN(0x00FFFFF).mul(web3.utils.toBN(256).pow(web3.utils.toBN(0x1e-3)));
-  const difficulty = difficulty1.divRound(target);
-  return difficulty.mul(new BN(0x100001));
-}
+  const difficulty = difficulty1.div(target);
+  return difficulty;
+} 
 
 const timeout = async (ms) => new Promise((resolve, reject) => setTimeout(resolve, ms));
 
@@ -191,56 +190,57 @@ function toUint32(value) {
   // Format as 4 bytes = 8 hexadecimal chars
   return module.exports.formatHexUint(value, 8);
 }
-
+  // make a merkle proof map of indices to prove that all block hashes commit to a superblock merkle root
+function makeMerkleProofMap (blockHashes) {
+    var merkleIndexMap = [];
+    for(var i =0;i< blockHashes.length;i++){
+      var proofOfFirstTx = btcProof.getProof(blockHashes, i);
+      for(var j = 0;j<proofOfFirstTx.sibling.length;j++){
+        merkleIndexMap.push(`0x${proofOfFirstTx.sibling[j]}`);
+      }
+    }
+    return merkleIndexMap;
+  }
+  
 // Calculate a superblock id
-function calcSuperblockHash(merkleRoot, accumulatedWork, timestamp, prevTimestamp, lastHash, lastBits, parentId, blockHeight) {
+function calcSuperblockHash(merkleRoot, accumulatedWork, timestamp, lastHash, parentId) {
   return `0x${Buffer.from(keccak256.arrayBuffer(
     Buffer.concat([
       module.exports.fromHex(merkleRoot),
       module.exports.fromHex(toUint256(accumulatedWork)),
       module.exports.fromHex(toUint256(timestamp)),
-      module.exports.fromHex(toUint256(prevTimestamp)),
       module.exports.fromHex(lastHash),
-      module.exports.fromHex(toUint32(lastBits)),
-      module.exports.fromHex(parentId),
-      module.exports.fromHex(toUint32(blockHeight))
+      module.exports.fromHex(parentId)
     ])
   )).toString('hex')}`;
 }
 
 // Construct a superblock from an array of block headers
-function makeSuperblock(headers, parentId, parentAccumulatedWork, _blockHeight, _prevTimestamp=0) {
+function makeSuperblock(headers, parentId, parentAccumulatedWork) {
   if (headers.length < 1) {
     throw new Error('Requires at least one header to build a superblock');
   }
   const blockHashes = headers.map(header => calcBlockSha256Hash(header));
+  const strippedHashes =  blockHashes.map(x => x.slice(2)); // <- remove prefix '0x'
   const accumulatedWork = headers.reduce((work, header) => work.add(getBlockDifficulty(header)), web3.utils.toBN(parentAccumulatedWork));
   const merkleRoot = makeMerkle(blockHashes);
   const timestamp = getBlockTimestamp(headers[headers.length - 1]);
-  const prevTimestamp = _prevTimestamp;
-  const lastBits = getBlockDifficultyBits(headers[headers.length - 1]);
   const lastHash = calcBlockSha256Hash(headers[headers.length - 1]);
   return {
     merkleRoot,
     accumulatedWork,
     timestamp,
-    prevTimestamp,
     lastHash,
-    lastBits,
     parentId,
     superblockHash: calcSuperblockHash(
       merkleRoot,
       accumulatedWork,
       timestamp,
-      prevTimestamp,
       lastHash,
-      lastBits,
-      parentId,
-      _blockHeight
+      parentId
     ),
     blockHeaders: headers,
-    blockHashes: blockHashes.map(x => x.slice(2)), // <- remove prefix '0x'
-    blockHeight: _blockHeight
+    blockHashes: strippedHashes, 
   };
 }
 
@@ -298,11 +298,8 @@ async function initSuperblockChain(options) {
     options.genesisSuperblock.merkleRoot,
     options.genesisSuperblock.accumulatedWork,
     options.genesisSuperblock.timestamp,
-    options.genesisSuperblock.prevTimestamp,
     options.genesisSuperblock.lastHash,
-    options.genesisSuperblock.lastBits,
     options.genesisSuperblock.parentId,
-    options.genesisSuperblock.blockHeight,
     { from: options.from },
   );
   return {
@@ -354,7 +351,7 @@ function ethAddressFromKeyPairRaw(keyPair) {
 }
 function buildSyscoinTransaction({ signer, inputs, outputs }) {
   const txBuilder = new bitcoin.TransactionBuilder(SYSCOIN);
-  txBuilder.setVersion(0x7401);
+  txBuilder.setVersion(0x7407);
   inputs.forEach(([ txid, index ]) => txBuilder.addInput(txid, index));
   outputs.forEach(([address, amount, data]) => {
     if (address === 'OP_RETURN') {
@@ -394,7 +391,7 @@ module.exports = {
     const genesisSuperblock = makeSuperblock(
       headers.slice(0, 1), // header 120
       '0x0000000000000000000000000000000000000000000000000000000000000000',
-      0,            // accumulated work block 120
+      1,            // accumulated work block 120
       1553880473,    // timestamp block 120,
       120
     );
@@ -403,11 +400,8 @@ module.exports = {
       genesisSuperblock.merkleRoot,
       genesisSuperblock.accumulatedWork,
       genesisSuperblock.timestamp,
-      genesisSuperblock.prevTimestamp,
       genesisSuperblock.lastHash,
-      genesisSuperblock.lastBits,
       genesisSuperblock.parentId,
-      genesisSuperblock.blockHeight,
       { from: sender },
     );
 
@@ -426,11 +420,8 @@ module.exports = {
       proposedSuperblock.merkleRoot,
       proposedSuperblock.accumulatedWork,
       proposedSuperblock.timestamp,
-      proposedSuperblock.prevTimestamp,
       proposedSuperblock.lastHash,
-      proposedSuperblock.lastBits,
       proposedSuperblock.parentId,
-      proposedSuperblock.blockHeight,
       { from: sender },
     );
 
@@ -469,8 +460,7 @@ module.exports = {
   makeMerkleProof: function (hashes, txIndex) {
       var proofOfFirstTx = btcProof.getProof(hashes, txIndex);
       return proofOfFirstTx.sibling;
-  }
-  ,
+  },
   // Adds the size of the hex string in bytes.
   // For input "111111" will return "00000003111111"
   addSizeToHeader: function (input) {
