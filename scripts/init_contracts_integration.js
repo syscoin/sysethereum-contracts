@@ -10,7 +10,8 @@ module.exports = async function(callback) {
   var timestamp = 1562016306;
   var lastHash = "0xa395b884dea0c77d3eff856838ebba4e74a6e633c7516784a7f21705d3d58f45"; // 46800
   var parentId = "0x0";
+  var lastBits = 403358244;
   console.log("Initializing...");
-  res = await sb.initialize(blocksMerkleRoot, accumulatedWork, timestamp, lastHash, parentId);
+  res = await sb.initialize(blocksMerkleRoot, accumulatedWork, timestamp, lastHash, lastBits, parentId);
   console.log("init_contracts_integration end");
 }
