@@ -100,7 +100,7 @@ import "../SyscoinTransactionProcessor.sol";
 // Addresses are the scriptHash with a version prefix of 5, encoded as
 // Base58check. These addresses begin with a '3'.
 
-pragma solidity ^0.4.19;
+pragma solidity >=0.5.0 <0.6.0;
 
 // parse a raw Syscoin transaction byte array
 library SyscoinMessageLibrary {
@@ -110,7 +110,7 @@ library SyscoinMessageLibrary {
 
     // Error codes
     uint constant ERR_INVALID_HEADER = 10050;
-    uint constant ERR_COINBASE_INDEX = 10060; // coinbase tx index within Litecoin merkle isn't 0
+    uint constant ERR_COINBASE_INDEX = 10060; // coinbase tx index within Bitcoin merkle isn't 0
     uint constant ERR_NOT_MERGE_MINED = 10070; // trying to check AuxPoW on a block that wasn't merge mined
     uint constant ERR_FOUND_TWICE = 10080; // 0xfabe6d6d found twice
     uint constant ERR_NO_MERGE_HEADER = 10090; // 0xfabe6d6d not found
@@ -124,7 +124,6 @@ library SyscoinMessageLibrary {
     uint constant ERR_PARSE_TX_SYS = 10170;
     enum Network { MAINNET, TESTNET, REGTEST }
     uint32 constant SYSCOIN_TX_VERSION_ASSET_ALLOCATION_BURN = 0x7407;
-    uint32 constant SYSCOIN_TX_VERSION_BURN = 0x7401;
     // AuxPoW block fields
     struct AuxPoW {
         uint blockHash;
@@ -136,9 +135,9 @@ library SyscoinMessageLibrary {
         uint syscoinHashIndex; // index of Syscoin block hash within block hash tree
         uint coinbaseMerkleRootCode; // encodes whether or not the root was found properly
 
-        uint parentMerkleRoot; // Merkle root of transaction tree from parent Litecoin block header
+        uint parentMerkleRoot; // Merkle root of transaction tree from parent Bitcoin block header
         uint[] parentMerkleProof; // proves that coinbase tx belongs to a tree with the above root
-        uint coinbaseTxIndex; // index of coinbase tx within Litecoin tx tree
+        uint coinbaseTxIndex; // index of coinbase tx within Bitcoin tx tree
 
         uint parentNonce;
     }
@@ -168,26 +167,9 @@ library SyscoinMessageLibrary {
         }
     }
     // convert little endian bytes to uint
-    function getBytesLE(bytes memory data, uint pos, uint bits) internal pure returns (uint) {
-        if (bits == 8) {
-            return uint8(data[pos]);
-        } else if (bits == 16) {
-            return uint16(data[pos])
-                 + uint16(data[pos + 1]) * 2 ** 8;
-        } else if (bits == 32) {
-            return uint32(data[pos])
-                 + uint32(data[pos + 1]) * 2 ** 8
-                 + uint32(data[pos + 2]) * 2 ** 16
-                 + uint32(data[pos + 3]) * 2 ** 24;
-        } else if (bits == 64) {
-            return uint64(data[pos])
-                 + uint64(data[pos + 1]) * 2 ** 8
-                 + uint64(data[pos + 2]) * 2 ** 16
-                 + uint64(data[pos + 3]) * 2 ** 24
-                 + uint64(data[pos + 4]) * 2 ** 32
-                 + uint64(data[pos + 5]) * 2 ** 40
-                 + uint64(data[pos + 6]) * 2 ** 48
-                 + uint64(data[pos + 7]) * 2 ** 56;
+    function getBytesLE(bytes memory data, uint pos, uint bits) internal pure returns (uint256 result) {
+        for (uint256 i = 0; i < bits / 8; i++) {
+            result += uint256(uint8(data[pos + i])) * 2 ** (i * 8);
         }
     }
     
@@ -210,12 +192,12 @@ library SyscoinMessageLibrary {
         uint32 version;
         uint pos = 0;
         version = bytesToUint32Flipped(txBytes, pos);
-        if(version != SYSCOIN_TX_VERSION_ASSET_ALLOCATION_BURN && version != SYSCOIN_TX_VERSION_BURN){
+        if(version != SYSCOIN_TX_VERSION_ASSET_ALLOCATION_BURN){
             return (ERR_PARSE_TX_SYS, output_value, destinationAddress, assetGUID);
         }
         pos = skipInputs(txBytes, 4);
             
-        (output_value, destinationAddress, assetGUID) = scanBurns(txBytes, version, pos);
+        (output_value, destinationAddress, assetGUID) = scanBurns(txBytes, pos);
         return (0, output_value, destinationAddress, assetGUID);
     }
 
@@ -264,7 +246,7 @@ library SyscoinMessageLibrary {
     }
              
     // scan the burn outputs and return the value and script data of first burned output.
-    function scanBurns(bytes memory txBytes, uint32 version, uint pos) private pure
+    function scanBurns(bytes memory txBytes, uint pos) private pure
              returns (uint, address, uint32)
     {
         uint script_len;
@@ -275,10 +257,6 @@ library SyscoinMessageLibrary {
         (n_outputs, pos) = parseVarInt(txBytes, pos);
         require(n_outputs < 10);
         for (uint i = 0; i < n_outputs; i++) {
-            // output
-            if(version == SYSCOIN_TX_VERSION_BURN){
-                output_value = getBytesLE(txBytes, pos, 64);
-            }
             pos += 8;
             // varint
             (script_len, pos) = parseVarInt(txBytes, pos);
@@ -290,12 +268,7 @@ library SyscoinMessageLibrary {
             }
             // skip opreturn marker
             pos += 1;
-            if(version == SYSCOIN_TX_VERSION_ASSET_ALLOCATION_BURN){
-                (output_value, destinationAddress, assetGUID) = scanAssetDetails(txBytes, pos);
-            }
-            else if(version == SYSCOIN_TX_VERSION_BURN){                
-                destinationAddress = scanSyscoinDetails(txBytes, pos);   
-            }
+            (output_value, destinationAddress, assetGUID) = scanAssetDetails(txBytes, pos);  
             // only one opreturn data allowed per transaction
             break;
         }
@@ -335,7 +308,7 @@ library SyscoinMessageLibrary {
     // takes a 'stop' argument which sets the maximum number of
     // siblings to scan through. stop=0 => scan all.
     function scanMerkleBranch(bytes memory txBytes, uint pos, uint stop) private pure
-             returns (uint[], uint)
+             returns (uint[] memory, uint)
     {
         uint n_siblings;
         uint halt;
@@ -363,16 +336,16 @@ library SyscoinMessageLibrary {
         // FIXME: With solc v0.4.24 and optimizations enabled
         // using uint160 for index i will generate an error
         // "Error: VM Exception while processing transaction: Error: redPow(normalNum)"
-        for (uint i = 0; i < 20; i++) {
-            slice += uint160(data[i + start]) << (8 * (19 - i));
+        for (uint8 i = 0; i < 20; i++) {
+            slice += uint160(uint8(data[i + start])) << (8 * (19 - i));
         }
         return bytes20(slice);
     }
     // Slice 32 contiguous bytes from bytes `data`, starting at `start`
     function sliceBytes32Int(bytes memory data, uint start) private pure returns (uint slice) {
-        for (uint i = 0; i < 32; i++) {
+        for (uint8 i = 0; i < 32; i++) {
             if (i + start < data.length) {
-                slice += uint(data[i + start]) << (8 * (31 - i));
+                slice += uint256(uint8(data[i + start])) << (8 * (31 - i));
             }
         }
     }
@@ -385,7 +358,7 @@ library SyscoinMessageLibrary {
     // @param _rawBytes - array to be sliced
     // @param offset - first byte of sliced array
     // @param _endIndex - last byte of sliced array
-    function sliceArray(bytes memory _rawBytes, uint offset, uint _endIndex) internal view returns (bytes) {
+    function sliceArray(bytes memory _rawBytes, uint offset, uint _endIndex) internal view returns (bytes memory) {
         uint len = _endIndex - offset;
         bytes memory result = new bytes(len);
         assembly {
@@ -405,16 +378,7 @@ library SyscoinMessageLibrary {
         // 0x6a OP_RETURN
         return 
             txBytes[pos] == byte(0x6a);
-    }
-    // Returns syscoin data parsed from the op_return data output from syscoin burn transaction
-    function scanSyscoinDetails(bytes memory txBytes, uint pos) private pure
-             returns (address) {      
-        uint8 op;
-        (op, pos) = getOpcode(txBytes, pos);
-        // ethereum addresses are 20 bytes (without the 0x)
-        require(op == 0x14);
-        return readEthereumAddress(txBytes, pos);
-    }    
+    }  
     // Returns asset data parsed from the op_return data output from syscoin asset burn transaction
     function scanAssetDetails(bytes memory txBytes, uint pos) private pure
              returns (uint, address, uint32) {
@@ -470,16 +434,6 @@ library SyscoinMessageLibrary {
                 mstore8(add(pos, i), byte(sub(31, i), _input))
             }
             result := mload(pos)
-        }
-    }
-    // helpers for flip32Bytes
-    struct UintWrapper {
-        uint value;
-    }
-
-    function ptr(UintWrapper memory uw) private pure returns (uint addr) {
-        assembly {
-            addr := uw
         }
     }
 
@@ -544,7 +498,7 @@ library SyscoinMessageLibrary {
     // root of the merkle tree.
     //
     // @return root of merkle tree
-    function makeMerkle(bytes32[] hashes2) external pure returns (bytes32) {
+    function makeMerkle(bytes32[] calldata hashes2) external pure returns (bytes32) {
         bytes32[] memory hashes = hashes2;
         uint length = hashes.length;
         if (length == 1) return hashes[0];
@@ -599,11 +553,11 @@ library SyscoinMessageLibrary {
         return resultHash;
     }
 
-    // @dev - calculates the Merkle root of a tree containing Litecoin transactions
-    // in order to prove that `ap`'s coinbase tx is in that Litecoin block.
+    // @dev - calculates the Merkle root of a tree containing Bitcoin transactions
+    // in order to prove that `ap`'s coinbase tx is in that Bitcoin block.
     //
     // @param _ap - AuxPoW information
-    // @return - Merkle root of Litecoin block that the Syscoin block
+    // @return - Merkle root of Bitcoin block that the Syscoin block
     // with this info was mined in if AuxPoW Merkle proof is correct,
     // garbage otherwise
     function computeParentMerkle(AuxPoW memory _ap) internal pure returns (uint) {
@@ -614,7 +568,7 @@ library SyscoinMessageLibrary {
 
     // @dev - calculates the Merkle root of a tree containing auxiliary block hashes
     // in order to prove that the Syscoin block identified by _blockHash
-    // was merge-mined in a Litecoin block.
+    // was merge-mined in a Bitcoin block.
     //
     // @param _blockHash - SHA-256 hash of a certain Syscoin block
     // @param _ap - AuxPoW information corresponding to said block
@@ -681,7 +635,7 @@ library SyscoinMessageLibrary {
     // @dev - Bitcoin-way of hashing
     // @param _dataBytes - raw data to be hashed
     // @return - result of applying SHA-256 twice to raw data and then flipping the bytes
-    function dblShaFlip(bytes _dataBytes) internal pure returns (uint) {
+    function dblShaFlip(bytes memory _dataBytes) internal pure returns (uint) {
         return flip32Bytes(uint(sha256(abi.encodePacked(sha256(abi.encodePacked(_dataBytes))))));
     }
 
@@ -789,7 +743,7 @@ library SyscoinMessageLibrary {
     //
     // @param _rawBytes - first 80 bytes of a block header
     // @return - exact same header information in BlockHeader struct form
-    function parseHeaderBytes(bytes memory _rawBytes, uint pos) internal view returns (BlockHeader bh) {
+    function parseHeaderBytes(bytes memory _rawBytes, uint pos) internal view returns (BlockHeader memory bh) {
         bh.bits = getBits(_rawBytes);
         bh.blockHash = dblShaFlipMem(_rawBytes, pos, 80);
     }
@@ -799,13 +753,13 @@ library SyscoinMessageLibrary {
     // @dev - Converts a bytes of size 4 to uint32,
     // e.g. for input [0x01, 0x02, 0x03 0x04] returns 0x01020304
     function bytesToUint32Flipped(bytes memory input, uint pos) internal pure returns (uint32 result) {
-        result = uint32(input[pos]) + uint32(input[pos + 1])*(2**8) + uint32(input[pos + 2])*(2**16) + uint32(input[pos + 3])*(2**24);
+        result = uint32(uint8(input[pos])) + uint32(uint8(input[pos + 1]))*(2**8) + uint32(uint8(input[pos + 2]))*(2**16) + uint32(uint8(input[pos + 3]))*(2**24);
     }
     function bytesToUint64(bytes memory input, uint pos) internal pure returns (uint64 result) {
-        result = uint64(input[pos+7]) + uint64(input[pos + 6])*(2**8) + uint64(input[pos + 5])*(2**16) + uint64(input[pos + 4])*(2**24) + uint64(input[pos + 3])*(2**32) + uint64(input[pos + 2])*(2**40) + uint64(input[pos + 1])*(2**48) + uint64(input[pos])*(2**56);
+        result = uint64(uint8(input[pos+7])) + uint64(uint8(input[pos + 6]))*(2**8) + uint64(uint8(input[pos + 5]))*(2**16) + uint64(uint8(input[pos + 4]))*(2**24) + uint64(uint8(input[pos + 3]))*(2**32) + uint64(uint8(input[pos + 2]))*(2**40) + uint64(uint8(input[pos + 1]))*(2**48) + uint64(uint8(input[pos]))*(2**56);
     }
      function bytesToUint32(bytes memory input, uint pos) internal pure returns (uint32 result) {
-        result = uint32(input[pos+3]) + uint32(input[pos + 2])*(2**8) + uint32(input[pos + 1])*(2**16) + uint32(input[pos])*(2**24);
+        result = uint32(uint8(input[pos+3])) + uint32(uint8(input[pos + 2]))*(2**8) + uint32(uint8(input[pos + 1]))*(2**16) + uint32(uint8(input[pos]))*(2**24);
     }  
     // @dev - checks version to determine if a block has merge mining information
     function isMergeMined(bytes memory _rawBytes, uint pos) internal pure returns (bool) {
@@ -817,7 +771,7 @@ library SyscoinMessageLibrary {
     // @param _pos - starting position of the block header
 	// @param _proposedBlockHash - proposed block hash computing from block header bytes
     // @return - [ErrorCode, IsMergeMined]
-    function verifyBlockHeader(bytes _blockHeaderBytes, uint _pos, uint _proposedBlockHash) external view returns (uint) {
+    function verifyBlockHeader(bytes calldata _blockHeaderBytes, uint _pos, uint _proposedBlockHash) external view returns (uint) {
         BlockHeader memory blockHeader = parseHeaderBytes(_blockHeaderBytes, _pos);
         uint blockSha256Hash = blockHeader.blockHash;
 		// must confirm that the header hash passed in and computing hash matches
@@ -849,12 +803,11 @@ library SyscoinMessageLibrary {
     int64 constant TARGET_TIMESPAN_DIV_4 = TARGET_TIMESPAN / int64(4);
     int64 constant TARGET_TIMESPAN_MUL_4 = TARGET_TIMESPAN * int64(4);
     int64 constant TARGET_TIMESPAN_ADJUSTMENT =  int64(360);  // 6 hour
-    uint constant INITIAL_CHAIN_WORK =  0x100001; 
     uint constant POW_LIMIT = 0x00000fffffffffffffffffffffffffffffffffffffffffffffffffffffffffff;
 
     // @dev - Calculate difficulty from compact representation (bits) found in block
     function diffFromBits(uint32 bits) external pure returns (uint) {
-        return targetToDiff(targetFromBits(bits))*INITIAL_CHAIN_WORK;
+        return targetToDiff(targetFromBits(bits));
     }
     
     function difficultyAdjustmentInterval() external pure returns (int64) {
