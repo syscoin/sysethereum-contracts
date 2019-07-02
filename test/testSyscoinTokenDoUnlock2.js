@@ -5,7 +5,7 @@ var utils = require('./utils');
 contract('testSyscoinTokenDoUnlock2', function(accounts) {
   it('doUnlock whith multiple txs', async () => {
     const trustedRelayerContract = accounts[0]; // Tell SyscoinToken to trust accounts[0] as it would be the relayer contract
-    let syscoinToken = await SyscoinToken.new(trustedRelayerContract, 1702063431, "SyscoinTokenAsset", 8, "SYSASSETX");
+    let syscoinToken = await SyscoinToken.new(trustedRelayerContract, 1702063431, "SyscoinToken", 8, "SYSX");
     await syscoinToken.assign(accounts[0], 5600000000);
     var balance = await syscoinToken.balanceOf(accounts[0]);
 

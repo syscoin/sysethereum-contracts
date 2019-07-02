@@ -32,8 +32,10 @@ module.exports = async function(callback) {
   console.log("SyscoinToken Balance of 0xf5fa014271b7971cb0ae960d445db3cb3802dfd9 : " + balance3);
 
 
- 
-  // Current block number 
-  console.log("Eth Current block : " + web3.eth.blockNumber);
+  web3.eth.getBlockNumber(function(error, result){ 
+    if (!error)
+      console.log("Eth block number => " + result);
+  });
+
 
 }

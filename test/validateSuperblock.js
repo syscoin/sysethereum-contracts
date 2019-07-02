@@ -18,9 +18,9 @@ contract('validateSuperblocks', (accounts) => {
       `0000003040c32bf1f3e190842b1c5e8a24428dfb8cd200023424f6cc38ec90e4e900000095d0f7925a33a31b240131a93fcdb414cb5b28045430609bf337d5a5142247048045ef5bf0ff0f1e6d720000`,
       `000000302e5c540fc89b052a6d97b3aaad50a4f5b95a9a4d92213bf22ee99bc9a80c0000ddcca38b8f7cfb8835615509a1c63cdb0e2ea184397dcf9677409ac6758fcd308045ef5bf0ff0f1e90ba0000`
     ];
-    const initAccumulatedWork = 0;
+    const initAccumulatedWork = 1;
     const initParentHash = '0x0000000000000000000000000000000000000000000000000000000000000000';
-    const genesisSuperblock = utils.makeSuperblock(genesisHeaders, initParentHash, initAccumulatedWork, 2);
+    const genesisSuperblock = utils.makeSuperblock(genesisHeaders, initParentHash, initAccumulatedWork);
 
     const headers = [
       `0000003071a534b46710b515806719a97a38c187624bedfaefd0e1d3d37daaa5c10b00000ffc785adb93908ce3474201293870b26820d301494dd92993ed55f5fa5a4a908145ef5bf0ff0f1e14820000`
@@ -28,9 +28,7 @@ contract('validateSuperblocks', (accounts) => {
     const hashes = headers.map(header => utils.calcBlockSha256Hash(header));
     proposedSuperblock = utils.makeSuperblock(headers,
       genesisSuperblock.superblockHash,
-      genesisSuperblock.accumulatedWork,
-      3,
-      genesisSuperblock.timestamp,
+      genesisSuperblock.accumulatedWork
     );
 
     beforeEach(async () => {
@@ -39,7 +37,7 @@ contract('validateSuperblocks', (accounts) => {
         claimManager,
         battleManager,
       } = await utils.initSuperblockChain({
-        network: utils.SYSCOIN_MAINNET,
+        network: utils.SYSCOIN_REGTEST,
         genesisSuperblock,
         params: utils.OPTIONS_SYSCOIN_REGTEST,
         from: owner,
@@ -57,11 +55,8 @@ contract('validateSuperblocks', (accounts) => {
         proposedSuperblock.merkleRoot,
         proposedSuperblock.accumulatedWork,
         proposedSuperblock.timestamp,
-        proposedSuperblock.retargetPeriod,
         proposedSuperblock.lastHash,
-        proposedSuperblock.lastBits,
         proposedSuperblock.parentId,
-        proposedSuperblock.blockHeight,
         { from: submitter },
       );
 
@@ -88,15 +83,15 @@ contract('validateSuperblocks', (accounts) => {
       result = await battleManager.respondMerkleRootHashes(proposesSuperblockHash, battleSessionId, hashes, { from: submitter });
       assert.ok(utils.findEvent(result.logs, 'RespondMerkleRootHashes'), 'Respond merkle root hashes');
 
-      await claimManager.makeDeposit({ value: utils.DEPOSITS.RESPOND_HEADER_PROOF_COST, from: challenger });
-      result = await battleManager.queryBlockHeaderProof(battleSessionId, { from: challenger });
-      assert.ok(utils.findEvent(result.logs, 'QueryBlockHeaderProof'), 'Query block header');
+      await claimManager.makeDeposit({ value: utils.DEPOSITS.RESPOND_LAST_HEADER_COST, from: challenger });
+      result = await battleManager.queryLastBlockHeader(battleSessionId, { from: challenger });
+      assert.ok(utils.findEvent(result.logs, 'QueryLastBlockHeader'), 'Query block header');
 
-      await claimManager.makeDeposit({ value: utils.DEPOSITS.RESPOND_HEADER_PROOF_COST, from: submitter });
-      result = await battleManager.respondBlockHeaderProof(battleSessionId, proposedSuperblock.blockSiblingsMap, 0, 1, `0x${headers[0]}`, { from: submitter });
+      await claimManager.makeDeposit({ value: utils.DEPOSITS.RESPOND_LAST_HEADER_COST, from: submitter });
 
-      assert.ok(utils.findEvent(result.logs, 'RespondBlockHeaderProof'), 'Respond block header');
+      result = await battleManager.respondLastBlockHeader(battleSessionId, `0x${headers[0]}`, { from: submitter });
       assert.ok(utils.findEvent(result.logs, 'RespondLastBlockHeader'), 'Respond last block header');
+
 
       // Verify superblock
       result = await battleManager.verifySuperblock(battleSessionId, { from: submitter });
@@ -114,11 +109,8 @@ contract('validateSuperblocks', (accounts) => {
         proposedSuperblock.merkleRoot,
         proposedSuperblock.accumulatedWork,
         proposedSuperblock.timestamp + 1,
-        proposedSuperblock.retargetPeriod,
         proposedSuperblock.lastHash,
-        proposedSuperblock.lastBits,
         proposedSuperblock.parentId,
-        proposedSuperblock.blockHeight,
         { from: submitter },
       );
 
@@ -144,14 +136,12 @@ contract('validateSuperblocks', (accounts) => {
       result = await battleManager.respondMerkleRootHashes(proposesSuperblockHash, battleSessionId, hashes, { from: submitter });
       assert.ok(utils.findEvent(result.logs, 'RespondMerkleRootHashes'), 'Respond merkle root hashes');
 
-      await claimManager.makeDeposit({ value: utils.DEPOSITS.RESPOND_HEADER_PROOF_COST, from: challenger });
-      result = await battleManager.queryBlockHeaderProof(battleSessionId,{ from: challenger });
-      assert.ok(utils.findEvent(result.logs, 'QueryBlockHeaderProof'), 'Query block header');
+      await claimManager.makeDeposit({ value: utils.DEPOSITS.RESPOND_LAST_HEADER_COST, from: challenger });
+      result = await battleManager.queryLastBlockHeader(battleSessionId,{ from: challenger });
+      assert.ok(utils.findEvent(result.logs, 'QueryLastBlockHeader'), 'Query block header');
 
-      await claimManager.makeDeposit({ value: utils.DEPOSITS.RESPOND_HEADER_PROOF_COST, from: submitter });
-      result = await battleManager.respondBlockHeaderProof(battleSessionId, proposedSuperblock.blockSiblingsMap, 0, 1, `0x${headers[0]}`, { from: submitter });
-
-      assert.ok(utils.findEvent(result.logs, 'RespondBlockHeaderProof'), 'Respond block header');
+      await claimManager.makeDeposit({ value: utils.DEPOSITS.RESPOND_LAST_HEADER_COST, from: submitter });
+      result = await battleManager.respondLastBlockHeader(battleSessionId, `0x${headers[0]}`, { from: submitter });
       assert.ok(utils.findEvent(result.logs, 'RespondLastBlockHeader'), 'Respond last block header');
 
       // Verify superblock
@@ -173,11 +163,8 @@ contract('validateSuperblocks', (accounts) => {
         proposedSuperblock.merkleRoot,
         proposedSuperblock.accumulatedWork,
         proposedSuperblock.timestamp + 1,
-        proposedSuperblock.retargetPeriod,
         utils.ZERO_BYTES32, // proposedSuperblock.lastHash,
-        proposedSuperblock.lastBits,
         proposedSuperblock.parentId,
-        proposedSuperblock.blockHeight,
         { from: submitter },
       );
 
@@ -218,11 +205,8 @@ contract('validateSuperblocks', (accounts) => {
         proposedSuperblock.merkleRoot,
         proposedSuperblock.accumulatedWork,
         proposedSuperblock.timestamp + 1,
-        proposedSuperblock.retargetPeriod,
         utils.ZERO_BYTES32, // proposedSuperblock.lastHash,
-        proposedSuperblock.lastBits,
         proposedSuperblock.parentId,
-        proposedSuperblock.blockHeight,
         { from: submitter },
       ));
 
@@ -233,11 +217,8 @@ contract('validateSuperblocks', (accounts) => {
         proposedSuperblock.merkleRoot,
         proposedSuperblock.accumulatedWork,
         proposedSuperblock.timestamp + 1,
-        proposedSuperblock.retargetPeriod,
         utils.ZERO_BYTES32, // proposedSuperblock.lastHash,
-        proposedSuperblock.lastBits,
         proposedSuperblock.parentId,
-        proposedSuperblock.blockHeight,
         { from: challenger },
       );
 
@@ -250,11 +231,8 @@ contract('validateSuperblocks', (accounts) => {
         proposedSuperblock.merkleRoot,
         proposedSuperblock.accumulatedWork,
         proposedSuperblock.timestamp + 1,
-        proposedSuperblock.retargetPeriod,
         utils.ZERO_BYTES32, // proposedSuperblock.lastHash,
-        proposedSuperblock.lastBits,
         proposedSuperblock.parentId,
-        proposedSuperblock.blockHeight,
         { from: challenger },
       ));
 

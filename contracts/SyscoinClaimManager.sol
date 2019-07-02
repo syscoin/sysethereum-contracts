@@ -160,20 +160,15 @@ contract SyscoinClaimManager is SyscoinDepositsManager, SyscoinErrorCodes {
     // @param _blocksMerkleRoot Root of the merkle tree of blocks contained in a superblock
     // @param _accumulatedWork Accumulated proof of work of the last block in the superblock
     // @param _timestamp Timestamp of the last block in the superblock
-    // @param _retargetPeriod Timestamp of the block when the last difficulty adjustment happened
     // @param _lastHash Hash of the last block in the superblock
-    // @param _lastBits Previous difficulty bits used to verify accumulatedWork through difficulty calculation
     // @param _parentHash Id of the parent superblock
     // @return Error code and superblockHash
     function proposeSuperblock(
         bytes32 _blocksMerkleRoot,
         uint _accumulatedWork,
         uint _timestamp,
-        uint _retargetPeriod,
         bytes32 _lastHash,
-        uint32 _lastBits,
-        bytes32 _parentHash,
-        uint32 _blockHeight
+        bytes32 _parentHash
     ) public returns (uint, bytes32) {
         require(address(trustedSuperblocks) != address(0));
 
@@ -190,7 +185,7 @@ contract SyscoinClaimManager is SyscoinDepositsManager, SyscoinErrorCodes {
         uint err;
         bytes32 superblockHash;
         (err, superblockHash) = trustedSuperblocks.propose(_blocksMerkleRoot, _accumulatedWork,
-            _timestamp, _retargetPeriod, _lastHash, _lastBits, _parentHash, _blockHeight,msg.sender);
+            _timestamp, _lastHash, _parentHash,msg.sender);
         if (err != 0) {
             emit ErrorClaim(superblockHash, err);
             return (err, superblockHash);
@@ -220,7 +215,6 @@ contract SyscoinClaimManager is SyscoinDepositsManager, SyscoinErrorCodes {
                 revert();
             }
         }
-
 
         claim.superblockHash = superblockHash;
         claim.submitter = msg.sender;
@@ -655,13 +649,10 @@ contract SyscoinClaimManager is SyscoinDepositsManager, SyscoinErrorCodes {
         bytes32 _blocksMerkleRoot,
         uint _accumulatedWork,
         uint _timestamp,
-        uint _retargetPeriod,
         bytes32 _lastHash,
-        uint32 _lastBits,
         bytes32 _parentId,
         address _submitter,
-        SyscoinSuperblocks.Status _status,
-        uint32 _height
+        SyscoinSuperblocks.Status _status
     ) {
         return trustedSuperblocks.getSuperblock(superblockHash);
     }

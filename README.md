@@ -27,7 +27,7 @@ If you are new to the Syscoin <=> Ethereum bridge, please check the [docs](https
   * [nodejs](https://nodejs.org) v9.2.0 to v11.15.0.
   * [truffle](http://truffleframework.com/) v4.1.5.
   ```
-    npm install -g truffle@4.1.5
+    npm install -g truffle@5.0.24
   ```
   * [ganache-cli](https://github.com/trufflesuite/ganache-cli) v6.4.2 or above.
   ```
