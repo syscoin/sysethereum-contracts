@@ -1,7 +1,7 @@
-pragma solidity ^0.4.26;
+pragma solidity >=0.5.0 <0.6.0;
 
 // Interface contract to be implemented by SyscoinToken
-contract SyscoinTransactionProcessor {
-    function processTransaction(uint txHash, uint value, address destinationAddress, uint32 _assetGUID, address superblockSubmitterAddress) public returns (uint);
-    function burn(uint _value, uint32 _assetGUID, bytes syscoinWitnessProgram) payable public returns (bool success);
+interface SyscoinTransactionProcessor {
+    function processTransaction(uint txHash, uint value, address destinationAddress, uint32 _assetGUID, address superblockSubmitterAddress) external returns (uint);
+    function burn(uint _value, uint32 _assetGUID, bytes calldata syscoinWitnessProgram) payable external returns (bool success);
 }

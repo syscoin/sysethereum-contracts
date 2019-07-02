@@ -1,4 +1,4 @@
-pragma solidity ^0.4.26;
+pragma solidity >=0.5.0 <0.6.0;
 
 import "./HumanStandardToken.sol";
 import "./Set.sol";
@@ -31,7 +31,7 @@ contract SyscoinToken is HumanStandardToken(0, "SyscoinToken", 8, "SYSX"), Sysco
 
     event NewToken(address indexed user, uint value);
 
-    constructor (address _trustedRelayerContract, uint32 _assetGUID, string _tokenName, uint8 _decimalUnits, string _tokenSymbol) public {
+    constructor (address _trustedRelayerContract, uint32 _assetGUID, string memory _tokenName, uint8 _decimalUnits, string memory _tokenSymbol) public {
         trustedRelayerContract = _trustedRelayerContract;
         assetGUID = _assetGUID;
         name = _tokenName;
@@ -70,17 +70,17 @@ contract SyscoinToken is HumanStandardToken(0, "SyscoinToken", 8, "SYSX"), Sysco
         balances[superblockSubmitterAddress] = balances[superblockSubmitterAddress].add(superblockSubmitterFee);
         emit NewToken(superblockSubmitterAddress, superblockSubmitterFee);
         // Hack to make etherscan show the event
-        emit Transfer(0, superblockSubmitterAddress, superblockSubmitterFee);
+        emit Transfer(address(0), superblockSubmitterAddress, superblockSubmitterFee);
 
         uint userValue = value.sub(superblockSubmitterFee);
         balances[destinationAddress] = balances[destinationAddress].add(userValue);
         emit NewToken(destinationAddress, userValue);
         // Hack to make etherscan show the event
-        emit Transfer(0, destinationAddress, userValue);   
+        emit Transfer(address(0), destinationAddress, userValue);   
         totalSupply += value;  
     }
     // keyhash or scripthash for syscoinWitnessProgram
-    function burn(uint _value, uint32 _assetGUID, bytes) payable public returns (bool success) {
+    function burn(uint _value, uint32 _assetGUID, bytes memory) payable public returns (bool success) {
         require (assetGUID > 0);
         require (assetGUID == _assetGUID);
         require (_value >= MIN_UNLOCK_VALUE);
@@ -88,7 +88,7 @@ contract SyscoinToken is HumanStandardToken(0, "SyscoinToken", 8, "SYSX"), Sysco
         balances[msg.sender] -= _value;            // Subtract from the sender
         totalSupply -= _value;                      // Updates totalSupply
         // Hack to make etherscan show the event
-        emit Transfer(msg.sender, 0, _value);   
+        emit Transfer(msg.sender, address(0), _value);   
         return true;
     }
 }

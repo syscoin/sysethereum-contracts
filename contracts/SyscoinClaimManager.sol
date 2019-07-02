@@ -1,4 +1,4 @@
-pragma solidity ^0.4.26;
+pragma solidity >=0.5.0 <0.6.0;
 
 import './SyscoinDepositsManager.sol';
 import './SyscoinSuperblocks.sol';
@@ -170,7 +170,7 @@ contract SyscoinClaimManager is SyscoinDepositsManager, SyscoinErrorCodes {
         bytes32 _lastHash,
         bytes32 _parentHash
     ) public returns (uint, bytes32) {
-        require(address(trustedSuperblocks) != 0);
+        require(address(trustedSuperblocks) != address(0));
 
         if (deposits[msg.sender] < minProposalDeposit) {
             emit ErrorClaim(0, ERR_SUPERBLOCK_MIN_DEPOSIT);
@@ -238,7 +238,7 @@ contract SyscoinClaimManager is SyscoinDepositsManager, SyscoinErrorCodes {
     // @param superblockHash – Id of the superblock to challenge.
     // @return - Error code and claim Id
     function challengeSuperblock(bytes32 superblockHash) public returns (uint, bytes32) {
-        require(address(trustedSuperblocks) != 0);
+        require(address(trustedSuperblocks) != address(0));
 
         SuperblockClaim storage claim = claims[superblockHash];
 
@@ -254,14 +254,12 @@ contract SyscoinClaimManager is SyscoinDepositsManager, SyscoinErrorCodes {
             emit ErrorClaim(superblockHash, ERR_SUPERBLOCK_MIN_DEPOSIT);
             return (ERR_SUPERBLOCK_MIN_DEPOSIT, superblockHash);
         }
-        // avoid same challenger on superblock, avoids issue with payouts which assumes unique payout recipients
-        for (idx = 0; idx < claim.challengers.length; ++idx) {
+        for (uint256 idx = 0; idx < claim.challengers.length; ++idx) {
             if(claim.challengers[idx] == msg.sender){
                 emit ErrorClaim(superblockHash, ERR_SUPERBLOCK_BAD_CHALLENGER);
                 return (ERR_SUPERBLOCK_BAD_CHALLENGER, superblockHash);
             }
         }
-        uint idx;
         uint err = trustedSuperblocks.challenge(superblockHash, msg.sender);
         if (err != 0) {
             emit ErrorClaim(superblockHash, err);
@@ -591,8 +589,8 @@ contract SyscoinClaimManager is SyscoinDepositsManager, SyscoinErrorCodes {
     }
 
     // @dev – Check if a claim exists
-    function claimExists(SuperblockClaim claim) private pure returns (bool) {
-        return (claim.submitter != 0x0);
+    function claimExists(SuperblockClaim memory claim) private pure returns (bool) {
+        return (claim.submitter != address(0));
     }
 
     // @dev - Return a given superblock's submitter
@@ -642,7 +640,7 @@ contract SyscoinClaimManager is SyscoinDepositsManager, SyscoinErrorCodes {
         return claims[superblockHash].sessions[challenger];
     }
 
-    function getClaimChallengers(bytes32 superblockHash) public view returns (address[]) {
+    function getClaimChallengers(bytes32 superblockHash) public view returns (address[] memory) {
         SuperblockClaim storage claim = claims[superblockHash];
         return claim.challengers;
     }

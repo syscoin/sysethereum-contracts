@@ -29,7 +29,7 @@ If you are new to the Syscoin <=> Ethereum bridge, please check the [docs](https
   ```
     npm install -g truffle@4.1.5
   ```
-  * [ganache-cli](https://github.com/trufflesuite/ganache-cli) v6.1.0 or above.
+  * [ganache-cli](https://github.com/trufflesuite/ganache-cli) v6.4.2 or above.
   ```
     npm install -g ganache-cli
   ```

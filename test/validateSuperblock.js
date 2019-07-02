@@ -217,7 +217,6 @@ contract('validateSuperblocks', (accounts) => {
         proposedSuperblock.merkleRoot,
         proposedSuperblock.accumulatedWork,
         proposedSuperblock.timestamp + 1,
-
         utils.ZERO_BYTES32, // proposedSuperblock.lastHash,
         proposedSuperblock.parentId,
         { from: challenger },

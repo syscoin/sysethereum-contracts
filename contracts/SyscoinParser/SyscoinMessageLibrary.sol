@@ -100,7 +100,7 @@ import "../SyscoinTransactionProcessor.sol";
 // Addresses are the scriptHash with a version prefix of 5, encoded as
 // Base58check. These addresses begin with a '3'.
 
-pragma solidity ^0.4.26;
+pragma solidity >=0.5.0 <0.6.0;
 
 // parse a raw Syscoin transaction byte array
 library SyscoinMessageLibrary {
@@ -167,26 +167,9 @@ library SyscoinMessageLibrary {
         }
     }
     // convert little endian bytes to uint
-    function getBytesLE(bytes data, uint pos, uint bits) internal pure returns (uint) {
-        if (bits == 8) {
-            return uint8(data[pos]);
-        } else if (bits == 16) {
-            return uint16(data[pos])
-                 + uint16(data[pos + 1]) * 2 ** 8;
-        } else if (bits == 32) {
-            return uint32(data[pos])
-                 + uint32(data[pos + 1]) * 2 ** 8
-                 + uint32(data[pos + 2]) * 2 ** 16
-                 + uint32(data[pos + 3]) * 2 ** 24;
-        } else if (bits == 64) {
-            return uint64(data[pos])
-                 + uint64(data[pos + 1]) * 2 ** 8
-                 + uint64(data[pos + 2]) * 2 ** 16
-                 + uint64(data[pos + 3]) * 2 ** 24
-                 + uint64(data[pos + 4]) * 2 ** 32
-                 + uint64(data[pos + 5]) * 2 ** 40
-                 + uint64(data[pos + 6]) * 2 ** 48
-                 + uint64(data[pos + 7]) * 2 ** 56;
+    function getBytesLE(bytes memory data, uint pos, uint bits) internal pure returns (uint256 result) {
+        for (uint256 i = 0; i < bits / 8; i++) {
+            result += uint256(uint8(data[pos + i])) * 2 ** (i * 8);
         }
     }
     
@@ -263,7 +246,7 @@ library SyscoinMessageLibrary {
     }
              
     // scan the burn outputs and return the value and script data of first burned output.
-    function scanBurns(bytes txBytes, uint pos) private pure
+    function scanBurns(bytes memory txBytes, uint pos) private pure
              returns (uint, address, uint32)
     {
         uint script_len;
@@ -324,8 +307,8 @@ library SyscoinMessageLibrary {
     // return array of values and the end position of the sibling hashes.
     // takes a 'stop' argument which sets the maximum number of
     // siblings to scan through. stop=0 => scan all.
-    function scanMerkleBranch(bytes txBytes, uint pos, uint stop) private pure
-             returns (uint[], uint)
+    function scanMerkleBranch(bytes memory txBytes, uint pos, uint stop) private pure
+             returns (uint[] memory, uint)
     {
         uint n_siblings;
         uint halt;
@@ -353,16 +336,16 @@ library SyscoinMessageLibrary {
         // FIXME: With solc v0.4.24 and optimizations enabled
         // using uint160 for index i will generate an error
         // "Error: VM Exception while processing transaction: Error: redPow(normalNum)"
-        for (uint i = 0; i < 20; i++) {
-            slice += uint160(data[i + start]) << (8 * (19 - i));
+        for (uint8 i = 0; i < 20; i++) {
+            slice += uint160(uint8(data[i + start])) << (8 * (19 - i));
         }
         return bytes20(slice);
     }
     // Slice 32 contiguous bytes from bytes `data`, starting at `start`
-    function sliceBytes32Int(bytes data, uint start) private pure returns (uint slice) {
-        for (uint i = 0; i < 32; i++) {
+    function sliceBytes32Int(bytes memory data, uint start) private pure returns (uint slice) {
+        for (uint8 i = 0; i < 32; i++) {
             if (i + start < data.length) {
-                slice += uint(data[i + start]) << (8 * (31 - i));
+                slice += uint256(uint8(data[i + start])) << (8 * (31 - i));
             }
         }
     }
@@ -375,7 +358,7 @@ library SyscoinMessageLibrary {
     // @param _rawBytes - array to be sliced
     // @param offset - first byte of sliced array
     // @param _endIndex - last byte of sliced array
-    function sliceArray(bytes memory _rawBytes, uint offset, uint _endIndex) internal view returns (bytes) {
+    function sliceArray(bytes memory _rawBytes, uint offset, uint _endIndex) internal view returns (bytes memory) {
         uint len = _endIndex - offset;
         bytes memory result = new bytes(len);
         assembly {
@@ -515,7 +498,7 @@ library SyscoinMessageLibrary {
     // root of the merkle tree.
     //
     // @return root of merkle tree
-    function makeMerkle(bytes32[] hashes2) external pure returns (bytes32) {
+    function makeMerkle(bytes32[] calldata hashes2) external pure returns (bytes32) {
         bytes32[] memory hashes = hashes2;
         uint length = hashes.length;
         if (length == 1) return hashes[0];
@@ -652,7 +635,7 @@ library SyscoinMessageLibrary {
     // @dev - Bitcoin-way of hashing
     // @param _dataBytes - raw data to be hashed
     // @return - result of applying SHA-256 twice to raw data and then flipping the bytes
-    function dblShaFlip(bytes _dataBytes) internal pure returns (uint) {
+    function dblShaFlip(bytes memory _dataBytes) internal pure returns (uint) {
         return flip32Bytes(uint(sha256(abi.encodePacked(sha256(abi.encodePacked(_dataBytes))))));
     }
 
@@ -760,7 +743,11 @@ library SyscoinMessageLibrary {
     //
     // @param _rawBytes - first 80 bytes of a block header
     // @return - exact same header information in BlockHeader struct form
+<<<<<<< HEAD
     function parseHeaderBytes(bytes _rawBytes, uint pos) internal view returns (BlockHeader bh) {
+=======
+    function parseHeaderBytes(bytes memory _rawBytes, uint pos) internal view returns (BlockHeader memory bh) {
+>>>>>>> e8aedf0... Merge pull request #12 from tommyz7/solidity_v0.5_upgrade
         bh.bits = getBits(_rawBytes);
         bh.blockHash = dblShaFlipMem(_rawBytes, pos, 80);
     }
@@ -769,6 +756,7 @@ library SyscoinMessageLibrary {
 
     // @dev - Converts a bytes of size 4 to uint32,
     // e.g. for input [0x01, 0x02, 0x03 0x04] returns 0x01020304
+<<<<<<< HEAD
     function bytesToUint32Flipped(bytes input, uint pos) internal pure returns (uint32 result) {
         result = uint32(input[pos]) + uint32(input[pos + 1])*(2**8) + uint32(input[pos + 2])*(2**16) + uint32(input[pos + 3])*(2**24);
     }
@@ -777,6 +765,16 @@ library SyscoinMessageLibrary {
     }
      function bytesToUint32(bytes input, uint pos) internal pure returns (uint32 result) {
         result = uint32(input[pos+3]) + uint32(input[pos + 2])*(2**8) + uint32(input[pos + 1])*(2**16) + uint32(input[pos])*(2**24);
+=======
+    function bytesToUint32Flipped(bytes memory input, uint pos) internal pure returns (uint32 result) {
+        result = uint32(uint8(input[pos])) + uint32(uint8(input[pos + 1]))*(2**8) + uint32(uint8(input[pos + 2]))*(2**16) + uint32(uint8(input[pos + 3]))*(2**24);
+    }
+    function bytesToUint64(bytes memory input, uint pos) internal pure returns (uint64 result) {
+        result = uint64(uint8(input[pos+7])) + uint64(uint8(input[pos + 6]))*(2**8) + uint64(uint8(input[pos + 5]))*(2**16) + uint64(uint8(input[pos + 4]))*(2**24) + uint64(uint8(input[pos + 3]))*(2**32) + uint64(uint8(input[pos + 2]))*(2**40) + uint64(uint8(input[pos + 1]))*(2**48) + uint64(uint8(input[pos]))*(2**56);
+    }
+     function bytesToUint32(bytes memory input, uint pos) internal pure returns (uint32 result) {
+        result = uint32(uint8(input[pos+3])) + uint32(uint8(input[pos + 2]))*(2**8) + uint32(uint8(input[pos + 1]))*(2**16) + uint32(uint8(input[pos]))*(2**24);
+>>>>>>> e8aedf0... Merge pull request #12 from tommyz7/solidity_v0.5_upgrade
     }  
     // @dev - checks version to determine if a block has merge mining information
     function isMergeMined(bytes _rawBytes, uint pos) internal pure returns (bool) {
@@ -788,7 +786,7 @@ library SyscoinMessageLibrary {
     // @param _pos - starting position of the block header
 	// @param _proposedBlockHash - proposed block hash computing from block header bytes
     // @return - [ErrorCode, IsMergeMined]
-    function verifyBlockHeader(bytes _blockHeaderBytes, uint _pos, uint _proposedBlockHash) external view returns (uint) {
+    function verifyBlockHeader(bytes calldata _blockHeaderBytes, uint _pos, uint _proposedBlockHash) external view returns (uint) {
         BlockHeader memory blockHeader = parseHeaderBytes(_blockHeaderBytes, _pos);
         uint blockSha256Hash = blockHeader.blockHash;
 		// must confirm that the header hash passed in and computing hash matches

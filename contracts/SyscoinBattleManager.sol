@@ -1,4 +1,4 @@
-pragma solidity ^0.4.19;
+pragma solidity >=0.5.0 <0.6.0;
 
 import './SyscoinClaimManager.sol';
 import './SyscoinErrorCodes.sol';
@@ -31,6 +31,10 @@ contract SyscoinBattleManager is SyscoinErrorCodes {
         uint32 bits;
         BlockInfoStatus status;
         bytes32 blockHash;
+    }
+    struct SiblingInfo{
+        uint[] siblings;
+        bool exists;
     }
 
     struct BattleSession {
@@ -111,13 +115,13 @@ contract SyscoinBattleManager is SyscoinErrorCodes {
     }
 
     function setSyscoinClaimManager(SyscoinClaimManager _syscoinClaimManager) public {
-        require(address(trustedSyscoinClaimManager) == 0x0 && address(_syscoinClaimManager) != 0x0);
+        require(address(trustedSyscoinClaimManager) == address(0) && address(_syscoinClaimManager) != address(0));
         trustedSyscoinClaimManager = _syscoinClaimManager;
     }
 
     // @dev - Start a battle session
     function beginBattleSession(bytes32 superblockHash, address submitter, address challenger)
-        onlyFrom(trustedSyscoinClaimManager) public returns (bytes32) {
+        onlyFrom(address(trustedSyscoinClaimManager)) public returns (bytes32) {
         bytes32 sessionId = keccak256(abi.encode(superblockHash, msg.sender, challenger));
         BattleSession storage session = sessions[sessionId];
         if(session.id != 0x0){
@@ -170,7 +174,7 @@ contract SyscoinBattleManager is SyscoinErrorCodes {
     }
 
     // @dev - Submitter sends hashes to verify superblock merkle root
-    function doVerifyMerkleRootHashes(BattleSession storage session, bytes32[] blockHashes) internal returns (uint) {
+    function doVerifyMerkleRootHashes(BattleSession storage session, bytes32[] memory blockHashes) internal returns (uint) {
         if (!hasDeposit(msg.sender, verifySuperblockCost)) {
             return ERR_SUPERBLOCK_MIN_DEPOSIT;
         }
@@ -191,6 +195,7 @@ contract SyscoinBattleManager is SyscoinErrorCodes {
                 return err;
             }
             session.blockHashes = blockHashes;
+            session.blockSiblings.length = blockHashes.length;
             session.challengeState = ChallengeState.RespondMerkleRootHashes;
             return ERR_SUPERBLOCK_OK;
         }
@@ -198,7 +203,7 @@ contract SyscoinBattleManager is SyscoinErrorCodes {
     }
 
     // @dev - For the submitter to respond to challenger queries
-    function respondMerkleRootHashes(bytes32 superblockHash, bytes32 sessionId, bytes32[] blockHashes) onlyClaimant(sessionId) public {
+    function respondMerkleRootHashes(bytes32 superblockHash, bytes32 sessionId, bytes32[] memory blockHashes) onlyClaimant(sessionId) public {
         BattleSession storage session = sessions[sessionId];
         uint err = doVerifyMerkleRootHashes(session, blockHashes);
         if (err != 0) {
@@ -247,7 +252,7 @@ contract SyscoinBattleManager is SyscoinErrorCodes {
     function verifyBlockAuxPoW(
         BlockInfo storage blockInfo,
         bytes32 blockHash,
-        bytes blockHeader
+        bytes memory blockHeader
     ) internal returns (uint) {
         uint err = SyscoinMessageLibrary.verifyBlockHeader(blockHeader, 0, uint(blockHash));
         if (err != 0) {
@@ -260,20 +265,10 @@ contract SyscoinBattleManager is SyscoinErrorCodes {
         return ERR_SUPERBLOCK_OK;
     }
 
-
-    function getSlice(uint begin, uint end, uint[] siblingsArray) internal pure returns (uint[]) {
-        uint[] memory a = new uint[](end-begin+1);
-        uint i;
-        for(i=0;i<=end-begin;i++){
-            a[i] = uint[](siblingsArray)[i+begin];
-        }
-        return a;
-    }
-
     // @dev - Verify block header sent by challenger
     function doVerifyLastBlockHeader(
         BattleSession storage session,
-        bytes blockHeader
+        bytes memory blockHeader
     ) internal returns (uint) {
         if (!hasDeposit(msg.sender, respondLastBlockHeaderCost)) {
             return (ERR_SUPERBLOCK_MIN_DEPOSIT);
@@ -308,7 +303,7 @@ contract SyscoinBattleManager is SyscoinErrorCodes {
     }
     function respondLastBlockHeader(
         bytes32 sessionId,
-        bytes blockHeader
+        bytes memory blockHeader
         ) onlyClaimant(sessionId) public {
         BattleSession storage session = sessions[sessionId];
         (uint err) = doVerifyLastBlockHeader(session, blockHeader);
@@ -470,7 +465,7 @@ contract SyscoinBattleManager is SyscoinErrorCodes {
     }
 
     // @dev - Return Syscoin block hashes associated with a certain battle session
-    function getSyscoinBlockHashes(bytes32 sessionId) public view returns (bytes32[]) {
+    function getSyscoinBlockHashes(bytes32 sessionId) public view returns (bytes32[] memory) {
         return sessions[sessionId].blockHashes;
     }
 
