@@ -98,60 +98,6 @@ contract('validateDifficultyAdjustment', (accounts) => {
       result = await claimManager.checkClaimFinished(proposesSuperblockHash, { from: submitter });
       assert.ok(utils.findEvent(result.logs, 'SuperblockClaimPending'), 'Superblock semi approved');
     });
-    it('Reject invalid block bits', async () => {
-      result = await claimManager.proposeSuperblock(
-        proposedSuperblock.merkleRoot,
-        proposedSuperblock.accumulatedWork,
-        proposedSuperblock.timestamp,
-        proposedSuperblock.lastHash,
-        0, // proposedSuperblock.lastBits,
-        proposedSuperblock.parentId,
-        { from: submitter },
-      );
-
-      const superblockClaimCreatedEvent = utils.findEvent(result.logs, 'SuperblockClaimCreated');
-      assert.ok(superblockClaimCreatedEvent, 'New superblock proposed');
-      proposesSuperblockHash = superblockClaimCreatedEvent.args.superblockHash;
-      claim1 = proposesSuperblockHash;
-
-      await claimManager.makeDeposit({ value: utils.DEPOSITS.MIN_CHALLENGE_DEPOSIT, from: challenger });
-      result = await claimManager.challengeSuperblock(proposesSuperblockHash, { from: challenger });
-      const superblockClaimChallengedEvent = utils.findEvent(result.logs, 'SuperblockClaimChallenged');
-      assert.ok(superblockClaimChallengedEvent, 'Superblock challenged');
-      assert.equal(claim1, superblockClaimChallengedEvent.args.superblockHash);
-      
-      const verificationGameStartedEvent = utils.findEvent(result.logs, 'VerificationGameStarted');
-      assert.ok(verificationGameStartedEvent, 'Battle started');
-      
-      battleSessionId = verificationGameStartedEvent.args.sessionId;
-      await claimManager.makeDeposit({ value: utils.DEPOSITS.RESPOND_MERKLE_COST, from: challenger });
-      result = await battleManager.queryMerkleRootHashes(proposesSuperblockHash, battleSessionId, { from: challenger });
-      assert.ok(utils.findEvent(result.logs, 'QueryMerkleRootHashes'), 'Query merkle root hashes');
-      
-      await claimManager.makeDeposit({ value: utils.DEPOSITS.VERIFY_SUPERBLOCK_COST, from: submitter });
-      result = await battleManager.respondMerkleRootHashes(proposesSuperblockHash, battleSessionId, hashes, { from: submitter });
-      assert.ok(utils.findEvent(result.logs, 'RespondMerkleRootHashes'), 'Respond merkle root hashes');
-
-      await claimManager.makeDeposit({ value: utils.DEPOSITS.RESPOND_LAST_HEADER_COST, from: challenger });
-      result = await battleManager.queryLastBlockHeader(battleSessionId, { from: challenger });
-      assert.ok(utils.findEvent(result.logs, 'QueryLastBlockHeader'), 'Query block header');
-
-      await claimManager.makeDeposit({ value: utils.DEPOSITS.RESPOND_LAST_HEADER_COST, from: submitter });
-      result = await battleManager.respondLastBlockHeader(battleSessionId, `0x${headers[1]}`, { from: submitter });
-      assert.ok(utils.findEvent(result.logs, 'RespondLastBlockHeader'), 'Respond last block header');
-
-      // Verify superblock
-  
-      result = await battleManager.verifySuperblock(battleSessionId, { from: challenger });
-      const errorBattleEvent = utils.findEvent(result.logs, 'ErrorBattle');
-      assert.ok(errorBattleEvent, 'Error verifying superblock');
-      assert.equal(errorBattleEvent.args.err, '50130', 'Bad bits');
-      assert.ok(utils.findEvent(result.logs, 'SubmitterConvicted'), 'Submitter failed');
-
-      // Confirm superblock
-      await utils.blockchainTimeoutSeconds(2*utils.OPTIONS_SYSCOIN_REGTEST.TIMEOUT);
-      result = await claimManager.checkClaimFinished(proposesSuperblockHash, { from: challenger });
-      assert.ok(utils.findEvent(result.logs, 'SuperblockClaimFailed'), 'Superblock rejected');
-    });
+   
   });
 });

@@ -31,8 +31,8 @@ contract SyscoinErrorCodes {
     uint constant ERR_SUPERBLOCK_INVALID_ACCUMULATED_WORK = 50180;
     uint constant ERR_SUPERBLOCK_BAD_PREVBLOCK = 50190;
     uint constant ERR_SUPERBLOCK_BAD_RETARGET = 50200;
-    uint constant ERR_SUPERBLOCK_INVALID_DIFFICULTY_ADJUSTMENT = 50130;
-
+    uint constant ERR_SUPERBLOCK_INVALID_DIFFICULTY_ADJUSTMENT = 50210;
+    uint constant ERR_SUPERBLOCK_BAD_MISMATCH = 50220;
 
     // error codes for verifyTx
     uint constant ERR_BAD_FEE = 20010;

@@ -366,32 +366,37 @@ contract SyscoinBattleManager is SyscoinErrorCodes {
         if(accWork <= 0){
             return ERR_SUPERBLOCK_BAD_ACCUMULATED_WORK;
         }    
-        (, prevWork, ,, ,, ,,) = getSuperblockInfo(prevBlock);
+        if(prevBits != blockInfo.bits){
+            return ERR_SUPERBLOCK_BAD_MISMATCH;
+        }
+        (, prevWork, ,, prevBits,, ,,) = getSuperblockInfo(prevBlock);
         if(net == SyscoinMessageLibrary.Network.REGTEST)
             heightDiff = session.blockHashes.length;
          
         if(accWork <= prevWork){
             return ERR_SUPERBLOCK_INVALID_ACCUMULATED_WORK;
         }
-        // make sure every 6th superblock adjusts difficulty
-        if((superblockHeight % 6) == 0){
-            if(prevBits == blockInfo.bits){
-                return ERR_SUPERBLOCK_INVALID_DIFFICULTY_ADJUSTMENT;
+        // make sure every 7th superblock adjusts difficulty
+        if(net != SyscoinMessageLibrary.Network.REGTEST){
+            if(((superblockHeight-1) % 6) == 0){
+                if(prevBits == blockInfo.bits){
+                    return ERR_SUPERBLOCK_INVALID_DIFFICULTY_ADJUSTMENT;
+                }
+                // make sure difficulty adjustment is within bounds
+                uint32 lowerBoundDiff = SyscoinMessageLibrary.calculateDifficulty(SyscoinMessageLibrary.getLowerBoundDifficultyTarget()-1, prevBits);
+                uint32 upperBoundDiff = SyscoinMessageLibrary.calculateDifficulty(SyscoinMessageLibrary.getUpperBoundDifficultyTarget()+1, prevBits);
+                if(blockInfo.bits < lowerBoundDiff || blockInfo.bits > upperBoundDiff){
+                    return ERR_SUPERBLOCK_BAD_RETARGET;
+                }          
             }
-            // make sure difficulty adjustment is within bounds
-            uint32 lowerBoundDiff = SyscoinMessageLibrary.calculateDifficulty(SyscoinMessageLibrary.getLowerBoundDifficultyTarget()-1, prevBits);
-            uint32 upperBoundDiff = SyscoinMessageLibrary.calculateDifficulty(SyscoinMessageLibrary.getUpperBoundDifficultyTarget()+1, prevBits);
-            if(blockInfo.bits < lowerBoundDiff || blockInfo.bits > upperBoundDiff){
-                return ERR_SUPERBLOCK_BAD_RETARGET;
-            }          
-        }
-        // within the 6th make sure bits don't change
-        else if(prevBits != blockInfo.bits){
-            return ERR_SUPERBLOCK_BAD_BITS;
-        }
-        uint newWork = prevWork + (SyscoinMessageLibrary.diffFromBits(blockInfo.bits)*heightDiff);
-        if (net != SyscoinMessageLibrary.Network.REGTEST && newWork != accWork) {
-            return ERR_SUPERBLOCK_BAD_ACCUMULATED_WORK;
+            // within the 7th make sure bits don't change
+            else if(prevBits != blockInfo.bits){
+                return ERR_SUPERBLOCK_BAD_BITS;
+            }
+            uint newWork = prevWork + (SyscoinMessageLibrary.diffFromBits(blockInfo.bits)*heightDiff);
+            if (newWork != accWork) {
+                return ERR_SUPERBLOCK_BAD_ACCUMULATED_WORK;
+            }
         }   
         return ERR_SUPERBLOCK_OK;
     }
