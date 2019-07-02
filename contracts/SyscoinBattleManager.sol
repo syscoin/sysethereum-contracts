@@ -78,7 +78,7 @@ contract SyscoinBattleManager is SyscoinErrorCodes {
 
     event QueryMerkleRootHashes(bytes32 superblockHash, bytes32 sessionId, address submitter);
     event RespondMerkleRootHashes(bytes32 superblockHash, bytes32 sessionId, address challenger);
-    event QueryLastBlockHeader(bytes32 sessionId);
+    event QueryLastBlockHeader(bytes32 sessionId, address submitter);
     event RespondLastBlockHeader(bytes32 sessionId, address challenger);
 
     event ErrorBattle(bytes32 sessionId, uint err);
@@ -243,7 +243,7 @@ contract SyscoinBattleManager is SyscoinErrorCodes {
             session.actionsCounter += 1;
             session.lastActionTimestamp = block.timestamp;
             session.lastActionChallenger = session.actionsCounter;
-            emit QueryLastBlockHeader(sessionId);
+            emit QueryLastBlockHeader(sessionId, session.submitter);
         }
     }
 
