@@ -56,6 +56,7 @@ contract('validateSuperblocks', (accounts) => {
         proposedSuperblock.accumulatedWork,
         proposedSuperblock.timestamp,
         proposedSuperblock.lastHash,
+        proposedSuperblock.lastBits,
         proposedSuperblock.parentId,
         { from: submitter },
       );
@@ -110,6 +111,7 @@ contract('validateSuperblocks', (accounts) => {
         proposedSuperblock.accumulatedWork,
         proposedSuperblock.timestamp + 1,
         proposedSuperblock.lastHash,
+        proposedSuperblock.lastBits,
         proposedSuperblock.parentId,
         { from: submitter },
       );
@@ -164,6 +166,7 @@ contract('validateSuperblocks', (accounts) => {
         proposedSuperblock.accumulatedWork,
         proposedSuperblock.timestamp + 1,
         utils.ZERO_BYTES32, // proposedSuperblock.lastHash,
+        proposedSuperblock.lastBits,
         proposedSuperblock.parentId,
         { from: submitter },
       );
@@ -206,6 +209,7 @@ contract('validateSuperblocks', (accounts) => {
         proposedSuperblock.accumulatedWork,
         proposedSuperblock.timestamp + 1,
         utils.ZERO_BYTES32, // proposedSuperblock.lastHash,
+        proposedSuperblock.lastBits,
         proposedSuperblock.parentId,
         { from: submitter },
       ));
@@ -218,6 +222,7 @@ contract('validateSuperblocks', (accounts) => {
         proposedSuperblock.accumulatedWork,
         proposedSuperblock.timestamp + 1,
         utils.ZERO_BYTES32, // proposedSuperblock.lastHash,
+        proposedSuperblock.lastBits,
         proposedSuperblock.parentId,
         { from: challenger },
       );
@@ -232,6 +237,7 @@ contract('validateSuperblocks', (accounts) => {
         proposedSuperblock.accumulatedWork,
         proposedSuperblock.timestamp + 1,
         utils.ZERO_BYTES32, // proposedSuperblock.lastHash,
+        proposedSuperblock.lastBits,
         proposedSuperblock.parentId,
         { from: challenger },
       ));

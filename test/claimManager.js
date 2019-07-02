@@ -64,6 +64,7 @@ contract('SyscoinClaimManager', (accounts) => {
         proposedSuperblock.accumulatedWork,
         proposedSuperblock.timestamp,
         proposedSuperblock.lastHash,
+        proposedSuperblock.lastBits,
         proposedSuperblock.parentId,
         { from: submitter },
       );
@@ -99,6 +100,7 @@ contract('SyscoinClaimManager', (accounts) => {
         proposedSuperblock.accumulatedWork,
         proposedSuperblock.timestamp,
         proposedSuperblock.lastHash,
+        proposedSuperblock.lastBits,
         proposedSuperblock.parentId,
         { from: submitter },
       );
@@ -137,6 +139,7 @@ contract('SyscoinClaimManager', (accounts) => {
         proposedSuperblock.accumulatedWork,
         proposedSuperblock.timestamp,
         proposedSuperblock.lastHash,
+        proposedSuperblock.lastBits,
         proposedSuperblock.parentId,
         { from: submitter },
       );
@@ -216,6 +219,7 @@ contract('SyscoinClaimManager', (accounts) => {
         proposedSuperblock.accumulatedWork,
         proposedSuperblock.timestamp,
         proposedSuperblock.lastHash,
+        proposedSuperblock.lastBits,
         proposedSuperblock.parentId,
         { from: submitter },
       );
@@ -302,6 +306,7 @@ contract('SyscoinClaimManager', (accounts) => {
         proposedSuperblock.accumulatedWork,
         proposedSuperblock.timestamp,
         proposedSuperblock.lastHash,
+        proposedSuperblock.lastBits,
         proposedSuperblock.parentId,
         { from: submitter },
       );
@@ -445,6 +450,7 @@ contract('SyscoinClaimManager', (accounts) => {
         proposedSuperblock.accumulatedWork,
         proposedSuperblock.timestamp,
         proposedSuperblock.lastHash,
+        proposedSuperblock.lastBits,
         proposedSuperblock.parentId,
         { from: submitter },
       ));
@@ -457,6 +463,7 @@ contract('SyscoinClaimManager', (accounts) => {
         proposedSuperblock.accumulatedWork,
         proposedSuperblock.timestamp,
         proposedSuperblock.lastHash,
+        proposedSuperblock.lastBits,
         proposedSuperblock.parentId,
         { from: challenger },
       ));

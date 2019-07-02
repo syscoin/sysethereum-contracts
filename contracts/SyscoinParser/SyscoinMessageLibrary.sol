@@ -809,7 +809,12 @@ library SyscoinMessageLibrary {
     function diffFromBits(uint32 bits) external pure returns (uint) {
         return targetToDiff(targetFromBits(bits));
     }
-    
+    function getLowerBoundDifficultyTarget() external pure returns (int64) {
+        return TARGET_TIMESPAN_DIV_4;
+    }
+     function getUpperBoundDifficultyTarget() external pure returns (int64) {
+        return TARGET_TIMESPAN_MUL_4;
+    }   
     function difficultyAdjustmentInterval() external pure returns (int64) {
         return TARGET_TIMESPAN_ADJUSTMENT;
     }

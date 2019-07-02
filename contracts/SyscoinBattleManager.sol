@@ -180,7 +180,7 @@ contract SyscoinBattleManager is SyscoinErrorCodes {
         }
         require(session.blockHashes.length == 0);
         if (session.challengeState == ChallengeState.QueryMerkleRootHashes) {
-            (bytes32 merkleRoot, , , bytes32 lastHash, , ,) = getSuperblockInfo(session.superblockHash);
+            (bytes32 merkleRoot, , ,bytes32 lastHash,, , ,,) = getSuperblockInfo(session.superblockHash);
             if (lastHash != blockHashes[blockHashes.length - 1]){
                 return ERR_SUPERBLOCK_BAD_LASTBLOCK;
             }
@@ -325,7 +325,7 @@ contract SyscoinBattleManager is SyscoinErrorCodes {
         uint prevTimestamp;
         bytes32 parentId;
         bytes32 lastBlockHash;
-        (, , lastTimestamp, lastBlockHash, parentId,,) = getSuperblockInfo(session.superblockHash);
+        (, , lastTimestamp, lastBlockHash, ,parentId,,,) = getSuperblockInfo(session.superblockHash);
         bytes32 blockSha256Hash = session.blockHashes[session.blockHashes.length - 1];
         BlockInfo storage blockInfo = session.blocksInfo[session.superblockHash];
         if(session.blockHashes.length > 2){
@@ -344,7 +344,7 @@ contract SyscoinBattleManager is SyscoinErrorCodes {
         if (blockInfo.status != BlockInfoStatus.Verified) {
             return ERR_SUPERBLOCK_BAD_LASTBLOCK_STATUS;
         }
-        (, ,prevTimestamp , ,, , ) = getSuperblockInfo(parentId);
+        (, ,prevTimestamp , ,,,, , ) = getSuperblockInfo(parentId);
         
         if (prevTimestamp > lastTimestamp) {
             return ERR_SUPERBLOCK_BAD_TIMESTAMP;
@@ -358,18 +358,36 @@ contract SyscoinBattleManager is SyscoinErrorCodes {
         bytes32 prevBlock;
         uint heightDiff = superblockDuration; 
         uint prevWork;
+        uint32 prevBits;
+        uint superblockHeight;
         bytes32 superblockHash = session.superblockHash;
-        (, accWork, ,,prevBlock,,) = getSuperblockInfo(superblockHash);
+        (, accWork, ,,prevBits,prevBlock,,,superblockHeight) = getSuperblockInfo(superblockHash);
         BlockInfo storage blockInfo = session.blocksInfo[superblockHash];
         if(accWork <= 0){
             return ERR_SUPERBLOCK_BAD_ACCUMULATED_WORK;
         }    
-        (, prevWork, ,, , ,) = getSuperblockInfo(prevBlock);
+        (, prevWork, ,, ,, ,,) = getSuperblockInfo(prevBlock);
         if(net == SyscoinMessageLibrary.Network.REGTEST)
             heightDiff = session.blockHashes.length;
          
         if(accWork <= prevWork){
             return ERR_SUPERBLOCK_INVALID_ACCUMULATED_WORK;
+        }
+        // make sure every 6th superblock adjusts difficulty
+        if((superblockHeight % 6) == 0){
+            if(prevBits == blockInfo.bits){
+                return ERR_SUPERBLOCK_INVALID_DIFFICULTY_ADJUSTMENT;
+            }
+            // make sure difficulty adjustment is within bounds
+            uint32 lowerBoundDiff = SyscoinMessageLibrary.calculateDifficulty(SyscoinMessageLibrary.getLowerBoundDifficultyTarget()-1, prevBits);
+            uint32 upperBoundDiff = SyscoinMessageLibrary.calculateDifficulty(SyscoinMessageLibrary.getUpperBoundDifficultyTarget()+1, prevBits);
+            if(blockInfo.bits < lowerBoundDiff || blockInfo.bits > upperBoundDiff){
+                return ERR_SUPERBLOCK_BAD_RETARGET;
+            }          
+        }
+        // within the 6th make sure bits don't change
+        else if(prevBits != blockInfo.bits){
+            return ERR_SUPERBLOCK_BAD_BITS;
         }
         uint newWork = prevWork + (SyscoinMessageLibrary.diffFromBits(blockInfo.bits)*heightDiff);
         if (net != SyscoinMessageLibrary.Network.REGTEST && newWork != accWork) {
@@ -490,9 +508,11 @@ contract SyscoinBattleManager is SyscoinErrorCodes {
         uint _accumulatedWork,
         uint _timestamp,
         bytes32 _lastHash,
+        uint32 _lastBits,
         bytes32 _parentId,
         address _submitter,
-        SyscoinSuperblocks.Status _status
+        SyscoinSuperblocks.Status _status,
+        uint32 _height
     ) {
         return trustedSuperblocks.getSuperblock(superblockHash);
     }

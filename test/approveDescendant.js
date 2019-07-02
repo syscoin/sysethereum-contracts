@@ -83,6 +83,7 @@ contract('approveDescendant', (accounts) => {
                 superblock1.accumulatedWork,
                 superblock1.timestamp,
                 superblock1.lastHash,
+                superblock1.lastBits,
                 superblock1.parentId,
                 { from: submitter },
             );
@@ -145,6 +146,7 @@ contract('approveDescendant', (accounts) => {
                 superblock2.accumulatedWork,
                 superblock2.timestamp,
                 superblock2.lastHash,
+                superblock2.lastBits,
                 superblock2.parentId,
                 { from: submitter },
             );
@@ -172,6 +174,7 @@ contract('approveDescendant', (accounts) => {
                 superblock3.accumulatedWork,
                 superblock3.timestamp,
                 superblock3.lastHash,
+                superblock3.lastBits,
                 superblock3.parentId,
                 { from: submitter },
             );
@@ -230,6 +233,7 @@ contract('approveDescendant', (accounts) => {
                 superblock1.accumulatedWork,
                 superblock1.timestamp,
                 superblock1.lastHash,
+                superblock1.lastBits,
                 superblock1.parentId,
                 { from: submitter },
             );
@@ -289,6 +293,7 @@ contract('approveDescendant', (accounts) => {
                 superblock2.accumulatedWork,
                 superblock2.timestamp,
                 superblock2.lastHash,
+                superblock2.lastBits,
                 superblock2.parentId,
                 { from: submitter },
             );
@@ -347,6 +352,7 @@ contract('approveDescendant', (accounts) => {
                 superblock3.accumulatedWork,
                 superblock3.timestamp,
                 superblock3.lastHash,
+                superblock3.lastBits,
                 superblock3.parentId,
                 { from: submitter },
             );

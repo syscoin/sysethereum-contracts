@@ -93,6 +93,7 @@ contract('rejectClaim', (accounts) => {
                 superblock1.accumulatedWork,
                 superblock1.timestamp,
                 superblock1.lastHash,
+                superblock1.lastBits,
                 superblock1.parentId,
                 { from: submitter },
             );
@@ -108,6 +109,7 @@ contract('rejectClaim', (accounts) => {
                 superblock1.accumulatedWork,
                 superblock1.timestamp,
                 superblock1.lastHash,
+                superblock1.lastBits,
                 superblock1.parentId,
                 { from: submitter },
             ));
@@ -119,6 +121,7 @@ contract('rejectClaim', (accounts) => {
                 superblock1.accumulatedWork,
                 superblock1.timestamp,
                 superblock1.lastHash,
+                superblock1.lastBits,
                 superblock1.parentId,
                 { from: challenger },
             ));
@@ -139,6 +142,7 @@ contract('rejectClaim', (accounts) => {
                 superblock1.accumulatedWork,
                 superblock1.timestamp,
                 superblock1.lastHash,
+                superblock1.lastBits,
                 superblock1.parentId,
                 { from: submitter },
             ));
@@ -150,6 +154,7 @@ contract('rejectClaim', (accounts) => {
                 superblock1.accumulatedWork,
                 superblock1.timestamp,
                 superblock1.lastHash,
+                superblock1.lastBits,
                 superblock1.parentId,
                 { from: challenger },
             ));
@@ -167,6 +172,7 @@ contract('rejectClaim', (accounts) => {
                 superblockR0.accumulatedWork,
                 superblockR0.timestamp,
                 superblockR0.lastHash,
+                superblockR0.lastBits,
                 superblockR0.parentId,
                 { from: submitter },
             );
@@ -188,6 +194,7 @@ contract('rejectClaim', (accounts) => {
                 superblock2.accumulatedWork,
                 superblock2.timestamp,
                 superblock2.lastHash,
+                superblock2.lastBits,
                 superblock2.parentId,
                 { from: submitter },
             );
@@ -215,6 +222,7 @@ contract('rejectClaim', (accounts) => {
                 superblock3.accumulatedWork,
                 superblock3.timestamp,
                 superblock3.lastHash,
+                superblock3.lastBits,
                 superblock3.parentId,
                 { from: submitter },
             );
@@ -237,6 +245,7 @@ contract('rejectClaim', (accounts) => {
                 superblock4.accumulatedWork,
                 superblock4.timestamp,
                 superblock4.lastHash,
+                superblock4.lastBits,
                 superblock4.parentId,
                 { from: submitter },
             );
@@ -330,6 +339,7 @@ contract('rejectClaim', (accounts) => {
                 superblockR1.accumulatedWork,
                 superblockR1.timestamp,
                 superblockR1.lastHash,
+                superblockR1.lastBits,
                 superblockR1.parentId,
                 { from: submitter },
             );

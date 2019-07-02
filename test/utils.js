@@ -203,13 +203,14 @@ function makeMerkleProofMap (blockHashes) {
   }
   
 // Calculate a superblock id
-function calcSuperblockHash(merkleRoot, accumulatedWork, timestamp, lastHash, parentId) {
+function calcSuperblockHash(merkleRoot, accumulatedWork, timestamp, lastHash, lastBits, parentId) {
   return `0x${Buffer.from(keccak256.arrayBuffer(
     Buffer.concat([
       module.exports.fromHex(merkleRoot),
       module.exports.fromHex(toUint256(accumulatedWork)),
       module.exports.fromHex(toUint256(timestamp)),
       module.exports.fromHex(lastHash),
+      module.exports.fromHex(toUint32(lastBits)),
       module.exports.fromHex(parentId)
     ])
   )).toString('hex')}`;
@@ -226,17 +227,20 @@ function makeSuperblock(headers, parentId, parentAccumulatedWork) {
   const merkleRoot = makeMerkle(blockHashes);
   const timestamp = getBlockTimestamp(headers[headers.length - 1]);
   const lastHash = calcBlockSha256Hash(headers[headers.length - 1]);
+  const lastBits = getBlockDifficultyBits(headers[headers.length - 1]);
   return {
     merkleRoot,
     accumulatedWork,
     timestamp,
     lastHash,
+    lastBits,
     parentId,
     superblockHash: calcSuperblockHash(
       merkleRoot,
       accumulatedWork,
       timestamp,
       lastHash,
+      lastBits,
       parentId
     ),
     blockHeaders: headers,
@@ -299,6 +303,7 @@ async function initSuperblockChain(options) {
     options.genesisSuperblock.accumulatedWork,
     options.genesisSuperblock.timestamp,
     options.genesisSuperblock.lastHash,
+    options.genesisSuperblock.lastBits,
     options.genesisSuperblock.parentId,
     { from: options.from },
   );
@@ -401,6 +406,7 @@ module.exports = {
       genesisSuperblock.accumulatedWork,
       genesisSuperblock.timestamp,
       genesisSuperblock.lastHash,
+      genesisSuperblock.lastBits,
       genesisSuperblock.parentId,
       { from: sender },
     );
@@ -421,6 +427,7 @@ module.exports = {
       proposedSuperblock.accumulatedWork,
       proposedSuperblock.timestamp,
       proposedSuperblock.lastHash,
+      proposedSuperblock.lastBits,
       proposedSuperblock.parentId,
       { from: sender },
     );
