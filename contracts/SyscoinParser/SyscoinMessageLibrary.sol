@@ -743,11 +743,7 @@ library SyscoinMessageLibrary {
     //
     // @param _rawBytes - first 80 bytes of a block header
     // @return - exact same header information in BlockHeader struct form
-<<<<<<< HEAD
-    function parseHeaderBytes(bytes _rawBytes, uint pos) internal view returns (BlockHeader bh) {
-=======
     function parseHeaderBytes(bytes memory _rawBytes, uint pos) internal view returns (BlockHeader memory bh) {
->>>>>>> e8aedf0... Merge pull request #12 from tommyz7/solidity_v0.5_upgrade
         bh.bits = getBits(_rawBytes);
         bh.blockHash = dblShaFlipMem(_rawBytes, pos, 80);
     }
@@ -756,16 +752,6 @@ library SyscoinMessageLibrary {
 
     // @dev - Converts a bytes of size 4 to uint32,
     // e.g. for input [0x01, 0x02, 0x03 0x04] returns 0x01020304
-<<<<<<< HEAD
-    function bytesToUint32Flipped(bytes input, uint pos) internal pure returns (uint32 result) {
-        result = uint32(input[pos]) + uint32(input[pos + 1])*(2**8) + uint32(input[pos + 2])*(2**16) + uint32(input[pos + 3])*(2**24);
-    }
-    function bytesToUint64(bytes input, uint pos) internal pure returns (uint64 result) {
-        result = uint64(input[pos+7]) + uint64(input[pos + 6])*(2**8) + uint64(input[pos + 5])*(2**16) + uint64(input[pos + 4])*(2**24) + uint64(input[pos + 3])*(2**32) + uint64(input[pos + 2])*(2**40) + uint64(input[pos + 1])*(2**48) + uint64(input[pos])*(2**56);
-    }
-     function bytesToUint32(bytes input, uint pos) internal pure returns (uint32 result) {
-        result = uint32(input[pos+3]) + uint32(input[pos + 2])*(2**8) + uint32(input[pos + 1])*(2**16) + uint32(input[pos])*(2**24);
-=======
     function bytesToUint32Flipped(bytes memory input, uint pos) internal pure returns (uint32 result) {
         result = uint32(uint8(input[pos])) + uint32(uint8(input[pos + 1]))*(2**8) + uint32(uint8(input[pos + 2]))*(2**16) + uint32(uint8(input[pos + 3]))*(2**24);
     }
@@ -774,7 +760,6 @@ library SyscoinMessageLibrary {
     }
      function bytesToUint32(bytes memory input, uint pos) internal pure returns (uint32 result) {
         result = uint32(uint8(input[pos+3])) + uint32(uint8(input[pos + 2]))*(2**8) + uint32(uint8(input[pos + 1]))*(2**16) + uint32(uint8(input[pos]))*(2**24);
->>>>>>> e8aedf0... Merge pull request #12 from tommyz7/solidity_v0.5_upgrade
     }  
     // @dev - checks version to determine if a block has merge mining information
     function isMergeMined(bytes _rawBytes, uint pos) internal pure returns (bool) {
