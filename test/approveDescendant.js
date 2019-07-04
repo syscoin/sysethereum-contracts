@@ -194,7 +194,7 @@ contract('approveDescendant', (accounts) => {
             result = await claimManager.confirmClaim(superblock1Id, superblock3Id, { from: submitter });
             assert.equal(result.logs[0].event, 'SuperblockClaimSuccessful', 'SuperblockClaimSuccessful event missing');
             assert.equal(result.logs[3].event, 'SuperblockClaimSuccessful', 'SuperblockClaimSuccessful event missing');
-            assert.equal(result.logs[6].event, 'SuperblockClaimSuccessful', 'SuperblockClaimSuccessful event missing');
+            assert.equal(result.logs[5].event, 'SuperblockClaimSuccessful', 'SuperblockClaimSuccessful event missing');
 
             const status1 = await superblocks.getSuperblockStatus(superblock1Id);
             const status2 = await superblocks.getSuperblockStatus(superblock2Id);
