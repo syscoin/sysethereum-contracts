@@ -105,9 +105,6 @@ pragma solidity >=0.5.0 <0.6.0;
 // parse a raw Syscoin transaction byte array
 library SyscoinMessageLibrary {
 
-    uint constant p = 0xfffffffffffffffffffffffffffffffffffffffffffffffffffffffefffffc2f;  // secp256k1
-    uint constant q = (p + 1) / 4;
-
     // Error codes
     uint constant ERR_INVALID_HEADER = 10050;
     uint constant ERR_COINBASE_INDEX = 10060; // coinbase tx index within Bitcoin merkle isn't 0
@@ -676,15 +673,6 @@ library SyscoinMessageLibrary {
         return mant * 256**(exp - 3);
     }
 
-    uint constant SYSCOIN_DIFFICULTY_ONE = 0xFFFFF * 256**(0x1e - 3);
-
-    // @dev - Calculate syscoin difficulty from target
-    // https://en.bitcoin.it/wiki/Difficulty
-    // Min difficulty for bitcoin is 0x1d00ffff
-    // Min difficulty for syscoin is 0x1e0fffff
-    function targetToDiff(uint target) internal pure returns (uint) {
-        return SYSCOIN_DIFFICULTY_ONE / target;
-    }
     
 
     // 0x00 version
@@ -803,11 +791,10 @@ library SyscoinMessageLibrary {
     int64 constant TARGET_TIMESPAN_DIV_4 = TARGET_TIMESPAN / int64(4);
     int64 constant TARGET_TIMESPAN_MUL_4 = TARGET_TIMESPAN * int64(4);
     int64 constant TARGET_TIMESPAN_ADJUSTMENT =  int64(360);  // 6 hour
-    uint constant POW_LIMIT = 0x00000fffffffffffffffffffffffffffffffffffffffffffffffffffffffffff;
-
-    // @dev - Calculate difficulty from compact representation (bits) found in block
-    function diffFromBits(uint32 bits) external pure returns (uint) {
-        return targetToDiff(targetFromBits(bits));
+    uint constant POW_LIMIT =    0x00000fffffffffffffffffffffffffffffffffffffffffffffffffffffffffff;
+    function getWorkFromBits(uint32 bits) external pure returns(uint) {
+        uint target = targetFromBits(bits);
+        return (~target / (target + 1)) + 1;
     }
     function getLowerBoundDifficultyTarget() external pure returns (int64) {
         return TARGET_TIMESPAN_DIV_4;
@@ -815,9 +802,6 @@ library SyscoinMessageLibrary {
      function getUpperBoundDifficultyTarget() external pure returns (int64) {
         return TARGET_TIMESPAN_MUL_4;
     }   
-    function difficultyAdjustmentInterval() external pure returns (int64) {
-        return TARGET_TIMESPAN_ADJUSTMENT;
-    }
     // @param _actualTimespan - time elapsed from previous block creation til current block creation;
     // i.e., how much time it took to mine the current block
     // @param _bits - previous block header difficulty (in bits)

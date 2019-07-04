@@ -80,7 +80,6 @@ contract SyscoinBattleManager is SyscoinErrorCodes {
     event RespondMerkleRootHashes(bytes32 superblockHash, bytes32 sessionId, address challenger);
     event QueryLastBlockHeader(bytes32 sessionId, address submitter);
     event RespondLastBlockHeader(bytes32 sessionId, address challenger);
-
     event ErrorBattle(bytes32 sessionId, uint err);
     modifier onlyFrom(address sender) {
         require(msg.sender == sender);
@@ -144,16 +143,9 @@ contract SyscoinBattleManager is SyscoinErrorCodes {
 
     // @dev - Challenger makes a query for superblock hashes
     function doQueryMerkleRootHashes(BattleSession storage session) internal returns (uint) {
-        if (!hasDeposit(msg.sender, respondMerkleRootHashesCost)) {
-            return ERR_SUPERBLOCK_MIN_DEPOSIT;
-        }
         if (session.challengeState == ChallengeState.Challenged) {
             session.challengeState = ChallengeState.QueryMerkleRootHashes;
             assert(msg.sender == session.challenger);
-            uint err = bondDeposit(session.superblockHash, msg.sender, respondMerkleRootHashesCost);
-            if (err != ERR_SUPERBLOCK_OK) {
-                return err;
-            }
             return ERR_SUPERBLOCK_OK;
         }
         return ERR_SUPERBLOCK_BAD_STATUS;
@@ -175,9 +167,6 @@ contract SyscoinBattleManager is SyscoinErrorCodes {
 
     // @dev - Submitter sends hashes to verify superblock merkle root
     function doVerifyMerkleRootHashes(BattleSession storage session, bytes32[] memory blockHashes) internal returns (uint) {
-        if (!hasDeposit(msg.sender, verifySuperblockCost)) {
-            return ERR_SUPERBLOCK_MIN_DEPOSIT;
-        }
         require(session.blockHashes.length == 0);
         if (session.challengeState == ChallengeState.QueryMerkleRootHashes) {
             (bytes32 merkleRoot, , ,bytes32 lastHash,, , ,,) = getSuperblockInfo(session.superblockHash);
@@ -189,10 +178,6 @@ contract SyscoinBattleManager is SyscoinErrorCodes {
             }
             if (merkleRoot != SyscoinMessageLibrary.makeMerkle(blockHashes)) {
                 return ERR_SUPERBLOCK_INVALID_MERKLE;
-            }
-            uint err = bondDeposit(session.superblockHash, msg.sender, verifySuperblockCost);
-            if (err != ERR_SUPERBLOCK_OK) {
-                return err;
             }
             session.blockHashes = blockHashes;
             session.challengeState = ChallengeState.RespondMerkleRootHashes;
@@ -217,15 +202,8 @@ contract SyscoinBattleManager is SyscoinErrorCodes {
        
     // @dev - Challenger makes a query for last block header
     function doQueryLastBlockHeader(BattleSession storage session) internal returns (uint) {
-        if (!hasDeposit(msg.sender, respondLastBlockHeaderCost)) {
-            return ERR_SUPERBLOCK_MIN_DEPOSIT;
-        }
         if (session.challengeState == ChallengeState.RespondMerkleRootHashes) {
             require(session.blocksInfo[session.superblockHash].status == BlockInfoStatus.Uninitialized);
-            uint err = bondDeposit(session.superblockHash, msg.sender, respondLastBlockHeaderCost);
-            if (err != ERR_SUPERBLOCK_OK) {
-                return err;
-            }
             session.challengeState = ChallengeState.QueryLastBlockHeader;
             session.blocksInfo[session.superblockHash].status = BlockInfoStatus.Requested;
             return ERR_SUPERBLOCK_OK;
@@ -265,13 +243,10 @@ contract SyscoinBattleManager is SyscoinErrorCodes {
     }
 
     // @dev - Verify block header sent by challenger
-    function doVerifyLastBlockHeader(
+    function doRespondLastBlockHeader(
         BattleSession storage session,
         bytes memory blockHeader
     ) internal returns (uint) {
-        if (!hasDeposit(msg.sender, respondLastBlockHeaderCost)) {
-            return (ERR_SUPERBLOCK_MIN_DEPOSIT);
-        }
         if (session.challengeState == ChallengeState.QueryLastBlockHeader) {
             bytes32 blockSha256Hash = bytes32(SyscoinMessageLibrary.dblShaFlipMem(blockHeader, 0, 80));
             if(session.blockHashes[session.blockHashes.length-1] != blockSha256Hash){
@@ -290,10 +265,6 @@ contract SyscoinBattleManager is SyscoinErrorCodes {
                 return (err);
             }
 
-            err = bondDeposit(session.superblockHash, msg.sender, respondLastBlockHeaderCost);
-            if (err != ERR_SUPERBLOCK_OK) {
-                return (err);
-            }
             session.challengeState = ChallengeState.PendingVerification;
             blockInfo.status = BlockInfoStatus.Verified;
             return (ERR_SUPERBLOCK_OK);
@@ -305,7 +276,7 @@ contract SyscoinBattleManager is SyscoinErrorCodes {
         bytes memory blockHeader
         ) onlyClaimant(sessionId) public {
         BattleSession storage session = sessions[sessionId];
-        (uint err) = doVerifyLastBlockHeader(session, blockHeader);
+        (uint err) = doRespondLastBlockHeader(session, blockHeader);
         if (err != 0) {
             emit ErrorBattle(sessionId, err);
         }else{
@@ -393,7 +364,9 @@ contract SyscoinBattleManager is SyscoinErrorCodes {
             else if(prevBits != blockInfo.bits){
                 return ERR_SUPERBLOCK_BAD_BITS;
             }
-            uint newWork = prevWork + (SyscoinMessageLibrary.diffFromBits(blockInfo.bits)*heightDiff);
+
+            uint newWork = prevWork + (SyscoinMessageLibrary.getWorkFromBits(blockInfo.bits)*heightDiff);
+
             if (newWork != accWork) {
                 return ERR_SUPERBLOCK_BAD_ACCUMULATED_WORK;
             }
@@ -521,7 +494,7 @@ contract SyscoinBattleManager is SyscoinErrorCodes {
     ) {
         return trustedSuperblocks.getSuperblock(superblockHash);
     }
-
+    
     // @dev - Verify whether a user has a certain amount of deposits or more
     function hasDeposit(address who, uint amount) internal view returns (bool) {
         return trustedSyscoinClaimManager.getDeposit(who) >= amount;

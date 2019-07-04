@@ -45,9 +45,6 @@ contract SyscoinClaimManager is SyscoinDepositsManager, SyscoinErrorCodes {
     // Confirmations required to confirm semi approved superblocks
     uint public superblockConfirmations;
 
-    // Monetary reward for opponent in case battle is lost
-    uint public battleReward;
-
     uint public superblockDelay;    // Delay required to submit superblocks (in seconds)
     uint public superblockTimeout;  // Timeout for action (in seconds)
 
@@ -84,15 +81,13 @@ contract SyscoinClaimManager is SyscoinDepositsManager, SyscoinErrorCodes {
         SyscoinBattleManager _syscoinBattleManager,
         uint _superblockDelay,
         uint _superblockTimeout,
-        uint _superblockConfirmations,
-        uint _battleReward
+        uint _superblockConfirmations
     ) public {
         trustedSuperblocks = _superblocks;
         trustedSyscoinBattleManager = _syscoinBattleManager;
         superblockDelay = _superblockDelay;
         superblockTimeout = _superblockTimeout;
         superblockConfirmations = _superblockConfirmations;
-        battleReward = _battleReward;
     }
 
     // @dev – locks up part of a user's deposit into a claim.
@@ -227,7 +222,7 @@ contract SyscoinClaimManager is SyscoinDepositsManager, SyscoinErrorCodes {
         claim.challengeTimeout = block.timestamp + superblockTimeout;
         claim.challengers.length = 0;
 
-        err = this.bondDeposit(superblockHash, msg.sender, battleReward);
+        err = this.bondDeposit(superblockHash, msg.sender, minProposalDeposit);
         assert(err == ERR_SUPERBLOCK_OK);
 
         emit SuperblockClaimCreated(superblockHash, msg.sender);
@@ -251,7 +246,7 @@ contract SyscoinClaimManager is SyscoinDepositsManager, SyscoinErrorCodes {
             emit ErrorClaim(superblockHash, ERR_SUPERBLOCK_CLAIM_DECIDED);
             return (ERR_SUPERBLOCK_CLAIM_DECIDED, superblockHash);
         }
-        if (deposits[msg.sender] < minChallengeDeposit) {
+        if (deposits[msg.sender] < minProposalDeposit) {
             emit ErrorClaim(superblockHash, ERR_SUPERBLOCK_MIN_DEPOSIT);
             return (ERR_SUPERBLOCK_MIN_DEPOSIT, superblockHash);
         }
@@ -267,7 +262,7 @@ contract SyscoinClaimManager is SyscoinDepositsManager, SyscoinErrorCodes {
             return (err, 0);
         }
 
-        err = this.bondDeposit(superblockHash, msg.sender, battleReward);
+        err = this.bondDeposit(superblockHash, msg.sender, minProposalDeposit);
         assert(err == ERR_SUPERBLOCK_OK);
 
         claim.challengeTimeout = block.timestamp + superblockTimeout;

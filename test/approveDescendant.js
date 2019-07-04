@@ -55,8 +55,8 @@ contract('approveDescendant', (accounts) => {
         }));
 
         //FIXME: ganache-cli creates the same transaction hash if two accounts send the same amount
-        await claimManager.makeDeposit({ value: utils.DEPOSITS.MIN_PROPOSAL_DEPOSIT * 2, from: submitter });
-        await claimManager.makeDeposit({ value: utils.DEPOSITS.MIN_CHALLENGE_DEPOSIT * 2, from: challenger });
+        await claimManager.makeDeposit({ value: utils.DEPOSITS.MIN_REWARD * 3, from: submitter });
+        await claimManager.makeDeposit({ value: utils.DEPOSITS.MIN_REWARD * 3, from: challenger });
     }
 
     describe('Approve two descendants', () => {
@@ -107,21 +107,20 @@ contract('approveDescendant', (accounts) => {
             
         });
         it('Query and verify hashes', async () => {
-            await claimManager.makeDeposit({ value: utils.DEPOSITS.RESPOND_MERKLE_COST, from: challenger });
+
             result = await battleManager.queryMerkleRootHashes(superblock1Id, session1, { from: challenger });
             assert.ok(utils.findEvent(result.logs, 'QueryMerkleRootHashes'), 'Query merkle root hashes');
             
-            await claimManager.makeDeposit({ value: utils.DEPOSITS.VERIFY_SUPERBLOCK_COST, from: submitter });
+
             result = await battleManager.respondMerkleRootHashes(superblock1Id, session1, superblock1Hashes, { from: submitter });
             assert.ok(utils.findEvent(result.logs, 'RespondMerkleRootHashes'), 'Respond merkle root hashes');
         });
 
         it('Query and reply block header', async () => {
-            await claimManager.makeDeposit({ value: utils.DEPOSITS.RESPOND_LAST_HEADER_COST, from: challenger });
+
             result = await battleManager.queryLastBlockHeader(session1, { from: challenger });
             assert.ok(utils.findEvent(result.logs, 'QueryLastBlockHeader'), 'Query block header');
 
-            await claimManager.makeDeposit({ value: utils.DEPOSITS.RESPOND_LAST_HEADER_COST, from: submitter });
             result = await battleManager.respondLastBlockHeader(session1, `0x${superblock1Headers[2]}`, { from: submitter });
             assert.ok(utils.findEvent(result.logs, 'RespondLastBlockHeader'), 'Respond last block header');
             
@@ -253,22 +252,21 @@ contract('approveDescendant', (accounts) => {
         });
 
         it('Query and verify hashes', async () => {
-            await claimManager.makeDeposit({ value: utils.DEPOSITS.RESPOND_MERKLE_COST, from: challenger });
+
             result = await battleManager.queryMerkleRootHashes(superblock1Id, session1, { from: challenger });
             assert.ok(utils.findEvent(result.logs, 'QueryMerkleRootHashes'), 'Query merkle root hashes');
 
-            await claimManager.makeDeposit({ value: utils.DEPOSITS.VERIFY_SUPERBLOCK_COST, from: submitter });
+
             result = await battleManager.respondMerkleRootHashes(superblock1Id, session1, superblock1Hashes, { from: submitter });
             assert.ok(utils.findEvent(result.logs, 'RespondMerkleRootHashes'), 'Respond merkle root hashes');
         });
 
         it('Query and reply block header', async () => {
-            await claimManager.makeDeposit({ value: utils.DEPOSITS.RESPOND_LAST_HEADER_COST, from: challenger });
+
             result = await battleManager.queryLastBlockHeader(session1, { from: challenger });
             assert.ok(utils.findEvent(result.logs, 'QueryLastBlockHeader'), 'Query block header');
   
 
-            await claimManager.makeDeposit({ value: utils.DEPOSITS.RESPOND_LAST_HEADER_COST, from: submitter });
             result = await battleManager.respondLastBlockHeader(session1, `0x${superblock1Headers[2]}`, { from: submitter });
             assert.ok(utils.findEvent(result.logs, 'RespondLastBlockHeader'), 'Respond last block header');
             
@@ -313,21 +311,21 @@ contract('approveDescendant', (accounts) => {
         });
 
         it('Query and verify hashes', async () => {
-            await claimManager.makeDeposit({ value: utils.DEPOSITS.RESPOND_MERKLE_COST, from: challenger });
+
             result = await battleManager.queryMerkleRootHashes(superblock2Id, session1, { from: challenger });
             assert.ok(utils.findEvent(result.logs, 'QueryMerkleRootHashes'), 'Query merkle root hashes');
 
-            await claimManager.makeDeposit({ value: utils.DEPOSITS.VERIFY_SUPERBLOCK_COST, from: submitter });
+ 
             result = await battleManager.respondMerkleRootHashes(superblock2Id, session1, superblock2Hashes, { from: submitter });
             assert.ok(utils.findEvent(result.logs, 'RespondMerkleRootHashes'), 'Respond merkle root hashes');
         });
 
         it('Query and reply block header', async () => {
-            await claimManager.makeDeposit({ value: utils.DEPOSITS.RESPOND_LAST_HEADER_COST, from: challenger });
+
             result = await battleManager.queryLastBlockHeader(session1, { from: challenger });
             assert.ok(utils.findEvent(result.logs, 'QueryLastBlockHeader'), 'Query block header');
             
-            await claimManager.makeDeposit({ value: utils.DEPOSITS.RESPOND_LAST_HEADER_COST, from: submitter });
+
             result = await battleManager.respondLastBlockHeader(session1, `0x${superblock2Headers[2]}`, { from: submitter });
             assert.ok(utils.findEvent(result.logs, 'RespondLastBlockHeader'), 'Respond last block header');
 

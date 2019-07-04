@@ -43,14 +43,5 @@ contract SyscoinErrorCodes {
     uint constant ERR_TX_64BYTE = 20060;
     // error codes for relayTx
     uint constant ERR_RELAY_VERIFY = 30010;
-
-    // Minimum gas requirements
-    uint constant public minReward = 1000000000000000000;
-    uint constant public superblockCost = 440000;
-    uint constant public challengeCost = 34000;
-    uint constant public minProposalDeposit = challengeCost + minReward;
-    uint constant public minChallengeDeposit = superblockCost + minReward;
-    uint constant public respondMerkleRootHashesCost = 378000; // TODO: measure this with 60 hashes
-    uint constant public respondLastBlockHeaderCost = 40000;
-    uint constant public verifySuperblockCost = 220000;
+    uint constant public minProposalDeposit = 1000000000000000000;
 }
