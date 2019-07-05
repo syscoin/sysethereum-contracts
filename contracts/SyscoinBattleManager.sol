@@ -349,7 +349,7 @@ contract SyscoinBattleManager is SyscoinErrorCodes {
         }
         // make sure every 7th superblock adjusts difficulty
         if(net != SyscoinMessageLibrary.Network.REGTEST){
-            if(((superblockHeight-1) % 6) == 0){
+            if(((superblockHeight-2) % 6) == 0){
                 if(prevBits == blockInfo.bits){
                     return ERR_SUPERBLOCK_INVALID_DIFFICULTY_ADJUSTMENT;
                 }
