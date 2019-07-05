@@ -5,10 +5,10 @@ module.exports = async function(callback) {
   
   var sb = await SyscoinSuperblocks.deployed();
   console.log("beginning deployment...");
-  var blocksMerkleRoot = "0xa395b884dea0c77d3eff856838ebba4e74a6e633c7516784a7f21705d3d58f45";
-  var accumulatedWork = web3.utils.toBN("0x0000000000000000000000000000000000000000000b5aea51981d092e7d9739");
-  var timestamp = 1562016306;
-  var lastHash = "0xa395b884dea0c77d3eff856838ebba4e74a6e633c7516784a7f21705d3d58f45"; // 46800
+  var blocksMerkleRoot = "0xb106dd7496392e50b7c7e529240d6e62987db827ec2a7203120b0ca3c5a83c71";
+  var accumulatedWork = web3.utils.toBN("0x0000000000000000000000000000000000000000000b5ad3ace4939af72d8700");
+  var timestamp = 1562016284;
+  var lastHash = "0xb106dd7496392e50b7c7e529240d6e62987db827ec2a7203120b0ca3c5a83c71"; // 46799
   var parentId = "0x0";
   var lastBits = 403358244;
   console.log("Initializing...");

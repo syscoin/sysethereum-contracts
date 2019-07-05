@@ -1,4 +1,4 @@
-pragma solidity >=0.5.0 <0.6.0;
+pragma solidity ^0.5.10;
 
 import './SyscoinDepositsManager.sol';
 import './SyscoinSuperblocks.sol';
@@ -156,6 +156,7 @@ contract SyscoinClaimManager is SyscoinDepositsManager, SyscoinErrorCodes {
     // @param _accumulatedWork Accumulated proof of work of the last block in the superblock
     // @param _timestamp Timestamp of the last block in the superblock
     // @param _lastHash Hash of the last block in the superblock
+    // @param _lastBits Difficulty bits of the last block in the superblock bits used to verify accumulatedWork through difficulty calculation
     // @param _parentHash Id of the parent superblock
     // @return Error code and superblockHash
     function proposeSuperblock(

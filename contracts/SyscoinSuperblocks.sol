@@ -1,4 +1,4 @@
-pragma solidity >=0.5.0 <0.6.0;
+pragma solidity ^0.5.10;
 
 import "./SyscoinParser/SyscoinMessageLibrary.sol";
 import "./SyscoinErrorCodes.sol";
@@ -85,7 +85,7 @@ contract SyscoinSuperblocks is SyscoinErrorCodes {
     // @param _accumulatedWork Accumulated proof of work of the last block in the superblock
     // @param _timestamp Timestamp of the last block in the superblock
     // @param _lastHash Hash of the last block in the superblock
-    // @param _lastBits Previous difficulty bits used to verify accumulatedWork through difficulty calculation
+    // @param _lastBits Difficulty bits of the last block in the superblock bits used to verify accumulatedWork through difficulty calculation
     // @param _parentId Id of the parent superblock  
     // @param _blockHeight Block height of last block in superblock  
     // @return Error code and superblockHash
@@ -139,7 +139,7 @@ contract SyscoinSuperblocks is SyscoinErrorCodes {
     // @param _accumulatedWork Accumulated proof of work of the last block in the superblock
     // @param _timestamp Timestamp of the last block in the superblock
     // @param _lastHash Hash of the last block in the superblock
-    // @param _lastBits Difficulty bits of the last block in the superblock
+    // @param _lastBits Difficulty bits of the last block in the superblock bits used to verify accumulatedWork through difficulty calculation
     // @param _parentId Id of the parent superblock
     // @return Error code and superblockHash
     function propose(
@@ -446,6 +446,7 @@ contract SyscoinSuperblocks is SyscoinErrorCodes {
     // @param _accumulatedWork Accumulated proof of work of the last block in the superblock
     // @param _timestamp Timestamp of the last block in the superblock
     // @param _lastHash Hash of the last block in the superblock
+    // @param _lastBits Difficulty bits of the last block in the superblock bits used to verify accumulatedWork through difficulty calculation
     // @param _parentId Id of the parent superblock 
     // @return Superblock id
     function calcSuperblockHash(
