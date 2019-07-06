@@ -32,10 +32,6 @@ contract SyscoinBattleManager is SyscoinErrorCodes {
         BlockInfoStatus status;
         bytes32 blockHash;
     }
-    struct SiblingInfo{
-        uint[] siblings;
-        bool exists;
-    }
 
     struct BattleSession {
         bytes32 id;
@@ -48,13 +44,13 @@ contract SyscoinBattleManager is SyscoinErrorCodes {
         uint actionsCounter;              // Counter session actions
         bytes32[] blockHashes;            // Block hashes
 
-        mapping (bytes32 => BlockInfo) blocksInfo;
+        BlockInfo blocksInfo;
 
         ChallengeState challengeState;    // Claim state
     }
 
 
-    mapping (bytes32 => BattleSession) public sessions;
+    mapping (bytes32 => BattleSession) sessions;
 
 
 
@@ -203,9 +199,9 @@ contract SyscoinBattleManager is SyscoinErrorCodes {
     // @dev - Challenger makes a query for last block header
     function doQueryLastBlockHeader(BattleSession storage session) internal returns (uint) {
         if (session.challengeState == ChallengeState.RespondMerkleRootHashes) {
-            require(session.blocksInfo[session.superblockHash].status == BlockInfoStatus.Uninitialized);
+            require(session.blocksInfo.status == BlockInfoStatus.Uninitialized);
             session.challengeState = ChallengeState.QueryLastBlockHeader;
-            session.blocksInfo[session.superblockHash].status = BlockInfoStatus.Requested;
+            session.blocksInfo.status = BlockInfoStatus.Requested;
             return ERR_SUPERBLOCK_OK;
         }
         return ERR_SUPERBLOCK_BAD_STATUS;
@@ -252,7 +248,7 @@ contract SyscoinBattleManager is SyscoinErrorCodes {
             if(session.blockHashes[session.blockHashes.length-1] != blockSha256Hash){
                 return (ERR_SUPERBLOCK_BAD_LASTBLOCK);
             }
-            BlockInfo storage blockInfo = session.blocksInfo[session.superblockHash];
+            BlockInfo storage blockInfo = session.blocksInfo;
             if (blockInfo.status != BlockInfoStatus.Requested) {
                 return (ERR_SUPERBLOCK_BAD_SYSCOIN_STATUS);
             }
@@ -298,7 +294,7 @@ contract SyscoinBattleManager is SyscoinErrorCodes {
         bytes32 lastBlockHash;
         (, , lastTimestamp, lastBlockHash, ,parentId,,,) = getSuperblockInfo(session.superblockHash);
         bytes32 blockSha256Hash = session.blockHashes[session.blockHashes.length - 1];
-        BlockInfo storage blockInfo = session.blocksInfo[session.superblockHash];
+        BlockInfo storage blockInfo = session.blocksInfo;
         if(session.blockHashes.length > 2){
             bytes32 prevBlockSha256Hash = session.blockHashes[session.blockHashes.length - 2];
             if(blockInfo.prevBlock != prevBlockSha256Hash){
@@ -333,7 +329,7 @@ contract SyscoinBattleManager is SyscoinErrorCodes {
         uint superblockHeight;
         bytes32 superblockHash = session.superblockHash;
         (, accWork, ,,prevBits,prevBlock,,,superblockHeight) = getSuperblockInfo(superblockHash);
-        BlockInfo storage blockInfo = session.blocksInfo[superblockHash];
+        BlockInfo storage blockInfo = session.blocksInfo;
         if(accWork <= 0){
             return ERR_SUPERBLOCK_BAD_ACCUMULATED_WORK;
         }    
@@ -470,7 +466,7 @@ contract SyscoinBattleManager is SyscoinErrorCodes {
 
     function getSessionStatus(bytes32 sessionId) public view returns (BlockInfoStatus) {
         BattleSession storage session = sessions[sessionId];
-        return session.blocksInfo[session.superblockHash].status;
+        return session.blocksInfo.status;
     }
     function getSessionChallengeState(bytes32 sessionId) public view returns (ChallengeState) {
         return sessions[sessionId].challengeState;
