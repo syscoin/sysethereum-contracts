@@ -43,5 +43,5 @@ contract SyscoinErrorCodes {
     uint constant ERR_TX_64BYTE = 20060;
     // error codes for relayTx
     uint constant ERR_RELAY_VERIFY = 30010;
-    uint constant public minProposalDeposit = 1000000000000000000;
+    uint constant public minProposalDeposit = 3000000000000000000;
 }
