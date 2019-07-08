@@ -344,7 +344,7 @@ contract SyscoinBattleManager is SyscoinErrorCodes {
             return ERR_SUPERBLOCK_INVALID_ACCUMULATED_WORK;
         }
         // make sure every 7th superblock adjusts difficulty
-        if(net != SyscoinMessageLibrary.Network.REGTEST){
+        if(net == SyscoinMessageLibrary.Network.MAINNET){
             if(((superblockHeight-2) % 6) == 0){
                 if(prevBits == blockInfo.bits){
                     return ERR_SUPERBLOCK_INVALID_DIFFICULTY_ADJUSTMENT;
