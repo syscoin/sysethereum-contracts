@@ -10,10 +10,9 @@ Machine-based, rapid creation of many tokens would not necessarily need these ex
 3) Optional approveAndCall() functionality to notify a contract if an approval() has occurred.
 
 .*/
+pragma solidity ^0.5.10;
 
 import "./StandardToken.sol";
-
-pragma solidity >=0.5.0 <0.6.0;
 
 contract HumanStandardToken is StandardToken {
 

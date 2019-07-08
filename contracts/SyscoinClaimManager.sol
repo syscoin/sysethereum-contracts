@@ -1,4 +1,4 @@
-pragma solidity >=0.5.0 <0.6.0;
+pragma solidity ^0.5.10;
 
 import './SyscoinDepositsManager.sol';
 import './SyscoinSuperblocks.sol';
@@ -45,9 +45,6 @@ contract SyscoinClaimManager is SyscoinDepositsManager, SyscoinErrorCodes {
     // Confirmations required to confirm semi approved superblocks
     uint public superblockConfirmations;
 
-    // Monetary reward for opponent in case battle is lost
-    uint public battleReward;
-
     uint public superblockDelay;    // Delay required to submit superblocks (in seconds)
     uint public superblockTimeout;  // Timeout for action (in seconds)
 
@@ -84,15 +81,13 @@ contract SyscoinClaimManager is SyscoinDepositsManager, SyscoinErrorCodes {
         SyscoinBattleManager _syscoinBattleManager,
         uint _superblockDelay,
         uint _superblockTimeout,
-        uint _superblockConfirmations,
-        uint _battleReward
+        uint _superblockConfirmations
     ) public {
         trustedSuperblocks = _superblocks;
         trustedSyscoinBattleManager = _syscoinBattleManager;
         superblockDelay = _superblockDelay;
         superblockTimeout = _superblockTimeout;
         superblockConfirmations = _superblockConfirmations;
-        battleReward = _battleReward;
     }
 
     // @dev – locks up part of a user's deposit into a claim.
@@ -161,6 +156,7 @@ contract SyscoinClaimManager is SyscoinDepositsManager, SyscoinErrorCodes {
     // @param _accumulatedWork Accumulated proof of work of the last block in the superblock
     // @param _timestamp Timestamp of the last block in the superblock
     // @param _lastHash Hash of the last block in the superblock
+    // @param _lastBits Difficulty bits of the last block in the superblock bits used to verify accumulatedWork through difficulty calculation
     // @param _parentHash Id of the parent superblock
     // @return Error code and superblockHash
     function proposeSuperblock(
@@ -168,6 +164,7 @@ contract SyscoinClaimManager is SyscoinDepositsManager, SyscoinErrorCodes {
         uint _accumulatedWork,
         uint _timestamp,
         bytes32 _lastHash,
+        uint32 _lastBits,
         bytes32 _parentHash
     ) public returns (uint, bytes32) {
         require(address(trustedSuperblocks) != address(0));
@@ -185,7 +182,7 @@ contract SyscoinClaimManager is SyscoinDepositsManager, SyscoinErrorCodes {
         uint err;
         bytes32 superblockHash;
         (err, superblockHash) = trustedSuperblocks.propose(_blocksMerkleRoot, _accumulatedWork,
-            _timestamp, _lastHash, _parentHash,msg.sender);
+            _timestamp, _lastHash, _lastBits, _parentHash,msg.sender);
         if (err != 0) {
             emit ErrorClaim(superblockHash, err);
             return (err, superblockHash);
@@ -226,7 +223,7 @@ contract SyscoinClaimManager is SyscoinDepositsManager, SyscoinErrorCodes {
         claim.challengeTimeout = block.timestamp + superblockTimeout;
         claim.challengers.length = 0;
 
-        err = this.bondDeposit(superblockHash, msg.sender, battleReward);
+        err = this.bondDeposit(superblockHash, msg.sender, minProposalDeposit);
         assert(err == ERR_SUPERBLOCK_OK);
 
         emit SuperblockClaimCreated(superblockHash, msg.sender);
@@ -250,7 +247,7 @@ contract SyscoinClaimManager is SyscoinDepositsManager, SyscoinErrorCodes {
             emit ErrorClaim(superblockHash, ERR_SUPERBLOCK_CLAIM_DECIDED);
             return (ERR_SUPERBLOCK_CLAIM_DECIDED, superblockHash);
         }
-        if (deposits[msg.sender] < minChallengeDeposit) {
+        if (deposits[msg.sender] < minProposalDeposit) {
             emit ErrorClaim(superblockHash, ERR_SUPERBLOCK_MIN_DEPOSIT);
             return (ERR_SUPERBLOCK_MIN_DEPOSIT, superblockHash);
         }
@@ -266,7 +263,7 @@ contract SyscoinClaimManager is SyscoinDepositsManager, SyscoinErrorCodes {
             return (err, 0);
         }
 
-        err = this.bondDeposit(superblockHash, msg.sender, battleReward);
+        err = this.bondDeposit(superblockHash, msg.sender, minProposalDeposit);
         assert(err == ERR_SUPERBLOCK_OK);
 
         claim.challengeTimeout = block.timestamp + superblockTimeout;
@@ -354,12 +351,6 @@ contract SyscoinClaimManager is SyscoinDepositsManager, SyscoinErrorCodes {
             return false;
         }
 
-        // check that all verification games have been played.
-        if (claim.currentChallenger < claim.challengers.length) {
-            emit ErrorClaim(superblockHash, ERR_SUPERBLOCK_VERIFICATION_PENDING);
-            return false;
-        }
-
         claim.decided = true;
 
         bool confirmImmediately = false;
@@ -435,7 +426,6 @@ contract SyscoinClaimManager is SyscoinDepositsManager, SyscoinErrorCodes {
         }
         emit SuperblockClaimSuccessful(superblockHash, claim.submitter);
         doPaySubmitter(superblockHash, claim);
-        unbondDeposit(superblockHash, claim.submitter);
 
         if (confirmDescendants) {
             bytes32[] memory descendants = new bytes32[](numSuperblocks);
@@ -454,7 +444,6 @@ contract SyscoinClaimManager is SyscoinDepositsManager, SyscoinErrorCodes {
                 require(err == ERR_SUPERBLOCK_OK);
                 emit SuperblockClaimSuccessful(id, claim.submitter);
                 doPaySubmitter(id, claim);
-                unbondDeposit(id, claim.submitter);
             }
         }
 
@@ -511,7 +500,7 @@ contract SyscoinClaimManager is SyscoinDepositsManager, SyscoinErrorCodes {
     // @param superblockHash - claim Id
     // @param winner – winner of verification game.
     // @param loser – loser of verification game.
-    function sessionDecided(bytes32 sessionId, bytes32 superblockHash, address winner, address loser) public onlyBattleManager {
+    function sessionDecided(bytes32 sessionId, bytes32 superblockHash, address winner, address loser, bool timedOut) public onlyBattleManager {
         SuperblockClaim storage claim = claims[superblockHash];
 
         require(claimExists(claim));
@@ -523,9 +512,12 @@ contract SyscoinClaimManager is SyscoinDepositsManager, SyscoinErrorCodes {
             // Trigger end of verification game
             claim.invalid = true;
         } else if (claim.submitter == winner) {
-            // the claim continues.
-            // It should not fail when called from sessionDecided
-            runNextBattleSession(superblockHash);
+            if(timedOut){
+                // the claim continues if challenger timed out
+                // It should not fail when called from sessionDecided
+                runNextBattleSession(superblockHash);
+            }
+            
         } else {
             revert();
         }
@@ -533,51 +525,40 @@ contract SyscoinClaimManager is SyscoinDepositsManager, SyscoinErrorCodes {
         emit SuperblockBattleDecided(sessionId, winner, loser);
     }
 
-    // @dev - Pay challengers than ran their battles with submitter deposits
+    // @dev - Pay first challenger than ran their battle with submitter deposits
     // Challengers that did not run will be returned their deposits
     // Assumption is that each challenger is unique
     function doPayChallengers(bytes32 superblockHash, SuperblockClaim storage claim) internal {
-        uint rewards = claim.bondedDeposits[claim.submitter];
-        uint totalDeposits = 0;
-        uint idx = 0;
-        for (idx = 0; idx < claim.currentChallenger; ++idx) {
-            totalDeposits = totalDeposits.add(claim.bondedDeposits[claim.challengers[idx]]);
-        }
-        if(totalDeposits > 0){
-            delete claim.bondedDeposits[claim.submitter];
-        }else{
-            unbondDeposit(superblockHash, claim.submitter);
-        }
-       
-        address challenger;
-        uint reward;
-        for (idx = 0; idx < claim.currentChallenger; ++idx) {
-            challenger = claim.challengers[idx];
-            if(totalDeposits > 0){
-                reward = rewards.mul(claim.bondedDeposits[challenger]).div(totalDeposits);
-            }
-            else{
-                reward = 0;
-            }
+        if(claim.challengers.length > 0)
+        {
+            uint reward = claim.bondedDeposits[claim.submitter];
+            uint idx;
+
+            address challenger = claim.challengers[claim.currentChallenger-1];
             claim.bondedDeposits[challenger] = claim.bondedDeposits[challenger].add(reward);
+            for (idx = 0; idx < claim.challengers.length; ++idx) {
+                challenger = claim.challengers[idx];
+                unbondDeposit(superblockHash, challenger);
+            }
         }
-        for (idx = 0; idx < claim.challengers.length; ++idx) {
-            challenger = claim.challengers[idx];
-            unbondDeposit(superblockHash, challenger);
-        }
+        delete claim.bondedDeposits[claim.submitter];
     }
 
     // @dev - Pay submitter with challenger deposits
     function doPaySubmitter(bytes32 superblockHash, SuperblockClaim storage claim) internal {
-        address challenger;
-        uint bondedDeposit;
-        for (uint idx=0; idx < claim.challengers.length; ++idx) {
-            challenger = claim.challengers[idx];
-            bondedDeposit = claim.bondedDeposits[challenger];
-            claim.bondedDeposits[claim.submitter] = claim.bondedDeposits[claim.submitter].add(bondedDeposit);
-            delete claim.bondedDeposits[challenger];
+        if(claim.challengers.length > 0)
+        {
+            address challenger = claim.challengers[claim.currentChallenger-1];
+            uint reward = claim.bondedDeposits[challenger];
+            claim.bondedDeposits[challenger] = 0;
+            claim.bondedDeposits[claim.submitter] = claim.bondedDeposits[claim.submitter].add(reward);
+
+            for (uint idx = 0; idx < claim.challengers.length; ++idx) {
+                challenger = claim.challengers[idx];
+                unbondDeposit(superblockHash, challenger);
+            }
         }
-        unbondDeposit(superblockHash, claim.submitter);
+        unbondDeposit(superblockHash, claim.submitter);   
     }
 
     // @dev - Check if a superblock can be semi approved by calling checkClaimFinished
@@ -585,7 +566,7 @@ contract SyscoinClaimManager is SyscoinDepositsManager, SyscoinErrorCodes {
         SuperblockClaim storage claim = claims[superblockHash];
         return (trustedSuperblocks.getSuperblockStatus(superblockHash) == SyscoinSuperblocks.Status.InBattle &&
             !claim.invalid && !claim.verificationOngoing && block.timestamp > claim.challengeTimeout
-            && claim.currentChallenger >= claim.challengers.length);
+            && claim.currentChallenger >= 1);
     }
 
     // @dev – Check if a claim exists
@@ -650,9 +631,11 @@ contract SyscoinClaimManager is SyscoinDepositsManager, SyscoinErrorCodes {
         uint _accumulatedWork,
         uint _timestamp,
         bytes32 _lastHash,
+        uint32 _lastBits,
         bytes32 _parentId,
         address _submitter,
-        SyscoinSuperblocks.Status _status
+        SyscoinSuperblocks.Status _status,
+        uint32 _height
     ) {
         return trustedSuperblocks.getSuperblock(superblockHash);
     }

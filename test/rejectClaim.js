@@ -76,8 +76,8 @@ contract('rejectClaim', (accounts) => {
             }));
 
             //FIXME: ganache-cli creates the same transaction hash if two account send the same amount
-            await claimManager.makeDeposit({ value: utils.DEPOSITS.MIN_PROPOSAL_DEPOSIT, from: submitter });
-            await claimManager.makeDeposit({ value: utils.DEPOSITS.MIN_CHALLENGE_DEPOSIT, from: challenger });
+            await claimManager.makeDeposit({ value: utils.DEPOSITS.MIN_REWARD, from: submitter });
+            await claimManager.makeDeposit({ value: utils.DEPOSITS.MIN_REWARD, from: challenger });
         });
 
         it('Initialized', async () => {
@@ -93,6 +93,7 @@ contract('rejectClaim', (accounts) => {
                 superblock1.accumulatedWork,
                 superblock1.timestamp,
                 superblock1.lastHash,
+                superblock1.lastBits,
                 superblock1.parentId,
                 { from: submitter },
             );
@@ -101,24 +102,26 @@ contract('rejectClaim', (accounts) => {
             superblock1Id = superblockClaimCreatedEvent.args.superblockHash;
         });
         it('Re-Propose superblock 1 bad', async () => {
-            await claimManager.makeDeposit({ value: utils.DEPOSITS.MIN_PROPOSAL_DEPOSIT, from: submitter });
+            await claimManager.makeDeposit({ value: utils.DEPOSITS.MIN_REWARD, from: submitter });
             // try to propose before timeout as submitter
             await truffleAssert.reverts(claimManager.proposeSuperblock(
                 superblock1.merkleRoot,
                 superblock1.accumulatedWork,
                 superblock1.timestamp,
                 superblock1.lastHash,
+                superblock1.lastBits,
                 superblock1.parentId,
                 { from: submitter },
             ));
            
             // try to propose before timeout as challenger       
-            await claimManager.makeDeposit({ value: utils.DEPOSITS.MIN_PROPOSAL_DEPOSIT, from: challenger });
+            await claimManager.makeDeposit({ value: utils.DEPOSITS.MIN_REWARD, from: challenger });
             await truffleAssert.reverts(claimManager.proposeSuperblock(
                 superblock1.merkleRoot,
                 superblock1.accumulatedWork,
                 superblock1.timestamp,
                 superblock1.lastHash,
+                superblock1.lastBits,
                 superblock1.parentId,
                 { from: challenger },
             ));
@@ -133,23 +136,25 @@ contract('rejectClaim', (accounts) => {
             assert.equal(superblock1Id, best, 'Best superblock should match');
         });
         it('Propose superblock 1 bad 2', async () => {
-            await claimManager.makeDeposit({ value: utils.DEPOSITS.MIN_PROPOSAL_DEPOSIT, from: submitter });
+            await claimManager.makeDeposit({ value: utils.DEPOSITS.MIN_REWARD, from: submitter });
             await truffleAssert.reverts(claimManager.proposeSuperblock(
                 superblock1.merkleRoot,
                 superblock1.accumulatedWork,
                 superblock1.timestamp,
                 superblock1.lastHash,
+                superblock1.lastBits,
                 superblock1.parentId,
                 { from: submitter },
             ));
            
-            await claimManager.makeDeposit({ value: utils.DEPOSITS.MIN_PROPOSAL_DEPOSIT, from: challenger });
+            await claimManager.makeDeposit({ value: utils.DEPOSITS.MIN_REWARD, from: challenger });
 
             await truffleAssert.reverts(claimManager.proposeSuperblock(
                 superblock1.merkleRoot,
                 superblock1.accumulatedWork,
                 superblock1.timestamp,
                 superblock1.lastHash,
+                superblock1.lastBits,
                 superblock1.parentId,
                 { from: challenger },
             ));
@@ -167,6 +172,7 @@ contract('rejectClaim', (accounts) => {
                 superblockR0.accumulatedWork,
                 superblockR0.timestamp,
                 superblockR0.lastHash,
+                superblockR0.lastBits,
                 superblockR0.parentId,
                 { from: submitter },
             );
@@ -182,12 +188,13 @@ contract('rejectClaim', (accounts) => {
 
         // Propose two more superblocks
         it('Propose superblock 2', async () => {
-            await claimManager.makeDeposit({ value: utils.DEPOSITS.MIN_PROPOSAL_DEPOSIT, from: submitter });
+            await claimManager.makeDeposit({ value: utils.DEPOSITS.MIN_REWARD, from: submitter });
             const result = await claimManager.proposeSuperblock(
                 superblock2.merkleRoot,
                 superblock2.accumulatedWork,
                 superblock2.timestamp,
                 superblock2.lastHash,
+                superblock2.lastBits,
                 superblock2.parentId,
                 { from: submitter },
             );
@@ -215,6 +222,7 @@ contract('rejectClaim', (accounts) => {
                 superblock3.accumulatedWork,
                 superblock3.timestamp,
                 superblock3.lastHash,
+                superblock3.lastBits,
                 superblock3.parentId,
                 { from: submitter },
             );
@@ -237,6 +245,7 @@ contract('rejectClaim', (accounts) => {
                 superblock4.accumulatedWork,
                 superblock4.timestamp,
                 superblock4.lastHash,
+                superblock4.lastBits,
                 superblock4.parentId,
                 { from: submitter },
             );
@@ -284,22 +293,21 @@ contract('rejectClaim', (accounts) => {
         });
 
         it('Query and verify hashes', async () => {
-            await claimManager.makeDeposit({ value: utils.DEPOSITS.RESPOND_MERKLE_COST, from: challenger });
+
             result = await battleManager.queryMerkleRootHashes(superblockR0Id, session1, { from: challenger });
             assert.ok(utils.findEvent(result.logs, 'QueryMerkleRootHashes'), 'Query merkle root hashes');
 
-            await claimManager.makeDeposit({ value: utils.DEPOSITS.VERIFY_SUPERBLOCK_COST, from: submitter });
+
             result = await battleManager.respondMerkleRootHashes(superblockR0Id, session1, superblockR0Hashes, { from: submitter });
             assert.ok(utils.findEvent(result.logs, 'RespondMerkleRootHashes'), 'Respond merkle root hashes');
         });
 
         it('Query and reply block header', async () => {
-            await claimManager.makeDeposit({ value: utils.DEPOSITS.RESPOND_LAST_HEADER_COST, from: challenger });
+
             result = await battleManager.queryLastBlockHeader(session1, { from: challenger });
             assert.ok(utils.findEvent(result.logs, 'QueryLastBlockHeader'), 'Query block header');
 
-            await claimManager.makeDeposit({ value: utils.DEPOSITS.RESPOND_LAST_HEADER_COST, from: submitter });
-
+          
             result = await battleManager.respondLastBlockHeader(session1, `0x${superblockR0Headers[1]}`, { from: submitter });
             assert.ok(utils.findEvent(result.logs, 'RespondLastBlockHeader'), 'Respond last block header');
         });
@@ -330,6 +338,7 @@ contract('rejectClaim', (accounts) => {
                 superblockR1.accumulatedWork,
                 superblockR1.timestamp,
                 superblockR1.lastHash,
+                superblockR1.lastBits,
                 superblockR1.parentId,
                 { from: submitter },
             );

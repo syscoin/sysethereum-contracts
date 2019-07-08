@@ -25,7 +25,7 @@ If you are new to the Syscoin <=> Ethereum bridge, please check the [docs](https
 
 * Install prerequisites
   * [nodejs](https://nodejs.org) v9.2.0 to v11.15.0.
-  * [truffle](http://truffleframework.com/) v4.1.5.
+  * [truffle](http://truffleframework.com/) v5.0.24
   ```
     npm install -g truffle@5.0.24
   ```

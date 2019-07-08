@@ -1,4 +1,4 @@
-pragma solidity >=0.5.0 <0.6.0;
+pragma solidity ^0.5.10;
 
 import "./SyscoinParser/SyscoinMessageLibrary.sol";
 import "./SyscoinErrorCodes.sol";
@@ -20,6 +20,7 @@ contract SyscoinSuperblocks is SyscoinErrorCodes {
         bytes32 parentId;
         address submitter;
         bytes32 ancestors;
+        uint32 lastBits;
         uint32 index;
         uint32 height;
         Status status;
@@ -84,19 +85,22 @@ contract SyscoinSuperblocks is SyscoinErrorCodes {
     // @param _accumulatedWork Accumulated proof of work of the last block in the superblock
     // @param _timestamp Timestamp of the last block in the superblock
     // @param _lastHash Hash of the last block in the superblock
+    // @param _lastBits Difficulty bits of the last block in the superblock bits used to verify accumulatedWork through difficulty calculation
     // @param _parentId Id of the parent superblock  
+    // @param _blockHeight Block height of last block in superblock  
     // @return Error code and superblockHash
     function initialize(
         bytes32 _blocksMerkleRoot,
         uint _accumulatedWork,
         uint _timestamp,
         bytes32 _lastHash,
+        uint32 _lastBits,
         bytes32 _parentId
     ) public returns (uint, bytes32) {
         require(bestSuperblock == 0);
         require(_parentId == 0);
 
-        bytes32 superblockHash = calcSuperblockHash(_blocksMerkleRoot, _accumulatedWork, _timestamp, _lastHash, _parentId);
+        bytes32 superblockHash = calcSuperblockHash(_blocksMerkleRoot, _accumulatedWork, _timestamp, _lastHash, _lastBits, _parentId);
         SuperblockInfo storage superblock = superblocks[superblockHash];
 
         require(superblock.status == Status.Unitialized);
@@ -111,6 +115,7 @@ contract SyscoinSuperblocks is SyscoinErrorCodes {
         superblock.submitter = msg.sender;
         superblock.index = indexNextSuperblock;
         superblock.height = 1;
+        superblock.lastBits = _lastBits;
         superblock.status = Status.Approved;
         superblock.ancestors = 0x0;
         indexNextSuperblock++;
@@ -134,6 +139,7 @@ contract SyscoinSuperblocks is SyscoinErrorCodes {
     // @param _accumulatedWork Accumulated proof of work of the last block in the superblock
     // @param _timestamp Timestamp of the last block in the superblock
     // @param _lastHash Hash of the last block in the superblock
+    // @param _lastBits Difficulty bits of the last block in the superblock bits used to verify accumulatedWork through difficulty calculation
     // @param _parentId Id of the parent superblock
     // @return Error code and superblockHash
     function propose(
@@ -141,6 +147,7 @@ contract SyscoinSuperblocks is SyscoinErrorCodes {
         uint _accumulatedWork,
         uint _timestamp,
         bytes32 _lastHash,
+        uint32 _lastBits,
         bytes32 _parentId,
         address submitter
     ) public returns (uint, bytes32) {
@@ -155,7 +162,7 @@ contract SyscoinSuperblocks is SyscoinErrorCodes {
             return (ERR_SUPERBLOCK_BAD_PARENT, 0);
         }
 
-        bytes32 superblockHash = calcSuperblockHash(_blocksMerkleRoot, _accumulatedWork, _timestamp, _lastHash, _parentId);
+        bytes32 superblockHash = calcSuperblockHash(_blocksMerkleRoot, _accumulatedWork, _timestamp, _lastHash, _lastBits, _parentId);
         SuperblockInfo storage superblock = superblocks[superblockHash];
         if (superblock.status == Status.Unitialized) {
             indexSuperblock[indexNextSuperblock] = superblockHash;
@@ -166,6 +173,7 @@ contract SyscoinSuperblocks is SyscoinErrorCodes {
             superblock.parentId = _parentId;
             superblock.index = indexNextSuperblock;
             superblock.height = parent.height + 1;
+            superblock.lastBits = _lastBits;
             superblock.ancestors = updateAncestors(parent.ancestors, parent.index, parent.height);
             indexNextSuperblock++; 
         }
@@ -438,6 +446,7 @@ contract SyscoinSuperblocks is SyscoinErrorCodes {
     // @param _accumulatedWork Accumulated proof of work of the last block in the superblock
     // @param _timestamp Timestamp of the last block in the superblock
     // @param _lastHash Hash of the last block in the superblock
+    // @param _lastBits Difficulty bits of the last block in the superblock bits used to verify accumulatedWork through difficulty calculation
     // @param _parentId Id of the parent superblock 
     // @return Superblock id
     function calcSuperblockHash(
@@ -445,6 +454,7 @@ contract SyscoinSuperblocks is SyscoinErrorCodes {
         uint _accumulatedWork,
         uint _timestamp,
         bytes32 _lastHash,
+        uint32 _lastBits,
         bytes32 _parentId
     ) public pure returns (bytes32) {
         return keccak256(abi.encodePacked(
@@ -452,6 +462,7 @@ contract SyscoinSuperblocks is SyscoinErrorCodes {
             _accumulatedWork,
             _timestamp,
             _lastHash,
+            _lastBits,
             _parentId
         ));
     }
@@ -467,23 +478,16 @@ contract SyscoinSuperblocks is SyscoinErrorCodes {
     }
     // @dev - Returns the superblock data for the supplied superblock hash
     //
-    // @return {
-    //   bytes32 _blocksMerkleRoot,
-    //   uint _accumulatedWork,
-    //   uint _timestamp,
-    //   bytes32 _lastHash,
-    //   bytes32 _parentId,
-    //   address _submitter,
-    //   Status _status,
-    // }  Superblock data
     function getSuperblock(bytes32 superblockHash) public view returns (
         bytes32 _blocksMerkleRoot,
         uint _accumulatedWork,
         uint _timestamp,
         bytes32 _lastHash,
+        uint32 _lastBits,
         bytes32 _parentId,
         address _submitter,
-        Status _status
+        Status _status,
+        uint32 _height
     ) {
         SuperblockInfo storage superblock = superblocks[superblockHash];
         return (
@@ -491,9 +495,11 @@ contract SyscoinSuperblocks is SyscoinErrorCodes {
             superblock.accumulatedWork,
             superblock.timestamp,
             superblock.lastHash,
+            superblock.lastBits,
             superblock.parentId,
             superblock.submitter,
-            superblock.status
+            superblock.status,
+            superblock.height
         );
     }
 

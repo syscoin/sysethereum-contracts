@@ -4,8 +4,6 @@ const btcProof = require('bitcoin-proof');
 const sha256 = require('js-sha256').sha256;
 const keccak256 = require('js-sha3').keccak256;
 const bitcoreLib = require('bitcore-lib');
-const ECDSA = bitcoreLib.crypto.ECDSA;
-const bitcoreMessage = require('bitcore-message');
 const bitcoin = require('bitcoinjs-lib');
 
 const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000'
@@ -16,7 +14,6 @@ const OPTIONS_SYSCOIN_REGTEST = {
   DELAY: 60,               // 1 minute
   TIMEOUT: 15,             // 15 seconds
   CONFIRMATIONS: 1,        // Superblocks required to confirm semi approved superblock
-  REWARD: 3                // Monetary reward for opponent in case battle is lost
 };
 
 
@@ -25,14 +22,7 @@ const SYSCOIN_TESTNET = 1;
 const SYSCOIN_REGTEST = 2;
 
 const DEPOSITS = {
-    MIN_REWARD: 1000000000000000000,
-    SUPERBLOCK_COST: 440000,
-    CHALLENGE_COST: 34000,
-    MIN_PROPOSAL_DEPOSIT: 34000+1000000000000000000,
-    MIN_CHALLENGE_DEPOSIT: 440000+1000000000000000000,
-    RESPOND_MERKLE_COST: 378000, // TODO: measure this with 60 hashes
-    RESPOND_LAST_HEADER_COST: 40000,
-    VERIFY_SUPERBLOCK_COST: 220000
+    MIN_REWARD: 3000000000000000000
 };
 
 
@@ -203,13 +193,14 @@ function makeMerkleProofMap (blockHashes) {
   }
   
 // Calculate a superblock id
-function calcSuperblockHash(merkleRoot, accumulatedWork, timestamp, lastHash, parentId) {
+function calcSuperblockHash(merkleRoot, accumulatedWork, timestamp, lastHash, lastBits, parentId) {
   return `0x${Buffer.from(keccak256.arrayBuffer(
     Buffer.concat([
       module.exports.fromHex(merkleRoot),
       module.exports.fromHex(toUint256(accumulatedWork)),
       module.exports.fromHex(toUint256(timestamp)),
       module.exports.fromHex(lastHash),
+      module.exports.fromHex(toUint32(lastBits)),
       module.exports.fromHex(parentId)
     ])
   )).toString('hex')}`;
@@ -226,17 +217,20 @@ function makeSuperblock(headers, parentId, parentAccumulatedWork) {
   const merkleRoot = makeMerkle(blockHashes);
   const timestamp = getBlockTimestamp(headers[headers.length - 1]);
   const lastHash = calcBlockSha256Hash(headers[headers.length - 1]);
+  const lastBits = getBlockDifficultyBits(headers[headers.length - 1]);
   return {
     merkleRoot,
     accumulatedWork,
     timestamp,
     lastHash,
+    lastBits,
     parentId,
     superblockHash: calcSuperblockHash(
       merkleRoot,
       accumulatedWork,
       timestamp,
       lastHash,
+      lastBits,
       parentId
     ),
     blockHeaders: headers,
@@ -288,7 +282,6 @@ async function initSuperblockChain(options) {
     options.params.DELAY,
     options.params.TIMEOUT,
     options.params.CONFIRMATIONS,
-    options.params.REWARD,
     { from: options.from },
   );
 
@@ -299,6 +292,7 @@ async function initSuperblockChain(options) {
     options.genesisSuperblock.accumulatedWork,
     options.genesisSuperblock.timestamp,
     options.genesisSuperblock.lastHash,
+    options.genesisSuperblock.lastBits,
     options.genesisSuperblock.parentId,
     { from: options.from },
   );
@@ -401,6 +395,7 @@ module.exports = {
       genesisSuperblock.accumulatedWork,
       genesisSuperblock.timestamp,
       genesisSuperblock.lastHash,
+      genesisSuperblock.lastBits,
       genesisSuperblock.parentId,
       { from: sender },
     );
@@ -412,7 +407,7 @@ module.exports = {
       130
     );
 
-    await claimManager.makeDeposit({ value: DEPOSITS.MIN_PROPOSAL_DEPOSIT, from: sender });
+    await claimManager.makeDeposit({ value: DEPOSITS.MIN_REWARD, from: sender });
 
     let result;
 
@@ -421,6 +416,7 @@ module.exports = {
       proposedSuperblock.accumulatedWork,
       proposedSuperblock.timestamp,
       proposedSuperblock.lastHash,
+      proposedSuperblock.lastBits,
       proposedSuperblock.parentId,
       { from: sender },
     );

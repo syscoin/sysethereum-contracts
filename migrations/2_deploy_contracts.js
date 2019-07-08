@@ -18,7 +18,6 @@ const SUPERBLOCK_OPTIONS_PRODUCTION = {
   DELAY: 3 * 3600,  // 3 hours
   TIMEOUT: 600,     // 10 minutes
   CONFIRMATIONS: 3, // Superblocks required to confirm semi approved superblock
-  REWARD: "1000000000000000000",        // Monetary reward for opponent in case a battle is lost
   ASSETGUID: 1172462264
 };
 
@@ -27,7 +26,6 @@ const SUPERBLOCK_OPTIONS_INTEGRATION_FAST_SYNC = {
   DELAY: 300,       // 5 minutes
   TIMEOUT: 300,      // 5 minutes
   CONFIRMATIONS: 3, // Superblocks required to confirm semi approved superblock
-  REWARD: "1000000000000000000",        // Monetary reward for opponent in case a battle is lost  
   ASSETGUID: 1172462264
 };
 
@@ -36,7 +34,6 @@ const SUPERBLOCK_OPTIONS_LOCAL = {
   DELAY: 60,        // 1 minute
   TIMEOUT: 30,      // 30 seconds
   CONFIRMATIONS: 1, // Superblocks required to confirm semi approved superblock
-  REWARD: "10",        // Monetary reward for opponent in case a battle is lost  
   ASSETGUID: 1172462264
 };
 
@@ -67,8 +64,7 @@ async function deployDevelopment(deployer, networkId, superblockOptions) {
     SyscoinBattleManager.address,
     superblockOptions.DELAY,
     superblockOptions.TIMEOUT,
-    superblockOptions.CONFIRMATIONS,
-    superblockOptions.REWARD
+    superblockOptions.CONFIRMATIONS
   );
 
   await deployer.deploy(SyscoinMessageLibraryForTests);
@@ -108,7 +104,6 @@ async function deployIntegration(deployer,  networkId, superblockOptions) {
     superblockOptions.DELAY,
     superblockOptions.TIMEOUT,
     superblockOptions.CONFIRMATIONS,
-    superblockOptions.REWARD,
     {gas: 5000000}
   );
 

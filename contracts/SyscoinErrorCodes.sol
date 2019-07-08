@@ -1,4 +1,4 @@
-pragma solidity >=0.5.0 <0.6.0;
+pragma solidity ^0.5.10;
 
 // @dev - SyscoinSuperblocks error codes
 contract SyscoinErrorCodes {
@@ -31,6 +31,8 @@ contract SyscoinErrorCodes {
     uint constant ERR_SUPERBLOCK_INVALID_ACCUMULATED_WORK = 50180;
     uint constant ERR_SUPERBLOCK_BAD_PREVBLOCK = 50190;
     uint constant ERR_SUPERBLOCK_BAD_RETARGET = 50200;
+    uint constant ERR_SUPERBLOCK_INVALID_DIFFICULTY_ADJUSTMENT = 50210;
+    uint constant ERR_SUPERBLOCK_BAD_MISMATCH = 50220;
 
     // error codes for verifyTx
     uint constant ERR_BAD_FEE = 20010;
@@ -41,14 +43,5 @@ contract SyscoinErrorCodes {
     uint constant ERR_TX_64BYTE = 20060;
     // error codes for relayTx
     uint constant ERR_RELAY_VERIFY = 30010;
-
-    // Minimum gas requirements
-    uint constant public minReward = 1000000000000000000;
-    uint constant public superblockCost = 440000;
-    uint constant public challengeCost = 34000;
-    uint constant public minProposalDeposit = challengeCost + minReward;
-    uint constant public minChallengeDeposit = superblockCost + minReward;
-    uint constant public respondMerkleRootHashesCost = 378000; // TODO: measure this with 60 hashes
-    uint constant public respondLastBlockHeaderCost = 40000;
-    uint constant public verifySuperblockCost = 220000;
+    uint constant public minProposalDeposit = 3000000000000000000;
 }
