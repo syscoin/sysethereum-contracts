@@ -1,8 +1,9 @@
 pragma solidity ^0.5.10;
 
+import './interfaces/SyscoinSuperblocksI.sol';
+import './interfaces/SyscoinClaimManagerI.sol';
+import './interfaces/SyscoinBattleManagerI.sol';
 import './SyscoinDepositsManager.sol';
-import './SyscoinSuperblocks.sol';
-import './SyscoinBattleManager.sol';
 import './SyscoinParser/SyscoinMessageLibrary.sol';
 import './SyscoinErrorCodes.sol';
 import 'openzeppelin-solidity/contracts/math/SafeMath.sol';
@@ -37,10 +38,10 @@ contract SyscoinClaimManager is SyscoinDepositsManager, SyscoinErrorCodes {
     mapping (bytes32 => SuperblockClaim) public claims;
 
     // Superblocks contract
-    SyscoinSuperblocks public trustedSuperblocks;
+    SyscoinSuperblocksI public trustedSuperblocks;
 
     // Battle manager contract
-    SyscoinBattleManager public trustedSyscoinBattleManager;
+    SyscoinBattleManagerI public trustedSyscoinBattleManager;
 
     // Confirmations required to confirm semi approved superblocks
     uint public superblockConfirmations;
@@ -77,8 +78,8 @@ contract SyscoinClaimManager is SyscoinDepositsManager, SyscoinErrorCodes {
     // @param _superblockTimeout Time to wait for challenges (in seconds)
     // @param _superblockConfirmations Confirmations required to confirm semi approved superblocks
     constructor(
-        SyscoinSuperblocks _superblocks,
-        SyscoinBattleManager _syscoinBattleManager,
+        SyscoinSuperblocksI _superblocks,
+        SyscoinBattleManagerI _syscoinBattleManager,
         uint _superblockDelay,
         uint _superblockTimeout,
         uint _superblockConfirmations
@@ -197,11 +198,11 @@ contract SyscoinClaimManager is SyscoinDepositsManager, SyscoinErrorCodes {
             bool allowed = claim.invalid == true && claim.decided == true && claim.submitter != msg.sender;
             if(allowed){
                 // we also want to ensure that if parent is approved we are building on the tip and not anywhere else
-                if(trustedSuperblocks.getSuperblockStatus(_parentHash) == SyscoinSuperblocks.Status.Approved){
+                if(trustedSuperblocks.getSuperblockStatus(_parentHash) == SyscoinSuperblocksI.Status.Approved){
                     allowed = trustedSuperblocks.getBestSuperblock() == _parentHash;
                 }
                 // or if its semi approved allow to build on top as well
-                else if(trustedSuperblocks.getSuperblockStatus(_parentHash) == SyscoinSuperblocks.Status.SemiApproved){
+                else if(trustedSuperblocks.getSuperblockStatus(_parentHash) == SyscoinSuperblocksI.Status.SemiApproved){
                     allowed = true;
                 }
                 else{
@@ -357,8 +358,8 @@ contract SyscoinClaimManager is SyscoinDepositsManager, SyscoinErrorCodes {
         // No challengers and parent approved; confirm immediately
         if (claim.challengers.length == 0) {
             bytes32 parentId = trustedSuperblocks.getSuperblockParentId(claim.superblockHash);
-            SyscoinSuperblocks.Status status = trustedSuperblocks.getSuperblockStatus(parentId);
-            if (status == SyscoinSuperblocks.Status.Approved) {
+            SyscoinSuperblocksI.Status status = trustedSuperblocks.getSuperblockStatus(parentId);
+            if (status == SyscoinSuperblocksI.Status.Approved) {
                 confirmImmediately = true;
             }
         }
@@ -392,7 +393,7 @@ contract SyscoinClaimManager is SyscoinDepositsManager, SyscoinErrorCodes {
                 emit ErrorClaim(superblockHash, ERR_SUPERBLOCK_BAD_CLAIM);
                 return false;
             }
-            if (trustedSuperblocks.getSuperblockStatus(id) != SyscoinSuperblocks.Status.SemiApproved) {
+            if (trustedSuperblocks.getSuperblockStatus(id) != SyscoinSuperblocksI.Status.SemiApproved) {
                 emit ErrorClaim(superblockHash, ERR_SUPERBLOCK_BAD_STATUS);
                 return false;
             }
@@ -408,13 +409,13 @@ contract SyscoinClaimManager is SyscoinDepositsManager, SyscoinErrorCodes {
             emit ErrorClaim(superblockHash, ERR_SUPERBLOCK_MISSING_CONFIRMATIONS);
             return false;
         }
-        if (trustedSuperblocks.getSuperblockStatus(id) != SyscoinSuperblocks.Status.SemiApproved) {
+        if (trustedSuperblocks.getSuperblockStatus(id) != SyscoinSuperblocksI.Status.SemiApproved) {
             emit ErrorClaim(superblockHash, ERR_SUPERBLOCK_BAD_STATUS);
             return false;
         }
 
         bytes32 parentId = trustedSuperblocks.getSuperblockParentId(superblockHash);
-        if (trustedSuperblocks.getSuperblockStatus(parentId) != SyscoinSuperblocks.Status.Approved) {
+        if (trustedSuperblocks.getSuperblockStatus(parentId) != SyscoinSuperblocksI.Status.Approved) {
             emit ErrorClaim(superblockHash, ERR_SUPERBLOCK_BAD_STATUS);
             return false;
         }
@@ -473,9 +474,9 @@ contract SyscoinClaimManager is SyscoinDepositsManager, SyscoinErrorCodes {
         id = trustedSuperblocks.getSuperblockAt(height);
 
         if (id != superblockHash) {
-            SyscoinSuperblocks.Status status = trustedSuperblocks.getSuperblockStatus(superblockHash);
+            SyscoinSuperblocksI.Status status = trustedSuperblocks.getSuperblockStatus(superblockHash);
 
-            if (status != SyscoinSuperblocks.Status.SemiApproved) {
+            if (status != SyscoinSuperblocksI.Status.SemiApproved) {
                 emit ErrorClaim(superblockHash, ERR_SUPERBLOCK_BAD_STATUS);
                 return false;
             }
@@ -564,7 +565,7 @@ contract SyscoinClaimManager is SyscoinDepositsManager, SyscoinErrorCodes {
     // @dev - Check if a superblock can be semi approved by calling checkClaimFinished
     function getInBattleAndSemiApprovable(bytes32 superblockHash) public view returns (bool) {
         SuperblockClaim storage claim = claims[superblockHash];
-        return (trustedSuperblocks.getSuperblockStatus(superblockHash) == SyscoinSuperblocks.Status.InBattle &&
+        return (trustedSuperblocks.getSuperblockStatus(superblockHash) == SyscoinSuperblocksI.Status.InBattle &&
             !claim.invalid && !claim.verificationOngoing && block.timestamp > claim.challengeTimeout
             && claim.currentChallenger >= 1);
     }
@@ -637,7 +638,7 @@ contract SyscoinClaimManager is SyscoinDepositsManager, SyscoinErrorCodes {
         uint32 _lastBits,
         bytes32 _parentId,
         address _submitter,
-        SyscoinSuperblocks.Status _status,
+        SyscoinSuperblocksI.Status _status,
         uint32 _height
     ) {
         return trustedSuperblocks.getSuperblock(superblockHash);
