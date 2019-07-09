@@ -625,7 +625,10 @@ contract SyscoinClaimManager is SyscoinDepositsManager, SyscoinErrorCodes {
         SuperblockClaim storage claim = claims[superblockHash];
         return claim.challengers;
     }
-
+    function getAbilityToProposeNextSuperblock(uint timestamp) public view returns (bool){
+        (, , uint timestampSuperblock ,,, , ,,) = getSuperblockInfo(trustedSuperblocks.getBestSuperblock());
+        return timestampSuperblock + superblockDelay <= timestamp;
+    }
     function getSuperblockInfo(bytes32 superblockHash) internal view returns (
         bytes32 _blocksMerkleRoot,
         uint _accumulatedWork,
