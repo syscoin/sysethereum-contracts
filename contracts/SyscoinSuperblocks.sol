@@ -1,5 +1,6 @@
 pragma solidity ^0.5.10;
 
+import './interfaces/SyscoinSuperblocksI.sol';
 import "./SyscoinParser/SyscoinMessageLibrary.sol";
 import "./SyscoinErrorCodes.sol";
 import "./SyscoinTransactionProcessor.sol";
@@ -7,10 +8,7 @@ import "./SyscoinTransactionProcessor.sol";
 // @dev - Manages superblocks
 //
 // Management of superblocks and status transitions
-contract SyscoinSuperblocks is SyscoinErrorCodes {
-
-    // @dev - Superblock status
-    enum Status { Unitialized, New, InBattle, SemiApproved, Approved, Invalid }
+contract SyscoinSuperblocks is SyscoinSuperblocksI, SyscoinErrorCodes {
 
     struct SuperblockInfo {
         bytes32 blocksMerkleRoot;
