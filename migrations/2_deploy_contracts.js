@@ -11,6 +11,7 @@ const SyscoinBattleManager = artifacts.require('./SyscoinBattleManager.sol');
 const SafeMath = artifacts.require('openzeppelin-solidity/contracts/math/SafeMath.sol');
 
 const SYSCOIN_MAINNET = 0;
+const SYSCOIN_TESTNET = 1;
 const SYSCOIN_REGTEST = 2;
 
 const SUPERBLOCK_OPTIONS_PRODUCTION = {
@@ -18,7 +19,7 @@ const SUPERBLOCK_OPTIONS_PRODUCTION = {
   DELAY: 3 * 3600,  // 3 hours
   TIMEOUT: 600,     // 10 minutes
   CONFIRMATIONS: 3, // Superblocks required to confirm semi approved superblock
-  ASSETGUID: 1172462264
+  ASSETGUID: 719610612
 };
 
 const SUPERBLOCK_OPTIONS_INTEGRATION_FAST_SYNC = {
@@ -123,7 +124,7 @@ module.exports = function(deployer, network) {
     } else if (network === 'ropsten') {
       await deployIntegration(deployer, SYSCOIN_MAINNET, SUPERBLOCK_OPTIONS_INTEGRATION_FAST_SYNC);
     } else if (network === 'rinkeby') {
-      await deployIntegration(deployer, SYSCOIN_MAINNET, SUPERBLOCK_OPTIONS_PRODUCTION);
+      await deployIntegration(deployer, SYSCOIN_TESTNET, SUPERBLOCK_OPTIONS_PRODUCTION);
     } else if (network === 'mainnet') {
       await deployIntegration(deployer, SYSCOIN_MAINNET, SUPERBLOCK_OPTIONS_PRODUCTION);
     } else if (network === 'integrationSyscoinRegtest') {

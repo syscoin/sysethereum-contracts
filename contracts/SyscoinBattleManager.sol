@@ -1,8 +1,8 @@
 pragma solidity ^0.5.10;
 
-import './SyscoinClaimManager.sol';
+import './interfaces/SyscoinClaimManagerI.sol';
+import './interfaces/SyscoinSuperblocksI.sol';
 import './SyscoinErrorCodes.sol';
-import './SyscoinSuperblocks.sol';
 import './SyscoinParser/SyscoinMessageLibrary.sol';
 
 // @dev - Manages a battle session between superblock submitter and challenger
@@ -63,10 +63,10 @@ contract SyscoinBattleManager is SyscoinErrorCodes {
 
 
     // Syscoin claim manager
-    SyscoinClaimManager trustedSyscoinClaimManager;
+    SyscoinClaimManagerI trustedSyscoinClaimManager;
 
     // Superblocks contract
-    SyscoinSuperblocks trustedSuperblocks;
+    SyscoinSuperblocksI trustedSuperblocks;
 
     event NewBattle(bytes32 superblockHash, bytes32 sessionId, address submitter, address challenger);
     event ChallengerConvicted(bytes32 superblockHash, bytes32 sessionId, address challenger);
@@ -99,7 +99,7 @@ contract SyscoinBattleManager is SyscoinErrorCodes {
     // @param _superblockTimeout Time to wait for challenges (in seconds)
     constructor(
         SyscoinMessageLibrary.Network _network,
-        SyscoinSuperblocks _superblocks,
+        SyscoinSuperblocksI _superblocks,
         uint _superblockDuration,
         uint _superblockTimeout
     ) public {
@@ -109,7 +109,7 @@ contract SyscoinBattleManager is SyscoinErrorCodes {
         superblockTimeout = _superblockTimeout;
     }
 
-    function setSyscoinClaimManager(SyscoinClaimManager _syscoinClaimManager) public {
+    function setSyscoinClaimManager(SyscoinClaimManagerI _syscoinClaimManager) public {
         require(address(trustedSyscoinClaimManager) == address(0) && address(_syscoinClaimManager) != address(0));
         trustedSyscoinClaimManager = _syscoinClaimManager;
     }
@@ -344,7 +344,7 @@ contract SyscoinBattleManager is SyscoinErrorCodes {
             return ERR_SUPERBLOCK_INVALID_ACCUMULATED_WORK;
         }
         // make sure every 7th superblock adjusts difficulty
-        if(net != SyscoinMessageLibrary.Network.REGTEST){
+        if(net == SyscoinMessageLibrary.Network.MAINNET){
             if(((superblockHeight-2) % 6) == 0){
                 if(prevBits == blockInfo.bits){
                     return ERR_SUPERBLOCK_INVALID_DIFFICULTY_ADJUSTMENT;
@@ -485,7 +485,7 @@ contract SyscoinBattleManager is SyscoinErrorCodes {
         uint32 _lastBits,
         bytes32 _parentId,
         address _submitter,
-        SyscoinSuperblocks.Status _status,
+        SyscoinSuperblocksI.Status _status,
         uint32 _height
     ) {
         return trustedSuperblocks.getSuperblock(superblockHash);

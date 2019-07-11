@@ -543,25 +543,6 @@ library SyscoinMessageLibrary {
         return flip32Bytes(uint(sha256(abi.encodePacked(sha256mem(_rawBytes, offset, len)))));
     }
 
-    // @dev – Read a bytes32 from an offset in the byte array
-    function readBytes32(bytes memory data, uint offset) internal pure returns (bytes32) {
-        bytes32 result;
-        assembly {
-            result := mload(add(add(data, 0x20), offset))
-        }
-        return result;
-    }
-
-    // @dev – Read an uint32 from an offset in the byte array
-    function readUint32(bytes memory data, uint offset) internal pure returns (uint32) {
-        uint32 result;
-        assembly {
-            result := mload(add(add(data, 0x20), offset))
-            
-        }
-        return result;
-    }
-
     // @dev - Bitcoin-way of computing the target from the 'bits' field of a block header
     // based on http://www.righto.com/2014/02/bitcoin-mining-hard-way-algorithms.html//ref3
     //
