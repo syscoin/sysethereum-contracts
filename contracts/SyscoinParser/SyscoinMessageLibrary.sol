@@ -227,27 +227,12 @@ library SyscoinMessageLibrary {
 
         return (sibling_values, pos);
     }   
-    // Slice 20 contiguous bytes from bytes `data`, starting at `start`
-    function sliceBytes20(bytes memory data, uint start) private pure returns (bytes20) {
-        uint160 slice = 0;
-        // FIXME: With solc v0.4.24 and optimizations enabled
-        // using uint160 for index i will generate an error
-        // "Error: VM Exception while processing transaction: Error: redPow(normalNum)"
-        for (uint8 i = 0; i < 20; i++) {
-            slice += uint160(uint8(data[i + start])) << (8 * (19 - i));
-        }
-        return bytes20(slice);
-    }
+
     // Slice 32 contiguous bytes from bytes `data`, starting at `start`
     function sliceBytes32Int(bytes memory data, uint start) private pure returns (uint slice) {
         assembly {
             slice := mload(add(data, add(0x20, start)))
         }
-        // for (uint8 i = 0; i < 32; i++) {
-        //     if (i + start < data.length) {
-        //         slice += uint256(uint8(data[i + start])) << (8 * (31 - i));
-        //     }
-        // }
     }
 
     // @dev returns a portion of a given byte array specified by its starting and ending points
@@ -330,9 +315,6 @@ library SyscoinMessageLibrary {
     function flip32Bytes(uint _input) internal pure returns (uint result) {
         assembly {
             let pos := mload(0x40)
-            // for { let i := 0 } lt(i, 32) { i := add(i, 1) } {
-            //     mstore8(add(pos, i), byte(sub(31, i), _input))
-            // }
             mstore8(add(pos, 0), byte(31, _input))
             mstore8(add(pos, 1), byte(30, _input))
             mstore8(add(pos, 2), byte(29, _input))
@@ -414,37 +396,20 @@ library SyscoinMessageLibrary {
         uint found = 0;
         uint target = 0xfabe6d6d00000000000000000000000000000000000000000000000000000000;
         uint mask = 0xffffffff00000000000000000000000000000000000000000000000000000000;
-
-        // uint step = 0;
-            
         assembly {
             let len := mload(rawBytes)
             let data := add(rawBytes, 0x20)
             let end := add(data, len)
             
-            for { } lt(data, end) { } {     // while(i < 0x100)
-                data := add(data, 0x1)
+            for { } lt(data, end) { } {     // while(i < end)
                 if eq(and(mload(data), mask), target) {
                     if eq(found, 0x0) {
                         position := add(sub(len, sub(end, data)), 4)
                     }
                     found := add(found, 1)
                 }
+                data := add(data, 0x1)
             }
-            
-            
-            // for
-            //     { let end := add(data, len) }
-            //     lt(add(data, step), end)
-            //     { step := add(step, 0x1) }
-            // {
-            //     if eq(and(mload(add(data, step)), mask), target) {
-            //         if eq(found, 0x0) {
-            //             position := add(step, 4)
-            //         }
-            //         found := add(found, 1)
-            //     }
-            // }
         }
 
         if (found >= 2) {
@@ -454,27 +419,6 @@ library SyscoinMessageLibrary {
         } else { // no merge mining header
             return (0, position - 4, ERR_NO_MERGE_HEADER);
         }
-
-
-        // uint position;
-        // bool found = false;
-
-        // for (uint i = 0; i < rawBytes.length; ++i) {
-        //     if (rawBytes[i] == 0xfa && rawBytes[i+1] == 0xbe && rawBytes[i+2] == 0x6d && rawBytes[i+3] == 0x6d) {
-        //         if (found) { // found twice
-        //             return (0, position - 4, ERR_FOUND_TWICE);
-        //         } else {
-        //             found = true;
-        //             position = i + 4;
-        //         }
-        //     }
-        // }
-
-        // if (!found) { // no merge mining header
-        //     return (0, position - 4, ERR_NO_MERGE_HEADER);
-        // } else {
-        //     return (sliceBytes32Int(rawBytes, position), position - 4, 1);
-        // }
     }
 
     // @dev - Evaluate the merkle root
@@ -719,7 +663,6 @@ library SyscoinMessageLibrary {
             mstore8(add(flip, 3), byte(0, data))
             result := shr(mul(8, 28), mload(flip))
         }
-        // result = uint32(uint8(input[pos])) + uint32(uint8(input[pos + 1]))*(2**8) + uint32(uint8(input[pos + 2]))*(2**16) + uint32(uint8(input[pos + 3]))*(2**24);
     }
     function bytesToUint64(bytes memory input, uint pos) internal pure returns (uint64 result) {
         result = uint64(uint8(input[pos+7])) + uint64(uint8(input[pos + 6]))*(2**8) + uint64(uint8(input[pos + 5]))*(2**16) + uint64(uint8(input[pos + 4]))*(2**24) + uint64(uint8(input[pos + 3]))*(2**32) + uint64(uint8(input[pos + 2]))*(2**40) + uint64(uint8(input[pos + 1]))*(2**48) + uint64(uint8(input[pos]))*(2**56);
@@ -749,7 +692,6 @@ library SyscoinMessageLibrary {
         if (_blockHeaderBytes.length > 80 && isMergeMined(_blockHeaderBytes, 0)) {
             AuxPoW memory ap = parseAuxPoW(_blockHeaderBytes, _pos);
             if (ap.blockHash > target) {
-
                 return (ERR_PROOF_OF_WORK_AUXPOW);
             }
             uint auxPoWCode = checkAuxPoW(blockSha256Hash, ap);
@@ -763,7 +705,6 @@ library SyscoinMessageLibrary {
             }
             return (0);
         }
-        return (0);
     }
 
     // For verifying Syscoin difficulty
