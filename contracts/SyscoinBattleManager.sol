@@ -176,7 +176,9 @@ contract SyscoinBattleManager is SyscoinErrorCodes {
                 return ERR_SUPERBLOCK_INVALID_MERKLE;
             }
             // session.blockHashes = blockHashes;
-            session.blockHashes.push(blockHashes[blockHashes.length-2]);
+            if (blockHashes.length > 1)
+                session.blockHashes.push(blockHashes[blockHashes.length-2]);
+            
             session.blockHashes.push(blockHashes[blockHashes.length-1]);
             session.challengeState = ChallengeState.RespondMerkleRootHashes;
             return ERR_SUPERBLOCK_OK;

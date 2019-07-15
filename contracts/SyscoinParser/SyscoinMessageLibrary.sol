@@ -487,7 +487,7 @@ library SyscoinMessageLibrary {
         bytes32[] memory hashes = hashes2;
         uint length = hashes.length;
         if (length == 1) return hashes[0];
-        require(length > 0);
+        require(length > 0, "Must provide hashes");
         uint i;
         uint j;
         uint k;
