@@ -155,10 +155,10 @@ contract SyscoinSuperblocks is SyscoinSuperblocksI, SyscoinErrorCodes {
         }
 
         SuperblockInfo storage parent = superblocks[_parentId];
-        if (parent.status != Status.SemiApproved && parent.status != Status.Approved) {
-            emit ErrorSuperblock(bytes32(0), ERR_SUPERBLOCK_BAD_PARENT);
-            return (ERR_SUPERBLOCK_BAD_PARENT, 0);
-        }
+        // if (parent.status != Status.SemiApproved && parent.status != Status.Approved) {
+        //     emit ErrorSuperblock(bytes32(0), ERR_SUPERBLOCK_BAD_PARENT);
+        //     return (ERR_SUPERBLOCK_BAD_PARENT, 0);
+        // }
 
         bytes32 superblockHash = calcSuperblockHash(_blocksMerkleRoot, _accumulatedWork, _timestamp, _lastHash, _lastBits, _parentId);
         SuperblockInfo storage superblock = superblocks[superblockHash];
