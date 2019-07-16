@@ -674,7 +674,6 @@ library SyscoinMessageLibrary {
 	// @param _proposedBlockHash - proposed block hash computing from block header bytes
     // @return - [ErrorCode, IsMergeMined]
     function verifyBlockHeader(bytes calldata _blockHeaderBytes, uint _pos, uint _proposedBlockHash) external view returns (uint) {
-        // 5k gas
         BlockHeader memory blockHeader = parseHeaderBytes(_blockHeaderBytes, _pos);
         uint blockSha256Hash = blockHeader.blockHash;
 		// must confirm that the header hash passed in and computing hash matches
