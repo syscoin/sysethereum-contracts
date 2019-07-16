@@ -357,25 +357,18 @@ library SyscoinMessageLibrary {
         // we need to traverse the bytes with a pointer because some fields are of variable length
         pos += 80; // skip non-AuxPoW header
         uint slicePos;
-        // 2k gas
         (slicePos) = getSlicePos(rawBytes, pos);
-        // 5k gas
         auxpow.txHash = dblShaFlipMem(rawBytes, pos, slicePos - pos);
         pos = slicePos;
         // parent block hash, skip and manually hash below
         pos += 32;
-        // 500 gas
         (auxpow.parentMerkleProof, pos) = scanMerkleBranch(rawBytes, pos, 0);
-        // 800 gas
         auxpow.coinbaseTxIndex = getBytesLE(rawBytes, pos, 32);
         pos += 4;
-        // 6k gas
         (auxpow.chainMerkleProof, pos) = scanMerkleBranch(rawBytes, pos, 0);
-        // 1k gas
         auxpow.syscoinHashIndex = getBytesLE(rawBytes, pos, 32);
         pos += 4;
         // calculate block hash instead of reading it above, as some are LE and some are BE, we cannot know endianness and have to calculate from parent block header
-        // 4k gas
         auxpow.blockHash = dblShaFlipMem(rawBytes, pos, 80);
         pos += 36; // skip parent version and prev block
         auxpow.parentMerkleRoot = sliceBytes32Int(rawBytes, pos);
