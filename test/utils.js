@@ -238,6 +238,34 @@ function makeSuperblock(headers, parentId, parentAccumulatedWork) {
   };
 }
 
+// use only for gas profiling. This function is faking a lot of data. Don't use for other testing
+function makeSuperblockFromHashes(blockHashes, parentId, parentAccumulatedWork) {
+  const strippedHashes =  blockHashes.map(x => x.slice(2)); // <- remove prefix '0x'
+  const accumulatedWork = 0;
+  const merkleRoot = makeMerkle(blockHashes);
+  const timestamp = 1563155885;
+  const lastHash = blockHashes[blockHashes.length - 1];
+  const lastBits = 108428188075
+  return {
+    merkleRoot,
+    accumulatedWork,
+    timestamp,
+    lastHash,
+    lastBits,
+    parentId,
+    superblockHash: calcSuperblockHash(
+      merkleRoot,
+      accumulatedWork,
+      timestamp,
+      lastHash,
+      lastBits,
+      parentId
+    ),
+    blockHeaders: blockHashes,
+    blockHashes: strippedHashes, 
+  };
+}
+
 function forgeSyscoinBlockHeader(prevHash, time) {
   const version = "30000100";
   const merkleRoot = "0".repeat(56) + "deadbeef";
@@ -360,6 +388,17 @@ function buildSyscoinTransaction({ signer, inputs, outputs }) {
   txBuilder.sign(0, signer);
   return txBuilder.build();
 }
+
+function printGas(txReceipt, msg, margin = 8) {
+  if (process.stdout.clearLine){
+    process.stdout.clearLine()
+    process.stdout.cursorTo(margin)
+    process.stdout.cursorTo(margin + 2)
+    let gas = new Number(txReceipt.receipt.gasUsed)
+    process.stdout.write(msg + " - gasUsed: " + gas.toLocaleString() + '\n');
+  }
+}
+
 
 module.exports = {
   OPTIONS_SYSCOIN_REGTEST,
@@ -512,6 +551,7 @@ module.exports = {
   verifyThrow,
   calcSuperblockHash,
   makeSuperblock,
+  makeSuperblockFromHashes,
   forgeSyscoinBlockHeader,
   base58ToBytes20,
   findEvent,
@@ -522,4 +562,5 @@ module.exports = {
   buildSyscoinTransaction,
   ethAddressFromKeyPair,
   ethAddressFromKeyPairRaw,
+  printGas
 };

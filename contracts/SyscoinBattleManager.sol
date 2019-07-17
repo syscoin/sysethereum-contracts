@@ -175,7 +175,10 @@ contract SyscoinBattleManager is SyscoinErrorCodes {
             if (merkleRoot != SyscoinMessageLibrary.makeMerkle(blockHashes)) {
                 return ERR_SUPERBLOCK_INVALID_MERKLE;
             }
-            session.blockHashes = blockHashes;
+            if (blockHashes.length > 1)
+                session.blockHashes.push(blockHashes[blockHashes.length-2]);
+            
+            session.blockHashes.push(blockHashes[blockHashes.length-1]);
             session.challengeState = ChallengeState.RespondMerkleRootHashes;
             return ERR_SUPERBLOCK_OK;
         }
@@ -323,7 +326,6 @@ contract SyscoinBattleManager is SyscoinErrorCodes {
     function validateProofOfWork(BattleSession storage session) internal view returns (uint) {
         uint accWork;
         bytes32 prevBlock;
-        uint heightDiff = superblockDuration; 
         uint prevWork;
         uint32 prevBits;
         uint superblockHeight;
@@ -337,9 +339,6 @@ contract SyscoinBattleManager is SyscoinErrorCodes {
             return ERR_SUPERBLOCK_BAD_MISMATCH;
         }
         (, prevWork, ,, prevBits,, ,,) = getSuperblockInfo(prevBlock);
-        if(net == SyscoinMessageLibrary.Network.REGTEST)
-            heightDiff = session.blockHashes.length;
-         
         if(accWork <= prevWork){
             return ERR_SUPERBLOCK_INVALID_ACCUMULATED_WORK;
         }
@@ -361,7 +360,7 @@ contract SyscoinBattleManager is SyscoinErrorCodes {
                 return ERR_SUPERBLOCK_BAD_BITS;
             }
 
-            uint newWork = prevWork + (SyscoinMessageLibrary.getWorkFromBits(blockInfo.bits)*heightDiff);
+            uint newWork = prevWork + (SyscoinMessageLibrary.getWorkFromBits(blockInfo.bits)*superblockDuration);
 
             if (newWork != accWork) {
                 return ERR_SUPERBLOCK_BAD_ACCUMULATED_WORK;
@@ -453,11 +452,6 @@ contract SyscoinBattleManager is SyscoinErrorCodes {
         BattleSession storage session = sessions[sessionId];
         return (session.lastActionChallenger > session.lastActionClaimant &&
             block.timestamp > session.lastActionTimestamp + superblockTimeout);
-    }
-
-    // @dev - Return Syscoin block hashes associated with a certain battle session
-    function getSyscoinBlockHashes(bytes32 sessionId) public view returns (bytes32[] memory) {
-        return sessions[sessionId].blockHashes;
     }
 
     function getSuperblockBySession(bytes32 sessionId) public view returns (bytes32) {

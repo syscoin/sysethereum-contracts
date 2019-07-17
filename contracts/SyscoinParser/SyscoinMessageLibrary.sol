@@ -227,23 +227,11 @@ library SyscoinMessageLibrary {
 
         return (sibling_values, pos);
     }   
-    // Slice 20 contiguous bytes from bytes `data`, starting at `start`
-    function sliceBytes20(bytes memory data, uint start) private pure returns (bytes20) {
-        uint160 slice = 0;
-        // FIXME: With solc v0.4.24 and optimizations enabled
-        // using uint160 for index i will generate an error
-        // "Error: VM Exception while processing transaction: Error: redPow(normalNum)"
-        for (uint8 i = 0; i < 20; i++) {
-            slice += uint160(uint8(data[i + start])) << (8 * (19 - i));
-        }
-        return bytes20(slice);
-    }
+
     // Slice 32 contiguous bytes from bytes `data`, starting at `start`
     function sliceBytes32Int(bytes memory data, uint start) private pure returns (uint slice) {
-        for (uint8 i = 0; i < 32; i++) {
-            if (i + start < data.length) {
-                slice += uint256(uint8(data[i + start])) << (8 * (31 - i));
-            }
+        assembly {
+            slice := mload(add(data, add(0x20, start)))
         }
     }
 
@@ -327,9 +315,38 @@ library SyscoinMessageLibrary {
     function flip32Bytes(uint _input) internal pure returns (uint result) {
         assembly {
             let pos := mload(0x40)
-            for { let i := 0 } lt(i, 32) { i := add(i, 1) } {
-                mstore8(add(pos, i), byte(sub(31, i), _input))
-            }
+            mstore8(add(pos, 0), byte(31, _input))
+            mstore8(add(pos, 1), byte(30, _input))
+            mstore8(add(pos, 2), byte(29, _input))
+            mstore8(add(pos, 3), byte(28, _input))
+            mstore8(add(pos, 4), byte(27, _input))
+            mstore8(add(pos, 5), byte(26, _input))
+            mstore8(add(pos, 6), byte(25, _input))
+            mstore8(add(pos, 7), byte(24, _input))
+            mstore8(add(pos, 8), byte(23, _input))
+            mstore8(add(pos, 9), byte(22, _input))
+            mstore8(add(pos, 10), byte(21, _input))
+            mstore8(add(pos, 11), byte(20, _input))
+            mstore8(add(pos, 12), byte(19, _input))
+            mstore8(add(pos, 13), byte(18, _input))
+            mstore8(add(pos, 14), byte(17, _input))
+            mstore8(add(pos, 15), byte(16, _input))
+            mstore8(add(pos, 16), byte(15, _input))
+            mstore8(add(pos, 17), byte(14, _input))
+            mstore8(add(pos, 18), byte(13, _input))
+            mstore8(add(pos, 19), byte(12, _input))
+            mstore8(add(pos, 20), byte(11, _input))
+            mstore8(add(pos, 21), byte(10, _input))
+            mstore8(add(pos, 22), byte(9, _input))
+            mstore8(add(pos, 23), byte(8, _input))
+            mstore8(add(pos, 24), byte(7, _input))
+            mstore8(add(pos, 25), byte(6, _input))
+            mstore8(add(pos, 26), byte(5, _input))
+            mstore8(add(pos, 27), byte(4, _input))
+            mstore8(add(pos, 28), byte(3, _input))
+            mstore8(add(pos, 29), byte(2, _input))
+            mstore8(add(pos, 30), byte(1, _input))
+            mstore8(add(pos, 31), byte(0, _input))
             result := mload(pos)
         }
     }
@@ -369,23 +386,31 @@ library SyscoinMessageLibrary {
              returns (uint, uint, uint)
     {
         uint position;
-        bool found = false;
-
-        for (uint i = 0; i < rawBytes.length; ++i) {
-            if (rawBytes[i] == 0xfa && rawBytes[i+1] == 0xbe && rawBytes[i+2] == 0x6d && rawBytes[i+3] == 0x6d) {
-                if (found) { // found twice
-                    return (0, position - 4, ERR_FOUND_TWICE);
-                } else {
-                    found = true;
-                    position = i + 4;
+        uint found = 0;
+        uint target = 0xfabe6d6d00000000000000000000000000000000000000000000000000000000;
+        uint mask = 0xffffffff00000000000000000000000000000000000000000000000000000000;
+        assembly {
+            let len := mload(rawBytes)
+            let data := add(rawBytes, 0x20)
+            let end := add(data, len)
+            
+            for { } lt(data, end) { } {     // while(i < end)
+                if eq(and(mload(data), mask), target) {
+                    if eq(found, 0x0) {
+                        position := add(sub(len, sub(end, data)), 4)
+                    }
+                    found := add(found, 1)
                 }
+                data := add(data, 0x1)
             }
         }
 
-        if (!found) { // no merge mining header
-            return (0, position - 4, ERR_NO_MERGE_HEADER);
-        } else {
+        if (found >= 2) {
+            return (0, position - 4, ERR_FOUND_TWICE);
+        } else if (found == 1) {
             return (sliceBytes32Int(rawBytes, position), position - 4, 1);
+        } else { // no merge mining header
+            return (0, position - 4, ERR_NO_MERGE_HEADER);
         }
     }
 
@@ -399,7 +424,7 @@ library SyscoinMessageLibrary {
         bytes32[] memory hashes = hashes2;
         uint length = hashes.length;
         if (length == 1) return hashes[0];
-        require(length > 0);
+        require(length > 0, "Must provide hashes");
         uint i;
         uint j;
         uint k;
@@ -622,7 +647,15 @@ library SyscoinMessageLibrary {
     // @dev - Converts a bytes of size 4 to uint32,
     // e.g. for input [0x01, 0x02, 0x03 0x04] returns 0x01020304
     function bytesToUint32Flipped(bytes memory input, uint pos) internal pure returns (uint32 result) {
-        result = uint32(uint8(input[pos])) + uint32(uint8(input[pos + 1]))*(2**8) + uint32(uint8(input[pos + 2]))*(2**16) + uint32(uint8(input[pos + 3]))*(2**24);
+        assembly {
+            let data := mload(add(add(input, 0x20), pos))
+            let flip := mload(0x40)
+            mstore8(add(flip, 0), byte(3, data))
+            mstore8(add(flip, 1), byte(2, data))
+            mstore8(add(flip, 2), byte(1, data))
+            mstore8(add(flip, 3), byte(0, data))
+            result := shr(mul(8, 28), mload(flip))
+        }
     }
     function bytesToUint64(bytes memory input, uint pos) internal pure returns (uint64 result) {
         result = uint64(uint8(input[pos+7])) + uint64(uint8(input[pos + 6]))*(2**8) + uint64(uint8(input[pos + 5]))*(2**16) + uint64(uint8(input[pos + 4]))*(2**24) + uint64(uint8(input[pos + 3]))*(2**32) + uint64(uint8(input[pos + 2]))*(2**40) + uint64(uint8(input[pos + 1]))*(2**48) + uint64(uint8(input[pos]))*(2**56);
@@ -651,7 +684,6 @@ library SyscoinMessageLibrary {
         if (_blockHeaderBytes.length > 80 && isMergeMined(_blockHeaderBytes, 0)) {
             AuxPoW memory ap = parseAuxPoW(_blockHeaderBytes, _pos);
             if (ap.blockHash > target) {
-
                 return (ERR_PROOF_OF_WORK_AUXPOW);
             }
             uint auxPoWCode = checkAuxPoW(blockSha256Hash, ap);
