@@ -44,6 +44,9 @@ If you are new to the Syscoin <=> Ethereum bridge, please check the [docs](https
     # first start ganache-cli
     ganache-cli --gasLimit 4000000000000
 
+    # compile contracts
+    truffle compile --all
+
     # run tests
     truffle test
   ```
