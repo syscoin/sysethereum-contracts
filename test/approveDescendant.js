@@ -34,10 +34,84 @@ contract('approveDescendant', (accounts) => {
     const superblock1Hashes = superblock1Headers.map(utils.calcBlockSha256Hash);
     const superblock2Hashes = superblock2Headers.map(utils.calcBlockSha256Hash);
 
+    // use only for gas profiling
+    // const superblock4Hashes = [
+    //     '0x61e59a93fdc54eb347213908660d867f0c081144163e317adb6b04715bba04b6',
+    //     '0x4912e067d38329fc4e4957cfcf6979ebdd12c88c5d01b9100316aa95705dc86d',
+    //     '0xd281018c50c08e0b562847c745379e4186a90549fd213941400d9dddabb61d83',
+    //     '0x2e2a8f87d7f7bb1dea98a73e0a29fdf3ca513c17abc2ddb35752330eab2f1b66',
+    //     '0x2a2bce748c31d7f1494a7043f020de406241959d791eac5fe3c871837693f546',
+    //     '0x63707bdf5b65a5914aaa24a7a8c76ba19e055f200f2428d91888ed65d2ce19da',
+    //     '0x84e5916452b809c14609288493d401bca07c44628e295f5baffe385c0122fbd1',
+    //     '0xe16eca7d2185ba2d1cb5a834a5a8f773a3ae147ede5a8dcc09ab2b7f172c07ac',
+    //     '0x769f7d1bf5bba431afd5b4766b49ce1dde179d6b851b50ea7b2ec56178dea3b7',
+    //     '0x4319021a392f192bb7f9277cb08db0a50ebcd590216147b4e1bfe53c99e6014f',
+
+    //     '0x34e733ea765f106a3678bd410ef624212be56a0d07e04736c048e9630357d590',
+    //     '0xb77794c9af67240cbab602bd2e6717aed3f247868c97503e2a1307f2be625530',
+    //     '0xb985cfb6d71bb2dde02035fe382783b57ea6b996e6c41f0dc8fc7e0a55df6eb7',
+    //     '0xdfe512d3197efe0a04aec29f4fad538c5c6ea4f85e61bf6c59dd4549b247d747',
+    //     '0x32c479385cef67c21b788b2b5033b533af230560ed601da2c7ead5fb6c76f288',
+    //     '0x6f27f5cc8f8b4390b3e4607412567e16cdc12c855f581123945fea80f4103376',
+    //     '0x07cfb165b95bc38b4ef3d927930c87fa51980202f2ef01bd1fc932f00fcba2ed',
+    //     '0x8c503c2bfb7a0e9a8b6e28071ea5791e4591a9a2fa94d34d1558c66481d04a31',
+    //     '0xfa24e0c3d597eced9d4730be87d5f1e292d4562f98071a6f04adb9c25c3ce63c',
+    //     '0xfe9ea9d39510888e5e1db260ea716c1950e19345de6e723e605dcf48ee3e9479',
+
+    //     '0x16de6993280b3d99ece7447912c527c8ef689299ebb7a3b80a1c7093e766f83f',
+    //     '0xf9315153f13ee0db95b40e5bc349d150d06b290cb85d59fb0396494def4ae534',
+    //     '0x6b9133f2dc39edf963e6b106b10252b38229d239ea7a840f9daf3916473b77cf',
+    //     '0x829fd4d8152bd01454c4ee179884a9cfb9bd3b44d7d10d1896022a4b2b4169fa',
+    //     '0x761cd6aa6feb77df4616fb788cb4304ae003c7b0478f3e6fff20f8ac3c19f128',
+    //     '0xc0687e550c3be07fd3151eadc82d9cf0f602e246220a1161305fdd8c813a14a7',
+    //     '0xa9bd3c14e0469bf4db421b0ca2e44da18ee91b9d8466bdb2af934f1b9881f118',
+    //     '0x3fe02bf92961c054224e42c11ae9852a4fea2255869cc034898c206e7ed50348',
+    //     '0xb343c8b7bc80d14356fac3d5a9794dd70ad0bc992e0add6389c66aeb55477754',
+    //     '0x3bee7e03ed7863badbc1d5b0eb4199a90cac14b475352b5ebe4988823bb59886',
+
+    //     '0x665cfd159912a61776c262aa2eef2b28ab5c00b79ff112e81c9342589f7efcab',
+    //     '0x29a8c2b9c1cffa1b5a067673a10c66031ae0e0bd68829dee8aef7e1bda91166b',
+    //     '0x23d781dc2dff18bdafe9d484951e2eeabdc5e5f7e16d77928f67bda71b1cda1d',
+    //     '0xde352bbaca48a2931248f9e200a9195bf6afb5e4bebbbcc9efc4c21f1d0f06b6',
+    //     '0x79c7268847382538155049695dacfc1bb3209973d6c37eee4bc0c2794b83ff46',
+    //     '0xabc4da6d66702cf4b65877c5e2204bbaf788e9d4f1093ae7a9c0b1a468627205',
+    //     '0x6ef90ada55944d003c896ba9f9bd8f1fc6076b12f20dc8e4e15d3db14e767e3c',
+    //     '0x9af1136c4654f37277719842e1f051b9572cd80f52e66b95ee5443c852568f1c',
+    //     '0x18656b99e1e9057ca65480f1b5f7eb63a043b6f7594b5e5350881a4f1c88a8cd',
+    //     '0x43654fe6b3d0c03b3606832030c97b96ff11774c869d411262ef954c48b10e37',
+
+    //     '0x615918507856a3498b0797271aaa9107abb0502db55463082373e7b883f9f6c7',
+    //     '0x1504d337d8286fceec8c88520c89b164a4ccb282e9d6792d0767180cbfbafe68',
+    //     '0x9c17d7a3facc9288d4204239051107e616b08b681edb41711bf7aa1a1ce70a12',
+    //     '0x80b5019a97b4fae3a5780d07f76cde7807faa92fdabaa9bcdb771e987edbf348',
+    //     '0x3491db66960ff3fb40217b2287dd28902e77841552b2f6cd89aafce2746dbb2c',
+    //     '0xa45a8b4e3a7775c88befab795d2779e9caa931244e680ac44bfce82c3f1ea758',
+    //     '0x0445571dd33521971ee8c4b17910ba24c6f7a0883aa6d01e20f62626e6a76af0',
+    //     '0x63d94803d76704cc8b49c7e40db42108011849089173c10cb6455dbd420c9e21',
+    //     '0xcac1c6f5c6861eaf73c5fe0e8962fec57c9fc726e6d97a40c509476b8149fc28',
+    //     '0xe5e8546fc7e1815ba4ec94e5be12c8dca792531fa5844d8b624bd5d7924a7da1',
+
+    //     '0xcc41d468ddbcdbce7ecb0ed2ce657b50cdd1ccb1ae862170578f682a93feff07',
+    //     '0x3b35788b2b7852daa187ec062215588bf2798c1848e038762501d13b083e36cf',
+    //     '0x73bc3ed4c826f64e7ee7dbf0ad1f81efc220361de3396bcfbb1c5d051a4d9a9c',
+    //     '0xda6eb4b02b1cc01ccf0b994c97797cc518a44d83709d552182ecb2fcd2e3da77',
+    //     '0x22ecd5029771e854752d8cc4afc816785fdc7dfe0d2b69015a175e2f651a383b',
+    //     '0x16e79f1177c2a1e306213b7ee360e0df6d20ddf1ce8335962b4744c3d0e49f0e',
+    //     '0x41dbae5dfe056ebbc11294bc81cec24eb9afd3cbcd3005be2edbe5ab0bbd0783',
+    //     '0x3cb3c8621fe533ec98b04f61bf8fc402bd35c4b5b438821990c2ab54fc11a4a4',
+    //     '0xbcab13b5e109379b03a3ae0f8c475952f5bf002fee254dd5fec8eef82e8fdddf',
+    //     '0x1c5793735acdc4804ab69e51b2dc2b667de98f239274de08a712e734cd91e1a0',
+
+    // ]
+    // const superblock4 = utils.makeSuperblockFromHashes(superblock4Hashes, initParentId, 0);
+    
+    
+
     const superblock0 = utils.makeSuperblock(superblock0Headers, initParentId, 0);
     const superblock1 = utils.makeSuperblock(superblock1Headers, superblock0.superblockHash, superblock0.accumulatedWork);
     const superblock2 = utils.makeSuperblock(superblock2Headers, superblock1.superblockHash, superblock1.accumulatedWork);
     const superblock3 = utils.makeSuperblock(superblock3Headers, superblock2.superblockHash, superblock2.accumulatedWork);
+
 
     async function initSuperblockChain() {
         ({
@@ -65,6 +139,7 @@ contract('approveDescendant', (accounts) => {
         let superblock2Id;
         let superblock3Id;
         let superblockR0Id;
+        let superblock4Id;
 
         let session1;
 
@@ -116,8 +191,53 @@ contract('approveDescendant', (accounts) => {
             assert.ok(utils.findEvent(result.logs, 'RespondMerkleRootHashes'), 'Respond merkle root hashes');
         });
 
-        it('Query and reply block header', async () => {
 
+
+
+        // tests for 60 hashes, use only for gas profiling. Hashes are faked and validation fails down the road.
+        // it('Propose superblock with 60 hashes', async () => {
+        //     const result  = await claimManager.proposeSuperblock(
+        //         superblock4.merkleRoot,
+        //         superblock4.accumulatedWork,
+        //         superblock4.timestamp,
+        //         superblock4.lastHash,
+        //         superblock4.lastBits,
+        //         superblock4.parentId,
+        //         { from: submitter },
+        //     );
+        //     utils.printGas(result, "proposeSuperblock 4");
+        //     const superblockClaimCreatedEvent = utils.findEvent(result.logs, 'SuperblockClaimCreated');
+        //     assert.ok(superblockClaimCreatedEvent, 'New superblock proposed');
+        //     superblock4Id = superblockClaimCreatedEvent.args.superblockHash;
+        // });
+        // it('Challenge superblock with 60 hashes', async () => {
+        //     const result = await claimManager.challengeSuperblock(superblock4Id, { from: challenger });
+        //     utils.printGas(result, "challengeSuperblock 4");
+        //     const superblockClaimChallengedEvent = utils.findEvent(result.logs, 'SuperblockClaimChallenged');
+        //     assert.ok(superblockClaimChallengedEvent, 'Superblock challenged');
+        //     assert.equal(superblock4Id, superblockClaimChallengedEvent.args.superblockHash);
+        //     const verificationGameStartedEvent = utils.findEvent(result.logs, 'VerificationGameStarted');
+        //     assert.ok(verificationGameStartedEvent, 'Battle started');
+        //     session1 = verificationGameStartedEvent.args.sessionId;
+        // });
+        // it('Query and verify 60 hashes', async () => {
+
+        //     result = await battleManager.queryMerkleRootHashes(superblock4Id, session1, { from: challenger });
+        //     utils.printGas(result, "queryMerkleRootHashes 4");
+        //     assert.ok(utils.findEvent(result.logs, 'QueryMerkleRootHashes'), 'Query merkle root hashes');
+            
+
+        //     result = await battleManager.respondMerkleRootHashes(superblock4Id, session1, superblock4Hashes, { from: submitter });
+        //     utils.printGas(result, "respondMerkleRootHashes 4");
+        //     assert.ok(utils.findEvent(result.logs, 'RespondMerkleRootHashes'), 'Respond merkle root hashes');
+        // });
+
+
+
+
+
+
+        it('Query and reply block header', async () => {
             result = await battleManager.queryLastBlockHeader(session1, { from: challenger });
             assert.ok(utils.findEvent(result.logs, 'QueryLastBlockHeader'), 'Query block header');
 
