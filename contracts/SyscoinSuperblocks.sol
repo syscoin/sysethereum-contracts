@@ -45,6 +45,8 @@ contract SyscoinSuperblocks is SyscoinSuperblocksI, SyscoinErrorCodes {
     bytes32 public bestSuperblock;
     uint public bestSuperblockAccumulatedWork;
 
+    SyscoinTransactionProcessor public syscoinERC20Manager;
+
     event NewSuperblock(bytes32 superblockHash, address who);
     event ApprovedSuperblock(bytes32 superblockHash, address who);
     event ChallengeSuperblock(bytes32 superblockHash, address who);
@@ -65,7 +67,9 @@ contract SyscoinSuperblocks is SyscoinSuperblocksI, SyscoinErrorCodes {
     }
 
     // @dev – the constructor
-    constructor() public {}
+    constructor(address _syscoinERC20Manager) public {
+        syscoinERC20Manager = SyscoinTransactionProcessor(_syscoinERC20Manager);
+    }
 
     // @dev - sets ClaimManager instance associated with managing superblocks.
     // Once trustedClaimManager has been set, it cannot be changed.
@@ -317,7 +321,7 @@ contract SyscoinSuperblocks is SyscoinSuperblocksI, SyscoinErrorCodes {
         uint _syscoinBlockIndex,
         uint[] memory _syscoinBlockSiblings,
         bytes32 _superblockHash,
-        SyscoinTransactionProcessor _untrustedTargetContract
+        address erc20ContractAddress
     ) public returns (uint) {
 
         // Check if Syscoin block belongs to given superblock
@@ -329,43 +333,51 @@ contract SyscoinSuperblocks is SyscoinSuperblocksI, SyscoinErrorCodes {
         }
         uint txHash = verifyTx(_txBytes, _txIndex, _txSiblings, _syscoinBlockHeader, _superblockHash);
         if (txHash != 0) {
-            uint ret = parseTxHelper(_txBytes, txHash, _untrustedTargetContract);
+            // uint ret = parseTxHelper(_txBytes, txHash, _untrustedTargetContract);
+            uint value;
+            address destinationAddress;
+            uint ret;
+            (ret, value, destinationAddress,) = SyscoinMessageLibrary.parseTransaction(_txBytes);
             if(ret != 0){
                 emit RelayTransaction(bytes32(0), ret);
                 return ret;
             }
-            ProcessTransactionParams storage params = txParams[txHash];
-            params.superblockSubmitterAddress = superblocks[_superblockHash].submitter;
-            txParams[txHash] = params;
-            return verifyTxHelper(txHash);
+            // ProcessTransactionParams storage params = txParams[txHash];
+            // params.superblockSubmitterAddress = superblocks[_superblockHash].submitter;
+            // txParams[txHash] = params;
+            // return verifyTxHelper(txHash);
+            // TODO: how to make sure erc20ContractAddress is correct?
+            uint returnCode = syscoinERC20Manager.processTransaction(txHash, value, destinationAddress, superblocks[_superblockHash].submitter, erc20ContractAddress);
+            emit RelayTransaction(bytes32(txHash), returnCode);
+            return returnCode;
         }
         emit RelayTransaction(bytes32(0), ERR_RELAY_VERIFY);
         return(ERR_RELAY_VERIFY);        
     }
-    function parseTxHelper(bytes memory _txBytes, uint txHash, SyscoinTransactionProcessor _untrustedTargetContract) private returns (uint) {
-        uint value;
-        address destinationAddress;
-        uint32 _assetGUID;
-        uint ret;
-        (ret, value, destinationAddress, _assetGUID) = SyscoinMessageLibrary.parseTransaction(_txBytes);
-        if(ret != 0){
-            return ret;
-        }
+    // function parseTxHelper(bytes memory _txBytes, uint txHash, SyscoinTransactionProcessor _untrustedTargetContract) private returns (uint) {
+    //     uint value;
+    //     address destinationAddress;
+    //     uint32 _assetGUID;
+    //     uint ret;
+    //     (ret, value, destinationAddress, _assetGUID) = SyscoinMessageLibrary.parseTransaction(_txBytes);
+    //     if(ret != 0){
+    //         return ret;
+    //     }
 
-        ProcessTransactionParams memory params;
-        params.value = value;
-        params.destinationAddress = destinationAddress;
-        params.assetGUID = _assetGUID;
-        params.untrustedTargetContract = _untrustedTargetContract;
-        txParams[txHash] = params;        
-        return 0;
-    }
-    function verifyTxHelper(uint txHash) private returns (uint) {
-        ProcessTransactionParams storage params = txParams[txHash];        
-        uint returnCode = params.untrustedTargetContract.processTransaction(txHash, params.value, params.destinationAddress, params.assetGUID, params.superblockSubmitterAddress);
-        emit RelayTransaction(bytes32(txHash), returnCode);
-        return (returnCode);
-    }
+    //     ProcessTransactionParams memory params;
+    //     params.value = value;
+    //     params.destinationAddress = destinationAddress;
+    //     params.assetGUID = _assetGUID;
+    //     params.untrustedTargetContract = _untrustedTargetContract;
+    //     txParams[txHash] = params;        
+    //     return 0;
+    // }
+    // function verifyTxHelper(uint txHash) private returns (uint) {
+    //     ProcessTransactionParams storage params = txParams[txHash];        
+    //     uint returnCode = params.untrustedTargetContract.processTransaction(txHash, params.value, params.destinationAddress, params.assetGUID, params.superblockSubmitterAddress);
+    //     emit RelayTransaction(bytes32(txHash), returnCode);
+    //     return (returnCode);
+    // }
     // @dev - Checks whether the transaction given by `_txBytes` is in the block identified by `_txBlockHeaderBytes`.
     // First it guards against a Merkle tree collision attack by raising an error if the transaction is exactly 64 bytes long,
     // then it calls helperVerifyHash to do the actual check.
