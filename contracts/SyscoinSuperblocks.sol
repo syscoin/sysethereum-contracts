@@ -81,7 +81,7 @@ contract SyscoinSuperblocks is SyscoinSuperblocksI, SyscoinErrorCodes {
     //
     // @param _blocksMerkleRoot Root of the merkle tree of blocks contained in a superblock
     // @param _accumulatedWork Accumulated proof of work of the last block in the superblock
-    // @param _timestamp Timestamp of the last block in the superblock
+    // @param _timestamp Median Timestamp of the last block in the superblock
     // @param _lastHash Hash of the last block in the superblock
     // @param _lastBits Difficulty bits of the last block in the superblock bits used to verify accumulatedWork through difficulty calculation
     // @param _parentId Id of the parent superblock  
@@ -135,7 +135,7 @@ contract SyscoinSuperblocks is SyscoinSuperblocksI, SyscoinErrorCodes {
     //
     // @param _blocksMerkleRoot Root of the merkle tree of blocks contained in a superblock
     // @param _accumulatedWork Accumulated proof of work of the last block in the superblock
-    // @param _timestamp Timestamp of the last block in the superblock
+    // @param _timestamp Median Timestamp of the last block in the superblock
     // @param _lastHash Hash of the last block in the superblock
     // @param _lastBits Difficulty bits of the last block in the superblock bits used to verify accumulatedWork through difficulty calculation
     // @param _parentId Id of the parent superblock
@@ -442,7 +442,7 @@ contract SyscoinSuperblocks is SyscoinSuperblocksI, SyscoinErrorCodes {
     //
     // @param _blocksMerkleRoot Root of the merkle tree of blocks contained in a superblock
     // @param _accumulatedWork Accumulated proof of work of the last block in the superblock
-    // @param _timestamp Timestamp of the last block in the superblock
+    // @param _timestamp Median Timestamp of the last block in the superblock
     // @param _lastHash Hash of the last block in the superblock
     // @param _lastBits Difficulty bits of the last block in the superblock bits used to verify accumulatedWork through difficulty calculation
     // @param _parentId Id of the parent superblock 
