@@ -3,7 +3,7 @@ pragma solidity ^0.5.10;
 interface SyscoinSuperblocksI {
 
     // @dev - Superblock status
-    enum Status { Unitialized, New, InBattle, SemiApproved, Approved, Invalid }
+    enum Status { Uninitialized, New, InBattle, SemiApproved, Approved, Invalid }
 
     function propose(
         bytes32 _blocksMerkleRoot,
