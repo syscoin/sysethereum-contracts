@@ -321,7 +321,7 @@ contract SyscoinBattleManager is SyscoinErrorCodes {
         if (blockInfo.timestamp <= prevTimestamp ) {
             return ERR_SUPERBLOCK_BAD_TIMESTAMP;
         }           
-        // last MTP must be greator than next MTP     
+        // next MTP must be greator than previous MTP     
         if (lastTimestamp <= prevTimestamp) {
             return ERR_SUPERBLOCK_BAD_TIMESTAMP;
         }
