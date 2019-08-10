@@ -308,21 +308,15 @@ contract SyscoinBattleManager is SyscoinErrorCodes {
         if(blockSha256Hash != lastBlockHash){
             return ERR_SUPERBLOCK_BAD_LASTBLOCK;
         }
-        // block timestamp cannot be more than 2 hrs into the future
-        if (blockInfo.timestamp > block.timestamp + 7200 ) {
+        if (blockInfo.timestamp != lastTimestamp) {
             return ERR_SUPERBLOCK_BAD_TIMESTAMP;
         }
         if (blockInfo.status != BlockInfoStatus.Verified) {
             return ERR_SUPERBLOCK_BAD_LASTBLOCK_STATUS;
         }
         (, ,prevTimestamp , ,,,, , ) = getSuperblockInfo(parentId);
-
-        // block timestamp must be greator than previous MTP
-        if (blockInfo.timestamp <= prevTimestamp ) {
-            return ERR_SUPERBLOCK_BAD_TIMESTAMP;
-        }           
-        // next MTP must be greator than previous MTP     
-        if (lastTimestamp <= prevTimestamp) {
+        
+        if (prevTimestamp > lastTimestamp) {
             return ERR_SUPERBLOCK_BAD_TIMESTAMP;
         }
         return ERR_SUPERBLOCK_OK;

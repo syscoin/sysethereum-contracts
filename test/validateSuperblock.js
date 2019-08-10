@@ -108,7 +108,7 @@ contract('validateSuperblocks', (accounts) => {
       result = await claimManager.proposeSuperblock(
         proposedSuperblock.merkleRoot,
         proposedSuperblock.accumulatedWork,
-        proposedSuperblock.timestamp - 1,
+        proposedSuperblock.timestamp + 1,
         proposedSuperblock.lastHash,
         proposedSuperblock.lastBits,
         proposedSuperblock.parentId,
