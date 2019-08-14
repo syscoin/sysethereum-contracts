@@ -14,7 +14,7 @@ contract('testSyscoinTokenProcessTransaction', function(accounts) {
     const superblockSubmitterAddress = accounts[4];
     await syscoinToken.processTransaction(txHash, value, address, 1702063431, superblockSubmitterAddress);
 
-    const superblockSubmitterFee = 905853205; 
+    const superblockSubmitterFee = 90585320; 
     const userValue = value - superblockSubmitterFee;
 
     const balance = await syscoinToken.balanceOf(address);
