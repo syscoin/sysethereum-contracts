@@ -207,6 +207,9 @@ contract SyscoinBattleManager is SyscoinErrorCodes {
             if(blockIndexInvalidated > session.blockHashes.length){
                 return ERR_SUPERBLOCK_BAD_INTERIM_BLOCKINDEX;
             }
+            if(net != SyscoinMessageLibrary.Network.REGTEST && blockIndexInvalidated == 0){
+                return ERR_SUPERBLOCK_BAD_INTERIM_BLOCKINDEX;
+            }
             session.blockIndexInvalidated = blockIndexInvalidated;
             return ERR_SUPERBLOCK_OK;
         }
@@ -486,6 +489,9 @@ contract SyscoinBattleManager is SyscoinErrorCodes {
     }
     function getBlockHashesBySession(bytes32 sessionId) public view returns (bytes32[] memory blockHashes) {
         return sessions[sessionId].blockHashes;
+    }
+    function getInvalidatedBlockIndexBySession(bytes32 sessionId) public view returns (uint) {
+        return sessions[sessionId].blockIndexInvalidated;
     }
     function getSessionStatus(bytes32 sessionId) public view returns (BlockInfoStatus) {
         BattleSession storage session = sessions[sessionId];
