@@ -254,11 +254,8 @@ contract SyscoinBattleManager is SyscoinErrorCodes {
         bytes memory blockInterimHeader
     ) internal returns (uint) {
         if (session.challengeState == ChallengeState.QueryLastBlockHeader) {
-            bytes32 blockSha256Hash = bytes32(SyscoinMessageLibrary.dblShaFlipMem(blockLastHeader, 0, 80));
             uint lastIndex = session.blockHashes.length-1;
-            if(session.blockHashes[lastIndex] != blockSha256Hash){
-                return (ERR_SUPERBLOCK_BAD_LASTBLOCK);
-            }
+            bytes32 blockSha256Hash = session.blockHashes[lastIndex];
             BlockInfo storage blockInfo = session.blocksInfo;
             if (blockInfo.status != BlockInfoStatus.Requested) {
                 return (ERR_SUPERBLOCK_BAD_SYSCOIN_STATUS);
@@ -276,11 +273,7 @@ contract SyscoinBattleManager is SyscoinErrorCodes {
             }
             // if interim header is passed in (last block is identical but another block is not matching, then validate the interim block and that it links to the chain of hashes stored in the session from merkle root hash response coming from defender)
             if(blockInterimHeader.length > 0 && session.blockIndexInvalidated > 0){
-                bytes32 blockSha256HashInterim = bytes32(SyscoinMessageLibrary.dblShaFlipMem(blockInterimHeader, 0, 80));
-                // check to make sure this block hashes correctly to the one we expect in the session array
-                if(session.blockHashes[session.blockIndexInvalidated] != blockSha256HashInterim){
-                    return (ERR_SUPERBLOCK_BAD_INTERIMBLOCK);
-                }
+                bytes32 blockSha256HashInterim = session.blockHashes[session.blockIndexInvalidated];
                 err = SyscoinMessageLibrary.verifyBlockHeader(blockInterimHeader, 0, uint(blockSha256HashInterim));
                 if (err != 0) {
                     return err;
