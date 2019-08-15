@@ -252,7 +252,7 @@ contract('SyscoinClaimManager', (accounts) => {
       assert.ok(utils.findEvent(result.logs, 'RespondMerkleRootHashes'), 'Respond merkle root hashes');
     });
     it('Query block header', async () => {
-      const result = await battleManager.queryLastBlockHeader(battleSessionId, headers.length-1, { from: challenger });
+      const result = await battleManager.queryLastBlockHeader(battleSessionId, 0, { from: challenger });
       assert.ok(utils.findEvent(result.logs, 'QueryLastBlockHeader'), 'Query block header');
     });   
     it('Answer blocks header', async () => {
