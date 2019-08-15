@@ -2,6 +2,7 @@
 /node_modules
 /output
 ._.DS_Store
+.DS_Store
 *.swp
 contracts/Timestamp*
 test/testTimestamp.js*
