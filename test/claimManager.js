@@ -172,7 +172,7 @@ contract('SyscoinClaimManager', (accounts) => {
 
     it('Query and reply block header', async () => {
 
-      result = await battleManager.queryLastBlockHeader(battleSessionId, 1, { from: challenger });
+      result = await battleManager.queryLastBlockHeader(battleSessionId, 0, { from: challenger });
       assert.ok(utils.findEvent(result.logs, 'QueryLastBlockHeader'), 'Query block header');
 
 
@@ -375,7 +375,7 @@ contract('SyscoinClaimManager', (accounts) => {
       assert.ok(utils.findEvent(result.logs, 'RespondMerkleRootHashes'), 'Respond merkle root hashes');
 
 
-      result = await battleManager.queryLastBlockHeader(battleSessionId, 1, { from: challenger });
+      result = await battleManager.queryLastBlockHeader(battleSessionId, 0, { from: challenger });
       assert.ok(utils.findEvent(result.logs, 'QueryLastBlockHeader'), 'Query block header');
       
       result = await battleManager.timeout(battleSessionId, { from: challenger });
@@ -399,7 +399,7 @@ contract('SyscoinClaimManager', (accounts) => {
       assert.ok(utils.findEvent(result.logs, 'RespondMerkleRootHashes'), 'Respond merkle root hashes');
 
 
-      result = await battleManager.queryLastBlockHeader(battleSessionId, 1, { from: challenger });
+      result = await battleManager.queryLastBlockHeader(battleSessionId, 0, { from: challenger });
       assert.ok(utils.findEvent(result.logs, 'QueryLastBlockHeader'), 'Query block header');
 
 
@@ -428,7 +428,7 @@ contract('SyscoinClaimManager', (accounts) => {
       assert.ok(utils.findEvent(result.logs, 'RespondMerkleRootHashes'), 'Respond merkle root hashes');
 
 
-      result = await battleManager.queryLastBlockHeader(battleSessionId, 1, { from: challenger });
+      result = await battleManager.queryLastBlockHeader(battleSessionId, 0, { from: challenger });
       assert.ok(utils.findEvent(result.logs, 'QueryLastBlockHeader'), 'Query block header');
 
       result = await battleManager.respondLastBlockHeader(battleSessionId, `0x${headers[1]}`, "0x", { from: submitter });

@@ -207,9 +207,6 @@ contract SyscoinBattleManager is SyscoinErrorCodes {
             if(blockIndexInvalidated > session.blockHashes.length){
                 return ERR_SUPERBLOCK_BAD_INTERIM_BLOCKINDEX;
             }
-            if(net != SyscoinMessageLibrary.Network.REGTEST && blockIndexInvalidated == 0){
-                return ERR_SUPERBLOCK_BAD_INTERIM_BLOCKINDEX;
-            }
             session.blockIndexInvalidated = blockIndexInvalidated;
             return ERR_SUPERBLOCK_OK;
         }
@@ -268,11 +265,11 @@ contract SyscoinBattleManager is SyscoinErrorCodes {
             if (err != ERR_SUPERBLOCK_OK) {
                 return (err);
             }
-            if(session.blockIndexInvalidated != lastIndex && blockInterimHeader.length <= 0){
+            if(session.blockIndexInvalidated != 0 && blockInterimHeader.length <= 0){
                 return (ERR_SUPERBLOCK_INTERIMBLOCK_MISSING);
             }
             // if interim header is passed in (last block is identical but another block is not matching, then validate the interim block and that it links to the chain of hashes stored in the session from merkle root hash response coming from defender)
-            if(blockInterimHeader.length > 0 && session.blockIndexInvalidated > 0){
+            if(blockInterimHeader.length > 0 && session.blockIndexInvalidated != 0){
                 bytes32 blockSha256HashInterim = session.blockHashes[session.blockIndexInvalidated];
                 err = SyscoinMessageLibrary.verifyBlockHeader(blockInterimHeader, 0, uint(blockSha256HashInterim));
                 if (err != 0) {

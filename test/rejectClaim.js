@@ -304,7 +304,7 @@ contract('rejectClaim', (accounts) => {
 
         it('Query and reply block header', async () => {
 
-            result = await battleManager.queryLastBlockHeader(session1, 1, { from: challenger });
+            result = await battleManager.queryLastBlockHeader(session1, 0, { from: challenger });
             assert.ok(utils.findEvent(result.logs, 'QueryLastBlockHeader'), 'Query block header');
 
           
