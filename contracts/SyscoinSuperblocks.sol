@@ -101,7 +101,7 @@ contract SyscoinSuperblocks is SyscoinSuperblocksI, SyscoinErrorCodes {
         bytes32 superblockHash = calcSuperblockHash(_blocksMerkleRoot, _accumulatedWork, _timestamp, _lastHash, _lastBits, _parentId);
         SuperblockInfo storage superblock = superblocks[superblockHash];
 
-        require(superblock.status == Status.Unitialized);
+        require(superblock.status == Status.Uninitialized);
 
         indexSuperblock[indexNextSuperblock] = superblockHash;
 
@@ -162,7 +162,7 @@ contract SyscoinSuperblocks is SyscoinSuperblocksI, SyscoinErrorCodes {
 
         bytes32 superblockHash = calcSuperblockHash(_blocksMerkleRoot, _accumulatedWork, _timestamp, _lastHash, _lastBits, _parentId);
         SuperblockInfo storage superblock = superblocks[superblockHash];
-        if (superblock.status == Status.Unitialized) {
+        if (superblock.status == Status.Uninitialized) {
             indexSuperblock[indexNextSuperblock] = superblockHash;
             superblock.blocksMerkleRoot = _blocksMerkleRoot;
             superblock.accumulatedWork = _accumulatedWork;

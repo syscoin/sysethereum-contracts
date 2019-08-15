@@ -42,6 +42,7 @@ contract SyscoinBattleManager is SyscoinErrorCodes {
         uint lastActionClaimant;          // Number last action submitter
         uint lastActionChallenger;        // Number last action challenger
         uint actionsCounter;              // Counter session actions
+        uint blockIndexInvalidated;       // block hash that is different between challenger and submitter
         bytes32[] blockHashes;            // Block hashes
 
         BlockInfo blocksInfo;
@@ -175,10 +176,8 @@ contract SyscoinBattleManager is SyscoinErrorCodes {
             if (merkleRoot != SyscoinMessageLibrary.makeMerkle(blockHashes)) {
                 return ERR_SUPERBLOCK_INVALID_MERKLE;
             }
-            if (blockHashes.length > 1)
-                session.blockHashes.push(blockHashes[blockHashes.length-2]);
-            
-            session.blockHashes.push(blockHashes[blockHashes.length-1]);
+
+            session.blockHashes = blockHashes;
             session.challengeState = ChallengeState.RespondMerkleRootHashes;
             return ERR_SUPERBLOCK_OK;
         }
@@ -200,20 +199,24 @@ contract SyscoinBattleManager is SyscoinErrorCodes {
     }
        
     // @dev - Challenger makes a query for last block header
-    function doQueryLastBlockHeader(BattleSession storage session) internal returns (uint) {
+    function doQueryLastBlockHeader(BattleSession storage session, uint blockIndexInvalidated) internal returns (uint) {
         if (session.challengeState == ChallengeState.RespondMerkleRootHashes) {
             require(session.blocksInfo.status == BlockInfoStatus.Uninitialized);
             session.challengeState = ChallengeState.QueryLastBlockHeader;
             session.blocksInfo.status = BlockInfoStatus.Requested;
+            if(blockIndexInvalidated > session.blockHashes.length){
+                return ERR_SUPERBLOCK_BAD_INTERIM_BLOCKINDEX;
+            }
+            session.blockIndexInvalidated = blockIndexInvalidated;
             return ERR_SUPERBLOCK_OK;
         }
         return ERR_SUPERBLOCK_BAD_STATUS;
     }
 
     // @dev - For the challenger to start a query
-    function queryLastBlockHeader(bytes32 sessionId) onlyChallenger(sessionId) public {
+    function queryLastBlockHeader(bytes32 sessionId, uint blockIndexInvalidated) onlyChallenger(sessionId) public {
         BattleSession storage session = sessions[sessionId];
-        uint err = doQueryLastBlockHeader(session);
+        uint err = doQueryLastBlockHeader(session, blockIndexInvalidated);
         if (err != ERR_SUPERBLOCK_OK) {
             emit ErrorBattle(sessionId, err);
         } else {
@@ -244,13 +247,12 @@ contract SyscoinBattleManager is SyscoinErrorCodes {
     // @dev - Verify block header sent by challenger
     function doRespondLastBlockHeader(
         BattleSession storage session,
-        bytes memory blockHeader
+        bytes memory blockLastHeader,
+        bytes memory blockInterimHeader
     ) internal returns (uint) {
         if (session.challengeState == ChallengeState.QueryLastBlockHeader) {
-            bytes32 blockSha256Hash = bytes32(SyscoinMessageLibrary.dblShaFlipMem(blockHeader, 0, 80));
-            if(session.blockHashes[session.blockHashes.length-1] != blockSha256Hash){
-                return (ERR_SUPERBLOCK_BAD_LASTBLOCK);
-            }
+            uint lastIndex = session.blockHashes.length-1;
+            bytes32 blockSha256Hash = session.blockHashes[lastIndex];
             BlockInfo storage blockInfo = session.blocksInfo;
             if (blockInfo.status != BlockInfoStatus.Requested) {
                 return (ERR_SUPERBLOCK_BAD_SYSCOIN_STATUS);
@@ -259,11 +261,27 @@ contract SyscoinBattleManager is SyscoinErrorCodes {
 			// pass in blockSha256Hash here instead of proposedScryptHash because we
             // don't need a proposed hash (we already calculated it here, syscoin uses 
             // sha256 just like bitcoin)
-            uint err = verifyBlockAuxPoW(blockInfo, blockSha256Hash, blockHeader);
+            uint err = verifyBlockAuxPoW(blockInfo, blockSha256Hash, blockLastHeader);
             if (err != ERR_SUPERBLOCK_OK) {
                 return (err);
             }
+            if(session.blockIndexInvalidated != 0 && blockInterimHeader.length <= 0){
+                return (ERR_SUPERBLOCK_INTERIMBLOCK_MISSING);
+            }
+            // if interim header is passed in (last block is identical but another block is not matching, then validate the interim block and that it links to the chain of hashes stored in the session from merkle root hash response coming from defender)
+            if(blockInterimHeader.length > 0 && session.blockIndexInvalidated != 0){
+                bytes32 blockSha256HashInterim = session.blockHashes[session.blockIndexInvalidated];
+                err = SyscoinMessageLibrary.verifyBlockHeader(blockInterimHeader, 0, uint(blockSha256HashInterim));
+                if (err != 0) {
+                    return err;
+                }
+                bytes32 blockInterimHeaderPrevBlockHash = bytes32(SyscoinMessageLibrary.getHashPrevBlock(blockInterimHeader));
 
+                // check to ensure the block hash of the invalidated index - 1 (prev block) matches that of the prevblock of the block header of the offending mismatched block
+                if(blockInterimHeaderPrevBlockHash != session.blockHashes[session.blockIndexInvalidated-1]){
+                    return (ERR_SUPERBLOCK_BAD_INTERIM_PREVHASH);
+                }
+            }
             session.challengeState = ChallengeState.PendingVerification;
             blockInfo.status = BlockInfoStatus.Verified;
             return (ERR_SUPERBLOCK_OK);
@@ -272,10 +290,11 @@ contract SyscoinBattleManager is SyscoinErrorCodes {
     }
     function respondLastBlockHeader(
         bytes32 sessionId,
-        bytes memory blockHeader
+        bytes memory blockLastHeader,
+        bytes memory blockInterimHeader
         ) onlyClaimant(sessionId) public {
         BattleSession storage session = sessions[sessionId];
-        (uint err) = doRespondLastBlockHeader(session, blockHeader);
+        (uint err) = doRespondLastBlockHeader(session, blockLastHeader, blockInterimHeader);
         if (err != 0) {
             emit ErrorBattle(sessionId, err);
         }else{
@@ -298,13 +317,14 @@ contract SyscoinBattleManager is SyscoinErrorCodes {
         (, , lastTimestamp, lastBlockHash, ,parentId,,,) = getSuperblockInfo(session.superblockHash);
         bytes32 blockSha256Hash = session.blockHashes[session.blockHashes.length - 1];
         BlockInfo storage blockInfo = session.blocksInfo;
-        if(session.blockHashes.length > 2){
+        if(net != SyscoinMessageLibrary.Network.REGTEST){
             bytes32 prevBlockSha256Hash = session.blockHashes[session.blockHashes.length - 2];
             if(blockInfo.prevBlock != prevBlockSha256Hash){
                 return ERR_SUPERBLOCK_BAD_PREVBLOCK;
             }
-
         }
+
+        
         if(blockSha256Hash != lastBlockHash){
             return ERR_SUPERBLOCK_BAD_LASTBLOCK;
         }
@@ -457,7 +477,12 @@ contract SyscoinBattleManager is SyscoinErrorCodes {
     function getSuperblockBySession(bytes32 sessionId) public view returns (bytes32) {
         return sessions[sessionId].superblockHash;
     }
-
+    function getBlockHashesBySession(bytes32 sessionId) public view returns (bytes32[] memory blockHashes) {
+        return sessions[sessionId].blockHashes;
+    }
+    function getInvalidatedBlockIndexBySession(bytes32 sessionId) public view returns (uint) {
+        return sessions[sessionId].blockIndexInvalidated;
+    }
     function getSessionStatus(bytes32 sessionId) public view returns (BlockInfoStatus) {
         BattleSession storage session = sessions[sessionId];
         return session.blocksInfo.status;

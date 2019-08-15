@@ -39,9 +39,16 @@ If you are new to the Syscoin <=> Ethereum bridge, please check the [docs](https
   ```
     npm install
   ```
+
+* Compile contracts
+  ```
+    # compile contracts
+    truffle compile --all
+  ```
+
 * Run tests:
   ```
-    # first start ganache-cli
+    # first start ganache-cli - and do this again once your gas ran out
     ganache-cli --gasLimit 4000000000000
 
     # run tests
