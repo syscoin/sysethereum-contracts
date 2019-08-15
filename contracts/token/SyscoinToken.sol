@@ -11,7 +11,7 @@ contract SyscoinToken is HumanStandardToken(0, "SyscoinToken", 8, "SYSX"), Sysco
 
     // Lock constants
     uint public constant MIN_LOCK_VALUE = 300000000; // 3 syscoins
-    uint public constant SUPERBLOCK_SUBMITTER_LOCK_FEE = 1; // 1 = 0.1%
+    uint public constant SUPERBLOCK_SUBMITTER_LOCK_FEE = 1; // 1 = 0.01%
 
     // Unlock constants
     uint public constant MIN_UNLOCK_VALUE = 300000000; // 3 syscoins
@@ -66,7 +66,7 @@ contract SyscoinToken is HumanStandardToken(0, "SyscoinToken", 8, "SYSX"), Sysco
 
     function processLockTransaction(address destinationAddress, uint value, address superblockSubmitterAddress) private {
 
-        uint superblockSubmitterFee = value.mul(SUPERBLOCK_SUBMITTER_LOCK_FEE) / 1000;
+        uint superblockSubmitterFee = value.mul(SUPERBLOCK_SUBMITTER_LOCK_FEE) / 10000;
         balances[superblockSubmitterAddress] = balances[superblockSubmitterAddress].add(superblockSubmitterFee);
         emit NewToken(superblockSubmitterAddress, superblockSubmitterFee);
         // Hack to make etherscan show the event

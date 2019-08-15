@@ -85,11 +85,11 @@ contract('validateSuperblocks', (accounts) => {
       assert.ok(utils.findEvent(result.logs, 'RespondMerkleRootHashes'), 'Respond merkle root hashes');
 
 
-      result = await battleManager.queryLastBlockHeader(battleSessionId, { from: challenger });
+      result = await battleManager.queryLastBlockHeader(battleSessionId, 0, { from: challenger });
       assert.ok(utils.findEvent(result.logs, 'QueryLastBlockHeader'), 'Query block header');
 
 
-      result = await battleManager.respondLastBlockHeader(battleSessionId, `0x${headers[0]}`, { from: submitter });
+      result = await battleManager.respondLastBlockHeader(battleSessionId, `0x${headers[0]}`, "0x", { from: submitter });
       assert.ok(utils.findEvent(result.logs, 'RespondLastBlockHeader'), 'Respond last block header');
 
 
@@ -137,11 +137,11 @@ contract('validateSuperblocks', (accounts) => {
       result = await battleManager.respondMerkleRootHashes(proposesSuperblockHash, battleSessionId, hashes, { from: submitter });
       assert.ok(utils.findEvent(result.logs, 'RespondMerkleRootHashes'), 'Respond merkle root hashes');
 
-      result = await battleManager.queryLastBlockHeader(battleSessionId,{ from: challenger });
+      result = await battleManager.queryLastBlockHeader(battleSessionId, 0, { from: challenger });
       assert.ok(utils.findEvent(result.logs, 'QueryLastBlockHeader'), 'Query block header');
 
  
-      result = await battleManager.respondLastBlockHeader(battleSessionId, `0x${headers[0]}`, { from: submitter });
+      result = await battleManager.respondLastBlockHeader(battleSessionId, `0x${headers[0]}`, "0x", { from: submitter });
       assert.ok(utils.findEvent(result.logs, 'RespondLastBlockHeader'), 'Respond last block header');
 
       // Verify superblock

@@ -18,7 +18,7 @@ contract('testRelayToSyscoinAssetToken', function(accounts) {
     assert.equal(assetGUID,1702063431);
     assert.equal(inputEthAddress,address);
     await syscoinToken.processTransaction(txHash, amount, inputEthAddress, assetGUID, superblockSubmitterAddress);
-    const superblockSubmitterFee = value/1000; 
+    const superblockSubmitterFee = value/10000; 
     const userValue = value - superblockSubmitterFee;
 
     const balance = await syscoinToken.balanceOf(address);

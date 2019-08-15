@@ -81,12 +81,12 @@ contract('validateDifficultyAdjustment', (accounts) => {
       assert.ok(utils.findEvent(result.logs, 'RespondMerkleRootHashes'), 'Respond merkle root hashes');
 
 
-      result = await battleManager.queryLastBlockHeader(battleSessionId, { from: challenger });
+      result = await battleManager.queryLastBlockHeader(battleSessionId, 0, { from: challenger });
       assert.ok(utils.findEvent(result.logs, 'QueryLastBlockHeader'), 'Query block header');
       
 
 
-      result = await battleManager.respondLastBlockHeader(battleSessionId, `0x${headers[1]}`, { from: submitter });
+      result = await battleManager.respondLastBlockHeader(battleSessionId, `0x${headers[1]}`, "0x", { from: submitter });
       assert.ok(utils.findEvent(result.logs, 'RespondLastBlockHeader'), 'Respond last block header');
 
       // Verify diff change and challenger is at fault (its actually valid)

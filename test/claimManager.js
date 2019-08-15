@@ -172,11 +172,11 @@ contract('SyscoinClaimManager', (accounts) => {
 
     it('Query and reply block header', async () => {
 
-      result = await battleManager.queryLastBlockHeader(battleSessionId, { from: challenger });
+      result = await battleManager.queryLastBlockHeader(battleSessionId, 0, { from: challenger });
       assert.ok(utils.findEvent(result.logs, 'QueryLastBlockHeader'), 'Query block header');
 
 
-      result = await battleManager.respondLastBlockHeader(battleSessionId, `0x${headers[1]}`, { from: submitter });
+      result = await battleManager.respondLastBlockHeader(battleSessionId, `0x${headers[1]}`, "0x", { from: submitter });
       assert.ok(utils.findEvent(result.logs, 'RespondLastBlockHeader'), 'Respond last block header');
 
       
@@ -252,13 +252,13 @@ contract('SyscoinClaimManager', (accounts) => {
       assert.ok(utils.findEvent(result.logs, 'RespondMerkleRootHashes'), 'Respond merkle root hashes');
     });
     it('Query block header', async () => {
-      const result = await battleManager.queryLastBlockHeader(battleSessionId, { from: challenger });
+      const result = await battleManager.queryLastBlockHeader(battleSessionId, 0, { from: challenger });
       assert.ok(utils.findEvent(result.logs, 'QueryLastBlockHeader'), 'Query block header');
     });   
     it('Answer blocks header', async () => {
 
       let len = headers.length;
-      result = await battleManager.respondLastBlockHeader(battleSessionId, `0x${headers[len-1]}`, { from: submitter });
+      result = await battleManager.respondLastBlockHeader(battleSessionId, `0x${headers[len-1]}`, "0x", { from: submitter });
       assert.ok(utils.findEvent(result.logs, 'RespondLastBlockHeader'), 'Respond last block header');
 
     });
@@ -375,7 +375,7 @@ contract('SyscoinClaimManager', (accounts) => {
       assert.ok(utils.findEvent(result.logs, 'RespondMerkleRootHashes'), 'Respond merkle root hashes');
 
 
-      result = await battleManager.queryLastBlockHeader(battleSessionId, { from: challenger });
+      result = await battleManager.queryLastBlockHeader(battleSessionId, 0, { from: challenger });
       assert.ok(utils.findEvent(result.logs, 'QueryLastBlockHeader'), 'Query block header');
       
       result = await battleManager.timeout(battleSessionId, { from: challenger });
@@ -399,11 +399,11 @@ contract('SyscoinClaimManager', (accounts) => {
       assert.ok(utils.findEvent(result.logs, 'RespondMerkleRootHashes'), 'Respond merkle root hashes');
 
 
-      result = await battleManager.queryLastBlockHeader(battleSessionId, { from: challenger });
+      result = await battleManager.queryLastBlockHeader(battleSessionId, 0, { from: challenger });
       assert.ok(utils.findEvent(result.logs, 'QueryLastBlockHeader'), 'Query block header');
 
 
-      result = await battleManager.respondLastBlockHeader(battleSessionId, `0x${headers[1]}`, { from: submitter });
+      result = await battleManager.respondLastBlockHeader(battleSessionId, `0x${headers[1]}`, "0x", { from: submitter });
       assert.ok(utils.findEvent(result.logs, 'RespondLastBlockHeader'), 'Respond last block header');
       
       result = await battleManager.timeout(battleSessionId, { from: submitter });
@@ -428,10 +428,10 @@ contract('SyscoinClaimManager', (accounts) => {
       assert.ok(utils.findEvent(result.logs, 'RespondMerkleRootHashes'), 'Respond merkle root hashes');
 
 
-      result = await battleManager.queryLastBlockHeader(battleSessionId, { from: challenger });
+      result = await battleManager.queryLastBlockHeader(battleSessionId, 0, { from: challenger });
       assert.ok(utils.findEvent(result.logs, 'QueryLastBlockHeader'), 'Query block header');
 
-      result = await battleManager.respondLastBlockHeader(battleSessionId, `0x${headers[1]}`, { from: submitter });
+      result = await battleManager.respondLastBlockHeader(battleSessionId, `0x${headers[1]}`, "0x", { from: submitter });
       assert.ok(utils.findEvent(result.logs, 'RespondLastBlockHeader'), 'Respond last block header');
 
       result = await battleManager.verifySuperblock(battleSessionId, { from: challenger });

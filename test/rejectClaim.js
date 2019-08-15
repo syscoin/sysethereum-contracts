@@ -304,11 +304,11 @@ contract('rejectClaim', (accounts) => {
 
         it('Query and reply block header', async () => {
 
-            result = await battleManager.queryLastBlockHeader(session1, { from: challenger });
+            result = await battleManager.queryLastBlockHeader(session1, 0, { from: challenger });
             assert.ok(utils.findEvent(result.logs, 'QueryLastBlockHeader'), 'Query block header');
 
           
-            result = await battleManager.respondLastBlockHeader(session1, `0x${superblockR0Headers[1]}`, { from: submitter });
+            result = await battleManager.respondLastBlockHeader(session1, `0x${superblockR0Headers[1]}`, "0x", { from: submitter });
             assert.ok(utils.findEvent(result.logs, 'RespondLastBlockHeader'), 'Respond last block header');
         });
 
