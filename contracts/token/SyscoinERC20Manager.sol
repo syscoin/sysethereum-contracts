@@ -75,7 +75,7 @@ contract SyscoinERC20Manager {
 
         assetBalances[assetGUID] = assetBalances[assetGUID].sub(value);
 
-        uint superblockSubmitterFee = value.mul(SUPERBLOCK_SUBMITTER_LOCK_FEE).div(1000);
+        uint superblockSubmitterFee = value.mul(SUPERBLOCK_SUBMITTER_LOCK_FEE).div(10000);
         uint userValue = value.sub(superblockSubmitterFee);
 
         // pay the fee
