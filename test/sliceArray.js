@@ -3,7 +3,7 @@ const SyscoinMessageLibraryForTests = artifacts.require('SyscoinMessageLibraryFo
 contract('sliceArray', (accounts) => {
   let syscoinMessageLibraryForTests;
   before(async () => {
-    syscoinMessageLibraryForTests = await SyscoinMessageLibraryForTests.deployed();
+    syscoinMessageLibraryForTests = await SyscoinMessageLibraryForTests.new();
   });
   it("slice middle", async () => {
     const result = await syscoinMessageLibraryForTests.sliceArrayPublic.call("0x000102030405060708090a", 2, 5);

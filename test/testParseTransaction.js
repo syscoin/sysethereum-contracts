@@ -9,7 +9,7 @@ contract('testParseTransaction', (accounts) => {
     'L4N2R2S2WRAnrdwnezs4kHaxsQkRNMrVwgGpHJNgJxGYT788LnGB',
   ].map(utils.syscoinKeyPairFromWIF);
   before(async () => {
-    syscoinMessageLibraryForTests = await SyscoinMessageLibraryForTests.deployed();
+    syscoinMessageLibraryForTests = await SyscoinMessageLibraryForTests.new();
   });
   it('Parse simple transaction with only OP_RETURN and wrong version', async () => {
     const tx = utils.buildSyscoinTransaction({
