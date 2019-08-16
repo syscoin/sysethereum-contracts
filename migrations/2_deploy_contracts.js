@@ -26,7 +26,7 @@ const SUPERBLOCK_OPTIONS_INTEGRATION_FAST_SYNC = {
   DELAY: 300,       // 5 minutes
   TIMEOUT: 300,      // 5 minutes
   CONFIRMATIONS: 3, // Superblocks required to confirm semi approved superblock
-  ASSETGUID: 1172462264
+  ASSETGUID: 719610612
 };
 
 const SUPERBLOCK_OPTIONS_LOCAL = {
@@ -34,7 +34,7 @@ const SUPERBLOCK_OPTIONS_LOCAL = {
   DELAY: 60,        // 1 minute
   TIMEOUT: 30,      // 30 seconds
   CONFIRMATIONS: 1, // Superblocks required to confirm semi approved superblock
-  ASSETGUID: 1172462264
+  ASSETGUID: 719610612
 };
 
 async function deployDevelopment(deployer, networkId, superblockOptions) {
@@ -119,7 +119,7 @@ module.exports = function(deployer, network) {
     } else if (network === 'ropsten') {
       await deployIntegration(deployer, SYSCOIN_MAINNET, SUPERBLOCK_OPTIONS_INTEGRATION_FAST_SYNC);
     } else if (network === 'rinkeby') {
-      await deployIntegration(deployer, SYSCOIN_TESTNET, SUPERBLOCK_OPTIONS_PRODUCTION);
+      await deployIntegration(deployer, SYSCOIN_TESTNET, SUPERBLOCK_OPTIONS_INTEGRATION_FAST_SYNC);
     } else if (network === 'mainnet') {
       await deployIntegration(deployer, SYSCOIN_MAINNET, SUPERBLOCK_OPTIONS_PRODUCTION);
     } else if (network === 'integrationSyscoinRegtest') {
