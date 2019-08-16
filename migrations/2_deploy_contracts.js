@@ -26,7 +26,7 @@ const SUPERBLOCK_OPTIONS_INTEGRATION_FAST_SYNC = {
   DELAY: 300,       // 5 minutes
   TIMEOUT: 300,      // 5 minutes
   CONFIRMATIONS: 3, // Superblocks required to confirm semi approved superblock
-  ASSETGUID: 719610612
+  ASSETGUID: 505115838
 };
 
 const SUPERBLOCK_OPTIONS_LOCAL = {
