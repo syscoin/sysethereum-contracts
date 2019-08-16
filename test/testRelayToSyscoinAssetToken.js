@@ -3,7 +3,7 @@ const SyscoinMessageLibraryForTests = artifacts.require('SyscoinMessageLibraryFo
 
 contract('testRelayToSyscoinAssetToken', function(accounts) {
   before(async () => {
-    syscoinMessageLibraryForTests = await SyscoinMessageLibraryForTests.deployed();
+    syscoinMessageLibraryForTests = await SyscoinMessageLibraryForTests.new();
   });
   const trustedRelayerContract = accounts[0]; // Tell SyscoinToken to trust accounts[0] as it would be the relayer contract
   const superblockSubmitterAddress = accounts[4];
