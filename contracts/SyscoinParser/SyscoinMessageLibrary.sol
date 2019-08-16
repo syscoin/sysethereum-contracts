@@ -1,7 +1,5 @@
 pragma solidity ^0.5.10;
 
-import "../SyscoinTransactionProcessor.sol";
-
 // parse a raw Syscoin transaction byte array
 library SyscoinMessageLibrary {
 
