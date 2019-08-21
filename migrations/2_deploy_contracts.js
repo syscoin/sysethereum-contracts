@@ -119,7 +119,7 @@ module.exports = function(deployer, network) {
     } else if (network === 'ropsten') {
       await deployIntegration(deployer, SYSCOIN_MAINNET, SUPERBLOCK_OPTIONS_INTEGRATION_FAST_SYNC);
     } else if (network === 'rinkeby') {
-      await deployIntegration(deployer, SYSCOIN_TESTNET, SUPERBLOCK_OPTIONS_INTEGRATION_FAST_SYNC);
+      await deployIntegration(deployer, SYSCOIN_TESTNET, SUPERBLOCK_OPTIONS_PRODUCTION);
     } else if (network === 'mainnet') {
       await deployIntegration(deployer, SYSCOIN_MAINNET, SUPERBLOCK_OPTIONS_PRODUCTION);
     } else if (network === 'integrationSyscoinRegtest') {

@@ -5,7 +5,7 @@ module.exports = async function(callback) {
   
   var sb = await SyscoinSuperblocks.deployed();
   console.log("beginning deployment...");
-  var blocksMerkleRoot = "0x0b997db69c6bb3c0dcac85f3a7cf599bbd65773e8eccaaf69fc326d4b2bcb840";
+  var blocksMerkleRoot = "0x000002afdda9c43ddeb2bc1bf31dba6d039307df65e2fd0111bdf5c201ec1d6f";
   var accumulatedWork = web3.utils.toBN("0x0000000000000000000000000000000000000000000000000000000016800168");
   var timestamp = 1565991151;
   var lastHash = "0x000002afdda9c43ddeb2bc1bf31dba6d039307df65e2fd0111bdf5c201ec1d6f"; // 359

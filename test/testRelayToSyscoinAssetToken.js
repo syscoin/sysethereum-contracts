@@ -14,10 +14,10 @@ contract('testRelayToSyscoinAssetToken', function(accounts) {
   const address = web3.utils.toChecksumAddress('0x5a714c3ed4ce4f297679e733f3c476b24d8895e5');
   it('test mint and burn asset', async () => {
     let syscoinToken = await SyscoinToken.new(trustedRelayerContract, 1702063431, "SyscoinToken", 8, "SYSX");
-    const [ ret, amount, inputEthAddress, assetGUID ]  = Object.values(await syscoinMessageLibraryForTests.parseTransaction(txData));
+    const [ ret, amount, inputEthAddress, precision, assetGUID ]  = Object.values(await syscoinMessageLibraryForTests.parseTransaction(txData));
     assert.equal(assetGUID,1702063431);
     assert.equal(inputEthAddress,address);
-    await syscoinToken.processTransaction(txHash, amount, inputEthAddress, assetGUID, superblockSubmitterAddress);
+    await syscoinToken.processTransaction(txHash, amount, inputEthAddress, assetGUID, superblockSubmitterAddress, precision);
     const superblockSubmitterFee = value/10000; 
     const userValue = value - superblockSubmitterFee;
 

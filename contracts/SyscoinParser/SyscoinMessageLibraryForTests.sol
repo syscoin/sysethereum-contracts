@@ -84,7 +84,7 @@ contract SyscoinMessageLibraryForTests {
     }
 
     function parseTransaction(bytes memory txBytes) public pure
-             returns (uint, uint, address, uint32, address) {
+             returns (uint, uint, address, uint32, uint8, address) {
         return SyscoinMessageLibrary.parseTransaction(txBytes);
      }
 

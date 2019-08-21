@@ -294,7 +294,7 @@ contract SyscoinSuperblocks is SyscoinSuperblocksI, SyscoinErrorCodes {
         return (ERR_SUPERBLOCK_OK, _superblockHash);
     }
 
-    // @dev - relays transaction `_txBytes` to `_untrustedTargetContract`'s processTransaction() method.
+    // @dev - relays transaction `_txBytes` to ERC20Manager's processTransaction() method.
     // Also logs the value of processTransaction.
     // Note: callers cannot be 100% certain when an ERR_RELAY_VERIFY occurs because
     // it may also have been returned by processTransaction(). Callers should be
@@ -331,14 +331,15 @@ contract SyscoinSuperblocks is SyscoinSuperblocksI, SyscoinErrorCodes {
             uint ret;
             uint32 assetGUID;
             address erc20ContractAddress;
-            (ret, value, destinationAddress, assetGUID, erc20ContractAddress) = SyscoinMessageLibrary.parseTransaction(_txBytes);
+            uint8 precision;
+            (ret, value, destinationAddress, assetGUID, precision, erc20ContractAddress) = SyscoinMessageLibrary.parseTransaction(_txBytes);
             if(ret != 0){
                 emit RelayTransaction(bytes32(0), ret);
                 return ret;
             }
-            uint returnCode = syscoinERC20Manager.processTransaction(txHash, value, destinationAddress, superblocks[_superblockHash].submitter, erc20ContractAddress, assetGUID);
-            emit RelayTransaction(bytes32(txHash), returnCode);
-            return returnCode;
+            syscoinERC20Manager.processTransaction(txHash, value, destinationAddress, superblocks[_superblockHash].submitter, erc20ContractAddress, assetGUID, precision);
+            emit RelayTransaction(bytes32(txHash), value);
+            return value;
         }
         emit RelayTransaction(bytes32(0), ERR_RELAY_VERIFY);
         return(ERR_RELAY_VERIFY);        

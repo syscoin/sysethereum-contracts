@@ -47,6 +47,14 @@ contract SyscoinERC20Manager {
         _;
     }
 
+    function requireMinimumValue(uint8 decimalsIn, uint value) private pure {
+        uint256 decimals = uint256(decimalsIn);
+        require(
+            value >= (uint256(10) ** decimals).div(MIN_LOCK_VALUE),
+            "Value must be bigger or equal MIN_LOCK_VALUE"
+        );
+    }
+
     function wasSyscoinTxProcessed(uint txHash) public view returns (bool) {
         return syscoinTxHashesAlreadyProcessed.contains(txHash);
     }
@@ -57,10 +65,12 @@ contract SyscoinERC20Manager {
         address destinationAddress,
         address superblockSubmitterAddress,
         address erc20ContractAddress,
-        uint32 assetGUID
-    ) public onlyTrustedRelayer minimumValue(erc20ContractAddress, value) returns (uint) {
+        uint32 assetGUID,
+        uint8 precision
+    ) public onlyTrustedRelayer {
         SyscoinERC20AssetI erc20 = SyscoinERC20AssetI(erc20ContractAddress);
-
+        uint8 decimalsForERC20 = erc20.decimals();
+        requireMinimumValue(decimalsForERC20, value);
         // Add tx to the syscoinTxHashesAlreadyProcessed and Check tx was not already processed
         require(syscoinTxHashesAlreadyProcessed.insert(txHash), "TX already processed");
 
@@ -85,16 +95,15 @@ contract SyscoinERC20Manager {
         // get your token
         erc20.transfer(destinationAddress, userValue);
         emit TokenUnfreeze(destinationAddress, userValue);
-
-        return value;
     }
 
     // keyhash or scripthash for syscoinWitnessProgram
     function freezeBurnERC20(
         uint value,
         uint32 assetGUID,
-        bytes memory syscoinAddress,
-        address erc20ContractAddress
+        address erc20ContractAddress,
+        uint8 precision,
+        bytes memory syscoinAddress
     )
         public
         minimumValue(erc20ContractAddress, value)
@@ -102,10 +111,11 @@ contract SyscoinERC20Manager {
     {
         require(syscoinAddress.length > 0, "syscoinAddress cannot be zero");
         require(assetGUID > 0, "Asset GUID must not be 0");
+        
         assetBalances[assetGUID] = assetBalances[assetGUID].add(value);
 
         SyscoinERC20AssetI erc20 = SyscoinERC20AssetI(erc20ContractAddress);
-
+        require(precision == erc20.decimals(), "Decimals were not provided with the correct value");
         // is this a Syscoin asset and we are allowed to mint?
         if (isMinterOf(erc20ContractAddress)) {
             erc20.burnFrom(msg.sender, value);
