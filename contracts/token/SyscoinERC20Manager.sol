@@ -72,9 +72,9 @@ contract SyscoinERC20Manager {
         uint8 nLocalPrecision = erc20.decimals();
         // see issue #372 on syscoin
         if(nLocalPrecision > precision){
-            value /= uint(10)**(uint(nLocalPrecision - precision));
+            value *= uint(10)**(uint(nLocalPrecision - precision));
         }else if(nLocalPrecision < precision){
-            value *= uint(10)**(uint(precision - nLocalPrecision));
+            value /= uint(10)**(uint(precision - nLocalPrecision));
         }
         requireMinimumValue(nLocalPrecision, value);
         // Add tx to the syscoinTxHashesAlreadyProcessed and Check tx was not already processed
