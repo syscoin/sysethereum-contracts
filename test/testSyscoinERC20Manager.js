@@ -39,7 +39,7 @@ contract('SyscoinERC20Manager', function(accounts) {
     assert.equal(await erc20Asset.isMinter(owner), false, "owner should NOT be a minter on the ERC20 token");
     assert.equal(await erc20Asset.balanceOf(owner), value, `SyscoinERC20Asset's ${owner} balance is not the expected one`);
 
-    await erc20Manager.freezeBurnERC20(burnVal, assetGUID, syscoinAddress, erc20Asset.address, {from: owner});
+    await erc20Manager.freezeBurnERC20(burnVal, assetGUID, syscoinAddress, erc20Asset.address, 8, syscoinAddress, {from: owner});
 
     assert.equal(await erc20Asset.balanceOf(erc20Manager.address), 0, "erc20Manager balance is not correct");
     assert.equal(await erc20Asset.balanceOf(owner), value - burnVal, `erc20Asset's user balance after burn is not the expected one`);
@@ -50,7 +50,7 @@ contract('SyscoinERC20Manager', function(accounts) {
     assert.equal(await erc20Manager.trustedRelayerContract(), trustedRelayerContract, "trustedRelayerContract is not correct");
     assert.equal(await erc20Legacy.balanceOf(owner), value, `LegacyERC20's ${owner} balance is not the expected one`);
 
-    await erc20Manager.freezeBurnERC20(burnVal, assetGUID, syscoinAddress, erc20Legacy.address, {from: owner});
+    await erc20Manager.freezeBurnERC20(burnVal, assetGUID, syscoinAddress, erc20Legacy.address, 8, syscoinAddress,{from: owner});
 
     assert.equal(await erc20Legacy.balanceOf(erc20Manager.address), burnVal, "erc20Manager balance is not correct");
     assert.equal(await erc20Legacy.balanceOf(owner), value - burnVal, `erc20Asset's user balance after burn is not the expected one`);
@@ -61,7 +61,7 @@ contract('SyscoinERC20Manager', function(accounts) {
     assert.equal(await erc20Manager.trustedRelayerContract(), trustedRelayerContract, "trustedRelayerContract is not correct");
     assert.equal(await erc20AssetNoMint.balanceOf(owner), value, `erc20AssetNoMint's ${owner} balance is not the expected one`);
 
-    await erc20Manager.freezeBurnERC20(burnVal, assetGUID, syscoinAddress, erc20AssetNoMint.address, {from: owner});
+    await erc20Manager.freezeBurnERC20(burnVal, assetGUID, syscoinAddress, erc20AssetNoMint.address, 8, syscoinAddress,{from: owner});
 
     assert.equal(await erc20AssetNoMint.balanceOf(erc20Manager.address), burnVal, "erc20Manager balance is not correct");
     assert.equal(await erc20AssetNoMint.balanceOf(owner), value - burnVal, `erc20Asset's user balance after burn is not the expected one`);
@@ -75,14 +75,14 @@ contract('SyscoinERC20Manager', function(accounts) {
     assert.equal(await erc20Asset.isMinter(owner), false, "owner should NOT be a minter on the ERC20 token");
     assert.equal(await erc20Asset.balanceOf(owner), value, `SyscoinERC20Asset's ${owner} balance is not the expected one`);
 
-    await erc20Manager.freezeBurnERC20(burnVal, assetGUID, syscoinAddress, erc20Asset.address, {from: owner});
+    await erc20Manager.freezeBurnERC20(burnVal, assetGUID, syscoinAddress, erc20Asset.address, 8, syscoinAddress,{from: owner});
 
     assert.equal(await erc20Asset.balanceOf(erc20Manager.address), 0, "erc20Manager balance is not correct");
     assert.equal(await erc20Asset.balanceOf(owner), value - burnVal, `erc20Asset's user balance after burn is not the expected one`);
     assert.equal(await erc20Manager.assetBalances(assetGUID), burnVal, `assetBalances for ${assetGUID} GUID is not correct`);
 
     await erc20Asset.approve(erc20Manager.address, burnVal, {from: owner});
-    await erc20Manager.freezeBurnERC20(burnVal, assetGUID, syscoinAddress, erc20Asset.address, {from: owner});
+    await erc20Manager.freezeBurnERC20(burnVal, assetGUID, syscoinAddress, erc20Asset.address, 8, syscoinAddress,{from: owner});
 
     assert.equal(await erc20Asset.balanceOf(erc20Manager.address), 0, "erc20Manager balance is not correct");
     assert.equal(await erc20Asset.balanceOf(owner), value - burnVal - burnVal, `erc20Asset's user balance after burn is not the expected one`);
@@ -94,14 +94,14 @@ contract('SyscoinERC20Manager', function(accounts) {
 
     assert.equal(await erc20Legacy.balanceOf(owner), value, `LegacyERC20's ${owner} balance is not the expected one`);
 
-    await erc20Manager.freezeBurnERC20(burnVal, assetGUID, syscoinAddress, erc20Legacy.address, {from: owner});
+    await erc20Manager.freezeBurnERC20(burnVal, assetGUID, syscoinAddress, erc20Legacy.address, 8, syscoinAddress,{from: owner});
 
     assert.equal(await erc20Legacy.balanceOf(erc20Manager.address), burnVal, "erc20Manager balance is not correct");
     assert.equal(await erc20Legacy.balanceOf(owner), value - burnVal, `erc20Asset's user balance after burn is not the expected one`);
     assert.equal(await erc20Manager.assetBalances(assetGUID), burnVal, `assetBalances for ${assetGUID} GUID is not correct`);
 
     await erc20Legacy.approve(erc20Manager.address, burnVal, {from: owner});
-    await erc20Manager.freezeBurnERC20(burnVal, assetGUID, syscoinAddress, erc20Legacy.address, {from: owner});
+    await erc20Manager.freezeBurnERC20(burnVal, assetGUID, syscoinAddress, erc20Legacy.address, 8, syscoinAddress,{from: owner});
 
     assert.equal(await erc20Legacy.balanceOf(erc20Manager.address), burnVal + burnVal, "erc20Manager balance is not correct");
     assert.equal(await erc20Legacy.balanceOf(owner), value - burnVal - burnVal, `erc20Asset's user balance after burn is not the expected one`);
@@ -110,30 +110,30 @@ contract('SyscoinERC20Manager', function(accounts) {
 
   it('should fail to freeze & burn token without approval', async () => {
     await truffleAssert.reverts(
-      erc20Manager.freezeBurnERC20(value, assetGUID, syscoinAddress, erc20Asset.address, {from: owner})
+      erc20Manager.freezeBurnERC20(value, assetGUID, syscoinAddress, erc20Asset.address, 8, syscoinAddress,{from: owner})
     );
     await truffleAssert.reverts(
-      erc20Manager.freezeBurnERC20(value, assetGUID, syscoinAddress, erc20Legacy.address, {from: owner})
+      erc20Manager.freezeBurnERC20(value, assetGUID, syscoinAddress, erc20Legacy.address, 8, syscoinAddress,{from: owner})
     );
   });
 
   it('should fail to freeze & burn token below minimum value', async () => {
     await truffleAssert.reverts(
-      erc20Manager.freezeBurnERC20(belowMinValue, assetGUID, syscoinAddress, erc20Asset.address, {from: owner})
+      erc20Manager.freezeBurnERC20(belowMinValue, assetGUID, syscoinAddress, erc20Asset.address, 8, syscoinAddress,{from: owner})
     );
     await truffleAssert.reverts(
-      erc20Manager.freezeBurnERC20(belowMinValue, assetGUID, syscoinAddress, erc20Legacy.address, {from: owner})
+      erc20Manager.freezeBurnERC20(belowMinValue, assetGUID, syscoinAddress, erc20Legacy.address, 8, syscoinAddress,{from: owner})
     );
   });
 
   it('should fail to freeze & burn token if balance is not enough', async () => {
     await erc20Asset.approve(erc20Manager.address, 2*value, {from: owner});
     await truffleAssert.reverts(
-      erc20Manager.freezeBurnERC20(2*value, assetGUID, syscoinAddress, erc20Asset.address, {from: owner})
+      erc20Manager.freezeBurnERC20(2*value, assetGUID, syscoinAddress, erc20Asset.address, 8, syscoinAddress,{from: owner})
     );
     await erc20Legacy.approve(erc20Manager.address, 2*value, {from: owner});
     await truffleAssert.reverts(
-      erc20Manager.freezeBurnERC20(2*value, assetGUID, syscoinAddress, erc20Legacy.address, {from: owner})
+      erc20Manager.freezeBurnERC20(2*value, assetGUID, syscoinAddress, erc20Legacy.address, 8, syscoinAddress,{from: owner})
     );
   });
 });
