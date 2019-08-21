@@ -69,8 +69,14 @@ contract SyscoinERC20Manager {
         uint8 precision
     ) public onlyTrustedRelayer {
         SyscoinERC20AssetI erc20 = SyscoinERC20AssetI(erc20ContractAddress);
-        uint8 decimalsForERC20 = erc20.decimals();
-        requireMinimumValue(decimalsForERC20, value);
+        uint8 nLocalPrecision = erc20.decimals();
+        // see issue #372 on syscoin
+        if(nLocalPrecision > precision){
+            value /= uint(10)**(uint(nLocalPrecision - precision));
+        }else if(nLocalPrecision < precision){
+            value *= uint(10)**(uint(precision - nLocalPrecision));
+        }
+        requireMinimumValue(nLocalPrecision, value);
         // Add tx to the syscoinTxHashesAlreadyProcessed and Check tx was not already processed
         require(syscoinTxHashesAlreadyProcessed.insert(txHash), "TX already processed");
 

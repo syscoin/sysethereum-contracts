@@ -294,6 +294,7 @@ library SyscoinMessageLibrary {
         destinationAddress = readEthereumAddress(txBytes, pos);
         pos += op;
         // precision
+        (op, pos) = getOpcode(txBytes, pos);
         require(op == 0x01);
         precision = uint8(txBytes[pos]);
         pos += op;
