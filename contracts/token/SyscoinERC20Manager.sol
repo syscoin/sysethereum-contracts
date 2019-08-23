@@ -27,6 +27,7 @@ contract SyscoinERC20Manager {
     mapping(uint32 => uint256) public assetBalances;
 
     event TokenUnfreeze(address receipient, uint value);
+    event TokenUnfreezeFee(address receipient, uint value);
     event TokenFreeze(address freezer, uint value);
 
     constructor (address _trustedRelayerContract) public {
@@ -96,6 +97,7 @@ contract SyscoinERC20Manager {
 
         // pay the fee
         erc20.transfer(superblockSubmitterAddress, superblockSubmitterFee);
+        emit TokenUnfreezeFee(superblockSubmitterAddress, superblockSubmitterFee);
 
         // get your token
         erc20.transfer(destinationAddress, userValue);
