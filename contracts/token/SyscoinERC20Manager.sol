@@ -96,7 +96,6 @@ contract SyscoinERC20Manager {
 
         // pay the fee
         erc20.transfer(superblockSubmitterAddress, superblockSubmitterFee);
-        emit TokenUnfreeze(superblockSubmitterAddress, superblockSubmitterFee);
 
         // get your token
         erc20.transfer(destinationAddress, userValue);
