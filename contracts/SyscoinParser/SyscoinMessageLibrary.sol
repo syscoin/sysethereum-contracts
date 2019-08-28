@@ -1,7 +1,5 @@
 pragma solidity ^0.5.10;
 
-import "../SyscoinTransactionProcessor.sol";
-
 // parse a raw Syscoin transaction byte array
 library SyscoinMessageLibrary {
 
@@ -80,22 +78,24 @@ library SyscoinMessageLibrary {
 
 
     function parseTransaction(bytes memory txBytes) internal pure
-             returns (uint, uint, address, uint32)
+             returns (uint, uint, address, uint32, uint8, address)
     {
         
         uint output_value;
         uint32 assetGUID;
         address destinationAddress;
         uint32 version;
+        address erc20Address;
+        uint8 precision;
         uint pos = 0;
         version = bytesToUint32Flipped(txBytes, pos);
         if(version != SYSCOIN_TX_VERSION_ASSET_ALLOCATION_BURN){
-            return (ERR_PARSE_TX_SYS, output_value, destinationAddress, assetGUID);
+            return (ERR_PARSE_TX_SYS, output_value, destinationAddress, assetGUID, precision, erc20Address);
         }
         pos = skipInputs(txBytes, 4);
             
-        (output_value, destinationAddress, assetGUID) = scanBurns(txBytes, pos);
-        return (0, output_value, destinationAddress, assetGUID);
+        (output_value, destinationAddress, assetGUID, precision, erc20Address) = scanBurns(txBytes, pos);
+        return (0, output_value, destinationAddress, assetGUID, precision, erc20Address);
     }
 
 
@@ -144,12 +144,14 @@ library SyscoinMessageLibrary {
              
     // scan the burn outputs and return the value and script data of first burned output.
     function scanBurns(bytes memory txBytes, uint pos) private pure
-             returns (uint, address, uint32)
+             returns (uint, address, uint32, uint8, address)
     {
         uint script_len;
         uint output_value;
         uint32 assetGUID = 0;
         address destinationAddress;
+        address erc20Address;
+        uint8 precision;
         uint n_outputs;
         (n_outputs, pos) = parseVarInt(txBytes, pos);
         require(n_outputs < 10);
@@ -165,12 +167,12 @@ library SyscoinMessageLibrary {
             }
             // skip opreturn marker
             pos += 1;
-            (output_value, destinationAddress, assetGUID) = scanAssetDetails(txBytes, pos);  
+            (output_value, destinationAddress, assetGUID, precision, erc20Address) = scanAssetDetails(txBytes, pos);  
             // only one opreturn data allowed per transaction
             break;
         }
 
-        return (output_value, destinationAddress, assetGUID);
+        return (output_value, destinationAddress, assetGUID, precision, erc20Address);
     }
 
     function skipOutputs(bytes memory txBytes, uint pos) private pure
@@ -266,11 +268,13 @@ library SyscoinMessageLibrary {
     }  
     // Returns asset data parsed from the op_return data output from syscoin asset burn transaction
     function scanAssetDetails(bytes memory txBytes, uint pos) private pure
-             returns (uint, address, uint32) {
+             returns (uint, address, uint32, uint8, address) {
                  
         uint32 assetGUID;
         address destinationAddress;
+        address erc20Address;
         uint output_value;
+        uint8 precision;
         uint8 op;
         // vchAsset
         (op, pos) = getOpcode(txBytes, pos);
@@ -287,8 +291,18 @@ library SyscoinMessageLibrary {
         (op, pos) = getOpcode(txBytes, pos);
         // ethereum contracts are 20 bytes (without the 0x)
         require(op == 0x14);
-        destinationAddress = readEthereumAddress(txBytes, pos);       
-        return (output_value, destinationAddress, assetGUID);
+        destinationAddress = readEthereumAddress(txBytes, pos);
+        pos += op;
+        // precision
+        (op, pos) = getOpcode(txBytes, pos);
+        require(op == 0x01);
+        precision = uint8(txBytes[pos]);
+        pos += op;
+        // erc20Address
+        (op, pos) = getOpcode(txBytes, pos);
+        require(op == 0x14);
+        erc20Address = readEthereumAddress(txBytes, pos);
+        return (output_value, destinationAddress, assetGUID, precision, erc20Address);
     }         
     // Read the ethereum address embedded in the tx output
     function readEthereumAddress(bytes memory txBytes, uint pos) private pure

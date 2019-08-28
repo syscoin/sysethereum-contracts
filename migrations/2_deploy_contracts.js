@@ -1,9 +1,8 @@
 
 const Set = artifacts.require('./token/Set.sol');
-const SyscoinToken = artifacts.require('./token/SyscoinToken.sol');
-const SyscoinTokenForTests = artifacts.require('./token/SyscoinTokenForTests.sol');
+const SyscoinERC20Asset = artifacts.require('./token/SyscoinERC20Asset.sol');
+const SyscoinERC20Manager = artifacts.require('./token/SyscoinERC20Manager.sol');
 const SyscoinMessageLibrary = artifacts.require('./SyscoinParser/SyscoinMessageLibrary.sol');
-const SyscoinMessageLibraryForTests = artifacts.require('./SyscoinParser/SyscoinMessageLibraryForTests.sol');
 const SyscoinSuperblocks = artifacts.require('./SyscoinSuperblocks.sol');
 const SyscoinClaimManager = artifacts.require('./SyscoinClaimManager.sol');
 const SyscoinBattleManager = artifacts.require('./SyscoinBattleManager.sol');
@@ -27,7 +26,7 @@ const SUPERBLOCK_OPTIONS_INTEGRATION_FAST_SYNC = {
   DELAY: 300,       // 5 minutes
   TIMEOUT: 300,      // 5 minutes
   CONFIRMATIONS: 3, // Superblocks required to confirm semi approved superblock
-  ASSETGUID: 1172462264
+  ASSETGUID: 505115838
 };
 
 const SUPERBLOCK_OPTIONS_LOCAL = {
@@ -35,7 +34,7 @@ const SUPERBLOCK_OPTIONS_LOCAL = {
   DELAY: 60,        // 1 minute
   TIMEOUT: 30,      // 30 seconds
   CONFIRMATIONS: 1, // Superblocks required to confirm semi approved superblock
-  ASSETGUID: 1172462264
+  ASSETGUID: 719610612
 };
 
 async function deployDevelopment(deployer, networkId, superblockOptions) {
@@ -43,15 +42,11 @@ async function deployDevelopment(deployer, networkId, superblockOptions) {
   await deployer.deploy(SyscoinMessageLibrary);
   await deployer.deploy(SafeMath);
 
-  await deployer.link(Set, SyscoinTokenForTests);
-  await deployer.link(SyscoinMessageLibrary, [SyscoinMessageLibraryForTests, SyscoinSuperblocks, SyscoinBattleManager, SyscoinClaimManager]);
-
+  await deployer.link(SyscoinMessageLibrary, [SyscoinSuperblocks, SyscoinBattleManager, SyscoinClaimManager]);
 
   await deployer.deploy(SyscoinSuperblocks);
-
-  await deployer.deploy(SyscoinTokenForTests,
-    SyscoinSuperblocks.address,superblockOptions.ASSETGUID,"SyscoinToken", 8, "SYSX",
-  );
+  await deployer.link(Set, SyscoinERC20Manager);
+  await deployer.deploy(SyscoinERC20Manager, SyscoinSuperblocks.address);
 
   await deployer.deploy(SyscoinBattleManager,
     networkId,
@@ -68,10 +63,9 @@ async function deployDevelopment(deployer, networkId, superblockOptions) {
     superblockOptions.CONFIRMATIONS
   );
 
-  await deployer.deploy(SyscoinMessageLibraryForTests);
-
   const superblocks = SyscoinSuperblocks.at(SyscoinSuperblocks.address);
   (await superblocks).setClaimManager(SyscoinClaimManager.address);
+  (await superblocks).setERC20Manager(SyscoinERC20Manager.address);
 
   const syscoinBattleManager = SyscoinBattleManager.at(SyscoinBattleManager.address);
   (await syscoinBattleManager).setSyscoinClaimManager(SyscoinClaimManager.address);
@@ -82,13 +76,15 @@ async function deployIntegration(deployer,  networkId, superblockOptions) {
   await deployer.deploy(SyscoinMessageLibrary, {gas: 2000000});
   await deployer.deploy(SafeMath, {gas: 100000});
 
-  await deployer.link(Set, SyscoinToken);
   await deployer.link(SyscoinMessageLibrary, [SyscoinSuperblocks, SyscoinBattleManager, SyscoinClaimManager]);
 
   await deployer.deploy(SyscoinSuperblocks, {gas: 5000000});
 
-  await deployer.deploy(SyscoinToken,
-    SyscoinSuperblocks.address,superblockOptions.ASSETGUID,"SyscoinToken", 8, "SYSX",
+  await deployer.link(Set, SyscoinERC20Manager);
+  await deployer.deploy(SyscoinERC20Manager, SyscoinSuperblocks.address);
+
+  await deployer.deploy(SyscoinERC20Asset,
+    "SyscoinToken", "SYSX", 8, SyscoinERC20Manager.address,
     {gas: 2000000 }
   );
   await deployer.deploy(SyscoinBattleManager,
@@ -110,6 +106,7 @@ async function deployIntegration(deployer,  networkId, superblockOptions) {
 
   const superblocks = SyscoinSuperblocks.at(SyscoinSuperblocks.address);
   (await superblocks).setClaimManager(SyscoinClaimManager.address, {gas: 60000});
+  (await superblocks).setERC20Manager(SyscoinERC20Manager.address);
 
   const syscoinBattleManager = SyscoinBattleManager.at(SyscoinBattleManager.address);
   (await syscoinBattleManager).setSyscoinClaimManager(SyscoinClaimManager.address);
@@ -117,8 +114,6 @@ async function deployIntegration(deployer,  networkId, superblockOptions) {
 
 module.exports = function(deployer, network) {
   deployer.then(async () => {
-
-
     if (network === 'development') {
       await deployDevelopment(deployer, SYSCOIN_MAINNET, SUPERBLOCK_OPTIONS_LOCAL);
     } else if (network === 'ropsten') {

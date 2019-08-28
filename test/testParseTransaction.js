@@ -9,7 +9,7 @@ contract('testParseTransaction', (accounts) => {
     'L4N2R2S2WRAnrdwnezs4kHaxsQkRNMrVwgGpHJNgJxGYT788LnGB',
   ].map(utils.syscoinKeyPairFromWIF);
   before(async () => {
-    syscoinMessageLibraryForTests = await SyscoinMessageLibraryForTests.deployed();
+    syscoinMessageLibraryForTests = await SyscoinMessageLibraryForTests.new();
   });
   it('Parse simple transaction with only OP_RETURN and wrong version', async () => {
     const tx = utils.buildSyscoinTransaction({
@@ -21,7 +21,7 @@ contract('testParseTransaction', (accounts) => {
     });
     tx.version = 0x01;
     const txData = `0x${tx.toHex()}`;
-    const [ ret, amount, inputEthAddress, assetGUID ] = Object.values(await syscoinMessageLibraryForTests.parseTransaction(txData));
+    const [ ret, amount, inputEthAddress, precision, assetGUID ] = Object.values(await syscoinMessageLibraryForTests.parseTransaction(txData));
     assert.equal(ret, 10170, 'Error Parsing, wrong version');
     assert.equal(amount.toNumber(), 0, 'Amount burned');
     
@@ -51,7 +51,7 @@ contract('testParseTransaction', (accounts) => {
     });
     tx.version = 0x7407;
     const txData = `0x${tx.toHex()}`;
-    const [ ret, amount, inputEthAddress, assetGUID ] =  Object.values(await syscoinMessageLibraryForTests.parseTransaction(txData));
+    const [ ret, amount, inputEthAddress, precision, assetGUID ] =  Object.values(await syscoinMessageLibraryForTests.parseTransaction(txData));
     assert.equal(ret, 0, 'Parsing succeeded');
     assert.equal(amount.toNumber(), 0, 'Amount burned');
 

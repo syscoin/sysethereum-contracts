@@ -30,20 +30,12 @@ contract SyscoinSuperblocks is SyscoinSuperblocksI, SyscoinErrorCodes {
     // Index to superblock id
     mapping (uint32 => bytes32) private indexSuperblock;
 
-    struct ProcessTransactionParams {
-        uint value;
-        address destinationAddress;
-        uint32 assetGUID;
-        address superblockSubmitterAddress;
-        SyscoinTransactionProcessor untrustedTargetContract;
-    }
-
-    mapping (uint => ProcessTransactionParams) private txParams;
-
     uint32 indexNextSuperblock;
 
     bytes32 public bestSuperblock;
     uint public bestSuperblockAccumulatedWork;
+
+    SyscoinTransactionProcessor public syscoinERC20Manager;
 
     event NewSuperblock(bytes32 superblockHash, address who);
     event ApprovedSuperblock(bytes32 superblockHash, address who);
@@ -66,6 +58,14 @@ contract SyscoinSuperblocks is SyscoinSuperblocksI, SyscoinErrorCodes {
 
     // @dev – the constructor
     constructor() public {}
+
+    // @dev - sets ClaimManager instance associated with managing superblocks.
+    // Once trustedClaimManager has been set, it cannot be changed.
+    // @param _claimManager - address of the ClaimManager contract to be associated with
+    function setERC20Manager(address _syscoinERC20Manager) public {
+        require(address(syscoinERC20Manager) == address(0) && _syscoinERC20Manager != address(0));
+        syscoinERC20Manager = SyscoinTransactionProcessor(_syscoinERC20Manager);
+    }
 
     // @dev - sets ClaimManager instance associated with managing superblocks.
     // Once trustedClaimManager has been set, it cannot be changed.
@@ -294,7 +294,7 @@ contract SyscoinSuperblocks is SyscoinSuperblocksI, SyscoinErrorCodes {
         return (ERR_SUPERBLOCK_OK, _superblockHash);
     }
 
-    // @dev - relays transaction `_txBytes` to `_untrustedTargetContract`'s processTransaction() method.
+    // @dev - relays transaction `_txBytes` to ERC20Manager's processTransaction() method.
     // Also logs the value of processTransaction.
     // Note: callers cannot be 100% certain when an ERR_RELAY_VERIFY occurs because
     // it may also have been returned by processTransaction(). Callers should be
@@ -308,7 +308,6 @@ contract SyscoinSuperblocks is SyscoinSuperblocksI, SyscoinErrorCodes {
     // @param _syscoinBlockIndex - block's index withing superblock
     // @param _syscoinBlockSiblings - block's merkle siblings
     // @param _superblockHash - superblock containing block header
-    // @param _untrustedTargetContract - the contract that is going to process the transaction
     function relayTx(
         bytes memory _txBytes,
         uint _txIndex,
@@ -316,10 +315,8 @@ contract SyscoinSuperblocks is SyscoinSuperblocksI, SyscoinErrorCodes {
         bytes memory _syscoinBlockHeader,
         uint _syscoinBlockIndex,
         uint[] memory _syscoinBlockSiblings,
-        bytes32 _superblockHash,
-        SyscoinTransactionProcessor _untrustedTargetContract
+        bytes32 _superblockHash
     ) public returns (uint) {
-
         // Check if Syscoin block belongs to given superblock
         if (bytes32(SyscoinMessageLibrary.computeMerkle(SyscoinMessageLibrary.dblShaFlip(_syscoinBlockHeader), _syscoinBlockIndex, _syscoinBlockSiblings))
             != getSuperblockMerkleRoot(_superblockHash)) {
@@ -329,43 +326,24 @@ contract SyscoinSuperblocks is SyscoinSuperblocksI, SyscoinErrorCodes {
         }
         uint txHash = verifyTx(_txBytes, _txIndex, _txSiblings, _syscoinBlockHeader, _superblockHash);
         if (txHash != 0) {
-            uint ret = parseTxHelper(_txBytes, txHash, _untrustedTargetContract);
+            uint value;
+            address destinationAddress;
+            uint ret;
+            uint32 assetGUID;
+            address erc20ContractAddress;
+            uint8 precision;
+            (ret, value, destinationAddress, assetGUID, precision, erc20ContractAddress) = SyscoinMessageLibrary.parseTransaction(_txBytes);
             if(ret != 0){
                 emit RelayTransaction(bytes32(0), ret);
                 return ret;
             }
-            ProcessTransactionParams storage params = txParams[txHash];
-            params.superblockSubmitterAddress = superblocks[_superblockHash].submitter;
-            txParams[txHash] = params;
-            return verifyTxHelper(txHash);
+            syscoinERC20Manager.processTransaction(txHash, value, destinationAddress, superblocks[_superblockHash].submitter, erc20ContractAddress, assetGUID, precision);
+            return value;
         }
         emit RelayTransaction(bytes32(0), ERR_RELAY_VERIFY);
         return(ERR_RELAY_VERIFY);        
     }
-    function parseTxHelper(bytes memory _txBytes, uint txHash, SyscoinTransactionProcessor _untrustedTargetContract) private returns (uint) {
-        uint value;
-        address destinationAddress;
-        uint32 _assetGUID;
-        uint ret;
-        (ret, value, destinationAddress, _assetGUID) = SyscoinMessageLibrary.parseTransaction(_txBytes);
-        if(ret != 0){
-            return ret;
-        }
 
-        ProcessTransactionParams memory params;
-        params.value = value;
-        params.destinationAddress = destinationAddress;
-        params.assetGUID = _assetGUID;
-        params.untrustedTargetContract = _untrustedTargetContract;
-        txParams[txHash] = params;        
-        return 0;
-    }
-    function verifyTxHelper(uint txHash) private returns (uint) {
-        ProcessTransactionParams storage params = txParams[txHash];        
-        uint returnCode = params.untrustedTargetContract.processTransaction(txHash, params.value, params.destinationAddress, params.assetGUID, params.superblockSubmitterAddress);
-        emit RelayTransaction(bytes32(txHash), returnCode);
-        return (returnCode);
-    }
     // @dev - Checks whether the transaction given by `_txBytes` is in the block identified by `_txBlockHeaderBytes`.
     // First it guards against a Merkle tree collision attack by raising an error if the transaction is exactly 64 bytes long,
     // then it calls helperVerifyHash to do the actual check.
@@ -433,8 +411,6 @@ contract SyscoinSuperblocks is SyscoinSuperblocksI, SyscoinErrorCodes {
             emit VerifyTransaction(bytes32(_txHash), ERR_MERKLE_ROOT);
             return (ERR_MERKLE_ROOT);
         }
-
-        emit VerifyTransaction(bytes32(_txHash), 1);
         return (1);
     }
 

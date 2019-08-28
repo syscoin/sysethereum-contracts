@@ -27,6 +27,16 @@ interface SyscoinSuperblocksI {
         uint32 _height
     );
 
+    function relayTx(
+        bytes calldata _txBytes,
+        uint _txIndex,
+        uint[] calldata _txSiblings,
+        bytes calldata _syscoinBlockHeader,
+        uint _syscoinBlockIndex,
+        uint[] calldata _syscoinBlockSiblings,
+        bytes32 _superblockHash
+    ) external returns (uint);
+
     function confirm(bytes32 _superblockHash, address _validator) external returns (uint);
     function challenge(bytes32 _superblockHash, address _challenger) external returns (uint);
     function semiApprove(bytes32 _superblockHash, address _validator) external returns (uint, bytes32);
