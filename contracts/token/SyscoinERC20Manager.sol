@@ -4,8 +4,9 @@ import "./Set.sol";
 import "../SyscoinTransactionProcessor.sol";
 import "openzeppelin-solidity/contracts/math/SafeMath.sol";
 import "../interfaces/SyscoinERC20AssetI.sol";
+import "../upgradeability/Initializable.sol";
 
-contract SyscoinERC20Manager {
+contract SyscoinERC20Manager is Initializable {
 
     using SafeMath for uint256;
     using SafeMath for uint8;
@@ -30,7 +31,8 @@ contract SyscoinERC20Manager {
     event TokenUnfreezeFee(address receipient, uint value);
     event TokenFreeze(address freezer, uint value);
 
-    constructor (address _trustedRelayerContract) public {
+
+    function init(address _trustedRelayerContract) public initializer {
         trustedRelayerContract = _trustedRelayerContract;
     }
 
