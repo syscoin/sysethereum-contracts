@@ -162,11 +162,11 @@ contract('SyscoinClaimManager', (accounts) => {
 
     it('Query and verify hashes', async () => {
 
-      result = await battleManager.queryMerkleRootHashes(proposedSuperblockHash, battleSessionId, { from: challenger });
+      result = await battleManager.queryMerkleRootHashes(battleSessionId, { from: challenger });
       assert.ok(utils.findEvent(result.logs, 'QueryMerkleRootHashes'), 'Query merkle root hashes');
 
 
-      result = await battleManager.respondMerkleRootHashes(proposedSuperblockHash, battleSessionId, hashes.slice(0, 2), { from: submitter });
+      result = await battleManager.respondMerkleRootHashes(battleSessionId, hashes.slice(0, 2), { from: submitter });
       assert.ok(utils.findEvent(result.logs, 'RespondMerkleRootHashes'), 'Respond merkle root hashes');
     });
 
@@ -242,13 +242,13 @@ contract('SyscoinClaimManager', (accounts) => {
     it('Query hashes', async () => {
       const session = await claimManager.getSession(proposedSuperblockHash, challenger);
       assert.equal(session, battleSessionId, 'Sessions should match');
-      result = await battleManager.queryMerkleRootHashes(proposedSuperblockHash, battleSessionId, { from: challenger });
+      result = await battleManager.queryMerkleRootHashes(battleSessionId, { from: challenger });
       assert.ok(utils.findEvent(result.logs, 'QueryMerkleRootHashes'), 'Query merkle root hashes');
     });
     
     it('Verify hashes', async () => {
 
-      const result = await battleManager.respondMerkleRootHashes(proposedSuperblockHash, battleSessionId, hashes, { from: submitter });
+      const result = await battleManager.respondMerkleRootHashes(battleSessionId, hashes, { from: submitter });
       assert.ok(utils.findEvent(result.logs, 'RespondMerkleRootHashes'), 'Respond merkle root hashes');
     });
     it('Query block header', async () => {
@@ -336,7 +336,7 @@ contract('SyscoinClaimManager', (accounts) => {
     
     it('Timeout reply hashes', async () => {
       let result;
-      result = await battleManager.queryMerkleRootHashes(proposedSuperblockHash, battleSessionId, { from: challenger });
+      result = await battleManager.queryMerkleRootHashes(battleSessionId, { from: challenger });
       assert.ok(utils.findEvent(result.logs, 'QueryMerkleRootHashes'), 'Query merkle root hashes');
       result = await battleManager.timeout(battleSessionId, { from: challenger });
       assert.ok(utils.findEvent(result.logs, 'ErrorBattle'), 'Timeout too early');
@@ -348,11 +348,11 @@ contract('SyscoinClaimManager', (accounts) => {
     it('Timeout query block headers', async () => {
       let result;
 
-      result = await battleManager.queryMerkleRootHashes(proposedSuperblockHash, battleSessionId, { from: challenger });
+      result = await battleManager.queryMerkleRootHashes(battleSessionId, { from: challenger });
       assert.ok(utils.findEvent(result.logs, 'QueryMerkleRootHashes'), 'Query merkle root hashes');
 
 
-      result = await battleManager.respondMerkleRootHashes(proposedSuperblockHash, battleSessionId, hashes.slice(0, 2), { from: submitter });
+      result = await battleManager.respondMerkleRootHashes(battleSessionId, hashes.slice(0, 2), { from: submitter });
       assert.ok(utils.findEvent(result.logs, 'RespondMerkleRootHashes'), 'Respond merkle root hashes');
 
       result = await battleManager.timeout(battleSessionId, { from: submitter });
@@ -367,11 +367,11 @@ contract('SyscoinClaimManager', (accounts) => {
     it('Timeout reply block headers', async () => {
       let result;
 
-      result = await battleManager.queryMerkleRootHashes(proposedSuperblockHash, battleSessionId, { from: challenger });
+      result = await battleManager.queryMerkleRootHashes(battleSessionId, { from: challenger });
       assert.ok(utils.findEvent(result.logs, 'QueryMerkleRootHashes'), 'Query merkle root hashes');
 
 
-      result = await battleManager.respondMerkleRootHashes(proposedSuperblockHash, battleSessionId, hashes.slice(0, 2), { from: submitter });
+      result = await battleManager.respondMerkleRootHashes(battleSessionId, hashes.slice(0, 2), { from: submitter });
       assert.ok(utils.findEvent(result.logs, 'RespondMerkleRootHashes'), 'Respond merkle root hashes');
 
 
@@ -391,11 +391,11 @@ contract('SyscoinClaimManager', (accounts) => {
       let result;
       let data;
 
-      result = await battleManager.queryMerkleRootHashes(proposedSuperblockHash, battleSessionId, { from: challenger });
+      result = await battleManager.queryMerkleRootHashes(battleSessionId, { from: challenger });
       assert.ok(utils.findEvent(result.logs, 'QueryMerkleRootHashes'), 'Query merkle root hashes');
 
 
-      result = await battleManager.respondMerkleRootHashes(proposedSuperblockHash, battleSessionId, hashes.slice(0, 2), { from: submitter });
+      result = await battleManager.respondMerkleRootHashes(battleSessionId, hashes.slice(0, 2), { from: submitter });
       assert.ok(utils.findEvent(result.logs, 'RespondMerkleRootHashes'), 'Respond merkle root hashes');
 
 
@@ -420,11 +420,11 @@ contract('SyscoinClaimManager', (accounts) => {
       let data;
 
 
-      result = await battleManager.queryMerkleRootHashes(proposedSuperblockHash, battleSessionId, { from: challenger });
+      result = await battleManager.queryMerkleRootHashes(battleSessionId, { from: challenger });
       assert.ok(utils.findEvent(result.logs, 'QueryMerkleRootHashes'), 'Query merkle root hashes');
 
 
-      result = await battleManager.respondMerkleRootHashes(proposedSuperblockHash, battleSessionId, hashes.slice(0, 2), { from: submitter });
+      result = await battleManager.respondMerkleRootHashes(battleSessionId, hashes.slice(0, 2), { from: submitter });
       assert.ok(utils.findEvent(result.logs, 'RespondMerkleRootHashes'), 'Respond merkle root hashes');
 
 

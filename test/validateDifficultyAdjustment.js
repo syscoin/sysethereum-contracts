@@ -73,11 +73,11 @@ contract('validateDifficultyAdjustment', (accounts) => {
       battleSessionId = verificationGameStartedEvent.args.sessionId;
 
 
-      result = await battleManager.queryMerkleRootHashes(proposesSuperblockHash, battleSessionId, { from: challenger });
+      result = await battleManager.queryMerkleRootHashes(battleSessionId, { from: challenger });
       assert.ok(utils.findEvent(result.logs, 'QueryMerkleRootHashes'), 'Query merkle root hashes');
 
 
-      result = await battleManager.respondMerkleRootHashes(proposesSuperblockHash, battleSessionId, hashes, { from: submitter });
+      result = await battleManager.respondMerkleRootHashes(battleSessionId, hashes, { from: submitter });
       assert.ok(utils.findEvent(result.logs, 'RespondMerkleRootHashes'), 'Respond merkle root hashes');
 
 

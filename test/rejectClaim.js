@@ -294,11 +294,11 @@ contract('rejectClaim', (accounts) => {
 
         it('Query and verify hashes', async () => {
 
-            result = await battleManager.queryMerkleRootHashes(superblockR0Id, session1, { from: challenger });
+            result = await battleManager.queryMerkleRootHashes(session1, { from: challenger });
             assert.ok(utils.findEvent(result.logs, 'QueryMerkleRootHashes'), 'Query merkle root hashes');
 
 
-            result = await battleManager.respondMerkleRootHashes(superblockR0Id, session1, superblockR0Hashes, { from: submitter });
+            result = await battleManager.respondMerkleRootHashes(session1, superblockR0Hashes, { from: submitter });
             assert.ok(utils.findEvent(result.logs, 'RespondMerkleRootHashes'), 'Respond merkle root hashes');
         });
 
