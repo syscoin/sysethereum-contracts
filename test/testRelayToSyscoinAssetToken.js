@@ -1,11 +1,12 @@
-
 var LegacyERC20 = artifacts.require("./token/LegacyERC20ForTests.sol");
 var SyscoinERC20Manager = artifacts.require("./token/SyscoinERC20Manager.sol");
 const SyscoinMessageLibraryForTests = artifacts.require('SyscoinMessageLibraryForTests');
+var AdminUpgradeabilityProxy = artifacts.require("./upgradeability/AdminUpgradeabilityProxy.sol");
 const truffleAssert = require('truffle-assertions');
 
 contract('testRelayToSyscoinAssetToken', function(accounts) {
   const owner = accounts[1];
+  const proxyAdmin = accounts[9];
   let value = web3.utils.toWei("20");
   const burnVal = web3.utils.toWei("10");
   const syscoinAddress = "0x004322ec9eb713f37cf8d701d819c165549d53d14e";
@@ -13,24 +14,32 @@ contract('testRelayToSyscoinAssetToken', function(accounts) {
   let assetGUIDParsed;
   let erc20Address;
   const trustedRelayerContract = accounts[0];
-  let erc20Manager, erc20Legacy;
+  let erc20Manager, erc20Legacy, erc20ManagerLogic;
   const superblockSubmitterAddress = accounts[4];
   let ret, amount, inputEthAddress, precision;
   const txHash = '0xfb9f37192e041f94d9b1db12ea50778f2019b167059f6063561477982162d8f2';
   const txData = '0x0774000001d46638fce247272c08eec7be46ea2f2c5a92d27ac6a6d59e7f83051e0cc9664201000000160014e37ddd289ccd1fb130a91210644810b2415aec40feffffff020000000000000000526a043acaeec008000000003b9aca0014b0ea8c9ee8aa87efd28a12de8c034f947c144053010814fe234d3994f95bf7cebd9837c4444f5af63f0a97010014e37ddd289ccd1fb130a91210644810b2415aec40f8d7754817000000160014e37ddd289ccd1fb130a91210644810b2415aec4000000000';
   const erc20LegacyRinkeby = '0xfE234d3994f95Bf7CEBD9837C4444F5AF63F0a97';
   before(async () => {
+    erc20ManagerLogic = await SyscoinERC20Manager.new(trustedRelayerContract);
+    let data = erc20ManagerLogic.contract.methods.init(trustedRelayerContract).encodeABI();
+    erc20ManagerProxy = await AdminUpgradeabilityProxy.new(erc20ManagerLogic.address, proxyAdmin, data);
+    erc20Manager = new web3.eth.Contract(
+      erc20ManagerLogic.abi,
+      erc20ManagerProxy.address,
+      {from: owner}
+    );
+
     syscoinMessageLibraryForTests = await SyscoinMessageLibraryForTests.new();
-    erc20Manager = await SyscoinERC20Manager.new(trustedRelayerContract);
     
     erc20Legacy = await LegacyERC20.new("LegacyToken", "LEGX", 18, {from: owner});
     await erc20Legacy.assign(owner, value);
-    await erc20Legacy.approve(erc20Manager.address, burnVal, {from: owner});
-    await erc20Manager.freezeBurnERC20(burnVal, assetGUID, erc20Legacy.address, 18, syscoinAddress, {from: owner});
+    await erc20Legacy.approve(erc20Manager.options.address, burnVal, {from: owner});
+    await erc20Manager.methods.freezeBurnERC20(burnVal, assetGUID, erc20Legacy.address, 18, syscoinAddress).send({from: owner, gas: 300000});
     
-    assert.equal(await erc20Legacy.balanceOf(erc20Manager.address), value - burnVal, "erc20Manager balance is not correct");
+    assert.equal(await erc20Legacy.balanceOf(erc20Manager.options.address), value - burnVal, "erc20Manager balance is not correct");
     assert.equal(await erc20Legacy.balanceOf(owner), burnVal, `erc20Legacy's user balance after burn is not the expected one`);
-    assert.equal(await erc20Manager.assetBalances(assetGUID), burnVal, `assetBalances for ${assetGUID} GUID is not correct`);
+    assert.equal(await erc20Manager.methods.assetBalances(assetGUID).call(), burnVal, `assetBalances for ${assetGUID} GUID is not correct`);
     [ ret, amount, inputEthAddress, assetGUIDParsed, precision, erc20Address ]  = Object.values(await syscoinMessageLibraryForTests.parseTransaction(txData));
     
   });
@@ -42,7 +51,7 @@ contract('testRelayToSyscoinAssetToken', function(accounts) {
     assert.equal(amount,1000000000);
     assert.equal(precision,8);
     assert.equal(erc20Address,erc20LegacyRinkeby);
-    await erc20Manager.processTransaction(txHash, amount.toString(), owner,superblockSubmitterAddress,erc20Legacy.address, assetGUID, precision.toString());
+    await erc20Manager.methods.processTransaction(txHash, amount.toString(), owner,superblockSubmitterAddress,erc20Legacy.address, assetGUID, precision.toString()).send({gas: 300000, from: trustedRelayerContract});
     // now check the user and superblock submitter balances reflect the mint amounts
     const superblockSubmitterFee = burnVal/10000; 
     const userValue = value - superblockSubmitterFee;
@@ -50,7 +59,7 @@ contract('testRelayToSyscoinAssetToken', function(accounts) {
     assert.equal(await erc20Legacy.balanceOf(superblockSubmitterAddress), superblockSubmitterFee, `erc20Legacy's superblock submitter balance after mint is not the expected one`);
   });
   it("processTransaction fail - tx already processed", async () => {
-    await erc20Legacy.approve(erc20Manager.address, burnVal, {from: owner});
-    await truffleAssert.reverts(erc20Manager.processTransaction(txHash, amount.toString(), inputEthAddress,superblockSubmitterAddress,erc20Legacy.address, assetGUID, precision.toString()));
+    await erc20Legacy.approve(erc20Manager.options.address, burnVal, {from: owner});
+    await truffleAssert.reverts(erc20Manager.methods.processTransaction(txHash, amount.toString(), inputEthAddress,superblockSubmitterAddress,erc20Legacy.address, assetGUID, precision.toString()).send({gas: 300000}));
   });
 });

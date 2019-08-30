@@ -70,11 +70,11 @@ contract SyscoinBattleManager is SyscoinErrorCodes {
     SyscoinSuperblocksI trustedSuperblocks;
 
     event NewBattle(bytes32 superblockHash, bytes32 sessionId, address submitter, address challenger);
-    event ChallengerConvicted(bytes32 superblockHash, bytes32 sessionId, address challenger);
-    event SubmitterConvicted(bytes32 superblockHash, bytes32 sessionId, address submitter);
+    event ChallengerConvicted(bytes32 sessionId, address challenger);
+    event SubmitterConvicted(bytes32 sessionId, address submitter);
 
-    event QueryMerkleRootHashes(bytes32 superblockHash, bytes32 sessionId, address submitter);
-    event RespondMerkleRootHashes(bytes32 superblockHash, bytes32 sessionId, address challenger);
+    event QueryMerkleRootHashes(bytes32 sessionId, address submitter);
+    event RespondMerkleRootHashes(bytes32 sessionId, address challenger);
     event QueryLastBlockHeader(bytes32 sessionId, address submitter);
     event RespondLastBlockHeader(bytes32 sessionId, address challenger);
     event ErrorBattle(bytes32 sessionId, uint err);
@@ -149,7 +149,7 @@ contract SyscoinBattleManager is SyscoinErrorCodes {
     }
 
     // @dev - Challenger makes a query for superblock hashes
-    function queryMerkleRootHashes(bytes32 superblockHash, bytes32 sessionId) onlyChallenger(sessionId) public {
+    function queryMerkleRootHashes(bytes32 sessionId) onlyChallenger(sessionId) public {
         BattleSession storage session = sessions[sessionId];
         uint err = doQueryMerkleRootHashes(session);
         if (err != ERR_SUPERBLOCK_OK) {
@@ -158,7 +158,7 @@ contract SyscoinBattleManager is SyscoinErrorCodes {
             session.actionsCounter += 1;
             session.lastActionTimestamp = block.timestamp;
             session.lastActionChallenger = session.actionsCounter;
-            emit QueryMerkleRootHashes(superblockHash, sessionId, session.submitter);
+            emit QueryMerkleRootHashes(sessionId, session.submitter);
         }
     }
 
@@ -185,7 +185,7 @@ contract SyscoinBattleManager is SyscoinErrorCodes {
     }
 
     // @dev - For the submitter to respond to challenger queries
-    function respondMerkleRootHashes(bytes32 superblockHash, bytes32 sessionId, bytes32[] memory blockHashes) onlyClaimant(sessionId) public {
+    function respondMerkleRootHashes(bytes32 sessionId, bytes32[] memory blockHashes) onlyClaimant(sessionId) public {
         BattleSession storage session = sessions[sessionId];
         uint err = doVerifyMerkleRootHashes(session, blockHashes);
         if (err != 0) {
@@ -194,7 +194,7 @@ contract SyscoinBattleManager is SyscoinErrorCodes {
             session.actionsCounter += 1;
             session.lastActionTimestamp = block.timestamp;
             session.lastActionClaimant = session.actionsCounter;
-            emit RespondMerkleRootHashes(superblockHash, sessionId, session.challenger);
+            emit RespondMerkleRootHashes(sessionId, session.challenger);
         }
     }
        
@@ -415,9 +415,9 @@ contract SyscoinBattleManager is SyscoinErrorCodes {
         BattleSession storage session = sessions[sessionId];
         uint status = doVerifySuperblock(session, sessionId);
         if (status == 1) {
-            convictChallenger(sessionId, session.challenger, session.superblockHash, false);
+            convictChallenger(sessionId, false);
         } else if (status == 2) {
-            convictSubmitter(sessionId, session.submitter, session.superblockHash);
+            convictSubmitter(sessionId);
         }
     }
 
@@ -427,11 +427,11 @@ contract SyscoinBattleManager is SyscoinErrorCodes {
         if (session.challengeState == ChallengeState.SuperblockFailed ||
             (session.lastActionChallenger > session.lastActionClaimant &&
             block.timestamp > session.lastActionTimestamp + superblockTimeout)) {
-            convictSubmitter(sessionId, session.submitter, session.superblockHash);
+            convictSubmitter(sessionId);
             return ERR_SUPERBLOCK_OK;
         } else if (session.lastActionClaimant > session.lastActionChallenger &&
             block.timestamp > session.lastActionTimestamp + superblockTimeout) {
-            convictChallenger(sessionId, session.challenger, session.superblockHash, true);
+            convictChallenger(sessionId, true);
             return ERR_SUPERBLOCK_OK;
         }
         emit ErrorBattle(sessionId, ERR_SUPERBLOCK_NO_TIMEOUT);
@@ -439,19 +439,19 @@ contract SyscoinBattleManager is SyscoinErrorCodes {
     }
 
     // @dev - To be called when a challenger is convicted
-    function convictChallenger(bytes32 sessionId, address challenger, bytes32 superblockHash, bool timedOut) internal {
+    function convictChallenger(bytes32 sessionId, bool timedOut) internal {
         BattleSession storage session = sessions[sessionId];
-        sessionDecided(sessionId, superblockHash, session.submitter, session.challenger, timedOut);
+        sessionDecided(sessionId, session.superblockHash, session.submitter, session.challenger, timedOut);
         disable(sessionId);
-        emit ChallengerConvicted(superblockHash, sessionId, challenger);
+        emit ChallengerConvicted(sessionId, session.challenger);
     }
 
     // @dev - To be called when a submitter is convicted
-    function convictSubmitter(bytes32 sessionId, address submitter, bytes32 superblockHash) internal {
+    function convictSubmitter(bytes32 sessionId) internal {
         BattleSession storage session = sessions[sessionId];
-        sessionDecided(sessionId, superblockHash, session.challenger, session.submitter, false);
+        sessionDecided(sessionId, session.superblockHash, session.challenger, session.submitter, false);
         disable(sessionId);
-        emit SubmitterConvicted(superblockHash, sessionId, submitter);
+        emit SubmitterConvicted(sessionId, session.submitter);
     }
 
     // @dev - Disable session

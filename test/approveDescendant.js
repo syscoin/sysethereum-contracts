@@ -183,11 +183,11 @@ contract('approveDescendant', (accounts) => {
         });
         it('Query and verify hashes', async () => {
 
-            result = await battleManager.queryMerkleRootHashes(superblock1Id, session1, { from: challenger });
+            result = await battleManager.queryMerkleRootHashes(session1, { from: challenger });
             assert.ok(utils.findEvent(result.logs, 'QueryMerkleRootHashes'), 'Query merkle root hashes');
             
 
-            result = await battleManager.respondMerkleRootHashes(superblock1Id, session1, superblock1Hashes, { from: submitter });
+            result = await battleManager.respondMerkleRootHashes(session1, superblock1Hashes, { from: submitter });
             assert.ok(utils.findEvent(result.logs, 'RespondMerkleRootHashes'), 'Respond merkle root hashes');
         });
 
@@ -222,12 +222,12 @@ contract('approveDescendant', (accounts) => {
         // });
         // it('Query and verify 60 hashes', async () => {
 
-        //     result = await battleManager.queryMerkleRootHashes(superblock4Id, session1, { from: challenger });
+        //     result = await battleManager.queryMerkleRootHashes(session1, { from: challenger });
         //     utils.printGas(result, "queryMerkleRootHashes 4");
         //     assert.ok(utils.findEvent(result.logs, 'QueryMerkleRootHashes'), 'Query merkle root hashes');
             
 
-        //     result = await battleManager.respondMerkleRootHashes(superblock4Id, session1, superblock4Hashes, { from: submitter });
+        //     result = await battleManager.respondMerkleRootHashes(session1, superblock4Hashes, { from: submitter });
         //     utils.printGas(result, "respondMerkleRootHashes 4");
         //     assert.ok(utils.findEvent(result.logs, 'RespondMerkleRootHashes'), 'Respond merkle root hashes');
         // });
@@ -373,11 +373,11 @@ contract('approveDescendant', (accounts) => {
 
         it('Query and verify hashes', async () => {
 
-            result = await battleManager.queryMerkleRootHashes(superblock1Id, session1, { from: challenger });
+            result = await battleManager.queryMerkleRootHashes(session1, { from: challenger });
             assert.ok(utils.findEvent(result.logs, 'QueryMerkleRootHashes'), 'Query merkle root hashes');
 
 
-            result = await battleManager.respondMerkleRootHashes(superblock1Id, session1, superblock1Hashes, { from: submitter });
+            result = await battleManager.respondMerkleRootHashes(session1, superblock1Hashes, { from: submitter });
             assert.ok(utils.findEvent(result.logs, 'RespondMerkleRootHashes'), 'Respond merkle root hashes');
         });
 
@@ -432,11 +432,11 @@ contract('approveDescendant', (accounts) => {
 
         it('Query and verify hashes', async () => {
 
-            result = await battleManager.queryMerkleRootHashes(superblock2Id, session1, { from: challenger });
+            result = await battleManager.queryMerkleRootHashes(session1, { from: challenger });
             assert.ok(utils.findEvent(result.logs, 'QueryMerkleRootHashes'), 'Query merkle root hashes');
 
  
-            result = await battleManager.respondMerkleRootHashes(superblock2Id, session1, superblock2Hashes, { from: submitter });
+            result = await battleManager.respondMerkleRootHashes(session1, superblock2Hashes, { from: submitter });
             assert.ok(utils.findEvent(result.logs, 'RespondMerkleRootHashes'), 'Respond merkle root hashes');
         });
 

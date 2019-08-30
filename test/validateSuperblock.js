@@ -77,11 +77,11 @@ contract('validateSuperblocks', (accounts) => {
       
       battleSessionId = verificationGameStartedEvent.args.sessionId;
  
-      result = await battleManager.queryMerkleRootHashes(proposesSuperblockHash, battleSessionId, { from: challenger });
+      result = await battleManager.queryMerkleRootHashes(battleSessionId, { from: challenger });
       assert.ok(utils.findEvent(result.logs, 'QueryMerkleRootHashes'), 'Query merkle root hashes');
 
 
-      result = await battleManager.respondMerkleRootHashes(proposesSuperblockHash, battleSessionId, hashes, { from: submitter });
+      result = await battleManager.respondMerkleRootHashes(battleSessionId, hashes, { from: submitter });
       assert.ok(utils.findEvent(result.logs, 'RespondMerkleRootHashes'), 'Respond merkle root hashes');
 
 
@@ -130,11 +130,11 @@ contract('validateSuperblocks', (accounts) => {
       
       battleSessionId = verificationGameStartedEvent.args.sessionId;
 
-      result = await battleManager.queryMerkleRootHashes(proposesSuperblockHash, battleSessionId, { from: challenger });
+      result = await battleManager.queryMerkleRootHashes(battleSessionId, { from: challenger });
       assert.ok(utils.findEvent(result.logs, 'QueryMerkleRootHashes'), 'Query merkle root hashes');
       
 
-      result = await battleManager.respondMerkleRootHashes(proposesSuperblockHash, battleSessionId, hashes, { from: submitter });
+      result = await battleManager.respondMerkleRootHashes(battleSessionId, hashes, { from: submitter });
       assert.ok(utils.findEvent(result.logs, 'RespondMerkleRootHashes'), 'Respond merkle root hashes');
 
       result = await battleManager.queryLastBlockHeader(battleSessionId, 0, { from: challenger });
@@ -184,11 +184,11 @@ contract('validateSuperblocks', (accounts) => {
       
       battleSessionId = verificationGameStartedEvent.args.sessionId;
 
-      result = await battleManager.queryMerkleRootHashes(proposesSuperblockHash, battleSessionId, { from: challenger });
+      result = await battleManager.queryMerkleRootHashes(battleSessionId, { from: challenger });
       assert.ok(utils.findEvent(result.logs, 'QueryMerkleRootHashes'), 'Query merkle root hashes');
 
    
-      result = await battleManager.respondMerkleRootHashes(proposesSuperblockHash, battleSessionId, hashes, { from: submitter });
+      result = await battleManager.respondMerkleRootHashes(battleSessionId, hashes, { from: submitter });
       const errorBattleEvent = utils.findEvent(result.logs, 'ErrorBattle');
       assert.ok(errorBattleEvent, 'Respond merkle root hashes');
       assert.equal(errorBattleEvent.args.err, '50150', 'Bad last hash');
