@@ -6,7 +6,8 @@ import "openzeppelin-solidity/contracts/math/SafeMath.sol";
 import "../interfaces/SyscoinERC20AssetI.sol";
 import "../upgradeability/Initializable.sol";
 
-contract SyscoinERC20Manager is Initializable {
+// DONOT USE IN PRODUCTION
+contract SyscoinERC20ManagerForTests is Initializable {
 
     using SafeMath for uint256;
     using SafeMath for uint8;
@@ -118,8 +119,11 @@ contract SyscoinERC20Manager is Initializable {
         minimumValue(erc20ContractAddress, value)
         returns (bool)
     {
-        require(syscoinAddress.length > 0, "syscoinAddress cannot be zero");
-        require(assetGUID > 0, "Asset GUID must not be 0");
+        // commented out on purpose
+        // require(syscoinAddress.length > 0, "syscoinAddress cannot be zero");
+
+        // commented out on purpose
+        // require(assetGUID > 0, "Asset GUID must not be 0");
         
         assetBalances[assetGUID] = assetBalances[assetGUID].add(value);
 
