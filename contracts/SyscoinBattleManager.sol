@@ -365,9 +365,6 @@ contract SyscoinBattleManager is SyscoinErrorCodes {
         // make sure every 7th superblock adjusts difficulty
         if(net == SyscoinMessageLibrary.Network.MAINNET){
             if(((superblockHeight-2) % 6) == 0){
-                if(prevBits == blockInfo.bits){
-                    return ERR_SUPERBLOCK_INVALID_DIFFICULTY_ADJUSTMENT;
-                }
                 // make sure difficulty adjustment is within bounds
                 uint32 lowerBoundDiff = SyscoinMessageLibrary.calculateDifficulty(SyscoinMessageLibrary.getLowerBoundDifficultyTarget()-1, prevBits);
                 uint32 upperBoundDiff = SyscoinMessageLibrary.calculateDifficulty(SyscoinMessageLibrary.getUpperBoundDifficultyTarget()+1, prevBits);
