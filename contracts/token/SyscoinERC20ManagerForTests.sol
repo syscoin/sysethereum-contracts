@@ -113,7 +113,7 @@ contract SyscoinERC20ManagerForTests is Initializable {
         uint32 assetGUID,
         address erc20ContractAddress,
         uint8 precision,
-        bytes memory syscoinAddress
+        bytes memory
     )
         public
         minimumValue(erc20ContractAddress, value)
