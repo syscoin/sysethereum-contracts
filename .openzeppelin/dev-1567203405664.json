@@ -1,0 +1,129 @@
+{
+  "contracts": {
+    "SyscoinERC20Manager": {
+      "address": "0xC3639456d869245046A20E7A5B421BFb45d2048e",
+      "constructorCode": "608060405234801561001057600080fd5b50611064806100206000396000f3fe",
+      "bodyBytecodeHash": "cda7be58db39549a86745a61bc741eff57d4046d4315418b927c3fc91c10b060",
+      "localBytecodeHash": "b07d8e8f9e10b3804419e13f66453ca22f5ac7ac1ce52e85e5de2b439faa3108",
+      "deployedBytecodeHash": "a5af38d5efaef0cc5688573980e93af6b7a3c4e184c9dad3f86816a6f3f7f1f1",
+      "types": {
+        "t_bool": {
+          "id": "t_bool",
+          "kind": "elementary",
+          "label": "bool"
+        },
+        "t_uint256": {
+          "id": "t_uint256",
+          "kind": "elementary",
+          "label": "uint256"
+        },
+        "t_array:50<t_uint256>": {
+          "id": "t_array:50<t_uint256>",
+          "valueType": "t_uint256",
+          "length": "50",
+          "kind": "array",
+          "label": "uint256[50]"
+        },
+        "t_address": {
+          "id": "t_address",
+          "kind": "elementary",
+          "label": "address"
+        },
+        "t_struct<Set.Data>": {
+          "id": "t_struct<Set.Data>",
+          "kind": "struct",
+          "label": "Set.Data",
+          "members": [
+            {
+              "label": "flags",
+              "astId": 8788,
+              "type": "t_mapping<t_bool>",
+              "src": "173:27:14"
+            }
+          ]
+        },
+        "t_mapping<t_bool>": {
+          "id": "t_mapping<t_bool>",
+          "valueType": "t_bool",
+          "label": "mapping(key => bool)",
+          "kind": "mapping"
+        },
+        "t_mapping<t_uint256>": {
+          "id": "t_mapping<t_uint256>",
+          "valueType": "t_uint256",
+          "label": "mapping(key => uint256)",
+          "kind": "mapping"
+        }
+      },
+      "storage": [
+        {
+          "contract": "Initializable",
+          "path": "contracts/upgradeability/Initializable.sol",
+          "label": "initialized",
+          "astId": 10043,
+          "type": "t_bool",
+          "src": "757:24:22"
+        },
+        {
+          "contract": "Initializable",
+          "path": "contracts/upgradeability/Initializable.sol",
+          "label": "initializing",
+          "astId": 10045,
+          "type": "t_bool",
+          "src": "876:25:22"
+        },
+        {
+          "contract": "Initializable",
+          "path": "contracts/upgradeability/Initializable.sol",
+          "label": "______gap",
+          "astId": 10101,
+          "type": "t_array:50<t_uint256>",
+          "src": "1951:29:22"
+        },
+        {
+          "contract": "SyscoinERC20Manager",
+          "path": "contracts/token/SyscoinERC20Manager.sol",
+          "label": "trustedRelayerContract",
+          "astId": 8962,
+          "type": "t_address",
+          "src": "732:37:17"
+        },
+        {
+          "contract": "SyscoinERC20Manager",
+          "path": "contracts/token/SyscoinERC20Manager.sol",
+          "label": "syscoinTxHashesAlreadyProcessed",
+          "astId": 8964,
+          "type": "t_struct<Set.Data>",
+          "src": "856:40:17"
+        },
+        {
+          "contract": "SyscoinERC20Manager",
+          "path": "contracts/token/SyscoinERC20Manager.sol",
+          "label": "assetBalances",
+          "astId": 8968,
+          "type": "t_mapping<t_uint256>",
+          "src": "903:47:17"
+        }
+      ],
+      "warnings": {
+        "hasConstructor": false,
+        "hasSelfDestruct": false,
+        "hasDelegateCall": false,
+        "hasInitialValuesInDeclarations": false,
+        "uninitializedBaseContracts": []
+      }
+    }
+  },
+  "solidityLibs": {
+    "Set": {
+      "address": "0x5aeCF257781C925f517d6D1573716B7aF01E2819",
+      "constructorCode": "6101b0610026600b82828239805160001a60731461001957fe5b30600052607381538281f3fe",
+      "bodyBytecodeHash": "26a419c08887e57f9b537583dcf82a24e7c5b887d58309359a2dad4796042e0e",
+      "localBytecodeHash": "f603806cd1c7944024709449ce4cf1c8e81e4be18d2327e0dbdfcdfcf5afbb93",
+      "deployedBytecodeHash": "f603806cd1c7944024709449ce4cf1c8e81e4be18d2327e0dbdfcdfcf5afbb93"
+    }
+  },
+  "proxies": {},
+  "manifestVersion": "2.2",
+  "version": "1.0.0"
+}
