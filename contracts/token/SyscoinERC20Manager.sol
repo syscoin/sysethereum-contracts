@@ -4,7 +4,7 @@ import "./Set.sol";
 import "../SyscoinTransactionProcessor.sol";
 import "openzeppelin-solidity/contracts/math/SafeMath.sol";
 import "../interfaces/SyscoinERC20AssetI.sol";
-import "../upgradeability/Initializable.sol";
+import "@openzeppelin/upgrades/contracts/Initializable.sol";
 
 contract SyscoinERC20Manager is Initializable {
 
