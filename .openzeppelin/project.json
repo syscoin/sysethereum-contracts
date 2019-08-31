@@ -2,7 +2,8 @@
   "manifestVersion": "2.2",
   "contracts": {
     "SyscoinERC20Manager": "SyscoinERC20Manager",
-    "SyscoinERC20ManagerForTests": "SyscoinERC20ManagerForTests"
+    "SyscoinERC20ManagerForTests": "SyscoinERC20ManagerForTests",
+    "SyscoinSuperblocks": "SyscoinSuperblocks"
   },
   "dependencies": {},
   "name": "sysethereum-contracts",
