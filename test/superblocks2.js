@@ -1,14 +1,25 @@
-const SyscoinSuperblocks = artifacts.require('SyscoinSuperblocks');
+const { TestHelper } = require('@openzeppelin/cli');
+const { Contracts, ZWeb3 } = require('@openzeppelin/upgrades');
+
+/* Initialize OpenZeppelin's Web3 provider. */
+ZWeb3.initialize(web3.currentProvider);
+
+const SyscoinSuperblocks = Contracts.getFromLocal('SyscoinSuperblocks');
 const utils = require('./utils');
 
 
 contract('SyscoinSuperblocks2', function(accounts) {
   const claimManager = accounts[1];
+  const proxyAdmin = accounts[9];
+  const erc20Manager = accounts[3];
   const user = accounts[2];
   let superblocks;
   beforeEach(async () => {
-    superblocks = await SyscoinSuperblocks.new();
-    await superblocks.setClaimManager(claimManager);
+    this.project = await TestHelper({from: proxyAdmin});
+    superblocks = await this.project.createProxy(SyscoinSuperblocks, {
+      initMethod: 'init',
+      initArgs: [erc20Manager, claimManager]
+    });
   });
   const headers = [
     `00010030bdddd1f271065781e185c91e7623b0fad7577eb6ed48f4a6c084e7cd2b17bd77a954d9e9ce07055e9bf22a1dd44a9ab10bd8acc3d2e1487b3c66395c4eb775360348e75b52d206180000000001000000010000000000000000000000000000000000000000000000000000000000000000ffffffff6303af6208202f5669614254432f4d696e65642062792074616b61666a7a687339313430302f2cfabe6d6d8a376cac09279c1a3319b60b544138421fc3929a9b0950b6c51b8ebc0d9921b3040000000000000010b230ea034d65f67fedf1787aab280100ffffffff026c354a4b000000001976a914536ffa992491508dca0354e52f32a3a7a679a53a88ac0000000000000000266a24aa21a9ed26c2eacb8d3980e6d23a5aacbb09586b9de87c41239ca98697ac49a186951e2c00000000f22af76b72948efe5c2d5c50e9e2c453ce0280a787b0f30100000000000000000c0f158fdb86dea3b53f33c01364e55f6a73e1af9e58bb7c53af140a742c74d3be6aaee3e2df7f7741be946a434a866b0f1e5d028c3f5d996505710a7988447e478cf390257229007bc87895e0dd8587ff6dcc14ecffa64dcdc268d5c43ce9607d5bee975203a6594aecbaec0f094d8ff60b5a14fa3142903cdbb49ac39588b109b33f52d5d0db227fcf2dc2011f7e9825879fe20b2dc4e657c694a9c69691f8d8c977ed914778ac14d596b96d4eaf3f5cdcb6c408fb8c545c14091cc498772a6c16c582d56dfde16fc92838656e8feec2e20c806e25df8f205892d7f1c0635af97f3c6cdfd19e9e504abdf868697420864aa045c2dd265223d2164e253395226838a9630fc6e73ca2f8ae980d620448fa665567c25a08f66625af98e360c68ad42dfe9ff104246c1b4cc627db03af62a65fec2b5ba4bfc9be4f57c19e7710ab9aa1733d8ed777f3d334506c19c4887b78708e346a7f1da994220c7dfa501f5d0094e3a39d3dfab77b3dcda33e9f93a798fa51484e663080a8258d0afa16599afa00000000022f6fc81881813616333d1abb9b177166d02b206ba44f211e581fca95ed5211b9c9c22d0cab8999b06f64cfab27630008e872a07665c2da9d6884581e2f44ea6c0200000000000020be2bd5b042f797840282c36871b2d56d923747c36fd70e000000000000000000ec1e9a5aabb4b0924ce239c9a171e459d6e0ea0f7a5a6c9ed20aee4bdbb8fc933048e75b922d271734dc86d5`,
@@ -23,30 +34,28 @@ contract('SyscoinSuperblocks2', function(accounts) {
   const genesisSuperblock = utils.makeSuperblock(headers, initParentId, initAccumulatedWork);
   it('Initialize', async () => {
     let result;
-    result = await superblocks.initialize(
+    result = await superblocks.methods.initialize(
       genesisSuperblock.merkleRoot,
-      genesisSuperblock.accumulatedWork,
+      genesisSuperblock.accumulatedWork.toString(),
       genesisSuperblock.timestamp,
       genesisSuperblock.lastHash,
       genesisSuperblock.lastBits,
-      genesisSuperblock.parentId,
-      { from: user }
-    );
+      genesisSuperblock.parentId).send({ from: user, gas: 300000 });
 
-    const best = await superblocks.getBestSuperblock();
+    const best = await superblocks.methods.getBestSuperblock().call();
     assert.equal(best, genesisSuperblock.superblockHash, 'Best superblock updated');
 
-    const locator = await superblocks.getSuperblockLocator();
+    const locator = await superblocks.methods.getSuperblockLocator().call();
     assert.equal(locator.length, 9, 'Superblock locator');
     assert.equal(locator[0], genesisSuperblock.superblockHash, 'Superblock locator 0');
     assert.equal(locator[1], genesisSuperblock.superblockHash, 'Superblock locator 1');
     assert.equal(locator[2], genesisSuperblock.superblockHash, 'Superblock locator 2');
     assert.equal(locator[8], genesisSuperblock.superblockHash, 'Superblock locator 8');
 
-    const height = await superblocks.getSuperblockHeight(best);
-    assert.equal(height.toNumber(), 1, 'Superblock height');
+    const height = await superblocks.methods.getSuperblockHeight(best).call();
+    assert.equal(height, 1, 'Superblock height');
 
-    const superblock = await superblocks.getSuperblock(best);
+    const superblock = await superblocks.methods.getSuperblock(best).call();
 
 
     // 2 keys per returned var
