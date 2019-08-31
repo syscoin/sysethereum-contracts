@@ -3,7 +3,9 @@
   "contracts": {
     "SyscoinERC20Manager": "SyscoinERC20Manager",
     "SyscoinERC20ManagerForTests": "SyscoinERC20ManagerForTests",
-    "SyscoinSuperblocks": "SyscoinSuperblocks"
+    "SyscoinSuperblocks": "SyscoinSuperblocks",
+    "SyscoinBattleManager": "SyscoinBattleManager",
+    "SyscoinClaimManager": "SyscoinClaimManager"
   },
   "dependencies": {},
   "name": "sysethereum-contracts",
