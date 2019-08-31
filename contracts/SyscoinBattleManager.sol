@@ -4,9 +4,10 @@ import './interfaces/SyscoinClaimManagerI.sol';
 import './interfaces/SyscoinSuperblocksI.sol';
 import './SyscoinErrorCodes.sol';
 import './SyscoinParser/SyscoinMessageLibrary.sol';
+import "@openzeppelin/upgrades/contracts/Initializable.sol";
 
 // @dev - Manages a battle session between superblock submitter and challenger
-contract SyscoinBattleManager is SyscoinErrorCodes {
+contract SyscoinBattleManager is Initializable, SyscoinErrorCodes {
 
     enum ChallengeState {
         Unchallenged,             // Unchallenged submission
@@ -98,12 +99,12 @@ contract SyscoinBattleManager is SyscoinErrorCodes {
     // @param _superblocks Contract that manages superblocks
     // @param _superblockDuration Superblock duration (in blocks)
     // @param _superblockTimeout Time to wait for challenges (in seconds)
-    constructor(
+    function init(
         SyscoinMessageLibrary.Network _network,
         SyscoinSuperblocksI _superblocks,
         uint _superblockDuration,
         uint _superblockTimeout
-    ) public {
+    ) public initializer {
         net = _network;
         trustedSuperblocks = _superblocks;
         superblockDuration = _superblockDuration;
