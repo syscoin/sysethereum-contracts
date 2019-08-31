@@ -1,8 +1,15 @@
+const { TestHelper } = require('@openzeppelin/cli');
+const { Contracts, ZWeb3 } = require('@openzeppelin/upgrades');
+
+/* Initialize OpenZeppelin's Web3 provider. */
+ZWeb3.initialize(web3.currentProvider);
+
+/* Retrieve compiled contract artifacts. */
+const SyscoinERC20ManagerV0 = Contracts.getFromLocal('SyscoinERC20Manager');
+const SyscoinERC20ManagerV1 = Contracts.getFromLocal('SyscoinERC20ManagerForTests');
+
 var SyscoinERC20Asset = artifacts.require("./token/SyscoinERC20AssetForTests.sol");
 var LegacyERC20 = artifacts.require("./token/LegacyERC20ForTests.sol");
-var SyscoinERC20Manager = artifacts.require("./token/SyscoinERC20Manager.sol");
-var SyscoinERC20ManagerForTests = artifacts.require("./token/SyscoinERC20ManagerForTests.sol");
-var AdminUpgradeabilityProxy = artifacts.require("./upgradeability/AdminUpgradeabilityProxy.sol");
 var Set = artifacts.require('./token/Set.sol');
 
 const { expectRevert } = require('openzeppelin-test-helpers');
@@ -20,15 +27,13 @@ contract('SyscoinERC20Manager', function(accounts) {
   const randomUser = accounts[2];
   let erc20Manager, erc20Asset, erc20Legacy, erc20AssetNoMint, erc20ManagerLogic, erc20ManagerProxy;
 
+
   beforeEach("set up SyscoinERC20Manager, SyscoinERC20Asset and LegacyERC20", async () => {
-    erc20ManagerLogic = await SyscoinERC20Manager.new(trustedRelayerContract);
-    let data = erc20ManagerLogic.contract.methods.init(trustedRelayerContract).encodeABI();
-    erc20ManagerProxy = await AdminUpgradeabilityProxy.new(erc20ManagerLogic.address, proxyAdmin, data);
-    erc20Manager = new web3.eth.Contract(
-      erc20ManagerLogic.abi,
-      erc20ManagerProxy.address,
-      {from: owner}
-    );
+    this.project = await TestHelper({from: proxyAdmin});
+    erc20Manager = await this.project.createProxy(SyscoinERC20ManagerV0, {
+      initMethod: 'init',
+      initArgs: [trustedRelayerContract]
+    });
     
     erc20Asset = await SyscoinERC20Asset.new("SyscoinToken", "SYSX", 8, erc20Manager.options.address, {from: owner});
     await erc20Asset.assign(owner, value);
@@ -181,25 +186,18 @@ contract('SyscoinERC20Manager', function(accounts) {
   });
 
   it('should upgrade to new logic and freeze token with zero syscoinAddress and zero assetGUID',  async () => {
-    let SetLib = await Set.new();
-    SyscoinERC20ManagerForTests.link("Set", SetLib.address);
-    let SyscoinERC20ManagerV2 = await SyscoinERC20ManagerForTests.new(trustedRelayerContract);
-    await erc20ManagerProxy.upgradeTo(SyscoinERC20ManagerV2.address, {from: proxyAdmin});
+    await expectRevert(
+      erc20Manager.methods.freezeBurnERC20(burnVal, 0, erc20Asset.address, 8, '0x').send({from: owner}),
+      "syscoinAddress cannot be zero"
+    );
 
-    assert.equal(erc20ManagerProxy.address, erc20Manager.options.address, "Both object should point to the same smart contract");
+    await this.project.upgradeProxy(erc20Manager.address, SyscoinERC20ManagerV1);
 
     assert.equal(await erc20Manager.methods.assetBalances(0).call(), 0, `initial assetBalances for ${assetGUID} GUID is not correct`);
 
-    // this would revert in previous version
+    // this would revert if upgrate did not succeed
     await erc20Manager.methods.freezeBurnERC20(burnVal, 0, erc20Asset.address, 8, '0x').send({from: owner});
 
     assert.equal(await erc20Manager.methods.assetBalances(0).call(), burnVal, `assetBalances for ${assetGUID} GUID is not correct`);
-  });
-
-  it('should fail if trying to upgrade from non-admin', async () => {
-    let SyscoinERC20ManagerV2 = await SyscoinERC20ManagerForTests.new(trustedRelayerContract);
-    await expectRevert.unspecified(
-      erc20ManagerProxy.upgradeTo(SyscoinERC20ManagerV2.address, {from: owner})
-    );
   });
 });
