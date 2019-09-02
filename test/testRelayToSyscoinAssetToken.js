@@ -1,7 +1,12 @@
+const { TestHelper } = require('@openzeppelin/cli');
+const { Contracts, ZWeb3 } = require('@openzeppelin/upgrades');
+
+/* Initialize OpenZeppelin's Web3 provider. */
+ZWeb3.initialize(web3.currentProvider);
+
+const SyscoinERC20Manager = Contracts.getFromLocal('SyscoinERC20Manager');
 var LegacyERC20 = artifacts.require("./token/LegacyERC20ForTests.sol");
-var SyscoinERC20Manager = artifacts.require("./token/SyscoinERC20Manager.sol");
 const SyscoinMessageLibraryForTests = artifacts.require('SyscoinMessageLibraryForTests');
-var AdminUpgradeabilityProxy = artifacts.require("./upgradeability/AdminUpgradeabilityProxy.sol");
 const truffleAssert = require('truffle-assertions');
 
 contract('testRelayToSyscoinAssetToken', function(accounts) {
@@ -21,14 +26,11 @@ contract('testRelayToSyscoinAssetToken', function(accounts) {
   const txData = '0x0774000001d46638fce247272c08eec7be46ea2f2c5a92d27ac6a6d59e7f83051e0cc9664201000000160014e37ddd289ccd1fb130a91210644810b2415aec40feffffff020000000000000000526a043acaeec008000000003b9aca0014b0ea8c9ee8aa87efd28a12de8c034f947c144053010814fe234d3994f95bf7cebd9837c4444f5af63f0a97010014e37ddd289ccd1fb130a91210644810b2415aec40f8d7754817000000160014e37ddd289ccd1fb130a91210644810b2415aec4000000000';
   const erc20LegacyRinkeby = '0xfE234d3994f95Bf7CEBD9837C4444F5AF63F0a97';
   before(async () => {
-    erc20ManagerLogic = await SyscoinERC20Manager.new(trustedRelayerContract);
-    let data = erc20ManagerLogic.contract.methods.init(trustedRelayerContract).encodeABI();
-    erc20ManagerProxy = await AdminUpgradeabilityProxy.new(erc20ManagerLogic.address, proxyAdmin, data);
-    erc20Manager = new web3.eth.Contract(
-      erc20ManagerLogic.abi,
-      erc20ManagerProxy.address,
-      {from: owner}
-    );
+    this.project = await TestHelper({from: proxyAdmin});
+    erc20Manager = await this.project.createProxy(SyscoinERC20Manager, {
+      initMethod: 'init',
+      initArgs: [trustedRelayerContract]
+    });
 
     syscoinMessageLibraryForTests = await SyscoinMessageLibraryForTests.new();
     
@@ -60,6 +62,6 @@ contract('testRelayToSyscoinAssetToken', function(accounts) {
   });
   it("processTransaction fail - tx already processed", async () => {
     await erc20Legacy.approve(erc20Manager.options.address, burnVal, {from: owner});
-    await truffleAssert.reverts(erc20Manager.methods.processTransaction(txHash, amount.toString(), inputEthAddress,superblockSubmitterAddress,erc20Legacy.address, assetGUID, precision.toString()).send({gas: 300000}));
+    await truffleAssert.reverts(erc20Manager.methods.processTransaction(txHash, amount.toString(), inputEthAddress,superblockSubmitterAddress,erc20Legacy.address, assetGUID, precision.toString()).send({from: trustedRelayerContract, gas: 300000}));
   });
 });
