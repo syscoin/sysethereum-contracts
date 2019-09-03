@@ -1,6 +1,7 @@
 /build
 /node_modules
 /output
+/org
 ._.DS_Store
 .DS_Store
 *.swp
