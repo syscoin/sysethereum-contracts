@@ -3,7 +3,6 @@ const { ConfigManager, scripts } = require('@openzeppelin/cli');
 const { add, push, create } = scripts;
 
 /* Retrieve compiled contract artifacts. */
-const Set = artifacts.require('./token/Set.sol');
 const SyscoinERC20Asset = artifacts.require('./token/SyscoinERC20Asset.sol');
 
 
@@ -47,13 +46,13 @@ async function deploy(options, accounts, networkId, superblockOptions) {
   console.log('\nDeploying SyscoinSuperblocks proxy instance at address ');
   let SyscoinSuperblocks = await create(Object.assign({ contractAlias: 'SyscoinSuperblocks' }, options));
 
-  console.log('\nDeploying SyscoinERC20Manager proxy instance at address ');
+  console.log('\nDeploying and Initializing SyscoinERC20Manager proxy instance at address ');
   let SyscoinERC20Manager = await create(Object.assign({ contractAlias: 'SyscoinERC20Manager', methodName: 'init', methodArgs: [SyscoinSuperblocks.address] }, options));
 
-  console.log('\nDeploying SyscoinBattleManager proxy instance at address ');
+  console.log('\nDeploying and Initializing SyscoinBattleManager proxy instance at address ');
   let SyscoinBattleManager = await create(Object.assign({ contractAlias: 'SyscoinBattleManager', methodName: 'init', methodArgs: [networkId, SyscoinSuperblocks.address, superblockOptions.DURATION, superblockOptions.TIMEOUT] }, options));
 
-  console.log('\nDeploying SyscoinClaimManager proxy instance at address ');
+  console.log('\nDeploying and Initializing SyscoinClaimManager proxy instance at address ');
   let SyscoinClaimManager = await create(Object.assign({ contractAlias: 'SyscoinClaimManager', methodName: 'init', methodArgs: [SyscoinSuperblocks.address, SyscoinBattleManager.address, superblockOptions.DELAY, superblockOptions.TIMEOUT, superblockOptions.CONFIRMATIONS] }, options));
 
   console.log('\nInitializing SyscoinSuperblocks...');
@@ -67,7 +66,7 @@ async function deploy(options, accounts, networkId, superblockOptions) {
 }
 
 module.exports = function(deployer, networkName, accounts) {
-  console.log(accounts);
+  console.log('Deploy wallet', accounts);
   deployer.then(async () => {
     let SyscoinERC20ManagerAddress;
     const { network, txParams } = await ConfigManager.initNetworkConfiguration({ network: networkName, from: accounts[0] })
@@ -77,7 +76,7 @@ module.exports = function(deployer, networkName, accounts) {
     } else {
       if (networkName === 'ropsten') {
         SyscoinERC20ManagerAddress = await deploy({ network, txParams }, accounts, SYSCOIN_MAINNET, SUPERBLOCK_OPTIONS_INTEGRATION_FAST_SYNC);
-      } else if (networkName === 'rinkeby' || networkName === 'rinkeby-fork') {
+      } else if (networkName === 'rinkeby') {
         SyscoinERC20ManagerAddress = await deploy({ network, txParams }, accounts, SYSCOIN_TESTNET, SUPERBLOCK_OPTIONS_PRODUCTION);
       } else if (networkName === 'mainnet') {
         SyscoinERC20ManagerAddress = await deploy({ network, txParams }, accounts, SYSCOIN_MAINNET, SUPERBLOCK_OPTIONS_PRODUCTION);
