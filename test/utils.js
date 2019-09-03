@@ -1,3 +1,9 @@
+const { TestHelper } = require('@openzeppelin/cli');
+const { Contracts, ZWeb3 } = require('@openzeppelin/upgrades');
+
+/* Initialize OpenZeppelin's Web3 provider. */
+ZWeb3.initialize(web3.currentProvider);
+
 const fs = require('fs');
 const readline = require('readline');
 const btcProof = require('bitcoin-proof');
@@ -292,38 +298,48 @@ function findEvent(logs, name) {
 }
 
 async function initSuperblockChain(options) {
-  const SyscoinClaimManager = artifacts.require('SyscoinClaimManager');
-  const SyscoinBattleManager = artifacts.require('SyscoinBattleManager');
-  const SyscoinSuperblocks = artifacts.require('SyscoinSuperblocks');
+  const SyscoinClaimManager = Contracts.getFromLocal('SyscoinClaimManager');
+  const SyscoinBattleManager = Contracts.getFromLocal('SyscoinBattleManager');
+  const SyscoinSuperblocks = Contracts.getFromLocal('SyscoinSuperblocks');
 
-  const superblocks = await SyscoinSuperblocks.new({ from: options.from });
-  const battleManager = await SyscoinBattleManager.new(
-    options.network,
-    superblocks.address,
-    options.params.DURATION,
-    options.params.TIMEOUT,
-    { from: options.from },
-  );
-  const claimManager = await SyscoinClaimManager.new(
-    superblocks.address,
-    battleManager.address,
-    options.params.DELAY,
-    options.params.TIMEOUT,
-    options.params.CONFIRMATIONS,
-    { from: options.from },
-  );
+  let project = await TestHelper({from: options.proxyAdmin});
 
-  await superblocks.setClaimManager(claimManager.address, { from: options.from });
-  await battleManager.setSyscoinClaimManager(claimManager.address, { from: options.from });
-  await superblocks.initialize(
+  superblocks = await project.createProxy(SyscoinSuperblocks);
+  battleManager = await project.createProxy(SyscoinBattleManager, {
+    initMethod: 'init',
+    initArgs: [
+      options.network,
+      superblocks.options.address,
+      options.params.DURATION,
+      options.params.TIMEOUT,
+    ]
+  });
+  claimManager = await project.createProxy(SyscoinClaimManager, {
+    initMethod: 'init',
+    initArgs: [
+      superblocks.options.address,
+      battleManager.options.address,
+      options.params.DELAY,
+      options.params.TIMEOUT,
+      options.params.CONFIRMATIONS,
+    ]
+  });
+
+  // random address
+  let syscoinERC20Manager = "0x08c8856a2424e1d58399d05bc6deac788b2fae9b";
+  await superblocks.methods.init(syscoinERC20Manager, claimManager.options.address).send({ from: options.from, gas: 300000 });
+
+  await battleManager.methods.setSyscoinClaimManager(claimManager.options.address).send({ from: options.from, gas: 300000 });
+
+  await superblocks.methods.initialize(
     options.genesisSuperblock.merkleRoot,
-    options.genesisSuperblock.accumulatedWork,
+    options.genesisSuperblock.accumulatedWork.toString(),
     options.genesisSuperblock.timestamp,
     options.genesisSuperblock.lastHash,
     options.genesisSuperblock.lastBits,
-    options.genesisSuperblock.parentId,
-    { from: options.from },
-  );
+    options.genesisSuperblock.parentId
+  ).send({ from: options.from, gas: 300000 });
+
   return {
     superblocks,
     claimManager,

@@ -42,61 +42,56 @@ contract('validateDifficultyAdjustment', (accounts) => {
         from: owner,
       }));
       genesisSuperblockHash = genesisSuperblock.superblockHash;
-      const best = await superblocks.getBestSuperblock();
+      const best = await superblocks.methods.getBestSuperblock().call();
       assert.equal(genesisSuperblockHash, best, 'Best superblock should match');
-      await claimManager.makeDeposit({ value: utils.DEPOSITS.MIN_REWARD, from: submitter });
-      await claimManager.makeDeposit({ value: utils.DEPOSITS.MIN_REWARD, from: challenger });
+      await claimManager.methods.makeDeposit().send({ value: utils.DEPOSITS.MIN_REWARD, from: submitter, gas: 300000 });
+      await claimManager.methods.makeDeposit().send({ value: utils.DEPOSITS.MIN_REWARD, from: challenger, gas: 300000 });
     });
     it('Confirm difficulty adjusts and convicts challenger', async () => {
-      result = await claimManager.proposeSuperblock(
+      result = await claimManager.methods.proposeSuperblock(
         proposedSuperblock.merkleRoot,
-        proposedSuperblock.accumulatedWork,
+        proposedSuperblock.accumulatedWork.toString(),
         proposedSuperblock.timestamp,
         proposedSuperblock.lastHash,
         proposedSuperblock.lastBits,
-        proposedSuperblock.parentId,
-        { from: submitter },
-      );
+        proposedSuperblock.parentId).send({ from: submitter, gas: 2100000 });
 
-      const superblockClaimCreatedEvent = utils.findEvent(result.logs, 'SuperblockClaimCreated');
-      assert.ok(superblockClaimCreatedEvent, 'New superblock proposed');
-      proposesSuperblockHash = superblockClaimCreatedEvent.args.superblockHash;
+      assert.ok(result.events.SuperblockClaimCreated, 'New superblock proposed');
+      proposesSuperblockHash = result.events.SuperblockClaimCreated.returnValues.superblockHash;
       claim1 = proposesSuperblockHash;
-      await claimManager.makeDeposit({ value: utils.DEPOSITS.MIN_REWARD, from: challenger });
-      result = await claimManager.challengeSuperblock(proposesSuperblockHash, { from: challenger });
-      const superblockClaimChallengedEvent = utils.findEvent(result.logs, 'SuperblockClaimChallenged');
-      assert.ok(superblockClaimChallengedEvent, 'Superblock challenged');
-      assert.equal(claim1, superblockClaimChallengedEvent.args.superblockHash);
+      await claimManager.methods.makeDeposit().send({ value: utils.DEPOSITS.MIN_REWARD, from: challenger, gas: 300000 });
+      result = await claimManager.methods.challengeSuperblock(proposesSuperblockHash).send({ from: challenger, gas: 2100000 });
+      assert.ok(result.events.SuperblockClaimChallenged, 'Superblock challenged');
+      assert.equal(claim1, result.events.SuperblockClaimChallenged.returnValues.superblockHash);
 
-      const verificationGameStartedEvent = utils.findEvent(result.logs, 'VerificationGameStarted');
-      assert.ok(verificationGameStartedEvent, 'Battle started');
-      battleSessionId = verificationGameStartedEvent.args.sessionId;
+      assert.ok(result.events.VerificationGameStarted, 'Battle started');
+      battleSessionId = result.events.VerificationGameStarted.returnValues.sessionId;
 
 
-      result = await battleManager.queryMerkleRootHashes(battleSessionId, { from: challenger });
-      assert.ok(utils.findEvent(result.logs, 'QueryMerkleRootHashes'), 'Query merkle root hashes');
+      result = await battleManager.methods.queryMerkleRootHashes(battleSessionId).send({ from: challenger, gas: 300000 });
+      assert.ok(result.events.QueryMerkleRootHashes, 'Query merkle root hashes');
 
 
-      result = await battleManager.respondMerkleRootHashes(battleSessionId, hashes, { from: submitter });
-      assert.ok(utils.findEvent(result.logs, 'RespondMerkleRootHashes'), 'Respond merkle root hashes');
+      result = await battleManager.methods.respondMerkleRootHashes(battleSessionId, hashes).send({ from: submitter, gas: 300000 });
+      assert.ok(result.events.RespondMerkleRootHashes, 'Respond merkle root hashes');
 
 
-      result = await battleManager.queryLastBlockHeader(battleSessionId, 0, { from: challenger });
-      assert.ok(utils.findEvent(result.logs, 'QueryLastBlockHeader'), 'Query block header');
+      result = await battleManager.methods.queryLastBlockHeader(battleSessionId, 0).send({ from: challenger, gas: 300000 });
+      assert.ok(result.events.QueryLastBlockHeader, 'Query block header');
       
 
 
-      result = await battleManager.respondLastBlockHeader(battleSessionId, `0x${headers[1]}`, "0x", { from: submitter });
-      assert.ok(utils.findEvent(result.logs, 'RespondLastBlockHeader'), 'Respond last block header');
+      result = await battleManager.methods.respondLastBlockHeader(battleSessionId, `0x${headers[1]}`, "0x").send({ from: submitter, gas: 2100000 });
+      assert.ok(result.events.RespondLastBlockHeader, 'Respond last block header');
 
       // Verify diff change and challenger is at fault (its actually valid)
-      result = await battleManager.verifySuperblock(battleSessionId, { from: submitter });
-      assert.ok(utils.findEvent(result.logs, 'ChallengerConvicted'), 'Challenger failed');
+      result = await battleManager.methods.verifySuperblock(battleSessionId).send({ from: submitter, gas: 300000 });
+      assert.ok(result.events.ChallengerConvicted, 'Challenger failed');
 
       // Confirm superblock
       await utils.blockchainTimeoutSeconds(2*utils.OPTIONS_SYSCOIN_REGTEST.TIMEOUT);
-      result = await claimManager.checkClaimFinished(proposesSuperblockHash, { from: submitter });
-      assert.ok(utils.findEvent(result.logs, 'SuperblockClaimPending'), 'Superblock semi approved');
+      result = await claimManager.methods.checkClaimFinished(proposesSuperblockHash).send({ from: submitter, gas: 300000 });
+      assert.ok(result.events.SuperblockClaimPending, 'Superblock semi approved');
     });
    
   });

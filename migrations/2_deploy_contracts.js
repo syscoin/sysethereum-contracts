@@ -60,9 +60,8 @@ async function deployDevelopment(deployer, networkId, superblockOptions) {
     superblockOptions.CONFIRMATIONS
   );
 
-  const superblocks = SyscoinSuperblocks.at(SyscoinSuperblocks.address);
-  (await superblocks).setClaimManager(SyscoinClaimManager.address);
-  (await superblocks).setERC20Manager(SyscoinERC20Manager.address);
+  const superblocks = await SyscoinSuperblocks.deployed();
+  await superblocks.init(SyscoinERC20Manager.address, SyscoinClaimManager.address);
 
   const syscoinBattleManager = SyscoinBattleManager.at(SyscoinBattleManager.address);
   (await syscoinBattleManager).setSyscoinClaimManager(SyscoinClaimManager.address);
@@ -101,9 +100,8 @@ async function deployIntegration(deployer,  networkId, superblockOptions) {
     {gas: 5000000}
   );
 
-  const superblocks = SyscoinSuperblocks.at(SyscoinSuperblocks.address);
-  (await superblocks).setClaimManager(SyscoinClaimManager.address, {gas: 60000});
-  (await superblocks).setERC20Manager(SyscoinERC20Manager.address);
+  const superblocks = await SyscoinSuperblocks.deployed();
+  await superblocks.init(SyscoinERC20Manager.address, SyscoinClaimManager.address);
 
   const syscoinBattleManager = SyscoinBattleManager.at(SyscoinBattleManager.address);
   (await syscoinBattleManager).setSyscoinClaimManager(SyscoinClaimManager.address);

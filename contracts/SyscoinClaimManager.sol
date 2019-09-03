@@ -7,11 +7,12 @@ import './SyscoinDepositsManager.sol';
 import './SyscoinParser/SyscoinMessageLibrary.sol';
 import './SyscoinErrorCodes.sol';
 import 'openzeppelin-solidity/contracts/math/SafeMath.sol';
+import "@openzeppelin/upgrades/contracts/Initializable.sol";
 
 // @dev - Manager of superblock claims
 //
 // Manages superblocks proposal and challenges
-contract SyscoinClaimManager is SyscoinDepositsManager, SyscoinErrorCodes {
+contract SyscoinClaimManager is Initializable, SyscoinDepositsManager, SyscoinErrorCodes {
 
     using SafeMath for uint;
 
@@ -77,13 +78,13 @@ contract SyscoinClaimManager is SyscoinDepositsManager, SyscoinErrorCodes {
     // @param _superblockDelay Delay to accept a superblock submission (in seconds)
     // @param _superblockTimeout Time to wait for challenges (in seconds)
     // @param _superblockConfirmations Confirmations required to confirm semi approved superblocks
-    constructor(
+    function init(
         SyscoinSuperblocksI _superblocks,
         SyscoinBattleManagerI _syscoinBattleManager,
         uint _superblockDelay,
         uint _superblockTimeout,
         uint _superblockConfirmations
-    ) public {
+    ) public initializer {
         trustedSuperblocks = _superblocks;
         trustedSyscoinBattleManager = _syscoinBattleManager;
         superblockDelay = _superblockDelay;
