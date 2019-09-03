@@ -159,7 +159,7 @@ contract('SyscoinClaimManager', (accounts) => {
     });
 
     it('Query and reply block header', async () => {
-      result = await battleManager.methods.queryLastBlockHeader(battleSessionId, 0).send({ from: challenger, gas: 300000 });
+      result = await battleManager.methods.queryLastBlockHeader(battleSessionId, -1).send({ from: challenger, gas: 300000 });
       assert.ok(result.events.QueryLastBlockHeader, 'Query block header');
 
       result = await battleManager.methods.respondLastBlockHeader(battleSessionId, `0x${headers[1]}`, "0x").send({ from: submitter, gas: 300000 });
@@ -230,7 +230,7 @@ contract('SyscoinClaimManager', (accounts) => {
       assert.ok(result.events.RespondMerkleRootHashes, 'Respond merkle root hashes');
     });
     it('Query block header', async () => {
-      const result = await battleManager.methods.queryLastBlockHeader(battleSessionId, 0).send({ from: challenger, gas: 300000 });
+      const result = await battleManager.methods.queryLastBlockHeader(battleSessionId, -1).send({ from: challenger, gas: 300000 });
       assert.ok(result.events.QueryLastBlockHeader, 'Query block header');
     });   
     it('Answer blocks header', async () => {
@@ -346,7 +346,7 @@ contract('SyscoinClaimManager', (accounts) => {
       result = await battleManager.methods.respondMerkleRootHashes(battleSessionId, hashes.slice(0, 2)).send({ from: submitter, gas: 300000 });
       assert.ok(result.events.RespondMerkleRootHashes, 'Respond merkle root hashes');
 
-      result = await battleManager.methods.queryLastBlockHeader(battleSessionId, 0).send({ from: challenger, gas: 300000 });
+      result = await battleManager.methods.queryLastBlockHeader(battleSessionId, -1).send({ from: challenger, gas: 300000 });
       assert.ok(result.events.QueryLastBlockHeader, 'Query block header');
       
       result = await battleManager.methods.timeout(battleSessionId).send({ from: challenger, gas: 300000 });
@@ -370,7 +370,7 @@ contract('SyscoinClaimManager', (accounts) => {
       assert.ok(result.events.RespondMerkleRootHashes, 'Respond merkle root hashes');
 
 
-      result = await battleManager.methods.queryLastBlockHeader(battleSessionId, 0).send({ from: challenger, gas: 300000 });
+      result = await battleManager.methods.queryLastBlockHeader(battleSessionId, -1).send({ from: challenger, gas: 300000 });
       assert.ok(result.events.QueryLastBlockHeader, 'Query block header');
 
 
@@ -399,7 +399,7 @@ contract('SyscoinClaimManager', (accounts) => {
       assert.ok(result.events.RespondMerkleRootHashes, 'Respond merkle root hashes');
 
 
-      result = await battleManager.methods.queryLastBlockHeader(battleSessionId, 0).send({ from: challenger, gas: 300000 });
+      result = await battleManager.methods.queryLastBlockHeader(battleSessionId, -1).send({ from: challenger, gas: 300000 });
       assert.ok(result.events.QueryLastBlockHeader, 'Query block header');
 
       result = await battleManager.methods.respondLastBlockHeader(battleSessionId, `0x${headers[1]}`, "0x").send({ from: submitter, gas: 300000 });

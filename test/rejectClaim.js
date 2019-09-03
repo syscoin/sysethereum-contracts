@@ -277,7 +277,7 @@ contract('rejectClaim', (accounts) => {
         });
 
         it('Query and reply block header', async () => {
-            result = await battleManager.methods.queryLastBlockHeader(session1, 0).send({ from: challenger, gas: 300000 });
+            result = await battleManager.methods.queryLastBlockHeader(session1, -1).send({ from: challenger, gas: 300000 });
             assert.ok(result.events.QueryLastBlockHeader, 'Query block header');
 
             result = await battleManager.methods.respondLastBlockHeader(session1, `0x${superblockR0Headers[1]}`, "0x").send({ from: submitter, gas: 2100000 });

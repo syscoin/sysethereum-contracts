@@ -83,7 +83,7 @@ contract('validateSuperblocks', (accounts) => {
       assert.ok(result.events.RespondMerkleRootHashes, 'Respond merkle root hashes');
 
 
-      result = await battleManager.methods.queryLastBlockHeader(battleSessionId, 0).send({ from: challenger, gas: 300000 });
+      result = await battleManager.methods.queryLastBlockHeader(battleSessionId, -1).send({ from: challenger, gas: 300000 });
       assert.ok(result.events.QueryLastBlockHeader, 'Query block header');
 
 
@@ -130,7 +130,7 @@ contract('validateSuperblocks', (accounts) => {
       result = await battleManager.methods.respondMerkleRootHashes(battleSessionId, hashes).send({ from: submitter, gas: 300000 });
       assert.ok(result.events.RespondMerkleRootHashes, 'Respond merkle root hashes');
 
-      result = await battleManager.methods.queryLastBlockHeader(battleSessionId, 0).send({ from: challenger, gas: 300000 });
+      result = await battleManager.methods.queryLastBlockHeader(battleSessionId, -1).send({ from: challenger, gas: 300000 });
       assert.ok(result.events.QueryLastBlockHeader, 'Query block header');
 
  

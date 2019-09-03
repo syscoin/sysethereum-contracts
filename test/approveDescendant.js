@@ -233,7 +233,7 @@ contract('approveDescendant', (accounts) => {
 
 
         it('Query and reply block header', async () => {
-            result = await battleManager.methods.queryLastBlockHeader(session1, 0).send({ from: challenger, gas: 300000 });
+            result = await battleManager.methods.queryLastBlockHeader(session1, -1).send({ from: challenger, gas: 300000 });
             assert.ok(result.events.QueryLastBlockHeader, 'Query block header');
 
             result = await battleManager.methods.respondLastBlockHeader(session1, `0x${superblock1Headers[2]}`, "0x").send({ from: submitter, gas: 2100000 });
@@ -364,7 +364,7 @@ contract('approveDescendant', (accounts) => {
 
         it('Query and reply block header', async () => {
 
-            result = await battleManager.methods.queryLastBlockHeader(session1, 0).send({ from: challenger, gas: 300000 });
+            result = await battleManager.methods.queryLastBlockHeader(session1, -1).send({ from: challenger, gas: 300000 });
             assert.ok(result.events.QueryLastBlockHeader, 'Query block header');
   
 
@@ -416,7 +416,7 @@ contract('approveDescendant', (accounts) => {
         });
 
         it('Query and reply block header', async () => {
-            result = await battleManager.methods.queryLastBlockHeader(session1, 0).send({ from: challenger, gas: 2100000 });
+            result = await battleManager.methods.queryLastBlockHeader(session1, -1).send({ from: challenger, gas: 2100000 });
             assert.ok(result.events.QueryLastBlockHeader, 'Query block header');
 
             result = await battleManager.methods.respondLastBlockHeader(session1, `0x${superblock2Headers[2]}`, "0x").send({ from: submitter, gas: 2100000 });
