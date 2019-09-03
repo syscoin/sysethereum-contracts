@@ -413,7 +413,7 @@ contract SyscoinBattleManager is Initializable, SyscoinErrorCodes {
         BattleSession storage session = sessions[sessionId];
         uint status = doVerifySuperblock(session, sessionId);
         if (status == 1) {
-            convictChallenger(sessionId, false);
+            convictChallenger(sessionId);
         } else if (status == 2) {
             convictSubmitter(sessionId);
         }
@@ -429,7 +429,7 @@ contract SyscoinBattleManager is Initializable, SyscoinErrorCodes {
             return ERR_SUPERBLOCK_OK;
         } else if (session.lastActionClaimant > session.lastActionChallenger &&
             block.timestamp > session.lastActionTimestamp + superblockTimeout) {
-            convictChallenger(sessionId, true);
+            convictChallenger(sessionId);
             return ERR_SUPERBLOCK_OK;
         }
         emit ErrorBattle(sessionId, ERR_SUPERBLOCK_NO_TIMEOUT);
@@ -437,9 +437,9 @@ contract SyscoinBattleManager is Initializable, SyscoinErrorCodes {
     }
 
     // @dev - To be called when a challenger is convicted
-    function convictChallenger(bytes32 sessionId, bool timedOut) internal {
+    function convictChallenger(bytes32 sessionId) internal {
         BattleSession storage session = sessions[sessionId];
-        sessionDecided(sessionId, session.superblockHash, session.submitter, session.challenger, timedOut);
+        sessionDecided(sessionId, session.superblockHash, session.submitter, session.challenger);
         disable(sessionId);
         emit ChallengerConvicted(sessionId, session.challenger);
     }
@@ -447,7 +447,7 @@ contract SyscoinBattleManager is Initializable, SyscoinErrorCodes {
     // @dev - To be called when a submitter is convicted
     function convictSubmitter(bytes32 sessionId) internal {
         BattleSession storage session = sessions[sessionId];
-        sessionDecided(sessionId, session.superblockHash, session.challenger, session.submitter, false);
+        sessionDecided(sessionId, session.superblockHash, session.challenger, session.submitter);
         disable(sessionId);
         emit SubmitterConvicted(sessionId, session.submitter);
     }
@@ -489,8 +489,8 @@ contract SyscoinBattleManager is Initializable, SyscoinErrorCodes {
         return sessions[sessionId].challengeState;
     }
     // @dev - To be called when a battle sessions  was decided
-    function sessionDecided(bytes32 sessionId, bytes32 superblockHash, address winner, address loser, bool timedOut) internal {
-        trustedSyscoinClaimManager.sessionDecided(sessionId, superblockHash, winner, loser, timedOut);
+    function sessionDecided(bytes32 sessionId, bytes32 superblockHash, address winner, address loser) internal {
+        trustedSyscoinClaimManager.sessionDecided(sessionId, superblockHash, winner, loser);
     }
 
     // @dev - Retrieve superblock information

@@ -502,7 +502,7 @@ contract SyscoinClaimManager is Initializable, SyscoinDepositsManager, SyscoinEr
     // @param superblockHash - claim Id
     // @param winner – winner of verification game.
     // @param loser – loser of verification game.
-    function sessionDecided(bytes32 sessionId, bytes32 superblockHash, address winner, address loser, bool timedOut) public onlyBattleManager {
+    function sessionDecided(bytes32 sessionId, bytes32 superblockHash, address winner, address loser) public onlyBattleManager {
         SuperblockClaim storage claim = claims[superblockHash];
 
         require(claimExists(claim));
@@ -514,11 +514,8 @@ contract SyscoinClaimManager is Initializable, SyscoinDepositsManager, SyscoinEr
             // Trigger end of verification game
             claim.invalid = true;
         } else if (claim.submitter == winner) {
-            if(timedOut){
-                // the claim continues if challenger timed out
-                // It should not fail when called from sessionDecided
-                runNextBattleSession(superblockHash);
-            }
+            // if challenger failed, move on to the next challenger if any
+            runNextBattleSession(superblockHash);
             
         } else {
             revert();

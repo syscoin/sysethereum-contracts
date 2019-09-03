@@ -19,5 +19,5 @@ interface SyscoinClaimManagerI {
         uint32 _height
     );
 
-    function sessionDecided(bytes32 sessionId, bytes32 superblockHash, address winner, address loser, bool timedOut) external;
+    function sessionDecided(bytes32 sessionId, bytes32 superblockHash, address winner, address loser) external;
 }
