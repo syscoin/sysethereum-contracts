@@ -43,7 +43,7 @@ contract SyscoinBattleManager is Initializable, SyscoinErrorCodes {
         uint lastActionClaimant;          // Number last action submitter
         uint lastActionChallenger;        // Number last action challenger
         uint actionsCounter;              // Counter session actions
-        int blockIndexInvalidated;       // block hash that is different between challenger and submitter
+        int blockIndexInvalidated;        // index of block in superblock where the block hash is different between challenger and submitter
         bytes32[] blockHashes;            // Block hashes
 
         BlockInfo blocksInfo;
