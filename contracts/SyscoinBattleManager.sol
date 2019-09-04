@@ -205,7 +205,7 @@ contract SyscoinBattleManager is Initializable, SyscoinErrorCodes {
             require(session.blocksInfo.status == BlockInfoStatus.Uninitialized);
             session.challengeState = ChallengeState.QueryLastBlockHeader;
             session.blocksInfo.status = BlockInfoStatus.Requested;
-            if(blockIndexInvalidated < -1 || (blockIndexInvalidated >= 0 && uint(blockIndexInvalidated) > session.blockHashes.length)){
+            if(blockIndexInvalidated < -1 || blockIndexInvalidated >= int(session.blockHashes.length)){
                 return ERR_SUPERBLOCK_BAD_INTERIM_BLOCKINDEX;
             }
             session.blockIndexInvalidated = blockIndexInvalidated;
