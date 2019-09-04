@@ -266,11 +266,9 @@ contract SyscoinBattleManager is Initializable, SyscoinErrorCodes {
             if (err != ERR_SUPERBLOCK_OK) {
                 return (err);
             }
-            bool emptyHeader = blockInterimHeader.length == 0;
-            bool noIndex = session.blockIndexInvalidated == -1
-
-            if (!noIndex && emptyHeader) return ERR_SUPERBLOCK_INTERIMBLOCK_MISSING;
-            if (noIndex && !emptyHeader) return ERR_SUPERBLOCK_BAD_INTERIM_BLOCKINDEX;
+       
+            if (session.blockIndexInvalidated != -1 && blockInterimHeader.length == 0) return ERR_SUPERBLOCK_INTERIMBLOCK_MISSING;
+            if (session.blockIndexInvalidated == -1 && blockInterimHeader.length != 0) return ERR_SUPERBLOCK_BAD_INTERIM_BLOCKINDEX;
   
             // if interim header is passed in (last block is identical but another block is not matching, then validate the interim block and that it links to the chain of hashes stored in the session from merkle root hash response coming from defender)
             if(blockInterimHeader.length > 0){
