@@ -46,4 +46,5 @@ interface SyscoinSuperblocksI {
     function getSuperblockParentId(bytes32 _superblockHash) external view returns (bytes32);
     function getSuperblockStatus(bytes32 _superblockHash) external view returns (Status);
     function getSuperblockAt(uint _height) external view returns (bytes32);
+    function getSuperblockLastHash(bytes32 _superblockHash) external view returns (bytes32);
 }

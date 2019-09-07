@@ -7,11 +7,12 @@ import './SyscoinDepositsManager.sol';
 import './SyscoinParser/SyscoinMessageLibrary.sol';
 import './SyscoinErrorCodes.sol';
 import 'openzeppelin-solidity/contracts/math/SafeMath.sol';
+import "@openzeppelin/upgrades/contracts/Initializable.sol";
 
 // @dev - Manager of superblock claims
 //
 // Manages superblocks proposal and challenges
-contract SyscoinClaimManager is SyscoinDepositsManager, SyscoinErrorCodes {
+contract SyscoinClaimManager is Initializable, SyscoinDepositsManager, SyscoinErrorCodes {
 
     using SafeMath for uint;
 
@@ -77,13 +78,13 @@ contract SyscoinClaimManager is SyscoinDepositsManager, SyscoinErrorCodes {
     // @param _superblockDelay Delay to accept a superblock submission (in seconds)
     // @param _superblockTimeout Time to wait for challenges (in seconds)
     // @param _superblockConfirmations Confirmations required to confirm semi approved superblocks
-    constructor(
+    function init(
         SyscoinSuperblocksI _superblocks,
         SyscoinBattleManagerI _syscoinBattleManager,
         uint _superblockDelay,
         uint _superblockTimeout,
         uint _superblockConfirmations
-    ) public {
+    ) public initializer {
         trustedSuperblocks = _superblocks;
         trustedSyscoinBattleManager = _syscoinBattleManager;
         superblockDelay = _superblockDelay;
@@ -501,7 +502,7 @@ contract SyscoinClaimManager is SyscoinDepositsManager, SyscoinErrorCodes {
     // @param superblockHash - claim Id
     // @param winner – winner of verification game.
     // @param loser – loser of verification game.
-    function sessionDecided(bytes32 sessionId, bytes32 superblockHash, address winner, address loser, bool timedOut) public onlyBattleManager {
+    function sessionDecided(bytes32 sessionId, bytes32 superblockHash, address winner, address loser) public onlyBattleManager {
         SuperblockClaim storage claim = claims[superblockHash];
 
         require(claimExists(claim));
@@ -513,11 +514,8 @@ contract SyscoinClaimManager is SyscoinDepositsManager, SyscoinErrorCodes {
             // Trigger end of verification game
             claim.invalid = true;
         } else if (claim.submitter == winner) {
-            if(timedOut){
-                // the claim continues if challenger timed out
-                // It should not fail when called from sessionDecided
-                runNextBattleSession(superblockHash);
-            }
+            // if challenger failed, move on to the next challenger if any
+            runNextBattleSession(superblockHash);
             
         } else {
             revert();

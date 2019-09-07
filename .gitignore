@@ -1,6 +1,7 @@
 /build
 /node_modules
 /output
+/org
 ._.DS_Store
 .DS_Store
 *.swp
@@ -10,3 +11,5 @@ test/parseAuxPoW.js*
 test/testRelayIntegration.js
 superblocknotes
 .idea
+
+.openzeppelin/.session

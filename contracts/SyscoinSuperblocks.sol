@@ -4,11 +4,12 @@ import './interfaces/SyscoinSuperblocksI.sol';
 import "./SyscoinParser/SyscoinMessageLibrary.sol";
 import "./SyscoinErrorCodes.sol";
 import "./SyscoinTransactionProcessor.sol";
+import "@openzeppelin/upgrades/contracts/Initializable.sol";
 
 // @dev - Manages superblocks
 //
 // Management of superblocks and status transitions
-contract SyscoinSuperblocks is SyscoinSuperblocksI, SyscoinErrorCodes {
+contract SyscoinSuperblocks is Initializable, SyscoinSuperblocksI, SyscoinErrorCodes {
 
     struct SuperblockInfo {
         bytes32 blocksMerkleRoot;
@@ -56,21 +57,12 @@ contract SyscoinSuperblocks is SyscoinSuperblocksI, SyscoinErrorCodes {
         _;
     }
 
-    // @dev – the constructor
-    constructor() public {}
-
-    // @dev - sets ClaimManager instance associated with managing superblocks.
-    // Once trustedClaimManager has been set, it cannot be changed.
+    // @param _syscoinERC20Manager - address of the SyscoinERC20Manager contract to be associated with
     // @param _claimManager - address of the ClaimManager contract to be associated with
-    function setERC20Manager(address _syscoinERC20Manager) public {
+    function init(address _syscoinERC20Manager, address _claimManager) public initializer {
         require(address(syscoinERC20Manager) == address(0) && _syscoinERC20Manager != address(0));
         syscoinERC20Manager = SyscoinTransactionProcessor(_syscoinERC20Manager);
-    }
 
-    // @dev - sets ClaimManager instance associated with managing superblocks.
-    // Once trustedClaimManager has been set, it cannot be changed.
-    // @param _claimManager - address of the ClaimManager contract to be associated with
-    function setClaimManager(address _claimManager) public {
         require(address(trustedClaimManager) == address(0) && _claimManager != address(0));
         trustedClaimManager = _claimManager;
     }

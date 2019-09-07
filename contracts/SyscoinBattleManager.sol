@@ -4,9 +4,10 @@ import './interfaces/SyscoinClaimManagerI.sol';
 import './interfaces/SyscoinSuperblocksI.sol';
 import './SyscoinErrorCodes.sol';
 import './SyscoinParser/SyscoinMessageLibrary.sol';
+import "@openzeppelin/upgrades/contracts/Initializable.sol";
 
 // @dev - Manages a battle session between superblock submitter and challenger
-contract SyscoinBattleManager is SyscoinErrorCodes {
+contract SyscoinBattleManager is Initializable, SyscoinErrorCodes {
 
     enum ChallengeState {
         Unchallenged,             // Unchallenged submission
@@ -42,7 +43,7 @@ contract SyscoinBattleManager is SyscoinErrorCodes {
         uint lastActionClaimant;          // Number last action submitter
         uint lastActionChallenger;        // Number last action challenger
         uint actionsCounter;              // Counter session actions
-        uint blockIndexInvalidated;       // block hash that is different between challenger and submitter
+        int blockIndexInvalidated;        // index of block in superblock where the block hash is different between challenger and submitter
         bytes32[] blockHashes;            // Block hashes
 
         BlockInfo blocksInfo;
@@ -98,12 +99,12 @@ contract SyscoinBattleManager is SyscoinErrorCodes {
     // @param _superblocks Contract that manages superblocks
     // @param _superblockDuration Superblock duration (in blocks)
     // @param _superblockTimeout Time to wait for challenges (in seconds)
-    constructor(
+    function init(
         SyscoinMessageLibrary.Network _network,
         SyscoinSuperblocksI _superblocks,
         uint _superblockDuration,
         uint _superblockTimeout
-    ) public {
+    ) public initializer {
         net = _network;
         trustedSuperblocks = _superblocks;
         superblockDuration = _superblockDuration;
@@ -199,12 +200,12 @@ contract SyscoinBattleManager is SyscoinErrorCodes {
     }
        
     // @dev - Challenger makes a query for last block header
-    function doQueryLastBlockHeader(BattleSession storage session, uint blockIndexInvalidated) internal returns (uint) {
+    function doQueryLastBlockHeader(BattleSession storage session, int blockIndexInvalidated) internal returns (uint) {
         if (session.challengeState == ChallengeState.RespondMerkleRootHashes) {
             require(session.blocksInfo.status == BlockInfoStatus.Uninitialized);
             session.challengeState = ChallengeState.QueryLastBlockHeader;
             session.blocksInfo.status = BlockInfoStatus.Requested;
-            if(blockIndexInvalidated > session.blockHashes.length){
+            if(blockIndexInvalidated < -1 || blockIndexInvalidated >= int(session.blockHashes.length)){
                 return ERR_SUPERBLOCK_BAD_INTERIM_BLOCKINDEX;
             }
             session.blockIndexInvalidated = blockIndexInvalidated;
@@ -214,7 +215,7 @@ contract SyscoinBattleManager is SyscoinErrorCodes {
     }
 
     // @dev - For the challenger to start a query
-    function queryLastBlockHeader(bytes32 sessionId, uint blockIndexInvalidated) onlyChallenger(sessionId) public {
+    function queryLastBlockHeader(bytes32 sessionId, int blockIndexInvalidated) onlyChallenger(sessionId) public {
         BattleSession storage session = sessions[sessionId];
         uint err = doQueryLastBlockHeader(session, blockIndexInvalidated);
         if (err != ERR_SUPERBLOCK_OK) {
@@ -252,7 +253,6 @@ contract SyscoinBattleManager is SyscoinErrorCodes {
     ) internal returns (uint) {
         if (session.challengeState == ChallengeState.QueryLastBlockHeader) {
             uint lastIndex = session.blockHashes.length-1;
-            bytes32 blockSha256Hash = session.blockHashes[lastIndex];
             BlockInfo storage blockInfo = session.blocksInfo;
             if (blockInfo.status != BlockInfoStatus.Requested) {
                 return (ERR_SUPERBLOCK_BAD_SYSCOIN_STATUS);
@@ -261,24 +261,37 @@ contract SyscoinBattleManager is SyscoinErrorCodes {
 			// pass in blockSha256Hash here instead of proposedScryptHash because we
             // don't need a proposed hash (we already calculated it here, syscoin uses 
             // sha256 just like bitcoin)
-            uint err = verifyBlockAuxPoW(blockInfo, blockSha256Hash, blockLastHeader);
+            uint err = verifyBlockAuxPoW(blockInfo, session.blockHashes[lastIndex], blockLastHeader);
             if (err != ERR_SUPERBLOCK_OK) {
                 return (err);
             }
-            if(session.blockIndexInvalidated != 0 && blockInterimHeader.length <= 0){
-                return (ERR_SUPERBLOCK_INTERIMBLOCK_MISSING);
-            }
+            bool emptyHeader = blockInterimHeader.length == 0;
+            bool noIndex = session.blockIndexInvalidated == -1;
+
+            if (!noIndex && emptyHeader) return ERR_SUPERBLOCK_INTERIMBLOCK_MISSING;
+            if (noIndex && !emptyHeader) return ERR_SUPERBLOCK_BAD_INTERIM_BLOCKINDEX;
+  
             // if interim header is passed in (last block is identical but another block is not matching, then validate the interim block and that it links to the chain of hashes stored in the session from merkle root hash response coming from defender)
-            if(blockInterimHeader.length > 0 && session.blockIndexInvalidated != 0){
-                bytes32 blockSha256HashInterim = session.blockHashes[session.blockIndexInvalidated];
+            if(blockInterimHeader.length > 0){
+                uint blockIndex = uint(session.blockIndexInvalidated);    
+                bytes32 blockSha256HashInterim = session.blockHashes[blockIndex];
                 err = SyscoinMessageLibrary.verifyBlockHeader(blockInterimHeader, 0, uint(blockSha256HashInterim));
                 if (err != 0) {
                     return err;
                 }
                 bytes32 blockInterimHeaderPrevBlockHash = bytes32(SyscoinMessageLibrary.getHashPrevBlock(blockInterimHeader));
-
-                // check to ensure the block hash of the invalidated index - 1 (prev block) matches that of the prevblock of the block header of the offending mismatched block
-                if(blockInterimHeaderPrevBlockHash != session.blockHashes[session.blockIndexInvalidated-1]){
+                bytes32 superBlockPrevBlockHash;
+                // if index is 0 then check last block of prev superblock
+                if(blockIndex == 0){
+                    bytes32 parentId = trustedSuperblocks.getSuperblockParentId(session.superblockHash);
+                    superBlockPrevBlockHash = trustedSuperblocks.getSuperblockLastHash(parentId);
+                }
+                // else we look at the prev block hash in the session
+                else{
+                    superBlockPrevBlockHash = session.blockHashes[blockIndex-1];
+                }
+                // check to ensure the block hash of the invalidated index - 1 (prev block) or prev superblock if index == 0 matches that of the prevblock of the block header of the offending mismatched block
+                if(blockInterimHeaderPrevBlockHash != superBlockPrevBlockHash){
                     return (ERR_SUPERBLOCK_BAD_INTERIM_PREVHASH);
                 }
             }
@@ -365,9 +378,6 @@ contract SyscoinBattleManager is SyscoinErrorCodes {
         // make sure every 7th superblock adjusts difficulty
         if(net == SyscoinMessageLibrary.Network.MAINNET){
             if(((superblockHeight-2) % 6) == 0){
-                if(prevBits == blockInfo.bits){
-                    return ERR_SUPERBLOCK_INVALID_DIFFICULTY_ADJUSTMENT;
-                }
                 // make sure difficulty adjustment is within bounds
                 uint32 lowerBoundDiff = SyscoinMessageLibrary.calculateDifficulty(SyscoinMessageLibrary.getLowerBoundDifficultyTarget()-1, prevBits);
                 uint32 upperBoundDiff = SyscoinMessageLibrary.calculateDifficulty(SyscoinMessageLibrary.getUpperBoundDifficultyTarget()+1, prevBits);
@@ -415,7 +425,7 @@ contract SyscoinBattleManager is SyscoinErrorCodes {
         BattleSession storage session = sessions[sessionId];
         uint status = doVerifySuperblock(session, sessionId);
         if (status == 1) {
-            convictChallenger(sessionId, false);
+            convictChallenger(sessionId);
         } else if (status == 2) {
             convictSubmitter(sessionId);
         }
@@ -431,7 +441,7 @@ contract SyscoinBattleManager is SyscoinErrorCodes {
             return ERR_SUPERBLOCK_OK;
         } else if (session.lastActionClaimant > session.lastActionChallenger &&
             block.timestamp > session.lastActionTimestamp + superblockTimeout) {
-            convictChallenger(sessionId, true);
+            convictChallenger(sessionId);
             return ERR_SUPERBLOCK_OK;
         }
         emit ErrorBattle(sessionId, ERR_SUPERBLOCK_NO_TIMEOUT);
@@ -439,9 +449,9 @@ contract SyscoinBattleManager is SyscoinErrorCodes {
     }
 
     // @dev - To be called when a challenger is convicted
-    function convictChallenger(bytes32 sessionId, bool timedOut) internal {
+    function convictChallenger(bytes32 sessionId) internal {
         BattleSession storage session = sessions[sessionId];
-        sessionDecided(sessionId, session.superblockHash, session.submitter, session.challenger, timedOut);
+        sessionDecided(sessionId, session.superblockHash, session.submitter, session.challenger);
         disable(sessionId);
         emit ChallengerConvicted(sessionId, session.challenger);
     }
@@ -449,7 +459,7 @@ contract SyscoinBattleManager is SyscoinErrorCodes {
     // @dev - To be called when a submitter is convicted
     function convictSubmitter(bytes32 sessionId) internal {
         BattleSession storage session = sessions[sessionId];
-        sessionDecided(sessionId, session.superblockHash, session.challenger, session.submitter, false);
+        sessionDecided(sessionId, session.superblockHash, session.challenger, session.submitter);
         disable(sessionId);
         emit SubmitterConvicted(sessionId, session.submitter);
     }
@@ -480,7 +490,7 @@ contract SyscoinBattleManager is SyscoinErrorCodes {
     function getBlockHashesBySession(bytes32 sessionId) public view returns (bytes32[] memory blockHashes) {
         return sessions[sessionId].blockHashes;
     }
-    function getInvalidatedBlockIndexBySession(bytes32 sessionId) public view returns (uint) {
+    function getInvalidatedBlockIndexBySession(bytes32 sessionId) public view returns (int) {
         return sessions[sessionId].blockIndexInvalidated;
     }
     function getSessionStatus(bytes32 sessionId) public view returns (BlockInfoStatus) {
@@ -491,8 +501,8 @@ contract SyscoinBattleManager is SyscoinErrorCodes {
         return sessions[sessionId].challengeState;
     }
     // @dev - To be called when a battle sessions  was decided
-    function sessionDecided(bytes32 sessionId, bytes32 superblockHash, address winner, address loser, bool timedOut) internal {
-        trustedSyscoinClaimManager.sessionDecided(sessionId, superblockHash, winner, loser, timedOut);
+    function sessionDecided(bytes32 sessionId, bytes32 superblockHash, address winner, address loser) internal {
+        trustedSyscoinClaimManager.sessionDecided(sessionId, superblockHash, winner, loser);
     }
 
     // @dev - Retrieve superblock information
