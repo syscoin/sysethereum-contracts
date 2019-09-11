@@ -19,13 +19,12 @@ contract SyscoinClaimManager is Initializable, SyscoinDepositsManager, SyscoinEr
     struct SuperblockClaim {
         bytes32 superblockHash;                       // Superblock Id
         address submitter;                           // Superblock submitter
+        address challenger;                         // Superblock challenger
         uint createdAt;                             // Superblock creation time
 
-        address[] challengers;                      // List of challengers
-        mapping (address => uint) bondedDeposits;   // Deposit associated to challengers
+        mapping (address => uint) bondedDeposits;   // Deposit associated to submitter+challenger
 
-        uint currentChallenger;                     // Index of challenger in current session
-        mapping (address => bytes32) sessions;      // Challenge sessions
+        bytes32 session;                            // Challenge session
 
         uint challengeTimeout;                      // Claim timeout
 
@@ -217,13 +216,12 @@ contract SyscoinClaimManager is Initializable, SyscoinDepositsManager, SyscoinEr
 
         claim.superblockHash = superblockHash;
         claim.submitter = msg.sender;
-        claim.currentChallenger = 0;
+        claim.challenger = address(0);
         claim.decided = false;
         claim.invalid = false;
         claim.verificationOngoing = false;
         claim.createdAt = block.timestamp;
         claim.challengeTimeout = block.timestamp + superblockTimeout;
-        claim.challengers.length = 0;
 
         err = this.bondDeposit(superblockHash, msg.sender, minProposalDeposit);
         assert(err == ERR_SUPERBLOCK_OK);
@@ -245,20 +243,19 @@ contract SyscoinClaimManager is Initializable, SyscoinDepositsManager, SyscoinEr
             emit ErrorClaim(superblockHash, ERR_SUPERBLOCK_BAD_CLAIM);
             return (ERR_SUPERBLOCK_BAD_CLAIM, superblockHash);
         }
-        if (claim.decided) {
+        if (claim.decided || claim.invalid) {
             emit ErrorClaim(superblockHash, ERR_SUPERBLOCK_CLAIM_DECIDED);
             return (ERR_SUPERBLOCK_CLAIM_DECIDED, superblockHash);
+        }
+        if (claim.verificationOngoing) {
+            emit ErrorClaim(superblockHash, ERR_SUPERBLOCK_CHALLENGE_EXISTS);
+            return (ERR_SUPERBLOCK_CHALLENGE_EXISTS, superblockHash);
         }
         if (deposits[msg.sender] < minProposalDeposit) {
             emit ErrorClaim(superblockHash, ERR_SUPERBLOCK_MIN_DEPOSIT);
             return (ERR_SUPERBLOCK_MIN_DEPOSIT, superblockHash);
         }
-        for (uint256 idx = 0; idx < claim.challengers.length; ++idx) {
-            if(claim.challengers[idx] == msg.sender){
-                emit ErrorClaim(superblockHash, ERR_SUPERBLOCK_BAD_CHALLENGER);
-                return (ERR_SUPERBLOCK_BAD_CHALLENGER, superblockHash);
-            }
-        }
+    
         uint err = trustedSuperblocks.challenge(superblockHash, msg.sender);
         if (err != 0) {
             emit ErrorClaim(superblockHash, err);
@@ -269,52 +266,20 @@ contract SyscoinClaimManager is Initializable, SyscoinDepositsManager, SyscoinEr
         assert(err == ERR_SUPERBLOCK_OK);
 
         claim.challengeTimeout = block.timestamp + superblockTimeout;
-        claim.challengers.push(msg.sender);
+        claim.challenger = msg.sender;
         emit SuperblockClaimChallenged(superblockHash, msg.sender);
 
-        if (!claim.verificationOngoing) {
-            runNextBattleSession(superblockHash);
-        }
+        claim.session = trustedSyscoinBattleManager.beginBattleSession(superblockHash, claim.submitter,
+            claim.challenger);
 
+        emit VerificationGameStarted(superblockHash, claim.submitter,
+            claim.challenger, claim.session);
+
+        claim.verificationOngoing = true;
         return (ERR_SUPERBLOCK_OK, superblockHash);
     }
 
-    // @dev – runs a battle session to verify a superblock for the next challenger
-    // @param superblockHash – claim id.
-    function runNextBattleSession(bytes32 superblockHash) internal returns (bool) {
-        SuperblockClaim storage claim = claims[superblockHash];
 
-        if (!claimExists(claim)) {
-            emit ErrorClaim(superblockHash, ERR_SUPERBLOCK_BAD_CLAIM);
-            return false;
-        }
-
-        // superblocks marked as invalid do not have to run remaining challengers
-        if (claim.decided || claim.invalid) {
-            emit ErrorClaim(superblockHash, ERR_SUPERBLOCK_CLAIM_DECIDED);
-            return false;
-        }
-
-        if (claim.verificationOngoing) {
-            emit ErrorClaim(superblockHash, ERR_SUPERBLOCK_VERIFICATION_PENDING);
-            return false;
-        }
-
-        if (claim.currentChallenger < claim.challengers.length) {
-
-            bytes32 sessionId = trustedSyscoinBattleManager.beginBattleSession(superblockHash, claim.submitter,
-                claim.challengers[claim.currentChallenger]);
-
-            claim.sessions[claim.challengers[claim.currentChallenger]] = sessionId;
-            emit VerificationGameStarted(superblockHash, claim.submitter,
-                claim.challengers[claim.currentChallenger], sessionId);
-
-            claim.verificationOngoing = true;
-            claim.currentChallenger += 1;
-        }
-
-        return true;
-    }
 
     // @dev – check whether a claim has successfully withstood all challenges.
     // If successful without challenges, it will mark the superblock as confirmed.
@@ -325,7 +290,7 @@ contract SyscoinClaimManager is Initializable, SyscoinDepositsManager, SyscoinEr
     function checkClaimFinished(bytes32 superblockHash) public returns (bool) {
         SuperblockClaim storage claim = claims[superblockHash];
 
-        if (!claimExists(claim)) {
+        if (!claimExists(claim) || claim.decided) {
             emit ErrorClaim(superblockHash, ERR_SUPERBLOCK_BAD_CLAIM);
             return false;
         }
@@ -343,7 +308,7 @@ contract SyscoinClaimManager is Initializable, SyscoinDepositsManager, SyscoinEr
             claim.decided = true;
             trustedSuperblocks.invalidate(claim.superblockHash, msg.sender);
             emit SuperblockClaimFailed(superblockHash, claim.submitter);
-            doPayChallengers(superblockHash, claim);
+            doPayChallenger(superblockHash, claim);
             return false;
         }
 
@@ -356,8 +321,8 @@ contract SyscoinClaimManager is Initializable, SyscoinDepositsManager, SyscoinEr
         claim.decided = true;
 
         bool confirmImmediately = false;
-        // No challengers and parent approved; confirm immediately
-        if (claim.challengers.length == 0) {
+        // No challenger and parent approved; confirm immediately
+        if (claim.challenger == address(0)) {
             bytes32 parentId = trustedSuperblocks.getSuperblockParentId(claim.superblockHash);
             SyscoinSuperblocksI.Status status = trustedSuperblocks.getSuperblockStatus(parentId);
             if (status == SyscoinSuperblocksI.Status.Approved) {
@@ -390,7 +355,7 @@ contract SyscoinClaimManager is Initializable, SyscoinDepositsManager, SyscoinEr
         bytes32 id = descendantId;
         SuperblockClaim storage claim = claims[id];
         while (id != superblockHash) {
-            if (!claimExists(claim)) {
+            if (!claimExists(claim) || claim.invalid) {
                 emit ErrorClaim(superblockHash, ERR_SUPERBLOCK_BAD_CLAIM);
                 return false;
             }
@@ -398,7 +363,7 @@ contract SyscoinClaimManager is Initializable, SyscoinDepositsManager, SyscoinEr
                 emit ErrorClaim(superblockHash, ERR_SUPERBLOCK_BAD_STATUS);
                 return false;
             }
-            if (confirmDescendants && claim.challengers.length > 0) {
+            if (confirmDescendants && claim.challenger != address(0)) {
                 confirmDescendants = false;
             }
             id = trustedSuperblocks.getSuperblockParentId(id);
@@ -489,7 +454,7 @@ contract SyscoinClaimManager is Initializable, SyscoinDepositsManager, SyscoinEr
 
             trustedSuperblocks.invalidate(superblockHash, msg.sender);
             emit SuperblockClaimFailed(superblockHash, claim.submitter);
-            doPayChallengers(superblockHash, claim);
+            doPayChallenger(superblockHash, claim);
             return true;
         }
 
@@ -510,52 +475,36 @@ contract SyscoinClaimManager is Initializable, SyscoinDepositsManager, SyscoinEr
         claim.verificationOngoing = false;
 
         if (claim.submitter == loser) {
-            // the claim is over.
-            // Trigger end of verification game
             claim.invalid = true;
-        } else if (claim.submitter == winner) {
-            // if challenger failed, move on to the next challenger if any
-            runNextBattleSession(superblockHash);
-            
-        } else {
+        } else if (claim.submitter != winner) {
             revert();
         }
 
         emit SuperblockBattleDecided(sessionId, winner, loser);
     }
 
-    // @dev - Pay first challenger than ran their battle with submitter deposits
-    // Challengers that did not run will be returned their deposits
-    // Assumption is that each challenger is unique
-    function doPayChallengers(bytes32 superblockHash, SuperblockClaim storage claim) internal {
-        if(claim.challengers.length > 0)
+    // @dev - Pay challenger
+    function doPayChallenger(bytes32 superblockHash, SuperblockClaim storage claim) internal {
+        if(claim.challenger != address(0))
         {
             uint reward = claim.bondedDeposits[claim.submitter];
-            uint idx;
-
-            address challenger = claim.challengers[claim.currentChallenger-1];
+            address challenger = claim.challenger;
             claim.bondedDeposits[challenger] = claim.bondedDeposits[challenger].add(reward);
-            for (idx = 0; idx < claim.challengers.length; ++idx) {
-                challenger = claim.challengers[idx];
-                unbondDeposit(superblockHash, challenger);
-            }
+            unbondDeposit(superblockHash, challenger);
         }
         delete claim.bondedDeposits[claim.submitter];
     }
 
-    // @dev - Pay submitter with challenger deposits
+    // @dev - Pay submitter with challenger deposit
     function doPaySubmitter(bytes32 superblockHash, SuperblockClaim storage claim) internal {
-        if(claim.challengers.length > 0)
+        if(claim.challenger != address(0))
         {
-            address challenger = claim.challengers[claim.currentChallenger-1];
+            address challenger = claim.challenger;
             uint reward = claim.bondedDeposits[challenger];
             claim.bondedDeposits[challenger] = 0;
             claim.bondedDeposits[claim.submitter] = claim.bondedDeposits[claim.submitter].add(reward);
 
-            for (uint idx = 0; idx < claim.challengers.length; ++idx) {
-                challenger = claim.challengers[idx];
-                unbondDeposit(superblockHash, challenger);
-            }
+            unbondDeposit(superblockHash, challenger);
         }
         unbondDeposit(superblockHash, claim.submitter);   
     }
@@ -565,7 +514,7 @@ contract SyscoinClaimManager is Initializable, SyscoinDepositsManager, SyscoinEr
         SuperblockClaim storage claim = claims[superblockHash];
         return (trustedSuperblocks.getSuperblockStatus(superblockHash) == SyscoinSuperblocksI.Status.InBattle &&
             !claim.invalid && !claim.verificationOngoing && block.timestamp > claim.challengeTimeout
-            && claim.currentChallenger >= 1);
+            && claim.challenger != address(0));
     }
 
     // @dev – Check if a claim exists
@@ -609,20 +558,14 @@ contract SyscoinClaimManager is Initializable, SyscoinDepositsManager, SyscoinEr
         return claims[superblockHash].challengeTimeout;
     }
 
-    // @dev - Return the number of challengers whose battles haven't been decided yet
-    function getClaimRemainingChallengers(bytes32 superblockHash) public view returns (uint) {
-        SuperblockClaim storage claim = claims[superblockHash];
-        return claim.challengers.length - (claim.currentChallenger);
-    }
-
     // @dev – Return session by challenger
-    function getSession(bytes32 superblockHash, address challenger) public view returns(bytes32) {
-        return claims[superblockHash].sessions[challenger];
+    function getSession(bytes32 superblockHash) public view returns(bytes32) {
+        return claims[superblockHash].session;
     }
 
-    function getClaimChallengers(bytes32 superblockHash) public view returns (address[] memory) {
+    function getClaimChallenger(bytes32 superblockHash) public view returns (address) {
         SuperblockClaim storage claim = claims[superblockHash];
-        return claim.challengers;
+        return claim.challenger;
     }
     function getAbilityToProposeNextSuperblock(uint timestamp) public view returns (bool){
         (, , uint timestampSuperblock ,,, , ,,) = getSuperblockInfo(trustedSuperblocks.getBestSuperblock());

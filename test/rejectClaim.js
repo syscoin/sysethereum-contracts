@@ -267,25 +267,8 @@ contract('rejectClaim', (accounts) => {
             assert.ok(result.events.ErrorClaim, 'Error claim not raised despite undecided claim');
         });
 
-        it('Query and verify hashes', async () => {
-
-            result = await battleManager.methods.queryMerkleRootHashes(session1).send({ from: challenger, gas: 300000 });
-            assert.ok(result.events.QueryMerkleRootHashes, 'Query merkle root hashes');
-
-            result = await battleManager.methods.respondMerkleRootHashes(session1, superblockR0Hashes).send({ from: submitter, gas: 300000 });
-            assert.ok(result.events.RespondMerkleRootHashes, 'Respond merkle root hashes');
-        });
-
-        it('Query and reply block header', async () => {
-            result = await battleManager.methods.queryLastBlockHeader(session1, -1).send({ from: challenger, gas: 300000 });
-            assert.ok(result.events.QueryLastBlockHeader, 'Query block header');
-
-            result = await battleManager.methods.respondLastBlockHeader(session1, `0x${superblockR0Headers[1]}`, "0x").send({ from: submitter, gas: 2100000 });
-            assert.ok(result.events.RespondLastBlockHeader, 'Respond last block header');
-        });
-
-        it('Verify forked superblock', async () => {
-            result = await battleManager.methods.verifySuperblock(session1).send({ from: challenger, gas: 300000 });
+        it('verify headers', async () => {
+            result = await battleManager.methods.respondBlockHeaders(session1, superblockR0Headers, superblockR0Headers.length).send({ from: submitter, gas: 5000000 });
             assert.ok(result.events.ChallengerConvicted, 'Challenger not convicted despite fork being initially valid');
         });
 

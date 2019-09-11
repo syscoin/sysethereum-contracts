@@ -167,8 +167,8 @@ async function displaySuperblocksStatus({ superblockHash, fromBlock, toBlock }) 
     const cm = await SyscoinClaimManager.deployed();
     const bm = await SyscoinBattleManager.deployed();
 
-    const getBattleStatus = async (superblockHash, challenger) => {
-      const sessionId = await cm.getSession(superblockHash, challenger);
+    const getBattleStatus = async (superblockHash) => {
+      const sessionId = await cm.getSession(superblockHash);
       const [
         id,
         superblockHash2,
@@ -200,10 +200,8 @@ async function displaySuperblocksStatus({ superblockHash, fromBlock, toBlock }) 
       }
     };
 
-    const getBattles = async (superblockHash, challengers) => {
-      return Promise.all(challengers.map((challenger) => {
-        return getBattleStatus(superblockHash, challenger);
-      }));
+    const getBattles = async (superblockHash) => {
+      return getBattleStatus(superblockHash);
     };
 
     const getClaimInfo = async (superblockHash) => {
@@ -249,7 +247,7 @@ async function displaySuperblocksStatus({ superblockHash, fromBlock, toBlock }) 
       ] = await sb.getSuperblock(superblockHash);
       const challengers = await cm.getClaimChallengers(superblockHash);
       const claim = await getClaimInfo(superblockHash);
-      const battles = await getBattles(superblockHash, challengers);
+      const battles = await getBattles(superblockHash);
       console.log(`Superblock: ${superblockHash}`);
       console.log(`Submitter: ${submitter}`);
       // console.log(`Block: ${blockNumber}, hash ${blockHash}`);
@@ -270,13 +268,13 @@ async function displaySuperblocksStatus({ superblockHash, fromBlock, toBlock }) 
         challengers.forEach((challenger, idx) => {
           console.log('    ----------');
           console.log(`    Challenger: ${challenger}`);
-          console.log(`    Battle session: ${battles[idx].sessionId}`);
+          console.log(`    Battle session: ${battles.sessionId}`);
           if (idx + 1 == claim.currentChallenger) {
             if (claim.decided) {
               console.log(`    Challenge state: ${claim.invalid ? 'succeeded' : 'failed'}`);
             } else if (claim.verificationOngoing) {
-              displayBattle(battles[idx].battle);
-              console.log(`    Challenge state: ${challengeStateToText(battles[idx].battle.challengeState)}`);
+              displayBattle(battles.battle);
+              console.log(`    Challenge state: ${challengeStateToText(battles.battle.challengeState)}`);
             } else {
               console.log('    Challenge state: waiting');
             }

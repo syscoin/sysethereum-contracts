@@ -35,6 +35,7 @@ library SyscoinMessageLibrary {
         uint coinbaseTxIndex; // index of coinbase tx within Bitcoin tx tree
 
         uint parentNonce;
+        uint pos;
     }
 
     // Syscoin block header stored as a struct, mostly for readability purposes.
@@ -42,7 +43,9 @@ library SyscoinMessageLibrary {
     // with parseHeaderBytes.
     struct BlockHeader {
         uint32 bits;
-        uint blockHash;
+        bytes32 prevBlock;
+        uint64 timestamp;
+        bytes32 blockHash;
     }
     // Convert a variable integer into something useful and return it and
     // the index to after it.
@@ -118,7 +121,29 @@ library SyscoinMessageLibrary {
         return n_stack;
     }    
 
-    function skipInputs(bytes memory txBytes, uint pos) private pure
+    function skipInputsCoinbase(bytes memory txBytes, uint pos) private view
+             returns (uint, bytes memory)
+    {
+        uint n_inputs;
+        uint script_len;
+        (n_inputs, pos) = parseVarInt(txBytes, pos);
+        // if dummy 0x00 is present this is a witness transaction
+        if(n_inputs == 0x00){
+            (n_inputs, pos) = parseVarInt(txBytes, pos); // flag
+            assert(n_inputs != 0x00);
+            // after dummy/flag the real var int comes for txins
+            (n_inputs, pos) = parseVarInt(txBytes, pos);
+        }
+        require(n_inputs == 1);
+
+        pos += 36;  // skip outpoint
+        (script_len, pos) = parseVarInt(txBytes, pos);
+        bytes memory coinbaseScript = sliceArray(txBytes, pos, pos+script_len);
+        pos += script_len + 4;  // skip sig_script, seq
+        
+        return (pos, coinbaseScript);
+    }
+      function skipInputs(bytes memory txBytes, uint pos) private pure
              returns (uint)
     {
         uint n_inputs;
@@ -140,8 +165,7 @@ library SyscoinMessageLibrary {
         }
 
         return pos;
-    }
-             
+    }           
     // scan the burn outputs and return the value and script data of first burned output.
     function scanBurns(bytes memory txBytes, uint pos) private pure
              returns (uint, address, uint32, uint8, address)
@@ -195,11 +219,11 @@ library SyscoinMessageLibrary {
     }
     // get final position of inputs, outputs and lock time
     // this is a helper function to slice a byte array and hash the inputs, outputs and lock time
-    function getSlicePos(bytes memory txBytes, uint pos) private pure
-             returns (uint slicePos)
+    function getSlicePos(bytes memory txBytes, uint pos) private view
+             returns (uint slicePos, bytes memory coinbaseScript)
     {
-        slicePos = skipInputs(txBytes, pos + 4);
-        slicePos = skipOutputs(txBytes, slicePos);
+        (slicePos, coinbaseScript) = skipInputsCoinbase(txBytes, pos + 4);
+        slicePos = skipOutputs(txBytes, pos);
         slicePos += 4; // skip lock time
     }
     // scan a Merkle branch.
@@ -370,8 +394,7 @@ library SyscoinMessageLibrary {
     {
         // we need to traverse the bytes with a pointer because some fields are of variable length
         pos += 80; // skip non-AuxPoW header
-        uint slicePos;
-        (slicePos) = getSlicePos(rawBytes, pos);
+        (uint slicePos, bytes memory coinbaseScript) = getSlicePos(rawBytes, pos);
         auxpow.txHash = dblShaFlipMem(rawBytes, pos, slicePos - pos);
         pos = slicePos;
         // parent block hash, skip and manually hash below
@@ -388,8 +411,10 @@ library SyscoinMessageLibrary {
         auxpow.parentMerkleRoot = sliceBytes32Int(rawBytes, pos);
         pos += 40; // skip root that was just read, parent block timestamp and bits
         auxpow.parentNonce = getBytesLE(rawBytes, pos, 32);
+        pos += 32;
+        auxpow.pos = pos;
         uint coinbaseMerkleRootPosition;
-        (auxpow.coinbaseMerkleRoot, coinbaseMerkleRootPosition, auxpow.coinbaseMerkleRootCode) = findCoinbaseMerkleRoot(rawBytes);
+        (auxpow.coinbaseMerkleRoot, coinbaseMerkleRootPosition, auxpow.coinbaseMerkleRootCode) = findCoinbaseMerkleRoot(coinbaseScript);
     }
 
     // @dev - looks for {0xfa, 0xbe, 'm', 'm'} byte sequence
@@ -607,10 +632,11 @@ library SyscoinMessageLibrary {
     // @param _blockHeader - Syscoin block header bytes
     // @param pos - where to start reading hash from
     // @return - hash of block's parent in big endian format
-    function getHashPrevBlock(bytes memory _blockHeader) internal pure returns (uint) {
+    function getHashPrevBlock(bytes memory _blockHeader, uint pos) internal pure returns (uint) {
         uint hashPrevBlock;
+        uint index = 0x04+pos;
         assembly {
-            hashPrevBlock := mload(add(add(_blockHeader, 32), 0x04))
+            hashPrevBlock := mload(add(add(_blockHeader, 32), index))
         }
         return flip32Bytes(hashPrevBlock);
     }
@@ -633,8 +659,8 @@ library SyscoinMessageLibrary {
     // @param _blockHeader - Syscoin block header bytes
     // @param pos - where to start reading bits from
     // @return - block's timestamp in big-endian format
-    function getTimestamp(bytes memory _blockHeader) internal pure returns (uint32 time) {
-        return bytesToUint32Flipped(_blockHeader, 0x44);
+    function getTimestamp(bytes memory _blockHeader, uint pos) internal pure returns (uint32 time) {
+        return bytesToUint32Flipped(_blockHeader, 0x44+pos);
     }
 
     // @dev - extract bits field from a raw Syscoin block header
@@ -642,8 +668,8 @@ library SyscoinMessageLibrary {
     // @param _blockHeader - Syscoin block header bytes
     // @param pos - where to start reading bits from
     // @return - block's difficulty in bits format, also big-endian
-    function getBits(bytes memory _blockHeader) internal pure returns (uint32 bits) {
-        return bytesToUint32Flipped(_blockHeader, 0x48);
+    function getBits(bytes memory _blockHeader, uint pos) internal pure returns (uint32 bits) {
+        return bytesToUint32Flipped(_blockHeader, uint(0x48)+pos);
     }
 
 
@@ -652,8 +678,10 @@ library SyscoinMessageLibrary {
     // @param _rawBytes - first 80 bytes of a block header
     // @return - exact same header information in BlockHeader struct form
     function parseHeaderBytes(bytes memory _rawBytes, uint pos) internal view returns (BlockHeader memory bh) {
-        bh.bits = getBits(_rawBytes);
-        bh.blockHash = dblShaFlipMem(_rawBytes, pos, 80);
+        bh.bits = getBits(_rawBytes, pos);
+        bh.blockHash = bytes32(dblShaFlipMem(_rawBytes, pos, 80));
+        bh.timestamp = getTimestamp(_rawBytes, pos);
+        bh.prevBlock = bytes32(getHashPrevBlock(_rawBytes, pos));
     }
 
     uint32 constant VERSION_AUXPOW = (1 << 8);
@@ -684,68 +712,68 @@ library SyscoinMessageLibrary {
 
     // @dev - Verify block header
     // @param _blockHeaderBytes - array of bytes with the block header
+    // @param _bits - block header bits
+    // @param _prevBlock - previous block
+    // @param _timestamp - timestamp of block
+    // @param _blockHash - hash of block
     // @param _pos - starting position of the block header
-	// @param _proposedBlockHash - proposed block hash computing from block header bytes
-    // @return - [ErrorCode, IsMergeMined]
-    function verifyBlockHeader(bytes calldata _blockHeaderBytes, uint _pos, uint _proposedBlockHash) external view returns (uint) {
+    // @return - [ErrorCode, IsMergeMined, position]
+    function verifyBlockHeader(bytes calldata _blockHeaderBytes, uint _pos) external view returns (uint, uint32, bytes32, uint64, bytes32, uint) {
         BlockHeader memory blockHeader = parseHeaderBytes(_blockHeaderBytes, _pos);
-        uint blockSha256Hash = blockHeader.blockHash;
-		// must confirm that the header hash passed in and computing hash matches
-		if(blockSha256Hash != _proposedBlockHash){
-			return (ERR_INVALID_HEADER_HASH);
-		}
+
         uint target = targetFromBits(blockHeader.bits);
-        if (_blockHeaderBytes.length > 80 && isMergeMined(_blockHeaderBytes, 0)) {
+        uint blockHash = uint(blockHeader.blockHash);
+        if (isMergeMined(_blockHeaderBytes, _pos)) {
             AuxPoW memory ap = parseAuxPoW(_blockHeaderBytes, _pos);
             if (ap.blockHash > target) {
-                return (ERR_PROOF_OF_WORK_AUXPOW);
+                return (ERR_PROOF_OF_WORK_AUXPOW, 0,0,0,0,0);
             }
-            uint auxPoWCode = checkAuxPoW(blockSha256Hash, ap);
+            uint auxPoWCode = checkAuxPoW(blockHash, ap);
             if (auxPoWCode != 1) {
-                return (auxPoWCode);
+                return (auxPoWCode, 0,0,0,0,0);
             }
-            return (0);
+            return (0, blockHeader.bits,blockHeader.prevBlock,blockHeader.timestamp,blockHeader.blockHash, ap.pos);
         } else {
-            if (_proposedBlockHash > target) {
-                return (ERR_PROOF_OF_WORK);
+            if (blockHash > target) {
+                return (ERR_PROOF_OF_WORK, 0,0,0,0,0);
             }
-            return (0);
+            return (0, blockHeader.bits,blockHeader.prevBlock,blockHeader.timestamp,blockHeader.blockHash, _pos+80);
         }
     }
 
     // For verifying Syscoin difficulty
-    int64 constant TARGET_TIMESPAN =  int64(21600); 
-    int64 constant TARGET_TIMESPAN_DIV_4 = TARGET_TIMESPAN / int64(4);
-    int64 constant TARGET_TIMESPAN_MUL_4 = TARGET_TIMESPAN * int64(4);
-    int64 constant TARGET_TIMESPAN_ADJUSTMENT =  int64(360);  // 6 hour
+    uint constant TARGET_TIMESPAN =  21600; 
+    uint constant TARGET_TIMESPAN_DIV_4 = TARGET_TIMESPAN / 4;
+    uint constant TARGET_TIMESPAN_MUL_4 = TARGET_TIMESPAN * 4;
+    uint constant TARGET_TIMESPAN_ADJUSTMENT =  360;  // 6 hour
     uint constant POW_LIMIT =    0x00000fffffffffffffffffffffffffffffffffffffffffffffffffffffffffff;
     function getWorkFromBits(uint32 bits) external pure returns(uint) {
         uint target = targetFromBits(bits);
         return (~target / (target + 1)) + 1;
     }
-    function getLowerBoundDifficultyTarget() external pure returns (int64) {
+    function getLowerBoundDifficultyTarget() external pure returns (uint) {
         return TARGET_TIMESPAN_DIV_4;
     }
-     function getUpperBoundDifficultyTarget() external pure returns (int64) {
+     function getUpperBoundDifficultyTarget() external pure returns (uint) {
         return TARGET_TIMESPAN_MUL_4;
     }   
     // @param _actualTimespan - time elapsed from previous block creation til current block creation;
     // i.e., how much time it took to mine the current block
     // @param _bits - previous block header difficulty (in bits)
     // @return - expected difficulty for the next block
-    function calculateDifficulty(int64 _actualTimespan, uint32 _bits) external pure returns (uint32 result) {
-       int64 actualTimespan = _actualTimespan;
+    function calculateDifficulty(uint _actualTimespan, uint32 _bits) external pure returns (uint32 result) {
+        uint actualTimespan = _actualTimespan;
         // Limit adjustment step
-        if (_actualTimespan < TARGET_TIMESPAN_DIV_4) {
+        if (actualTimespan < TARGET_TIMESPAN_DIV_4) {
             actualTimespan = TARGET_TIMESPAN_DIV_4;
-        } else if (_actualTimespan > TARGET_TIMESPAN_MUL_4) {
+        } else if (actualTimespan > TARGET_TIMESPAN_MUL_4) {
             actualTimespan = TARGET_TIMESPAN_MUL_4;
         }
 
         // Retarget
         uint bnNew = targetFromBits(_bits);
-        bnNew = bnNew * uint(actualTimespan);
-        bnNew = uint(bnNew) / uint(TARGET_TIMESPAN);
+        bnNew = bnNew * actualTimespan;
+        bnNew = bnNew / TARGET_TIMESPAN;
 
         if (bnNew > POW_LIMIT) {
             bnNew = POW_LIMIT;

@@ -149,25 +149,8 @@ contract('SyscoinClaimManager', (accounts) => {
       battleSessionId = result.events.VerificationGameStarted.returnValues.sessionId;
     });
 
-    it('Query and verify hashes', async () => {
-
-      result = await battleManager.methods.queryMerkleRootHashes(battleSessionId).send({ from: challenger, gas: 2100000 });
-      assert.ok(result.events.QueryMerkleRootHashes, 'Query merkle root hashes');
-
-      result = await battleManager.methods.respondMerkleRootHashes(battleSessionId, hashes.slice(0, 2)).send({ from: submitter, gas: 2100000 });
-      assert.ok(result.events.RespondMerkleRootHashes, 'Respond merkle root hashes');
-    });
-
-    it('Query and reply block header', async () => {
-      result = await battleManager.methods.queryLastBlockHeader(battleSessionId, -1).send({ from: challenger, gas: 300000 });
-      assert.ok(result.events.QueryLastBlockHeader, 'Query block header');
-
-      result = await battleManager.methods.respondLastBlockHeader(battleSessionId, `0x${headers[1]}`, "0x").send({ from: submitter, gas: 300000 });
-      assert.ok(result.events.RespondLastBlockHeader, 'Respond last block header');
-    });
-
-    it('Verify superblock', async () => {
-      const result = await battleManager.methods.verifySuperblock(battleSessionId).send({ from: challenger, gas: 300000 });
+    it('Verify headers', async () => {
+      result = await battleManager.methods.respondBlockHeaders(session1, headers, headers.length).send({ from: submitter, gas: 5000000 });
       assert.ok(result.events.ChallengerConvicted, 'Challenger failed');
     });
     
@@ -218,31 +201,8 @@ contract('SyscoinClaimManager', (accounts) => {
       battleSessionId = result.events.VerificationGameStarted.returnValues.sessionId;
     });
   
-    it('Query hashes', async () => {
-      const session = await claimManager.methods.getSession(proposedSuperblockHash, challenger).call();
-      assert.equal(session, battleSessionId, 'Sessions should match');
-      result = await battleManager.methods.queryMerkleRootHashes(battleSessionId).send({ from: challenger, gas: 300000 });
-      assert.ok(result.events.QueryMerkleRootHashes, 'Query merkle root hashes');
-    });
-    
-    it('Verify hashes', async () => {
-      const result = await battleManager.methods.respondMerkleRootHashes(battleSessionId, hashes).send({ from: submitter, gas: 300000 });
-      assert.ok(result.events.RespondMerkleRootHashes, 'Respond merkle root hashes');
-    });
-    it('Query block header', async () => {
-      const result = await battleManager.methods.queryLastBlockHeader(battleSessionId, -1).send({ from: challenger, gas: 300000 });
-      assert.ok(result.events.QueryLastBlockHeader, 'Query block header');
-    });   
-    it('Answer blocks header', async () => {
-
-      let len = headers.length;
-      result = await battleManager.methods.respondLastBlockHeader(battleSessionId, `0x${headers[len-1]}`, "0x").send({ from: submitter, gas: 2100000 });
-      assert.ok(result.events.RespondLastBlockHeader, 'Respond last block header');
-
-    });
-
-    it('Verify superblock', async () => {
-      const result = await battleManager.methods.verifySuperblock(battleSessionId).send({ from: challenger, gas: 300000 });
+    it('Verify headers', async () => {
+      result = await battleManager.methods.respondBlockHeaders(session1, headers, headers.length).send({ from: submitter, gas: 5000000 });
       assert.ok(result.events.ChallengerConvicted, 'Superblock verified');
     });
     
@@ -299,113 +259,21 @@ contract('SyscoinClaimManager', (accounts) => {
       await beginNewChallenge();
     });
     
-    it('Timeout query hashes', async () => {
+    it('Timeout respond headers', async () => {
       let result;
       result = await battleManager.methods.timeout(battleSessionId).send({ from: submitter, gas: 300000 });
       assert.ok(result.events.ErrorBattle, 'Timeout too early');
       await utils.blockchainTimeoutSeconds(2*utils.OPTIONS_SYSCOIN_REGTEST.TIMEOUT);
       result = await battleManager.methods.timeout(battleSessionId).send({ from: submitter, gas: 300000 });
-      assert.ok(result.events.ChallengerConvicted, 'Should convict challenger');
-    });
-    
-    it('Timeout reply hashes', async () => {
-      let result;
-      result = await battleManager.methods.queryMerkleRootHashes(battleSessionId).send({ from: challenger, gas: 300000 });
-      assert.ok(result.events.QueryMerkleRootHashes, 'Query merkle root hashes');
-      result = await battleManager.methods.timeout(battleSessionId).send({ from: challenger, gas: 300000 });
-      assert.ok(result.events.ErrorBattle, 'Timeout too early');
-      await utils.blockchainTimeoutSeconds(2*utils.OPTIONS_SYSCOIN_REGTEST.TIMEOUT);
-      result = await battleManager.methods.timeout(battleSessionId).send({ from: challenger, gas: 300000 });
-      assert.ok(result.events.SubmitterConvicted, 'Should convict claimant');
-    });
-    
-    it('Timeout query block headers', async () => {
-      let result;
-
-      result = await battleManager.methods.queryMerkleRootHashes(battleSessionId).send({ from: challenger, gas: 300000 });
-      assert.ok(result.events.QueryMerkleRootHashes, 'Query merkle root hashes');
-
-      result = await battleManager.methods.respondMerkleRootHashes(battleSessionId, hashes.slice(0, 2)).send({ from: submitter, gas: 300000 });
-      assert.ok(result.events.RespondMerkleRootHashes, 'Respond merkle root hashes');
-
-      result = await battleManager.methods.timeout(battleSessionId).send({ from: submitter, gas: 300000 });
-      assert.ok(result.events.ErrorBattle, 'Timeout too early');
-
-      await utils.blockchainTimeoutSeconds(2*utils.OPTIONS_SYSCOIN_REGTEST.TIMEOUT);
-
-      result = await battleManager.methods.timeout(battleSessionId).send({ from: submitter, gas: 300000 });
-      assert.ok(result.events.ChallengerConvicted, 'Should convict challenger');
-    });
-    
-    it('Timeout reply block headers', async () => {
-      let result;
-
-      result = await battleManager.methods.queryMerkleRootHashes(battleSessionId).send({ from: challenger, gas: 300000 });
-      assert.ok(result.events.QueryMerkleRootHashes, 'Query merkle root hashes');
-
-      result = await battleManager.methods.respondMerkleRootHashes(battleSessionId, hashes.slice(0, 2)).send({ from: submitter, gas: 300000 });
-      assert.ok(result.events.RespondMerkleRootHashes, 'Respond merkle root hashes');
-
-      result = await battleManager.methods.queryLastBlockHeader(battleSessionId, -1).send({ from: challenger, gas: 300000 });
-      assert.ok(result.events.QueryLastBlockHeader, 'Query block header');
-      
-      result = await battleManager.methods.timeout(battleSessionId).send({ from: challenger, gas: 300000 });
-      assert.ok(result.events.ErrorBattle, 'Timeout too early');
-
-      await utils.blockchainTimeoutSeconds(2*utils.OPTIONS_SYSCOIN_REGTEST.TIMEOUT);
-
-      result = await battleManager.methods.timeout(battleSessionId).send({ from: challenger, gas: 300000 });
-      assert.ok(result.events.SubmitterConvicted, 'Should convict claimant');
+      assert.ok(result.events.SubmitterConvicted, 'Should convict submitter');
     });
 
-    it('Timeout verify superblock', async () => {
-      let result;
-      let data;
-
-      result = await battleManager.methods.queryMerkleRootHashes(battleSessionId).send({ from: challenger, gas: 300000 });
-      assert.ok(result.events.QueryMerkleRootHashes, 'Query merkle root hashes');
-
-
-      result = await battleManager.methods.respondMerkleRootHashes(battleSessionId, hashes.slice(0, 2)).send({ from: submitter, gas: 300000 });
-      assert.ok(result.events.RespondMerkleRootHashes, 'Respond merkle root hashes');
-
-
-      result = await battleManager.methods.queryLastBlockHeader(battleSessionId, -1).send({ from: challenger, gas: 300000 });
-      assert.ok(result.events.QueryLastBlockHeader, 'Query block header');
-
-
-      result = await battleManager.methods.respondLastBlockHeader(battleSessionId, `0x${headers[1]}`, "0x").send({ from: submitter, gas: 300000 });
-      assert.ok(result.events.RespondLastBlockHeader, 'Respond last block header');
-      
-      result = await battleManager.methods.timeout(battleSessionId).send({ from: submitter, gas: 300000 });
-      assert.ok(result.events.ErrorBattle, 'Timeout too early');
-
-      await utils.blockchainTimeoutSeconds(2*utils.OPTIONS_SYSCOIN_REGTEST.TIMEOUT);
-
-      result = await battleManager.methods.timeout(battleSessionId).send({ from: submitter, gas: 300000 });
-      assert.ok(result.events.ChallengerConvicted, 'Should convict challenger');
-    });
 
     it('Verify superblock', async () => {
       let result;
       let data;
 
-
-      result = await battleManager.methods.queryMerkleRootHashes(battleSessionId).send({ from: challenger, gas: 300000 });
-      assert.ok(result.events.QueryMerkleRootHashes, 'Query merkle root hashes');
-
-
-      result = await battleManager.methods.respondMerkleRootHashes(battleSessionId, hashes.slice(0, 2)).send({ from: submitter, gas: 300000 });
-      assert.ok(result.events.RespondMerkleRootHashes, 'Respond merkle root hashes');
-
-
-      result = await battleManager.methods.queryLastBlockHeader(battleSessionId, -1).send({ from: challenger, gas: 300000 });
-      assert.ok(result.events.QueryLastBlockHeader, 'Query block header');
-
-      result = await battleManager.methods.respondLastBlockHeader(battleSessionId, `0x${headers[1]}`, "0x").send({ from: submitter, gas: 300000 });
-      assert.ok(result.events.RespondLastBlockHeader, 'Respond last block header');
-
-      result = await battleManager.methods.verifySuperblock(battleSessionId).send({ from: challenger, gas: 300000 });
+      result = await battleManager.methods.respondBlockHeaders(session1, headers, headers.length).send({ from: submitter, gas: 5000000 });
       assert.ok(result.events.ChallengerConvicted, 'Should convict challenger');
 
       await utils.blockchainTimeoutSeconds(2*utils.OPTIONS_SYSCOIN_REGTEST.TIMEOUT);

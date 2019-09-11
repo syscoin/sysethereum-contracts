@@ -26,15 +26,15 @@ contract SyscoinSuperblocks is Initializable, SyscoinSuperblocksI, SyscoinErrorC
     }
 
     // Mapping superblock id => superblock data
-    mapping (bytes32 => SuperblockInfo) superblocks;
+    mapping (bytes32 => SuperblockInfo) private superblocks;
 
     // Index to superblock id
     mapping (uint32 => bytes32) private indexSuperblock;
 
-    uint32 indexNextSuperblock;
+    uint32 private indexNextSuperblock;
 
-    bytes32 public bestSuperblock;
-    uint public bestSuperblockAccumulatedWork;
+    bytes32 private bestSuperblock;
+    uint private bestSuperblockAccumulatedWork;
 
     SyscoinTransactionProcessor public syscoinERC20Manager;
 
@@ -114,7 +114,6 @@ contract SyscoinSuperblocks is Initializable, SyscoinSuperblocksI, SyscoinErrorC
 
         bestSuperblock = superblockHash;
         bestSuperblockAccumulatedWork = _accumulatedWork;
-
         emit ApprovedSuperblock(superblockHash, msg.sender);
 
         return (ERR_SUPERBLOCK_OK, superblockHash);

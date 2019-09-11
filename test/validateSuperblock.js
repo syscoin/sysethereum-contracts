@@ -74,26 +74,9 @@ contract('validateSuperblocks', (accounts) => {
       
       battleSessionId = result.events.VerificationGameStarted.returnValues.sessionId;
  
-      result = await battleManager.methods.queryMerkleRootHashes(battleSessionId).send({ from: challenger, gas: 300000 });
-
-      assert.ok(result.events.QueryMerkleRootHashes, 'Query merkle root hashes');
-
-
-      result = await battleManager.methods.respondMerkleRootHashes(battleSessionId, hashes).send({ from: submitter, gas: 300000 });
-      assert.ok(result.events.RespondMerkleRootHashes, 'Respond merkle root hashes');
-
-
-      result = await battleManager.methods.queryLastBlockHeader(battleSessionId, -1).send({ from: challenger, gas: 300000 });
-      assert.ok(result.events.QueryLastBlockHeader, 'Query block header');
-
-
-      result = await battleManager.methods.respondLastBlockHeader(battleSessionId, `0x${headers[0]}`, "0x").send({ from: submitter, gas: 300000 });
-      assert.ok(result.events.RespondLastBlockHeader, 'Respond last block header');
-
-
-      // Verify superblock
-      result = await battleManager.methods.verifySuperblock(battleSessionId).send({ from: submitter, gas: 300000 });
+      result = await battleManager.methods.respondBlockHeaders(session1, headers, headers.length).send({ from: submitter, gas: 5000000 });
       assert.ok(result.events.ChallengerConvicted, 'Challenger failed');
+
 
       // Confirm superblock
       await utils.blockchainTimeoutSeconds(2*utils.OPTIONS_SYSCOIN_REGTEST.TIMEOUT);
@@ -123,25 +106,11 @@ contract('validateSuperblocks', (accounts) => {
       
       battleSessionId = result.events.VerificationGameStarted.returnValues.sessionId;
 
-      result = await battleManager.methods.queryMerkleRootHashes(battleSessionId).send({ from: challenger, gas: 300000 });
-      assert.ok(result.events.QueryMerkleRootHashes, 'Query merkle root hashes');
-      
-
-      result = await battleManager.methods.respondMerkleRootHashes(battleSessionId, hashes).send({ from: submitter, gas: 300000 });
-      assert.ok(result.events.RespondMerkleRootHashes, 'Respond merkle root hashes');
-
-      result = await battleManager.methods.queryLastBlockHeader(battleSessionId, -1).send({ from: challenger, gas: 300000 });
-      assert.ok(result.events.QueryLastBlockHeader, 'Query block header');
-
- 
-      result = await battleManager.methods.respondLastBlockHeader(battleSessionId, `0x${headers[0]}`, "0x").send({ from: submitter, gas: 300000 });
-      assert.ok(result.events.RespondLastBlockHeader, 'Respond last block header');
-
-      // Verify superblock
-      result = await battleManager.methods.verifySuperblock(battleSessionId).send({ from: challenger, gas: 300000 });
+      result = await battleManager.methods.respondBlockHeaders(session1, headers, headers.length).send({ from: submitter, gas: 5000000 });
       assert.ok(result.events.ErrorBattle, 'Error verifying superblock');
       assert.equal(result.events.ErrorBattle.returnValues.err, '50035', 'Bad timestamp');
       assert.ok(result.events.SubmitterConvicted, 'Submitter failed');
+
 
       // Confirm superblock
 
@@ -171,13 +140,10 @@ contract('validateSuperblocks', (accounts) => {
       
       battleSessionId = result.events.VerificationGameStarted.returnValues.sessionId;
 
-      result = await battleManager.methods.queryMerkleRootHashes(battleSessionId).send({ from: challenger, gas: 300000 });
-      assert.ok(result.events.QueryMerkleRootHashes, 'Query merkle root hashes');
-
-   
-      result = await battleManager.methods.respondMerkleRootHashes(battleSessionId, hashes).send({ from: submitter, gas: 300000 });
-      assert.ok(result.events.ErrorBattle, 'Respond merkle root hashes');
+      result = await battleManager.methods.respondBlockHeaders(session1, headers, headers.length).send({ from: submitter, gas: 5000000 });
+      assert.ok(result.events.ErrorBattle, 'Respond headers');
       assert.equal(result.events.ErrorBattle.returnValues.err, '50150', 'Bad last hash');
+      assert.ok(result.events.SubmitterConvicted, 'Submitter failed');
 
       await utils.blockchainTimeoutSeconds(2*utils.OPTIONS_SYSCOIN_REGTEST.TIMEOUT);
       result = await battleManager.methods.timeout(battleSessionId).send({ from: challenger, gas: 300000 });

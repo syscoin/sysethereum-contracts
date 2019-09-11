@@ -68,24 +68,8 @@ contract('validateDifficultyAdjustment', (accounts) => {
       battleSessionId = result.events.VerificationGameStarted.returnValues.sessionId;
 
 
-      result = await battleManager.methods.queryMerkleRootHashes(battleSessionId).send({ from: challenger, gas: 300000 });
-      assert.ok(result.events.QueryMerkleRootHashes, 'Query merkle root hashes');
 
-
-      result = await battleManager.methods.respondMerkleRootHashes(battleSessionId, hashes).send({ from: submitter, gas: 300000 });
-      assert.ok(result.events.RespondMerkleRootHashes, 'Respond merkle root hashes');
-
-
-      result = await battleManager.methods.queryLastBlockHeader(battleSessionId, -1).send({ from: challenger, gas: 300000 });
-      assert.ok(result.events.QueryLastBlockHeader, 'Query block header');
-      
-
-
-      result = await battleManager.methods.respondLastBlockHeader(battleSessionId, `0x${headers[1]}`, "0x").send({ from: submitter, gas: 2100000 });
-      assert.ok(result.events.RespondLastBlockHeader, 'Respond last block header');
-
-      // Verify diff change and challenger is at fault (its actually valid)
-      result = await battleManager.methods.verifySuperblock(battleSessionId).send({ from: submitter, gas: 300000 });
+      result = await battleManager.methods.respondBlockHeaders(session1, headers, headers.length).send({ from: submitter, gas: 5000000 });
       assert.ok(result.events.ChallengerConvicted, 'Challenger failed');
 
       // Confirm superblock

@@ -176,14 +176,9 @@ contract('approveDescendant', (accounts) => {
             assert.ok(result.events.ErrorClaim, 'Challenger cannot re-challenge same superblock');
             
         });
-        it('Query and verify hashes', async () => {
-
-            result = await battleManager.methods.queryMerkleRootHashes(session1).send({ from: challenger, gas: 300000 });
-            assert.ok(result.events.QueryMerkleRootHashes, 'Query merkle root hashes');
-            
-
-            result = await battleManager.methods.respondMerkleRootHashes(session1, superblock1Hashes).send({ from: submitter, gas: 300000 });
-            assert.ok(result.events.RespondMerkleRootHashes, 'Respond merkle root hashes');
+        it('Verify headers', async () => {
+            result = await battleManager.methods.respondBlockHeaders(session1, Buffer.from(superblock1Headers, 'hex'), superblock1Headers.length).send({ from: submitter, gas: 5000000 });
+            assert.ok(result.events.ChallengerConvicted, 'Challenger not convicted despite fork being initially valid');
         });
 
 
@@ -229,22 +224,6 @@ contract('approveDescendant', (accounts) => {
 
 
 
-
-
-
-        it('Query and reply block header', async () => {
-            result = await battleManager.methods.queryLastBlockHeader(session1, -1).send({ from: challenger, gas: 300000 });
-            assert.ok(result.events.QueryLastBlockHeader, 'Query block header');
-
-            result = await battleManager.methods.respondLastBlockHeader(session1, `0x${superblock1Headers[2]}`, "0x").send({ from: submitter, gas: 2100000 });
-            assert.ok(result.events.RespondLastBlockHeader, 'Respond last block header');
-            
-        });
-
-        it('Verify superblock 1', async () => {
-            result = await battleManager.methods.verifySuperblock(session1).send({ from: challenger, gas: 300000 });
-            assert.ok(result.events.ChallengerConvicted, 'Challenger not convicted despite fork being initially valid');
-        });
 
         it('Semi-approve superblock 1', async () => {
             await utils.blockchainTimeoutSeconds(2 * utils.OPTIONS_SYSCOIN_REGTEST.TIMEOUT);
@@ -353,30 +332,11 @@ contract('approveDescendant', (accounts) => {
             session1 = result.events.VerificationGameStarted.returnValues.sessionId;
         });
 
-        it('Query and verify hashes', async () => {
-
-            result = await battleManager.methods.queryMerkleRootHashes(session1).send({ from: challenger, gas: 300000 });
-            assert.ok(result.events.QueryMerkleRootHashes, 'Query merkle root hashes');
-
-            result = await battleManager.methods.respondMerkleRootHashes(session1, superblock1Hashes).send({ from: submitter, gas: 300000 });
-            assert.ok(result.events.RespondMerkleRootHashes, 'Respond merkle root hashes');
-        });
-
-        it('Query and reply block header', async () => {
-
-            result = await battleManager.methods.queryLastBlockHeader(session1, -1).send({ from: challenger, gas: 300000 });
-            assert.ok(result.events.QueryLastBlockHeader, 'Query block header');
-  
-
-            result = await battleManager.methods.respondLastBlockHeader(session1, `0x${superblock1Headers[2]}`, "0x").send({ from: submitter, gas: 300000 });
-            assert.ok(result.events.RespondLastBlockHeader, 'Respond last block header');
-            
-        });
-
-        it('Verify superblock 1', async () => {
-            result = await battleManager.methods.verifySuperblock(session1).send({ from: challenger, gas: 300000 });
+        it('Verify headers', async () => {
+            result = await battleManager.methods.respondBlockHeaders(session1, superblock1Headers, superblock1Headers.length).send({ from: submitter, gas: 5000000 });
             assert.ok(result.events.ChallengerConvicted, 'Challenger not convicted despite fork being initially valid');
         });
+        
 
         it('Semi-approve superblock 1', async () => {
             await utils.blockchainTimeoutSeconds(2 * utils.OPTIONS_SYSCOIN_REGTEST.TIMEOUT);
@@ -406,25 +366,8 @@ contract('approveDescendant', (accounts) => {
             session1 = result.events.VerificationGameStarted.returnValues.sessionId;
         });
 
-        it('Query and verify hashes', async () => {
-
-            result = await battleManager.methods.queryMerkleRootHashes(session1).send({ from: challenger, gas: 300000 });
-            assert.ok(result.events.QueryMerkleRootHashes, 'Query merkle root hashes');
-
-            result = await battleManager.methods.respondMerkleRootHashes(session1, superblock2Hashes).send({ from: submitter, gas: 300000 });
-            assert.ok(result.events.RespondMerkleRootHashes, 'Respond merkle root hashes');
-        });
-
-        it('Query and reply block header', async () => {
-            result = await battleManager.methods.queryLastBlockHeader(session1, -1).send({ from: challenger, gas: 2100000 });
-            assert.ok(result.events.QueryLastBlockHeader, 'Query block header');
-
-            result = await battleManager.methods.respondLastBlockHeader(session1, `0x${superblock2Headers[2]}`, "0x").send({ from: submitter, gas: 2100000 });
-            assert.ok(result.events.RespondLastBlockHeader, 'Respond last block header');
-        });
-
-        it('Verify superblock 2', async () => {
-            result = await battleManager.methods.verifySuperblock(session1).send({ from: challenger, gas: 300000 });
+        it('Verify headers', async () => {
+            result = await battleManager.methods.respondBlockHeaders(session1, superblock2Headers, superblock2Headers.length).send({ from: submitter, gas: 5000000 });
             assert.ok(result.events.ChallengerConvicted, 'Challenger not convicted despite fork being initially valid');
         });
 
