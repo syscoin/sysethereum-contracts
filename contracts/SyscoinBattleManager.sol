@@ -45,9 +45,8 @@ contract SyscoinBattleManager is Initializable, SyscoinErrorCodes {
     SyscoinSuperblocksI trustedSuperblocks;
 
     event NewBattle(bytes32 superblockHash, bytes32 sessionId, address submitter, address challenger);
-    event ChallengerConvicted(bytes32 sessionId, address challenger);
-    event SubmitterConvicted(bytes32 sessionId, address submitter);
-    event ErrorBattle(bytes32 sessionId, uint err);
+    event ChallengerConvicted(bytes32 sessionId, uint err, address challenger);
+    event SubmitterConvicted(bytes32 sessionId, uint err, address submitter);
     modifier onlyFrom(address sender) {
         require(msg.sender == sender);
         _;
@@ -147,14 +146,15 @@ contract SyscoinBattleManager is Initializable, SyscoinErrorCodes {
         BattleSession storage session = sessions[sessionId];
         (uint err, SyscoinMessageLibrary.BlockHeader[] memory blockHeadersParsed ) = doRespondBlockHeaders(session, blockHeaders, numHeaders);
         if (err != 0) {
-            emit ErrorBattle(sessionId, err);
-            convictSubmitter(sessionId);
+            convictSubmitter(sessionId, err);
         }else{
             err = validateHeaders(session.superblockHash, blockHeadersParsed);
-            if (err != 0) 
-                convictSubmitter(sessionId);
-            else
-                convictChallenger(sessionId);
+            if (err != 0) {
+                convictSubmitter(sessionId, err);
+            }
+            else{
+                convictChallenger(sessionId, err);
+            }
         }
     }     
 
@@ -162,19 +162,19 @@ contract SyscoinBattleManager is Initializable, SyscoinErrorCodes {
     function checkMerkleRoot(SyscoinMessageLibrary.BlockHeader[] memory blockHeadersParsed, uint32 prevBits, bytes32 merkleRoot) internal pure returns (uint) {
         bytes32[] memory blockHashes = new bytes32[](blockHeadersParsed.length);
         blockHashes[0] = blockHeadersParsed[0].blockHash;
-        for(uint i = blockHeadersParsed.length;i>0;i--){
+        for(uint i = blockHeadersParsed.length-1;i>0;i--){
             SyscoinMessageLibrary.BlockHeader memory thisHeader = blockHeadersParsed[i];
             SyscoinMessageLibrary.BlockHeader memory prevHeader = blockHeadersParsed[i-1];
             // except for the last header except all the bits to match
-            if(i < blockHeadersParsed.length){
+            if(i < (blockHeadersParsed.length-1)){
                 if(prevBits != thisHeader.bits || thisHeader.bits != prevHeader.bits)
-                    return ERR_SUPERBLOCK_BITS_PREVBLOCK;
+                    return thisHeader.bits;
             }
             if(prevHeader.blockHash != thisHeader.prevBlock)
                 return ERR_SUPERBLOCK_HASH_PREVBLOCK;
 
             // if previous block timestamp was greator or the next block timestamp was greator than 2 hours from previous timestamp
-            if((prevHeader.timestamp > thisHeader.timestamp) || (prevHeader.timestamp < (thisHeader.timestamp + 7200)))
+            if(prevHeader.timestamp > thisHeader.timestamp || (prevHeader.timestamp < (thisHeader.timestamp - 7200)))
                 return ERR_SUPERBLOCK_TIMESTAMP_PREVBLOCK;
             blockHashes[i] = thisHeader.blockHash;
         }
@@ -187,52 +187,49 @@ contract SyscoinBattleManager is Initializable, SyscoinErrorCodes {
     function validateHeaders(bytes32 superblockHash, SyscoinMessageLibrary.BlockHeader[] memory blockHeadersParsed) internal view returns (uint) {
         uint accWork;
         bytes32 parentId;
-        uint prevWork;
-        uint32 prevBits;
         uint32 newBits;
         uint32 currentBits;
         uint height;
         bytes32 lastHash;
         uint prevTimestamp;
         bytes32 merkleRoot;
-        (merkleRoot, accWork,prevTimestamp,,currentBits,parentId,,,height) = getSuperblockInfo(superblockHash);
+        (merkleRoot, accWork,prevTimestamp,lastHash,currentBits,parentId,,,height) = getSuperblockInfo(superblockHash);
         SyscoinMessageLibrary.BlockHeader memory lastHeader = blockHeadersParsed[blockHeadersParsed.length-1];
-        SyscoinMessageLibrary.BlockHeader memory prevTolastHeader;
-        // on mainnet we can expect this to exist
-        if(net == SyscoinMessageLibrary.Network.MAINNET){
-            prevTolastHeader = blockHeadersParsed[blockHeadersParsed.length-2];
-        }
-
+        SyscoinMessageLibrary.BlockHeader memory prevToLastHeader;
+        if(net == SyscoinMessageLibrary.Network.MAINNET)
+            prevToLastHeader = blockHeadersParsed[blockHeadersParsed.length-2];
+            
         // ensure the last block's timestamp matches the superblock's proposed timestamp
         if(prevTimestamp != lastHeader.timestamp)
             return ERR_SUPERBLOCK_INVALID_TIMESTAMP;
-        
+        // ensure last headers hash matches the last hash of the superblock
+        if(lastHeader.blockHash != lastHash)
+            return ERR_SUPERBLOCK_HASH_SUPERBLOCK;
+        uint32 prevBits;
+        uint prevWork;
         (, prevWork,prevTimestamp,lastHash,prevBits,, ,,) = getSuperblockInfo(parentId);
-        
-        if(accWork <= prevWork)
-            return ERR_SUPERBLOCK_BAD_ACCUMULATED_WORK;
+         // ensure first headers prev block matches the last hash of the prev superblock
+        if(blockHeadersParsed[0].prevBlock != lastHash)
+            return ERR_SUPERBLOCK_HASH_PREVSUPERBLOCK;   
  
         // timestamp check against prev block in prev superblock
-        if((prevTimestamp > blockHeadersParsed[0].timestamp) || (prevTimestamp < (blockHeadersParsed[0].timestamp + 7200)))
+        if((prevTimestamp > blockHeadersParsed[0].timestamp) || (prevTimestamp < (blockHeadersParsed[0].timestamp - 7200)))
             return ERR_SUPERBLOCK_TIMESTAMP_SUPERBLOCK;
 
         // make sure all bits are the same and timestamps are within range as well as headers are all linked
-        if(blockHeadersParsed[0].blockHash != lastHash)
-            return ERR_SUPERBLOCK_HASH_SUPERBLOCK;
-
         uint err = checkMerkleRoot(blockHeadersParsed, prevBits, merkleRoot);
         if(err != 0)
             return err;
         
         // make sure every 6th superblock adjusts difficulty
         // calculate the new work from prevBits minus one as if its an adjustment we need to account for new bits, if not then just add one more prevBits work
-        prevWork += (SyscoinMessageLibrary.getWorkFromBits(prevBits)*blockHeadersParsed.length-1);
         if(net == SyscoinMessageLibrary.Network.MAINNET){
+            prevWork += (SyscoinMessageLibrary.getWorkFromBits(prevBits)*blockHeadersParsed.length-1);
             if(((height-1) % 6) == 0){
                 // ie: superblockHeight = 13 meaning blocks 661->720, we need to check timestamp from block 719 - to block 360
                 // get 6 superblocks previous for second timestamp (for example block 360 is the timetamp 6 superblocks ago on second adjustment)
                 prevTimestamp = trustedSuperblocks.getSuperblockTimestamp(trustedSuperblocks.getSuperblockAt(height - 6));
-                newBits = SyscoinMessageLibrary.calculateDifficulty(prevTolastHeader.timestamp - prevTimestamp, prevBits); 
+                newBits = SyscoinMessageLibrary.calculateDifficulty(prevToLastHeader.timestamp - prevTimestamp, prevBits); 
                 // make sure difficulty adjustment is within bounds
                 if(newBits < SyscoinMessageLibrary.calculateDifficulty(SyscoinMessageLibrary.getLowerBoundDifficultyTarget()-1, prevBits) || newBits > SyscoinMessageLibrary.calculateDifficulty(SyscoinMessageLibrary.getUpperBoundDifficultyTarget()+1, prevBits))
                     return ERR_SUPERBLOCK_BAD_RETARGET; 
@@ -258,29 +255,28 @@ contract SyscoinBattleManager is Initializable, SyscoinErrorCodes {
     // @dev - Trigger conviction if response is not received in time
     function timeout(bytes32 sessionId) public returns (uint) {
         BattleSession storage session = sessions[sessionId];
-        if (session.challengeState == ChallengeState.Challenged ||
+        if (session.challengeState == ChallengeState.Challenged &&
             (block.timestamp > session.lastActionTimestamp + superblockTimeout)) {
-            convictSubmitter(sessionId);
-            return ERR_SUPERBLOCK_OK;
+            convictSubmitter(sessionId, ERR_SUPERBLOCK_TIMEOUT);
+            return ERR_SUPERBLOCK_TIMEOUT;
         }
-        emit ErrorBattle(sessionId, ERR_SUPERBLOCK_NO_TIMEOUT);
         return ERR_SUPERBLOCK_NO_TIMEOUT;
     }
 
     // @dev - To be called when a challenger is convicted
-    function convictChallenger(bytes32 sessionId) internal {
+    function convictChallenger(bytes32 sessionId, uint err) internal {
         BattleSession storage session = sessions[sessionId];
         sessionDecided(sessionId, session.superblockHash, session.submitter, session.challenger);
+        emit ChallengerConvicted(sessionId, err, session.challenger);
         disable(sessionId);
-        emit ChallengerConvicted(sessionId, session.challenger);
     }
 
     // @dev - To be called when a submitter is convicted
-    function convictSubmitter(bytes32 sessionId) internal {
+    function convictSubmitter(bytes32 sessionId, uint err) internal {
         BattleSession storage session = sessions[sessionId];
         sessionDecided(sessionId, session.superblockHash, session.challenger, session.submitter);
+        emit SubmitterConvicted(sessionId, err, session.submitter);
         disable(sessionId);
-        emit SubmitterConvicted(sessionId, session.submitter);
     }
 
     // @dev - Disable session

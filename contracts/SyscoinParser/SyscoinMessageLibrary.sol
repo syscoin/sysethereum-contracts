@@ -44,7 +44,7 @@ library SyscoinMessageLibrary {
     struct BlockHeader {
         uint32 bits;
         bytes32 prevBlock;
-        uint64 timestamp;
+        uint32 timestamp;
         bytes32 blockHash;
     }
     // Convert a variable integer into something useful and return it and
@@ -223,7 +223,7 @@ library SyscoinMessageLibrary {
              returns (uint slicePos, bytes memory coinbaseScript)
     {
         (slicePos, coinbaseScript) = skipInputsCoinbase(txBytes, pos + 4);
-        slicePos = skipOutputs(txBytes, pos);
+        slicePos = skipOutputs(txBytes, slicePos);
         slicePos += 4; // skip lock time
     }
     // scan a Merkle branch.
@@ -411,8 +411,7 @@ library SyscoinMessageLibrary {
         auxpow.parentMerkleRoot = sliceBytes32Int(rawBytes, pos);
         pos += 40; // skip root that was just read, parent block timestamp and bits
         auxpow.parentNonce = getBytesLE(rawBytes, pos, 32);
-        pos += 32;
-        auxpow.pos = pos;
+        auxpow.pos = pos+4;
         uint coinbaseMerkleRootPosition;
         (auxpow.coinbaseMerkleRoot, coinbaseMerkleRootPosition, auxpow.coinbaseMerkleRootCode) = findCoinbaseMerkleRoot(coinbaseScript);
     }
@@ -669,7 +668,7 @@ library SyscoinMessageLibrary {
     // @param pos - where to start reading bits from
     // @return - block's difficulty in bits format, also big-endian
     function getBits(bytes memory _blockHeader, uint pos) internal pure returns (uint32 bits) {
-        return bytesToUint32Flipped(_blockHeader, uint(0x48)+pos);
+        return bytesToUint32Flipped(_blockHeader, 0x48+pos);
     }
 
 
@@ -718,7 +717,7 @@ library SyscoinMessageLibrary {
     // @param _blockHash - hash of block
     // @param _pos - starting position of the block header
     // @return - [ErrorCode, IsMergeMined, position]
-    function verifyBlockHeader(bytes calldata _blockHeaderBytes, uint _pos) external view returns (uint, uint32, bytes32, uint64, bytes32, uint) {
+    function verifyBlockHeader(bytes calldata _blockHeaderBytes, uint _pos) external view returns (uint, uint32, bytes32, uint32, bytes32, uint) {
         BlockHeader memory blockHeader = parseHeaderBytes(_blockHeaderBytes, _pos);
 
         uint target = targetFromBits(blockHeader.bits);

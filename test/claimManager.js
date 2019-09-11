@@ -150,7 +150,7 @@ contract('SyscoinClaimManager', (accounts) => {
     });
 
     it('Verify headers', async () => {
-      result = await battleManager.methods.respondBlockHeaders(session1, headers, headers.length).send({ from: submitter, gas: 5000000 });
+      result = await battleManager.methods.respondBlockHeaders(battleSessionId, Buffer.from(headers.slice(0, 2).join(""), 'hex'), headers.slice(0, 2).length).send({ from: submitter, gas: 5000000 });
       assert.ok(result.events.ChallengerConvicted, 'Challenger failed');
     });
     
@@ -202,7 +202,7 @@ contract('SyscoinClaimManager', (accounts) => {
     });
   
     it('Verify headers', async () => {
-      result = await battleManager.methods.respondBlockHeaders(session1, headers, headers.length).send({ from: submitter, gas: 5000000 });
+      result = await battleManager.methods.respondBlockHeaders(battleSessionId, Buffer.from(headers.join(""), 'hex'), headers.length).send({ from: submitter, gas: 5000000 });
       assert.ok(result.events.ChallengerConvicted, 'Superblock verified');
     });
     
@@ -262,7 +262,7 @@ contract('SyscoinClaimManager', (accounts) => {
     it('Timeout respond headers', async () => {
       let result;
       result = await battleManager.methods.timeout(battleSessionId).send({ from: submitter, gas: 300000 });
-      assert.ok(result.events.ErrorBattle, 'Timeout too early');
+      assert.ok(Object.keys(result.events).length == 0);
       await utils.blockchainTimeoutSeconds(2*utils.OPTIONS_SYSCOIN_REGTEST.TIMEOUT);
       result = await battleManager.methods.timeout(battleSessionId).send({ from: submitter, gas: 300000 });
       assert.ok(result.events.SubmitterConvicted, 'Should convict submitter');
@@ -273,7 +273,7 @@ contract('SyscoinClaimManager', (accounts) => {
       let result;
       let data;
 
-      result = await battleManager.methods.respondBlockHeaders(session1, headers, headers.length).send({ from: submitter, gas: 5000000 });
+      result = await battleManager.methods.respondBlockHeaders(battleSessionId, Buffer.from(headers.slice(0, 2).join(""), 'hex'), headers.slice(0, 2).length).send({ from: submitter, gas: 5000000 });
       assert.ok(result.events.ChallengerConvicted, 'Should convict challenger');
 
       await utils.blockchainTimeoutSeconds(2*utils.OPTIONS_SYSCOIN_REGTEST.TIMEOUT);
