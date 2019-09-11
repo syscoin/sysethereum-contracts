@@ -168,7 +168,7 @@ contract SyscoinBattleManager is Initializable, SyscoinErrorCodes {
             // except for the last header except all the bits to match
             if(i < (blockHeadersParsed.length-1)){
                 if(prevBits != thisHeader.bits || thisHeader.bits != prevHeader.bits)
-                    return thisHeader.bits;
+                    return ERR_SUPERBLOCK_BITS_PREVBLOCK;
             }
             if(prevHeader.blockHash != thisHeader.prevBlock)
                 return ERR_SUPERBLOCK_HASH_PREVBLOCK;
