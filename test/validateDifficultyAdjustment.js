@@ -40,7 +40,7 @@ contract('validateDifficultyAdjustment', (accounts) => {
       } = await utils.initSuperblockChain({
         network: utils.SYSCOIN_REGTEST,
         genesisSuperblock,
-        params: utils.OPTIONS_SYSCOIN_REGTEST,
+        params: utils.SUPERBLOCK_OPTIONS_LOCAL,
         from: owner,
       }));
       genesisSuperblockHash = genesisSuperblock.superblockHash;
@@ -75,7 +75,7 @@ contract('validateDifficultyAdjustment', (accounts) => {
       assert.ok(result.events.ChallengerConvicted, 'Challenger failed');
 
       // Confirm superblock
-      await utils.blockchainTimeoutSeconds(2*utils.OPTIONS_SYSCOIN_REGTEST.TIMEOUT);
+      await utils.blockchainTimeoutSeconds(2*utils.SUPERBLOCK_OPTIONS_LOCAL.TIMEOUT);
       result = await claimManager.methods.checkClaimFinished(proposesSuperblockHash).send({ from: submitter, gas: 300000 });
       assert.ok(result.events.SuperblockClaimPending, 'Superblock semi approved');
     });

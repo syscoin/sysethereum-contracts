@@ -74,7 +74,7 @@ contract('rejectClaim', (accounts) => {
                 battleManager,
             } = await utils.initSuperblockChain({
                 network: utils.SYSCOIN_REGTEST,
-                params: utils.OPTIONS_SYSCOIN_REGTEST,
+                params: utils.SUPERBLOCK_OPTIONS_LOCAL,
                 genesisSuperblock: superblock0,
                 from: owner,
             }));
@@ -126,7 +126,7 @@ contract('rejectClaim', (accounts) => {
 
         });
         it('Confirm superblock 1', async () => {
-            await utils.blockchainTimeoutSeconds(2*utils.OPTIONS_SYSCOIN_REGTEST.TIMEOUT);
+            await utils.blockchainTimeoutSeconds(2*utils.SUPERBLOCK_OPTIONS_LOCAL.TIMEOUT);
             const result = await claimManager.methods.checkClaimFinished(superblock1Id).send({ from: submitter, gas: 300000 });
             assert.ok(result.events.SuperblockClaimSuccessful, 'Superblock challenged');
             const best = await superblocks.methods.getBestSuperblock().call();
@@ -191,7 +191,7 @@ contract('rejectClaim', (accounts) => {
         });
 
         it('Confirm superblock 2', async () => {
-            await utils.blockchainTimeoutSeconds(2*utils.OPTIONS_SYSCOIN_REGTEST.TIMEOUT);
+            await utils.blockchainTimeoutSeconds(2*utils.SUPERBLOCK_OPTIONS_LOCAL.TIMEOUT);
             const result = await claimManager.methods.checkClaimFinished(superblock2Id).send({ from: submitter, gas: 300000 });
             assert.ok(result.events.SuperblockClaimSuccessful, 'Superblock challenged');
             const best = await superblocks.methods.getBestSuperblock().call();
@@ -216,7 +216,7 @@ contract('rejectClaim', (accounts) => {
         });
 
         it('Confirm superblock 3', async () => {
-            await utils.blockchainTimeoutSeconds(2*utils.OPTIONS_SYSCOIN_REGTEST.TIMEOUT);
+            await utils.blockchainTimeoutSeconds(2*utils.SUPERBLOCK_OPTIONS_LOCAL.TIMEOUT);
             const result = await claimManager.methods.checkClaimFinished(superblock3Id).send({ from: submitter, gas: 300000 });
             assert.ok(result.events.SuperblockClaimSuccessful, 'Superblock challenged');
             const best = await superblocks.methods.getBestSuperblock().call();
@@ -236,7 +236,7 @@ contract('rejectClaim', (accounts) => {
         });
 
         it('Confirm superblock 4', async () => {
-            await utils.blockchainTimeoutSeconds(2*utils.OPTIONS_SYSCOIN_REGTEST.TIMEOUT);
+            await utils.blockchainTimeoutSeconds(2*utils.SUPERBLOCK_OPTIONS_LOCAL.TIMEOUT);
             const result = await claimManager.methods.checkClaimFinished(superblock4Id).send({ from: submitter, gas: 300000 });
             assert.ok(result.events.SuperblockClaimSuccessful, 'Superblock challenged');
             const best = await superblocks.methods.getBestSuperblock().call();
@@ -283,7 +283,7 @@ contract('rejectClaim', (accounts) => {
         });
 
         it('Confirm forked superblock', async () => {
-            await utils.blockchainTimeoutSeconds(2*utils.OPTIONS_SYSCOIN_REGTEST.TIMEOUT);
+            await utils.blockchainTimeoutSeconds(2*utils.SUPERBLOCK_OPTIONS_LOCAL.TIMEOUT);
             result = await claimManager.methods.checkClaimFinished(superblockR0Id).send({ from: challenger, gas: 300000 });
             assert.ok(result.events.SuperblockClaimPending, 'Superblock challenged');
             const status = await superblocks.methods.getSuperblockStatus(superblockR0Id).call();
@@ -304,7 +304,7 @@ contract('rejectClaim', (accounts) => {
         });
 
         it('Confirm superblock R1', async () => {
-            await utils.blockchainTimeoutSeconds(2*utils.OPTIONS_SYSCOIN_REGTEST.TIMEOUT);
+            await utils.blockchainTimeoutSeconds(2*utils.SUPERBLOCK_OPTIONS_LOCAL.TIMEOUT);
             const result = await claimManager.methods.checkClaimFinished(superblockR1Id).send({ from: submitter, gas: 300000 });
             assert.ok(result.events.SuperblockClaimPending, 'Superblock challenged');
             const status = await superblocks.methods.getSuperblockStatus(superblockR1Id).call();

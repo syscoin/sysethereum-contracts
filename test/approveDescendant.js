@@ -123,7 +123,7 @@ contract('approveDescendant', (accounts) => {
         } = await utils.initSuperblockChain({
             network: utils.SYSCOIN_REGTEST,
             params: {
-                ...utils.OPTIONS_SYSCOIN_REGTEST,
+                ...utils.SUPERBLOCK_OPTIONS_LOCAL,
                 CONFIRMATIONS: 2,  // Superblocks required to confirm semi approved superblock,
             },
             genesisSuperblock: superblock0,
@@ -228,7 +228,7 @@ contract('approveDescendant', (accounts) => {
 
 
         it('Semi-approve superblock 1', async () => {
-            await utils.blockchainTimeoutSeconds(2 * utils.OPTIONS_SYSCOIN_REGTEST.TIMEOUT);
+            await utils.blockchainTimeoutSeconds(2 * utils.SUPERBLOCK_OPTIONS_LOCAL.TIMEOUT);
             result = await claimManager.methods.checkClaimFinished(superblock1Id).send({ from: challenger, gas: 300000 });
             assert.ok(result.events.SuperblockClaimPending, 'Superblock challenged');
             const status = await superblocks.methods.getSuperblockStatus(superblock1Id).call();
@@ -248,7 +248,7 @@ contract('approveDescendant', (accounts) => {
         });
 
         it('Semi-approve superblock 2', async () => {
-            await utils.blockchainTimeoutSeconds(2 * utils.OPTIONS_SYSCOIN_REGTEST.TIMEOUT);
+            await utils.blockchainTimeoutSeconds(2 * utils.SUPERBLOCK_OPTIONS_LOCAL.TIMEOUT);
             result = await claimManager.methods.checkClaimFinished(superblock2Id).send({ from: challenger, gas: 300000 });
             assert.ok(result.events.SuperblockClaimPending, 'Superblock challenged');
             const status = await superblocks.methods.getSuperblockStatus(superblock2Id).call();
@@ -273,7 +273,7 @@ contract('approveDescendant', (accounts) => {
         });
 
         it('Semi-approve superblock 3', async () => {
-            await utils.blockchainTimeoutSeconds(2 * utils.OPTIONS_SYSCOIN_REGTEST.TIMEOUT);
+            await utils.blockchainTimeoutSeconds(2 * utils.SUPERBLOCK_OPTIONS_LOCAL.TIMEOUT);
             result = await claimManager.methods.checkClaimFinished(superblock3Id).send({ from: challenger, gas: 300000 });
             assert.ok(result.events.SuperblockClaimPending, 'Superblock challenged');
             const status = await superblocks.methods.getSuperblockStatus(superblock3Id).call();
@@ -341,7 +341,7 @@ contract('approveDescendant', (accounts) => {
         
 
         it('Semi-approve superblock 1', async () => {
-            await utils.blockchainTimeoutSeconds(2 * utils.OPTIONS_SYSCOIN_REGTEST.TIMEOUT);
+            await utils.blockchainTimeoutSeconds(2 * utils.SUPERBLOCK_OPTIONS_LOCAL.TIMEOUT);
             result = await claimManager.methods.checkClaimFinished(superblock1Id).send({ from: challenger, gas: 300000 });
             assert.ok(result.events.SuperblockClaimPending, 'Superblock challenged');
             const status = await superblocks.methods.getSuperblockStatus(superblock1Id).call();
@@ -374,7 +374,7 @@ contract('approveDescendant', (accounts) => {
         });
 
         it('Semi-approve superblock 2', async () => {
-            await utils.blockchainTimeoutSeconds(3 * utils.OPTIONS_SYSCOIN_REGTEST.TIMEOUT);
+            await utils.blockchainTimeoutSeconds(3 * utils.SUPERBLOCK_OPTIONS_LOCAL.TIMEOUT);
             result = await claimManager.methods.checkClaimFinished(superblock2Id).send({ from: challenger, gas: 300000 });
             assert.ok(result.events.SuperblockClaimPending, 'Superblock challenged');
             const status = await superblocks.methods.getSuperblockStatus(superblock2Id).call();
@@ -394,7 +394,7 @@ contract('approveDescendant', (accounts) => {
         });
 
         it('Semi-approve superblock 3', async () => {
-            await utils.blockchainTimeoutSeconds(2 * utils.OPTIONS_SYSCOIN_REGTEST.TIMEOUT);
+            await utils.blockchainTimeoutSeconds(2 * utils.SUPERBLOCK_OPTIONS_LOCAL.TIMEOUT);
             result = await claimManager.methods.checkClaimFinished(superblock3Id).send({ from: challenger, gas: 300000 });
             assert.ok(result.events.SuperblockClaimPending, 'Superblock challenged');
             const status = await superblocks.methods.getSuperblockStatus(superblock3Id).call();

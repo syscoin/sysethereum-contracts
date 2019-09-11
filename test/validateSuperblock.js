@@ -40,7 +40,7 @@ contract('validateSuperblocks', (accounts) => {
       } = await utils.initSuperblockChain({
         network: utils.SYSCOIN_REGTEST,
         genesisSuperblock,
-        params: utils.OPTIONS_SYSCOIN_REGTEST,
+        params: utils.SUPERBLOCK_OPTIONS_LOCAL,
         from: owner,
         proxyAdmin: proxyAdmin
       }));
@@ -79,7 +79,7 @@ contract('validateSuperblocks', (accounts) => {
 
 
       // Confirm superblock
-      await utils.blockchainTimeoutSeconds(2*utils.OPTIONS_SYSCOIN_REGTEST.TIMEOUT);
+      await utils.blockchainTimeoutSeconds(2*utils.SUPERBLOCK_OPTIONS_LOCAL.TIMEOUT);
       result = await claimManager.methods.checkClaimFinished(proposesSuperblockHash).send({ from: submitter, gas: 300000 });
       assert.ok(result.events.SuperblockClaimPending, 'Superblock semi approved');
     });
@@ -112,7 +112,7 @@ contract('validateSuperblocks', (accounts) => {
 
       // Confirm superblock
 
-      await utils.blockchainTimeoutSeconds(2*utils.OPTIONS_SYSCOIN_REGTEST.TIMEOUT);
+      await utils.blockchainTimeoutSeconds(2*utils.SUPERBLOCK_OPTIONS_LOCAL.TIMEOUT);
       result = await claimManager.methods.checkClaimFinished(proposesSuperblockHash).send({ from: challenger, gas: 300000 });
       assert.ok(result.events.SuperblockClaimFailed, 'Superblock rejected');
     });
@@ -142,7 +142,7 @@ contract('validateSuperblocks', (accounts) => {
       assert.ok(result.events.SubmitterConvicted, 'Submitter failed');
       assert.ok(result.events.SubmitterConvicted.returnValues.err, '50150', 'Bad last hash');
 
-      await utils.blockchainTimeoutSeconds(2*utils.OPTIONS_SYSCOIN_REGTEST.TIMEOUT);
+      await utils.blockchainTimeoutSeconds(2*utils.SUPERBLOCK_OPTIONS_LOCAL.TIMEOUT);
       result = await battleManager.methods.timeout(battleSessionId).send({ from: challenger, gas: 300000 });
       // already convicted
       assert.ok(Object.keys(result.events).length == 0);

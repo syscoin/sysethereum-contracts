@@ -15,11 +15,11 @@ const bitcoin = require('bitcoinjs-lib');
 const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000'
 const ZERO_BYTES32 = '0x00000000000000000000000000000000000000000000000000000000000000'
 
-const OPTIONS_SYSCOIN_REGTEST = {
-  DURATION: 600,           // 10 minute
-  DELAY: 60,               // 1 minute
-  TIMEOUT: 15,             // 15 seconds
-  CONFIRMATIONS: 1,        // Superblocks required to confirm semi approved superblock
+const SUPERBLOCK_OPTIONS_LOCAL = {
+  DURATION: 60,     // 60 blocks per superblock
+  DELAY: 60,        // 1 minute
+  TIMEOUT: 15,      // 15 seconds
+  CONFIRMATIONS: 1 // Superblocks required to confirm semi approved superblock
 };
 
 
@@ -417,7 +417,7 @@ function printGas(txReceipt, msg, margin = 8) {
 
 
 module.exports = {
-  OPTIONS_SYSCOIN_REGTEST,
+  SUPERBLOCK_OPTIONS_LOCAL,
   SYSCOIN_MAINNET,
   SYSCOIN_TESTNET,
   SYSCOIN_REGTEST,
@@ -479,7 +479,7 @@ module.exports = {
     assert.equal(result.logs[1].event, 'SuperblockClaimCreated', 'New superblock proposed');
     const superblockHash = result.logs[1].args.superblockHash;
 
-    await blockchainTimeoutSeconds(3*OPTIONS_SYSCOIN_REGTEST.TIMEOUT);
+    await blockchainTimeoutSeconds(3*SUPERBLOCK_OPTIONS_LOCAL.TIMEOUT);
 
     result = await claimManager.checkClaimFinished(superblockHash, { from: sender });
     assert.equal(result.logs[1].event, 'SuperblockClaimSuccessful', 'Superblock challenged');

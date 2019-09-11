@@ -548,16 +548,6 @@ contract SyscoinClaimManager is Initializable, SyscoinDepositsManager, SyscoinEr
         return claims[superblockHash].invalid;
     }
 
-    // @dev - Check if a claim has a verification game in progress
-    function getClaimVerificationOngoing(bytes32 superblockHash) public view returns (bool) {
-        return claims[superblockHash].verificationOngoing;
-    }
-
-    // @dev - Returns timestamp of challenge timeout
-    function getClaimChallengeTimeout(bytes32 superblockHash) public view returns (uint) {
-        return claims[superblockHash].challengeTimeout;
-    }
-
     // @dev – Return session by challenger
     function getSession(bytes32 superblockHash) public view returns(bytes32) {
         return claims[superblockHash].session;

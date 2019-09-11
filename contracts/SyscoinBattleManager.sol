@@ -226,7 +226,7 @@ contract SyscoinBattleManager is Initializable, SyscoinErrorCodes {
         if(net == SyscoinMessageLibrary.Network.MAINNET){
             prevWork += (SyscoinMessageLibrary.getWorkFromBits(prevBits)*blockHeadersParsed.length-1);
             if(((height-1) % 6) == 0){
-                // ie: superblockHeight = 13 meaning blocks 661->720, we need to check timestamp from block 719 - to block 360
+                // ie: superblockHeight = 7 meaning blocks 661->720, we need to check timestamp from block 719 - to block 360
                 // get 6 superblocks previous for second timestamp (for example block 360 is the timetamp 6 superblocks ago on second adjustment)
                 prevTimestamp = trustedSuperblocks.getSuperblockTimestamp(trustedSuperblocks.getSuperblockAt(height - 6));
                 newBits = SyscoinMessageLibrary.calculateDifficulty(prevToLastHeader.timestamp - prevTimestamp, prevBits); 

@@ -16,7 +16,7 @@ contract('SyscoinClaimManager', (accounts) => {
     } = await utils.initSuperblockChain({
       network: utils.SYSCOIN_REGTEST,
       genesisSuperblock,
-      params: utils.OPTIONS_SYSCOIN_REGTEST,
+      params: utils.SUPERBLOCK_OPTIONS_LOCAL,
       from: owner,
     }));
     await claimManager.methods.makeDeposit().send({ value: utils.DEPOSITS.MIN_REWARD, from: submitter, gas: 300000 });
@@ -79,7 +79,7 @@ contract('SyscoinClaimManager', (accounts) => {
     });
 
     it('Confirm', async () => {
-      await utils.blockchainTimeoutSeconds(2*utils.OPTIONS_SYSCOIN_REGTEST.TIMEOUT);
+      await utils.blockchainTimeoutSeconds(2*utils.SUPERBLOCK_OPTIONS_LOCAL.TIMEOUT);
       result = await claimManager.methods.checkClaimFinished(proposedSuperblockHash).send({ from: challenger, gas: 300000 });
       assert.ok(result.events.SuperblockClaimSuccessful, 'Superblock challenged');
       const best = await superblocks.methods.getBestSuperblock().call();
@@ -105,7 +105,7 @@ contract('SyscoinClaimManager', (accounts) => {
     });
 
     it('Confirm fork', async () => {
-      await utils.blockchainTimeoutSeconds(2*utils.OPTIONS_SYSCOIN_REGTEST.TIMEOUT);
+      await utils.blockchainTimeoutSeconds(2*utils.SUPERBLOCK_OPTIONS_LOCAL.TIMEOUT);
       const result = await claimManager.methods.checkClaimFinished(proposedForkSuperblockHash).send({ from: challenger, gas: 300000 });
       assert.ok(result.events.SuperblockClaimSuccessful, 'Superblock challenged');
       const best = await superblocks.methods.getBestSuperblock().call();
@@ -155,7 +155,7 @@ contract('SyscoinClaimManager', (accounts) => {
     });
     
     it('Confirm', async () => {
-      await utils.blockchainTimeoutSeconds(2*utils.OPTIONS_SYSCOIN_REGTEST.TIMEOUT);
+      await utils.blockchainTimeoutSeconds(2*utils.SUPERBLOCK_OPTIONS_LOCAL.TIMEOUT);
       const result = await claimManager.methods.checkClaimFinished(proposedSuperblockHash).send({ from: challenger, gas: 300000 });
       assert.ok(result.events.SuperblockClaimPending, 'Superblock challenged');
     });
@@ -207,7 +207,7 @@ contract('SyscoinClaimManager', (accounts) => {
     });
     
     it('Accept superblock', async () => {
-      await utils.blockchainTimeoutSeconds(2*utils.OPTIONS_SYSCOIN_REGTEST.TIMEOUT);
+      await utils.blockchainTimeoutSeconds(2*utils.SUPERBLOCK_OPTIONS_LOCAL.TIMEOUT);
       const result = await claimManager.methods.checkClaimFinished(proposedSuperblockHash).send({ from: submitter, gas: 300000 });
       assert.ok(result.events.SuperblockClaimPending, 'Superblock accepted');
     });
@@ -226,7 +226,7 @@ contract('SyscoinClaimManager', (accounts) => {
       } = await utils.initSuperblockChain({
         network: utils.SYSCOIN_REGTEST,
         genesisSuperblock,
-        params: utils.OPTIONS_SYSCOIN_REGTEST,
+        params: utils.SUPERBLOCK_OPTIONS_LOCAL,
         from: owner,
       }));
       await claimManager.methods.makeDeposit().send({ value: utils.DEPOSITS.MIN_REWARD, from: submitter, gas: 300000 });
@@ -263,7 +263,7 @@ contract('SyscoinClaimManager', (accounts) => {
       let result;
       result = await battleManager.methods.timeout(battleSessionId).send({ from: submitter, gas: 300000 });
       assert.ok(Object.keys(result.events).length == 0);
-      await utils.blockchainTimeoutSeconds(2*utils.OPTIONS_SYSCOIN_REGTEST.TIMEOUT);
+      await utils.blockchainTimeoutSeconds(2*utils.SUPERBLOCK_OPTIONS_LOCAL.TIMEOUT);
       result = await battleManager.methods.timeout(battleSessionId).send({ from: submitter, gas: 300000 });
       assert.ok(result.events.SubmitterConvicted, 'Should convict submitter');
     });
@@ -276,7 +276,7 @@ contract('SyscoinClaimManager', (accounts) => {
       result = await battleManager.methods.respondBlockHeaders(battleSessionId, Buffer.from(headers.slice(0, 2).join(""), 'hex'), headers.slice(0, 2).length).send({ from: submitter, gas: 5000000 });
       assert.ok(result.events.ChallengerConvicted, 'Should convict challenger');
 
-      await utils.blockchainTimeoutSeconds(2*utils.OPTIONS_SYSCOIN_REGTEST.TIMEOUT);
+      await utils.blockchainTimeoutSeconds(2*utils.SUPERBLOCK_OPTIONS_LOCAL.TIMEOUT);
       result = await claimManager.methods.checkClaimFinished(proposedSuperblockHash).send({ from: submitter, gas: 300000 });
       assert.ok(result.events.SuperblockClaimPending, 'Superblock accepted');
 

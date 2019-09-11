@@ -493,10 +493,6 @@ contract SyscoinSuperblocks is Initializable, SyscoinSuperblocksI, SyscoinErrorC
         return superblocks[_superblockHash].timestamp;
     }
 
-    // @dev - Return superblock last block hash
-    function getSuperblockLastHash(bytes32 _superblockHash) public view returns (bytes32) {
-        return superblocks[_superblockHash].lastHash;
-    }
 
     // @dev - Return superblock parent
     function getSuperblockParentId(bytes32 _superblockHash) public view returns (bytes32) {
