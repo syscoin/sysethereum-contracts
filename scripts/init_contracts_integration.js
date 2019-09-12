@@ -1,5 +1,5 @@
 var SyscoinSuperblocks = artifacts.require("./SyscoinSuperblocks.sol");
-var utils = require('../test/utils');
+
 module.exports = async function(callback) {
   console.log("init_contracts_integration begin");
   
@@ -14,4 +14,5 @@ module.exports = async function(callback) {
   console.log("Initializing...");
   res = await sb.initialize(blocksMerkleRoot, accumulatedWork, timestamp, lastHash, lastBits, parentId);
   console.log("init_contracts_integration end");
+  process.exit()
 }

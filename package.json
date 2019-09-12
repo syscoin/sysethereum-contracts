@@ -18,7 +18,7 @@
     "solc": "^0.5.11",
     "truffle-assertions": "^0.8.2",
     "truffle-hdwallet-provider": "^1.0.9",
-    "truffle-plugin-verify": "^0.3.2",
+    "truffle-plugin-verify": "^0.3.3",
     "web3": "^1.0.0-beta.37"
   },
   "devDependencies": {
