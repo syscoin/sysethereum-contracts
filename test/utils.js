@@ -1,8 +1,5 @@
 const { TestHelper } = require('@openzeppelin/cli');
-const { Contracts, ZWeb3 } = require('@openzeppelin/upgrades');
-
-/* Initialize OpenZeppelin's Web3 provider. */
-ZWeb3.initialize(web3.currentProvider);
+const { Contracts } = require('@openzeppelin/upgrades');
 
 const fs = require('fs');
 const readline = require('readline');

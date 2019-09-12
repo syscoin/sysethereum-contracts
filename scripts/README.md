@@ -26,12 +26,6 @@ This steps depends on the NETWORK for integrationSyscoinRegtest
 
     $ truffle exec --network integrationSyscoinRegtest scripts\init_contracts_local.js
 
-## Superblocks info
-
-Display information for the last approved superblocks
-
-    $ truffle exec --network NETWORK scripts\debug.js
-
 ## Send command to contracts
 
     $ truffle exec --network NETWORK scripts\superblock-cli.js COMMAND [OPTIONS]
