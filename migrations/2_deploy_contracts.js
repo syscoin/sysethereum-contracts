@@ -40,6 +40,7 @@ async function deploy(options, accounts, networkId, superblockOptions) {
 
   // Push implementation contracts to the network
   console.log('Deploying implementations...');
+
   await push(options);
 
   // Create an instance of MyContract, setting initial value to 42
