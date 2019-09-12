@@ -3,6 +3,19 @@ pragma solidity ^0.5.10;
 // @dev - SyscoinSuperblocks error codes
 contract SyscoinErrorCodes {
     // Error codes
+    uint constant ERR_INVALID_HEADER = 10050;
+    uint constant ERR_COINBASE_INDEX = 10060; // coinbase tx index within Bitcoin merkle isn't 0
+    uint constant ERR_NOT_MERGE_MINED = 10070; // trying to check AuxPoW on a block that wasn't merge mined
+    uint constant ERR_FOUND_TWICE = 10080; // 0xfabe6d6d found twice
+    uint constant ERR_NO_MERGE_HEADER = 10090; // 0xfabe6d6d not found
+    uint constant ERR_CHAIN_MERKLE = 10110;
+    uint constant ERR_PARENT_MERKLE = 10120;
+    uint constant ERR_PROOF_OF_WORK = 10130;
+    uint constant ERR_INVALID_HEADER_HASH = 10140;
+    uint constant ERR_PROOF_OF_WORK_AUXPOW = 10150;
+    uint constant ERR_PARSE_TX_OUTPUT_LENGTH = 10160;
+
+
     uint constant ERR_SUPERBLOCK_OK = 0;
     uint constant ERR_SUPERBLOCK_MISSING_BLOCKS = 1;
     uint constant ERR_SUPERBLOCK_BAD_STATUS = 50020;
@@ -45,6 +58,7 @@ contract SyscoinErrorCodes {
     uint constant ERR_SUPERBLOCK_INTERIMBLOCK_MISSING = 50220;
     uint constant ERR_SUPERBLOCK_BAD_INTERIM_PREVHASH = 50230;
     uint constant ERR_SUPERBLOCK_BAD_INTERIM_BLOCKINDEX = 50240;
+
 
     // error codes for verifyTx
     uint constant ERR_BAD_FEE = 20010;

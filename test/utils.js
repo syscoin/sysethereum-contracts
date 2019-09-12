@@ -213,13 +213,13 @@ function calcSuperblockHash(merkleRoot, accumulatedWork, timestamp, lastHash, la
 }
 
 // Construct a superblock from an array of block headers
-function makeSuperblock(headers, parentId, parentAccumulatedWork) {
+function makeSuperblock(headers, parentId, parentAccumulatedWork, absoluteAccWork) {
   if (headers.length < 1) {
     throw new Error('Requires at least one header to build a superblock');
   }
   const blockHashes = headers.map(header => calcBlockSha256Hash(header));
   const strippedHashes =  blockHashes.map(x => x.slice(2)); // <- remove prefix '0x'
-  const accumulatedWork = headers.reduce((work, header) => work.add(getBlockDifficulty(header)), web3.utils.toBN(parentAccumulatedWork));
+  const accumulatedWork = absoluteAccWork? absoluteAccWork: headers.reduce((work, header) => work.add(getBlockDifficulty(header)), web3.utils.toBN(parentAccumulatedWork));
   const merkleRoot = makeMerkle(blockHashes);
   const timestamp = getBlockTimestamp(headers[headers.length - 1]);
   const lastHash = calcBlockSha256Hash(headers[headers.length - 1]);
