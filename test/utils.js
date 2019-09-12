@@ -298,6 +298,13 @@ function findEvent(logs, name) {
 }
 
 async function initSuperblockChain(options) {
+  // fix for magically failing tests
+  Contracts.artifactDefaults = {
+    data: undefined,
+    from: undefined,
+    gasPrice: undefined,
+    gas: undefined 
+  };
   const SyscoinClaimManager = Contracts.getFromLocal('SyscoinClaimManager');
   const SyscoinBattleManager = Contracts.getFromLocal('SyscoinBattleManager');
   const SyscoinSuperblocks = Contracts.getFromLocal('SyscoinSuperblocks');
