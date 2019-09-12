@@ -39,7 +39,7 @@ async function deploy(options, accounts, networkId, superblockOptions) {
   add({ contractsData: [{ name: 'SyscoinClaimManager', alias: 'SyscoinClaimManager' }] });
 
   // Push implementation contracts to the network
-  console.log('Depolying implementations...');
+  console.log('Deploying implementations...');
   await push(options);
 
   // Create an instance of MyContract, setting initial value to 42
