@@ -39,7 +39,7 @@ async function deployDevelopment(deployer, networkId, superblockOptions) {
   await deployer.deploy(SyscoinMessageLibrary);
   await deployer.deploy(SafeMath);
 
-  await deployer.link(SyscoinMessageLibrary, [SyscoinSuperblocks, SyscoinBattleManager, SyscoinClaimManager]);
+  await deployer.link(SyscoinMessageLibrary, [SyscoinSuperblocks]);
 
   await deployer.deploy(SyscoinSuperblocks);
   await deployer.link(Set, SyscoinERC20Manager);

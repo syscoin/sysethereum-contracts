@@ -4,7 +4,6 @@ import './interfaces/SyscoinSuperblocksI.sol';
 import './interfaces/SyscoinClaimManagerI.sol';
 import './interfaces/SyscoinBattleManagerI.sol';
 import './SyscoinDepositsManager.sol';
-import './SyscoinParser/SyscoinMessageLibrary.sol';
 import './SyscoinErrorCodes.sol';
 import 'openzeppelin-solidity/contracts/math/SafeMath.sol';
 import "@openzeppelin/upgrades/contracts/Initializable.sol";
