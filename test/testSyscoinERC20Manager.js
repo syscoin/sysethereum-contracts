@@ -5,6 +5,13 @@ const { Contracts, ZWeb3 } = require('@openzeppelin/upgrades');
 ZWeb3.initialize(web3.currentProvider);
 
 /* Retrieve compiled contract artifacts. */
+// fix for magically failing tests
+Contracts.artifactDefaults = {
+  data: undefined,
+  from: undefined,
+  gasPrice: undefined,
+  gas: undefined 
+};
 const SyscoinERC20ManagerV0 = Contracts.getFromLocal('SyscoinERC20Manager');
 const SyscoinERC20ManagerV1 = Contracts.getFromLocal('SyscoinERC20ManagerForTests');
 
