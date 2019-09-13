@@ -13,7 +13,13 @@ contract SyscoinBattleManager is Initializable, SyscoinErrorCodes {
         Challenged                // Claims was challenged
     }
 
-
+    // For verifying Syscoin difficulty
+    uint constant TARGET_TIMESPAN =  21600; 
+    uint constant TARGET_TIMESPAN_DIV_4 = TARGET_TIMESPAN / 4;
+    uint constant TARGET_TIMESPAN_MUL_4 = TARGET_TIMESPAN * 4;
+    uint constant TARGET_TIMESPAN_ADJUSTMENT =  360;  // 6 hour
+    uint constant POW_LIMIT =    0x00000fffffffffffffffffffffffffffffffffffffffffffffffffffffffffff;
+    
     struct BattleSession {
         bytes32 id;
         bytes32 superblockHash;
@@ -583,13 +589,6 @@ contract SyscoinBattleManager is Initializable, SyscoinErrorCodes {
         }
     }
       
-
-    // For verifying Syscoin difficulty
-    uint constant TARGET_TIMESPAN =  21600; 
-    uint constant TARGET_TIMESPAN_DIV_4 = TARGET_TIMESPAN / 4;
-    uint constant TARGET_TIMESPAN_MUL_4 = TARGET_TIMESPAN * 4;
-    uint constant TARGET_TIMESPAN_ADJUSTMENT =  360;  // 6 hour
-    uint constant POW_LIMIT =    0x00000fffffffffffffffffffffffffffffffffffffffffffffffffffffffffff;
     function getWorkFromBits(uint32 bits) internal pure returns(uint) {
         uint target = targetFromBits(bits);
         return (~target / (target + 1)) + 1;

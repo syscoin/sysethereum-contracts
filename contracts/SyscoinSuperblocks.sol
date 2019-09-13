@@ -438,9 +438,7 @@ contract SyscoinSuperblocks is Initializable, SyscoinSuperblocksI, SyscoinErrorC
     function getBestSuperblock() public view returns (bytes32) {
         return bestSuperblock;
     }
-    function getBestSuperblockAccumulatedWork() public view returns (uint) {
-        return bestSuperblockAccumulatedWork;
-    }
+ 
     // @dev - Returns the superblock data for the supplied superblock hash
     //
     function getSuperblock(bytes32 superblockHash) public view returns (
@@ -473,10 +471,6 @@ contract SyscoinSuperblocks is Initializable, SyscoinSuperblocksI, SyscoinErrorC
         return superblocks[superblockHash].height;
     }
 
-    // @dev - Returns superblock internal index
-    function getSuperblockIndex(bytes32 superblockHash) public view returns (uint32) {
-        return superblocks[superblockHash].index;
-    }
 
     // @dev - Return superblock ancestors' indexes
     function getSuperblockAncestors(bytes32 superblockHash) public view returns (bytes32) {
@@ -499,10 +493,6 @@ contract SyscoinSuperblocks is Initializable, SyscoinSuperblocksI, SyscoinErrorC
         return superblocks[_superblockHash].parentId;
     }
 
-    // @dev - Return superblock accumulated work
-    function getSuperblockAccumulatedWork(bytes32 _superblockHash) public view returns (uint) {
-        return superblocks[_superblockHash].accumulatedWork;
-    }
 
     // @dev - Return superblock status
     function getSuperblockStatus(bytes32 _superblockHash) public view returns (Status) {
