@@ -176,10 +176,6 @@ async function displaySuperblocksStatus({ superblockHash, fromBlock, toBlock }) 
         challenger2,
         lastActionTimestamp,
         lastActionClaimant,
-        lastActionChallenger,
-        actionsCounter,
-        countBlockHeaderQueries,
-        countBlockHeaderResponses,
         challengeState,
       ] = await bm.sessions(sessionId);
       return {
@@ -191,10 +187,6 @@ async function displaySuperblocksStatus({ superblockHash, fromBlock, toBlock }) 
           challenger: challenger2,
           lastActionTimestamp,
           lastActionClaimant,
-          lastActionChallenger,
-          actionsCounter,
-          countBlockHeaderQueries,
-          countBlockHeaderResponses,
           challengeState,
         },
       }
@@ -229,7 +221,6 @@ async function displaySuperblocksStatus({ superblockHash, fromBlock, toBlock }) 
 
     const displayBattle = (battle) => {
       console.log(`        Last action timestamp: ${new Date(battle.lastActionTimestamp * 1000)}`);
-      console.log(`        Last action: ${parseInt(battle.lastActionClaimant) > parseInt(battle.lastActionChallenger) ? 'claimant' : 'challenger'}`);
       console.log(`        State: ${challengeStateToText(battle.challengeState)}`);
     };
 

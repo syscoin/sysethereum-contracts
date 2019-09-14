@@ -11,19 +11,6 @@ import "@openzeppelin/upgrades/contracts/Initializable.sol";
 // Management of superblocks and status transitions
 contract SyscoinSuperblocks is Initializable, SyscoinSuperblocksI, SyscoinErrorCodes {
 
-    struct SuperblockInfo {
-        bytes32 blocksMerkleRoot;
-        uint accumulatedWork;
-        uint timestamp;
-        bytes32 lastHash;
-        bytes32 parentId;
-        address submitter;
-        bytes32 ancestors;
-        uint32 lastBits;
-        uint32 index;
-        uint32 height;
-        Status status;
-    }
 
     // Mapping superblock id => superblock data
     mapping (bytes32 => SuperblockInfo) private superblocks;
@@ -147,7 +134,7 @@ contract SyscoinSuperblocks is Initializable, SyscoinSuperblocksI, SyscoinErrorC
 
         SuperblockInfo storage parent = superblocks[_parentId];
         if (parent.status != Status.SemiApproved && parent.status != Status.Approved) {
-            emit ErrorSuperblock(bytes32(0), ERR_SUPERBLOCK_BAD_PARENT);
+            emit ErrorSuperblock(_parentId, uint(parent.status));
             return (ERR_SUPERBLOCK_BAD_PARENT, 0);
         }
 
@@ -243,21 +230,21 @@ contract SyscoinSuperblocks is Initializable, SyscoinSuperblocksI, SyscoinErrorC
     // @param _superblockHash Id of the superblock to semi-approve
     // @param _validator Address requesting semi approval
     // @return Error code and superblockHash
-    function semiApprove(bytes32 _superblockHash, address _validator) public returns (uint, bytes32) {
+    function semiApprove(bytes32 _superblockHash, address _validator) public returns (uint) {
         if (msg.sender != trustedClaimManager) {
             emit ErrorSuperblock(_superblockHash, ERR_SUPERBLOCK_NOT_CLAIMMANAGER);
-            return (ERR_SUPERBLOCK_NOT_CLAIMMANAGER, 0);
+            return ERR_SUPERBLOCK_NOT_CLAIMMANAGER;
         }
         SuperblockInfo storage superblock = superblocks[_superblockHash];
 
         if (superblock.status != Status.InBattle && superblock.status != Status.New) {
             emit ErrorSuperblock(_superblockHash, ERR_SUPERBLOCK_BAD_STATUS);
-            return (ERR_SUPERBLOCK_BAD_STATUS, 0);
+            return ERR_SUPERBLOCK_BAD_STATUS;
         }
         superblock.status = Status.SemiApproved;
                 
         emit SemiApprovedSuperblock(_superblockHash, _validator);
-        return (ERR_SUPERBLOCK_OK, _superblockHash);
+        return ERR_SUPERBLOCK_OK;
     }
 
     // @dev - Invalidates a superblock
@@ -270,19 +257,19 @@ contract SyscoinSuperblocks is Initializable, SyscoinSuperblocksI, SyscoinErrorC
     // @param _superblockHash Id of the superblock to invalidate
     // @param _validator Address requesting superblock invalidation
     // @return Error code and superblockHash
-    function invalidate(bytes32 _superblockHash, address _validator) public returns (uint, bytes32) {
+    function invalidate(bytes32 _superblockHash, address _validator) public returns (uint) {
         if (msg.sender != trustedClaimManager) {
             emit ErrorSuperblock(_superblockHash, ERR_SUPERBLOCK_NOT_CLAIMMANAGER);
-            return (ERR_SUPERBLOCK_NOT_CLAIMMANAGER, 0);
+            return ERR_SUPERBLOCK_NOT_CLAIMMANAGER;
         }
         SuperblockInfo storage superblock = superblocks[_superblockHash];
         if (superblock.status != Status.InBattle && superblock.status != Status.SemiApproved) {
             emit ErrorSuperblock(_superblockHash, ERR_SUPERBLOCK_BAD_STATUS);
-            return (ERR_SUPERBLOCK_BAD_STATUS, 0);
+            return ERR_SUPERBLOCK_BAD_STATUS;
         }
         superblock.status = Status.Invalid;
         emit InvalidSuperblock(_superblockHash, _validator);
-        return (ERR_SUPERBLOCK_OK, _superblockHash);
+        return ERR_SUPERBLOCK_OK;
     }
 
     // @dev - relays transaction `_txBytes` to ERC20Manager's processTransaction() method.

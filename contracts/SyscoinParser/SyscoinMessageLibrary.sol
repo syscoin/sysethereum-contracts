@@ -72,7 +72,7 @@ library SyscoinMessageLibrary {
         // if dummy 0x00 is present this is a witness transaction
         if(n_inputs == 0x00){
             (n_inputs, pos) = parseVarInt(txBytes, pos); // flag
-            assert(n_inputs != 0x00);
+            require(n_inputs != 0x00);
             // after dummy/flag the real var int comes for txins
             (n_inputs, pos) = parseVarInt(txBytes, pos);
         }

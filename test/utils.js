@@ -129,6 +129,8 @@ const mineBlocks = async (web3, n) => {
       method: 'evm_mine',
       params: [],
       id: 0,
+    }, (err, result) => {
+      // adding callback to fix "callback is not a function" in web3 1.0 implementation
     });
     await timeout(100);
   }

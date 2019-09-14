@@ -27,6 +27,10 @@ contract SyscoinBattleManager is Initializable, SyscoinErrorCodes {
         address challenger;
         uint lastActionTimestamp;         // Last action timestamp
         ChallengeState challengeState;    // Claim state
+        uint32 prevSubmitBits;
+        uint32 prevSubmitTimestamp;
+        bytes32 prevSubmitBlockhash;
+        bytes32[] blockHashes;            // Block hashes for merkle root check
     }
    // AuxPoW block fields
     struct AuxPoW {
@@ -125,6 +129,7 @@ contract SyscoinBattleManager is Initializable, SyscoinErrorCodes {
         session.superblockHash = superblockHash;
         session.submitter = submitter;
         session.challenger = challenger;
+        session.blockHashes.length = 0;
         session.lastActionTimestamp = block.timestamp;
         session.challengeState = ChallengeState.Challenged;
 
@@ -204,7 +209,7 @@ contract SyscoinBattleManager is Initializable, SyscoinErrorCodes {
             result += uint256(uint8(data[pos + i])) * 2 ** (i * 8);
         }
     }
-    function parseAuxPoW(bytes memory rawBytes, uint pos, bool validateAuxPow) internal view
+    function parseAuxPoW(bytes memory rawBytes, uint pos) internal view
              returns (AuxPoW memory auxpow)
     {
         bytes memory coinbaseScript;
@@ -212,32 +217,26 @@ contract SyscoinBattleManager is Initializable, SyscoinErrorCodes {
         // we need to traverse the bytes with a pointer because some fields are of variable length
         pos += 80; // skip non-AuxPoW header
 
-        (slicePos, coinbaseScript) = getSlicePos(rawBytes, pos, validateAuxPow);
-        if(validateAuxPow)
-            auxpow.txHash = dblShaFlipMem(rawBytes, pos, slicePos - pos);
+        (slicePos, coinbaseScript) = getSlicePos(rawBytes, pos);
+        auxpow.txHash = dblShaFlipMem(rawBytes, pos, slicePos - pos);
         pos = slicePos;
         // parent block hash, skip and manually hash below
         pos += 32;
-        (auxpow.parentMerkleProof, pos) = scanMerkleBranch(rawBytes, pos, 0, validateAuxPow);
-        if(validateAuxPow)
-            auxpow.coinbaseTxIndex = getBytesLE(rawBytes, pos, 32);
+        (auxpow.parentMerkleProof, pos) = scanMerkleBranch(rawBytes, pos, 0);
+        auxpow.coinbaseTxIndex = getBytesLE(rawBytes, pos, 32);
         pos += 4;
-        (auxpow.chainMerkleProof, pos) = scanMerkleBranch(rawBytes, pos, 0, validateAuxPow);
-        if(validateAuxPow)
-            auxpow.syscoinHashIndex = getBytesLE(rawBytes, pos, 32);
+        (auxpow.chainMerkleProof, pos) = scanMerkleBranch(rawBytes, pos, 0);
+        auxpow.syscoinHashIndex = getBytesLE(rawBytes, pos, 32);
         pos += 4;
         // calculate block hash instead of reading it above, as some are LE and some are BE, we cannot know endianness and have to calculate from parent block header
         auxpow.blockHash = dblShaFlipMem(rawBytes, pos, 80);
         pos += 36; // skip parent version and prev block
-        if(validateAuxPow)
-            auxpow.parentMerkleRoot = sliceBytes32Int(rawBytes, pos);
+        auxpow.parentMerkleRoot = sliceBytes32Int(rawBytes, pos);
         pos += 40; // skip root that was just read, parent block timestamp and bits
-        if(validateAuxPow)
-            auxpow.parentNonce = getBytesLE(rawBytes, pos, 32);
+        auxpow.parentNonce = getBytesLE(rawBytes, pos, 32);
         auxpow.pos = pos+4;
         uint coinbaseMerkleRootPosition;
-        if(validateAuxPow)
-            (auxpow.coinbaseMerkleRoot, coinbaseMerkleRootPosition, auxpow.coinbaseMerkleRootCode) = findCoinbaseMerkleRoot(coinbaseScript);
+        (auxpow.coinbaseMerkleRoot, coinbaseMerkleRootPosition, auxpow.coinbaseMerkleRootCode) = findCoinbaseMerkleRoot(coinbaseScript);
     }
    function skipOutputs(bytes memory txBytes, uint pos) private pure
              returns (uint)
@@ -259,11 +258,11 @@ contract SyscoinBattleManager is Initializable, SyscoinErrorCodes {
     }
     // get final position of inputs, outputs and lock time
     // this is a helper function to slice a byte array and hash the inputs, outputs and lock time
-    function getSlicePos(bytes memory txBytes, uint pos, bool validateAuxPow) private view
+    function getSlicePos(bytes memory txBytes, uint pos) private view
              returns (uint slicePos, bytes memory coinbaseScript)
     {
 
-        (slicePos, coinbaseScript) = skipInputsCoinbase(txBytes, pos + 4, validateAuxPow);
+        (slicePos, coinbaseScript) = skipInputsCoinbase(txBytes, pos + 4);
         slicePos = skipOutputs(txBytes, slicePos);
         slicePos += 4; // skip lock time
     }
@@ -271,7 +270,7 @@ contract SyscoinBattleManager is Initializable, SyscoinErrorCodes {
     // return array of values and the end position of the sibling hashes.
     // takes a 'stop' argument which sets the maximum number of
     // siblings to scan through. stop=0 => scan all.
-    function scanMerkleBranch(bytes memory txBytes, uint pos, uint stop, bool validateAuxPow) private pure
+    function scanMerkleBranch(bytes memory txBytes, uint pos, uint stop) private pure
              returns (uint[] memory, uint)
     {
         uint n_siblings;
@@ -288,8 +287,7 @@ contract SyscoinBattleManager is Initializable, SyscoinErrorCodes {
         uint[] memory sibling_values = new uint[](halt);
 
         for (uint i = 0; i < halt; i++) {
-            if(validateAuxPow)
-                sibling_values[i] = flip32Bytes(sliceBytes32Int(txBytes, pos));
+            sibling_values[i] = flip32Bytes(sliceBytes32Int(txBytes, pos));
             pos += 32;
         }
 
@@ -322,7 +320,7 @@ contract SyscoinBattleManager is Initializable, SyscoinErrorCodes {
         }
         return result;
     }
-    function skipInputsCoinbase(bytes memory txBytes, uint pos, bool validateAuxPow) private view
+    function skipInputsCoinbase(bytes memory txBytes, uint pos) private view
              returns (uint, bytes memory)
     {
         uint n_inputs;
@@ -331,7 +329,7 @@ contract SyscoinBattleManager is Initializable, SyscoinErrorCodes {
         // if dummy 0x00 is present this is a witness transaction
         if(n_inputs == 0x00){
             (n_inputs, pos) = parseVarInt(txBytes, pos); // flag
-            assert(n_inputs != 0x00);
+            require(n_inputs != 0x00);
             // after dummy/flag the real var int comes for txins
             (n_inputs, pos) = parseVarInt(txBytes, pos);
         }
@@ -340,8 +338,7 @@ contract SyscoinBattleManager is Initializable, SyscoinErrorCodes {
         pos += 36;  // skip outpoint
         (script_len, pos) = parseVarInt(txBytes, pos);
         bytes memory coinbaseScript;
-        if(validateAuxPow)
-            coinbaseScript = sliceArray(txBytes, pos, pos+script_len);
+        coinbaseScript = sliceArray(txBytes, pos, pos+script_len);
         pos += script_len + 4;  // skip sig_script, seq
         
         return (pos, coinbaseScript);
@@ -565,25 +562,24 @@ contract SyscoinBattleManager is Initializable, SyscoinErrorCodes {
     // @param _blockHeaderBytes - array of bytes with the block header
     // @param _pos - starting position of the block header
     // @return - [ErrorCode, BlockHeader, position]
-    function verifyBlockHeader(bytes memory _blockHeaderBytes, uint _pos, bool validateAuxPow) internal view returns (uint, BlockHeader memory, uint) {
+    function verifyBlockHeader(bytes memory _blockHeaderBytes, uint _pos) internal view returns (uint, BlockHeader memory, uint) {
         BlockHeader memory blockHeader = parseHeaderBytes(_blockHeaderBytes, _pos);
         uint target = targetFromBits(blockHeader.bits);
         uint blockHash = uint(blockHeader.blockHash);
         if (isMergeMined(_blockHeaderBytes, _pos)) {
-            AuxPoW memory ap = parseAuxPoW(_blockHeaderBytes, _pos, validateAuxPow);
+            AuxPoW memory ap = parseAuxPoW(_blockHeaderBytes, _pos);
             if (ap.blockHash > target) {
                 return (ERR_PROOF_OF_WORK_AUXPOW, blockHeader,0);
             }
-            if(validateAuxPow){
-                uint auxPoWCode = checkAuxPoW(blockHash, ap);
-                if (auxPoWCode != 1) {
-                    return (auxPoWCode, blockHeader,0);
-                }
+            
+            uint auxPoWCode = checkAuxPoW(blockHash, ap);
+            if (auxPoWCode != 1) {
+                return (auxPoWCode, blockHeader,0);
             }
             return (0, blockHeader, ap.pos);
         } else {
             if (blockHash > target) {
-                return (ERR_PROOF_OF_WORK, blockHeader,0);
+                return (blockHash, blockHeader,0);
             }
             return (0, blockHeader, _pos+80);
         }
@@ -684,7 +680,7 @@ contract SyscoinBattleManager is Initializable, SyscoinErrorCodes {
         BattleSession storage session,
         bytes memory blockHeaders,
         uint numHeaders
-    ) internal view returns (uint, BlockHeader[] memory ) {
+    ) internal returns (uint, BlockHeader[] memory ) {
         BlockHeader[] memory myEmptyArray;
         if (session.challengeState == ChallengeState.Challenged) {
             uint pos = 0;
@@ -692,21 +688,13 @@ contract SyscoinBattleManager is Initializable, SyscoinErrorCodes {
             uint i;
             BlockHeader[] memory blockHeadersParsed = new BlockHeader[](numHeaders);
             for(i =0;i<blockHeadersParsed.length;i++){
-                (err, blockHeadersParsed[i], pos) = verifyBlockHeader(blockHeaders, pos, (i+1) == numHeaders);
+                (err, blockHeadersParsed[i], pos) = verifyBlockHeader(blockHeaders, pos);
                 if (err != ERR_SUPERBLOCK_OK) {
                     return (err, myEmptyArray);
                 }
-                if(pos >= blockHeaders.length){
-                    break;
-                }
             }
-            if(net == Network.MAINNET){
-                if(numHeaders != superblockDuration || (i+1) != superblockDuration)
-                    return (ERR_SUPERBLOCK_MISSING_BLOCKS, myEmptyArray);
-            }
-            else{
-                if(numHeaders != (i+1))
-                    return (ERR_SUPERBLOCK_MISSING_BLOCKS, myEmptyArray);
+            for(i =0;i<blockHeadersParsed.length;i++){
+                session.blockHashes.push(blockHeadersParsed[i].blockHash);
             }
             return (ERR_SUPERBLOCK_OK, blockHeadersParsed);
         }
@@ -718,20 +706,23 @@ contract SyscoinBattleManager is Initializable, SyscoinErrorCodes {
         uint numHeaders
         ) onlyClaimant(sessionId) public {
         BattleSession storage session = sessions[sessionId];
+        if(net == Network.MAINNET && numHeaders != 15)
+            revert();
         (uint err, BlockHeader[] memory blockHeadersParsed ) = doRespondBlockHeaders(session, blockHeaders, numHeaders);
-        if (err != 0) {
+        if (err != ERR_SUPERBLOCK_OK) {
             convictSubmitter(sessionId, err);
         }else{
-            err = validateHeaders(session.superblockHash, blockHeadersParsed);
-            if (err != 0) {
+            session.lastActionTimestamp = block.timestamp;
+            err = validateHeaders(session, blockHeadersParsed);
+            if (err != ERR_SUPERBLOCK_OK) {
                 convictSubmitter(sessionId, err);
             }
-            else{
+            // only convict challenger at the end if all headers have been provided
+            if(session.blockHashes.length >= superblockDuration || (net != Network.MAINNET && numHeaders < 15)){
                 convictChallenger(sessionId, err);
             }
         }
     }     
-
     // @dev - Converts a bytes of size 4 to uint32,
     // e.g. for input [0x01, 0x02, 0x03 0x04] returns 0x01020304
     function bytesToUint32Flipped(bytes memory input, uint pos) internal pure returns (uint32 result) {
@@ -776,15 +767,13 @@ contract SyscoinBattleManager is Initializable, SyscoinErrorCodes {
         }
         return hashes[0];
     }
-    // @dev - Validate merkle root, prev bits, prev hash and timestamp of block header
-    function checkMerkleRoot(BlockHeader[] memory blockHeadersParsed, uint32 prevBits, bytes32 merkleRoot) internal pure returns (uint) {
-        bytes32[] memory blockHashes = new bytes32[](blockHeadersParsed.length);
-        blockHashes[0] = blockHeadersParsed[0].blockHash;
+    // @dev - Validate prev bits, prev hash and timestamp of block header
+    function checkBlocks(BattleSession storage session, BlockHeader[] memory blockHeadersParsed, uint32 prevBits) internal view returns (uint) {
         for(uint i = blockHeadersParsed.length-1;i>0;i--){
             BlockHeader memory thisHeader = blockHeadersParsed[i];
             BlockHeader memory prevHeader = blockHeadersParsed[i-1];
             // except for the last header except all the bits to match
-            if(i < (blockHeadersParsed.length-1)){
+            if(session.blockHashes.length < superblockDuration || i < (blockHeadersParsed.length-1)){
                 if(prevBits != thisHeader.bits || thisHeader.bits != prevHeader.bits)
                     return ERR_SUPERBLOCK_BITS_PREVBLOCK;
             }
@@ -794,77 +783,90 @@ contract SyscoinBattleManager is Initializable, SyscoinErrorCodes {
             // if previous block timestamp was greator or the next block timestamp was greator than 2 hours from previous timestamp
             if(prevHeader.timestamp > thisHeader.timestamp || (prevHeader.timestamp < (thisHeader.timestamp - 7200)))
                 return ERR_SUPERBLOCK_TIMESTAMP_PREVBLOCK;
-            blockHashes[i] = thisHeader.blockHash;
         }
-        if (merkleRoot != makeMerkle(blockHashes))
-            return ERR_SUPERBLOCK_INVALID_MERKLE;
-
+        // enforce linking against previous submitted batch of blocks
+        if(session.blockHashes.length >= 30){
+            BlockHeader memory firstHeader = blockHeadersParsed[0];
+            if(session.prevSubmitBits != prevBits)
+                return ERR_SUPERBLOCK_BITS_PREVBLOCK;
+            if(session.prevSubmitBlockhash != firstHeader.prevBlock)
+                return ERR_SUPERBLOCK_HASH_PREVBLOCK; 
+            if(session.prevSubmitTimestamp > firstHeader.timestamp || (session.prevSubmitTimestamp < (firstHeader.timestamp - 7200)))
+                return ERR_SUPERBLOCK_TIMESTAMP_PREVBLOCK;                          
+        }
         return ERR_SUPERBLOCK_OK;
-    }
+    }   
     // @dev - Validate superblock accumulated work + other block header fields
-    function validateHeaders(bytes32 superblockHash, BlockHeader[] memory blockHeadersParsed) internal view returns (uint) {
-        uint accWork;
-        bytes32 parentId;
-        uint32 newBits;
-        uint32 currentBits;
-        uint height;
-        bytes32 lastHash;
-        uint prevTimestamp;
-        bytes32 merkleRoot;
-        (merkleRoot, accWork,prevTimestamp,lastHash,currentBits,parentId,,,height) = getSuperblockInfo(superblockHash);
+    function validateHeaders(BattleSession storage session, BlockHeader[] memory blockHeadersParsed) internal returns (uint) {
+        SyscoinSuperblocksI.SuperblockInfo memory superblockInfo;
+        SyscoinSuperblocksI.SuperblockInfo memory prevSuperblockInfo;
+        (superblockInfo.blocksMerkleRoot, superblockInfo.accumulatedWork,superblockInfo.timestamp,superblockInfo.lastHash,superblockInfo.lastBits,superblockInfo.parentId,,,superblockInfo.height) = getSuperblockInfo(session.superblockHash);
         BlockHeader memory lastHeader = blockHeadersParsed[blockHeadersParsed.length-1];
-        BlockHeader memory prevToLastHeader;
-        if(net == Network.MAINNET)
-            prevToLastHeader = blockHeadersParsed[blockHeadersParsed.length-2];
-            
-        // ensure the last block's timestamp matches the superblock's proposed timestamp
-        if(prevTimestamp != lastHeader.timestamp)
-            return ERR_SUPERBLOCK_INVALID_TIMESTAMP;
-        // ensure last headers hash matches the last hash of the superblock
-        if(lastHeader.blockHash != lastHash)
-            return ERR_SUPERBLOCK_HASH_SUPERBLOCK;
-        uint32 prevBits;
-        uint prevWork;
-        (, prevWork,prevTimestamp,lastHash,prevBits,, ,,) = getSuperblockInfo(parentId);
-         // ensure first headers prev block matches the last hash of the prev superblock
-        if(blockHeadersParsed[0].prevBlock != lastHash)
-            return ERR_SUPERBLOCK_HASH_PREVSUPERBLOCK;  
- 
-        // timestamp check against prev block in prev superblock
-        if((prevTimestamp > blockHeadersParsed[0].timestamp) || (prevTimestamp < (blockHeadersParsed[0].timestamp - 7200)))
-            return ERR_SUPERBLOCK_TIMESTAMP_SUPERBLOCK;
-
+        // if you have the last set of headers we can enfoce checks against the end
+        if(session.blockHashes.length < 15 || session.blockHashes.length >= superblockDuration){
+            // ensure the last block's timestamp matches the superblock's proposed timestamp
+            if(superblockInfo.timestamp != lastHeader.timestamp)
+                return ERR_SUPERBLOCK_INVALID_TIMESTAMP;
+            // ensure last headers hash matches the last hash of the superblock
+            if(lastHeader.blockHash != superblockInfo.lastHash)
+                return ERR_SUPERBLOCK_HASH_SUPERBLOCK;
+        }
+        (, prevSuperblockInfo.accumulatedWork,prevSuperblockInfo.timestamp,prevSuperblockInfo.lastHash,prevSuperblockInfo.lastBits,, ,,) = getSuperblockInfo(superblockInfo.parentId);
+        // for blocks 0 -> 15 we can check the first header
+        if(session.blockHashes.length <= 15){
+            // ensure first headers prev block matches the last hash of the prev superblock
+            if(blockHeadersParsed[0].prevBlock != prevSuperblockInfo.lastHash)
+                return ERR_SUPERBLOCK_HASH_PREVSUPERBLOCK;  
+    
+            // timestamp check against prev block in prev superblock
+            if((prevSuperblockInfo.timestamp > blockHeadersParsed[0].timestamp) || (prevSuperblockInfo.timestamp < (blockHeadersParsed[0].timestamp - 7200)))
+                return ERR_SUPERBLOCK_TIMESTAMP_SUPERBLOCK;
+        }
         // make sure all bits are the same and timestamps are within range as well as headers are all linked
-        uint err = checkMerkleRoot(blockHeadersParsed, prevBits, merkleRoot);
-        if(err != 0)
+        uint err = checkBlocks(session, blockHeadersParsed, prevSuperblockInfo.lastBits);
+        if(err != ERR_SUPERBLOCK_OK)
             return err;
-        
-        // make sure every 6th superblock adjusts difficulty
-        // calculate the new work from prevBits minus one as if its an adjustment we need to account for new bits, if not then just add one more prevBits work
-        if(net == Network.MAINNET){
-            prevWork += getWorkFromBits(prevBits)*uint(blockHeadersParsed.length-1);
-            if(((height-1) % 6) == 0){
-                // ie: superblockHeight = 7 meaning blocks 661->720, we need to check timestamp from block 719 - to block 360
-                // get 6 superblocks previous for second timestamp (for example block 360 has the timetamp 6 superblocks ago on second adjustment)
-                prevTimestamp = trustedSuperblocks.getSuperblockTimestamp(trustedSuperblocks.getSuperblockAt(height - 6));
-                newBits = calculateDifficulty(prevToLastHeader.timestamp - prevTimestamp, prevBits); 
-                // make sure difficulty adjustment is within bounds
-                if(newBits < calculateDifficulty(getLowerBoundDifficultyTarget()-1, prevBits) || newBits > calculateDifficulty(getUpperBoundDifficultyTarget()+1, prevBits))
-                    return ERR_SUPERBLOCK_BAD_RETARGET; 
-                // ensure bits of superblock match derived bits from calculateDifficulty
-                if(currentBits != newBits)
-                    return ERR_SUPERBLOCK_BITS_SUPERBLOCK;
-                    
-                prevWork += getWorkFromBits(newBits);
-            }
-            else
-                prevWork += getWorkFromBits(prevBits);
-            // make sure superblock bits match that of the last block
-            if(currentBits != lastHeader.bits)
-                return ERR_SUPERBLOCK_BITS_LASTBLOCK;
+        // for every batch of blocks up to the last one (at superblockDuration blocks we have all the headers so we can complete the game)
+        if(session.blockHashes.length < superblockDuration){
+            // set the last block header details in the session for subsequent batch of blocks to validate it connects to this header
+            session.prevSubmitBits = prevSuperblockInfo.lastBits;
+            session.prevSubmitTimestamp = lastHeader.timestamp;
+            session.prevSubmitBlockhash = lastHeader.blockHash;
+        }
+        // once all the headers are received we can check merkle and enforce difficulty
+        if(session.blockHashes.length < 15 || session.blockHashes.length >= superblockDuration){
+            if (superblockInfo.blocksMerkleRoot != makeMerkle(session.blockHashes))
+                return ERR_SUPERBLOCK_INVALID_MERKLE;
+
             
-            if (prevWork != accWork) 
-                return ERR_SUPERBLOCK_INVALID_ACCUMULATED_WORK;
+            // make sure every 6th superblock adjusts difficulty
+            // calculate the new work from prevBits minus one as if its an adjustment we need to account for new bits, if not then just add one more prevBits work
+            if(net == Network.MAINNET){
+                prevSuperblockInfo.accumulatedWork += getWorkFromBits(prevSuperblockInfo.lastBits)*(superblockDuration-1);
+                if(((superblockInfo.height-1) % 6) == 0){
+                    BlockHeader memory prevToLastHeader = blockHeadersParsed[blockHeadersParsed.length-2];
+                    // ie: superblockHeight = 7 meaning blocks 661->720, we need to check timestamp from block 719 - to block 360
+                    // get 6 superblocks previous for second timestamp (for example block 360 has the timetamp 6 superblocks ago on second adjustment)
+                    superblockInfo.timestamp = trustedSuperblocks.getSuperblockTimestamp(trustedSuperblocks.getSuperblockAt(superblockInfo.height - 6));
+                    uint32 newBits = calculateDifficulty(prevToLastHeader.timestamp - superblockInfo.timestamp, prevSuperblockInfo.lastBits); 
+                    // make sure difficulty adjustment is within bounds
+                    if(newBits < calculateDifficulty(getLowerBoundDifficultyTarget()-1, prevSuperblockInfo.lastBits) || newBits > calculateDifficulty(getUpperBoundDifficultyTarget()+1, prevSuperblockInfo.lastBits))
+                        return ERR_SUPERBLOCK_BAD_RETARGET; 
+                    // ensure bits of superblock match derived bits from calculateDifficulty
+                    if(superblockInfo.lastBits != newBits)
+                        return ERR_SUPERBLOCK_BITS_SUPERBLOCK;
+                        
+                    prevSuperblockInfo.accumulatedWork += getWorkFromBits(newBits);
+                }
+                else
+                    prevSuperblockInfo.accumulatedWork += getWorkFromBits(prevSuperblockInfo.lastBits);
+                // make sure superblock bits match that of the last block
+                if(superblockInfo.lastBits != lastHeader.bits)
+                    return ERR_SUPERBLOCK_BITS_LASTBLOCK;
+                
+                if (prevSuperblockInfo.accumulatedWork != superblockInfo.accumulatedWork) 
+                    return ERR_SUPERBLOCK_INVALID_ACCUMULATED_WORK;
+            }
         }
          
         return ERR_SUPERBLOCK_OK;

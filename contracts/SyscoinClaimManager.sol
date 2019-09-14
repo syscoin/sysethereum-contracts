@@ -223,7 +223,7 @@ contract SyscoinClaimManager is Initializable, SyscoinDepositsManager, SyscoinEr
         claim.challengeTimeout = block.timestamp + superblockTimeout;
 
         err = this.bondDeposit(superblockHash, msg.sender, minProposalDeposit);
-        assert(err == ERR_SUPERBLOCK_OK);
+        require(err == ERR_SUPERBLOCK_OK);
 
         emit SuperblockClaimCreated(superblockHash, msg.sender);
 
@@ -262,7 +262,7 @@ contract SyscoinClaimManager is Initializable, SyscoinDepositsManager, SyscoinEr
         }
 
         err = this.bondDeposit(superblockHash, msg.sender, minProposalDeposit);
-        assert(err == ERR_SUPERBLOCK_OK);
+        require(err == ERR_SUPERBLOCK_OK);
 
         claim.challengeTimeout = block.timestamp + superblockTimeout;
         claim.challenger = msg.sender;
@@ -305,7 +305,8 @@ contract SyscoinClaimManager is Initializable, SyscoinDepositsManager, SyscoinEr
             // The superblock is invalid, submitter abandoned
             // or superblock data is inconsistent
             claim.decided = true;
-            trustedSuperblocks.invalidate(claim.superblockHash, msg.sender);
+            uint err = trustedSuperblocks.invalidate(claim.superblockHash, msg.sender);
+            require(err == ERR_SUPERBLOCK_OK);
             emit SuperblockClaimFailed(superblockHash, claim.submitter);
             doPayChallenger(superblockHash, claim);
             return false;
@@ -330,11 +331,13 @@ contract SyscoinClaimManager is Initializable, SyscoinDepositsManager, SyscoinEr
         }
 
         if (confirmImmediately) {
-            trustedSuperblocks.confirm(claim.superblockHash, msg.sender);
+            uint err = trustedSuperblocks.confirm(claim.superblockHash, msg.sender);
+            require(err == ERR_SUPERBLOCK_OK);
             unbondDeposit(superblockHash, claim.submitter);
             emit SuperblockClaimSuccessful(superblockHash, claim.submitter);
         } else {
-            trustedSuperblocks.semiApprove(claim.superblockHash, msg.sender);
+            uint err = trustedSuperblocks.semiApprove(claim.superblockHash, msg.sender);
+            require(err == ERR_SUPERBLOCK_OK);
             emit SuperblockClaimPending(superblockHash, claim.submitter);
         }
         return true;
@@ -451,7 +454,8 @@ contract SyscoinClaimManager is Initializable, SyscoinDepositsManager, SyscoinEr
                 return false;
             }
 
-            trustedSuperblocks.invalidate(superblockHash, msg.sender);
+            uint err = trustedSuperblocks.invalidate(superblockHash, msg.sender);
+            require(err == ERR_SUPERBLOCK_OK);
             emit SuperblockClaimFailed(superblockHash, claim.submitter);
             doPayChallenger(superblockHash, claim);
             return true;

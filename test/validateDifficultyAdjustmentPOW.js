@@ -319,8 +319,22 @@ contract('validateDifficultyAdjustmentPOW', (accounts) => {
             battleSessionId = result.events.VerificationGameStarted.returnValues.sessionId;
         });
         it('Verify headers', async () => {
-            result = await battleManager.methods.respondBlockHeaders(battleSessionId, Buffer.from(superblock6Headers.join(""), 'hex'), superblock6Headers.length).send({ from: submitter, gas: 5500000 });
+            console.log("sending first...");
+            result = await battleManager.methods.respondBlockHeaders(battleSessionId, Buffer.from(superblock6Headers.slice(0, 15).join(""), 'hex'), 15).send({ from: submitter, gas: 3500000 });
+            assert.ok(Object.keys(result.events).length == 0);
+            await utils.mineBlocks(web3, 1);
+            console.log("sending second...");
+            result = await battleManager.methods.respondBlockHeaders(battleSessionId, Buffer.from(superblock6Headers.slice(15, 30).join(""), 'hex'), 15).send({ from: submitter, gas: 3500000 });
+            assert.ok(Object.keys(result.events).length == 0);
+            console.log("sending third...");
+            await utils.mineBlocks(web3, 1);
+            result = await battleManager.methods.respondBlockHeaders(battleSessionId, Buffer.from(superblock6Headers.slice(30, 45).join(""), 'hex'), 15).send({ from: submitter, gas: 3500000 });
+            assert.ok(Object.keys(result.events).length == 0);
+            console.log("sending fourth...");
+            await utils.mineBlocks(web3, 1);
+            result = await battleManager.methods.respondBlockHeaders(battleSessionId, Buffer.from(superblock6Headers.slice(45, 60).join(""), 'hex'), 15).send({ from: submitter, gas: 10000000 });
             assert.ok(result.events.ChallengerConvicted, 'Challenger failed');
+            await utils.mineBlocks(web3, 1);
         });
         
         it('Confirm', async () => {
