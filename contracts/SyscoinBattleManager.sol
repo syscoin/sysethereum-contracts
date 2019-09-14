@@ -579,7 +579,7 @@ contract SyscoinBattleManager is Initializable, SyscoinErrorCodes {
             return (0, blockHeader, ap.pos);
         } else {
             if (blockHash > target) {
-                return (blockHash, blockHeader,0);
+                return (ERR_PROOF_OF_WORK, blockHeader,0);
             }
             return (0, blockHeader, _pos+80);
         }
