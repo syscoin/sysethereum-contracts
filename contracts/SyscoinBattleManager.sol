@@ -30,7 +30,7 @@ contract SyscoinBattleManager is Initializable, SyscoinErrorCodes {
         uint32 prevSubmitBits;
         uint32 prevSubmitTimestamp;
         bytes32 prevSubmitBlockhash;
-        bytes32[] blockHashes;            // Block hashes for merkle root check
+        bytes32[] merkleRoots;            // interim merkle roots to recreate final root hash on last set of headers
     }
    // AuxPoW block fields
     struct AuxPoW {
@@ -129,7 +129,7 @@ contract SyscoinBattleManager is Initializable, SyscoinErrorCodes {
         session.superblockHash = superblockHash;
         session.submitter = submitter;
         session.challenger = challenger;
-        session.blockHashes.length = 0;
+        session.merkleRoots.length = 0;
         session.lastActionTimestamp = block.timestamp;
         session.challengeState = ChallengeState.Challenged;
 
@@ -678,6 +678,7 @@ contract SyscoinBattleManager is Initializable, SyscoinErrorCodes {
     // @dev - Verify block headers sent by challenger
     function doRespondBlockHeaders(
         BattleSession storage session,
+        SyscoinSuperblocksI.SuperblockInfo memory superblockInfo,
         bytes memory blockHeaders,
         uint numHeaders
     ) internal returns (uint, BlockHeader[] memory ) {
@@ -686,16 +687,37 @@ contract SyscoinBattleManager is Initializable, SyscoinErrorCodes {
             uint pos = 0;
             uint err;
             uint i;
+            bytes32[] memory blockHashes = new bytes32[](numHeaders);
             BlockHeader[] memory blockHeadersParsed = new BlockHeader[](numHeaders);
             for(i =0;i<blockHeadersParsed.length;i++){
                 (err, blockHeadersParsed[i], pos) = verifyBlockHeader(blockHeaders, pos);
                 if (err != ERR_SUPERBLOCK_OK) {
                     return (err, myEmptyArray);
                 }
+                blockHashes[i] = blockHeadersParsed[i].blockHash;
             }
-            for(i =0;i<blockHeadersParsed.length;i++){
-                session.blockHashes.push(blockHeadersParsed[i].blockHash);
+            if(session.merkleRoots.length == 3 || net != Network.MAINNET){
+                BlockHeader memory lastHeader = blockHeadersParsed[blockHeadersParsed.length-1];
+                bytes32[] memory merkleRoots = new bytes32[](net == Network.MAINNET? 4:1);
+                for(i =0;i<session.merkleRoots.length;i++){
+                    merkleRoots[i] = session.merkleRoots[i];
+                }
+                merkleRoots[i] = makeMerkle(blockHashes);
+                if (superblockInfo.blocksMerkleRoot != makeMerkle(merkleRoots))
+                    return (ERR_SUPERBLOCK_INVALID_MERKLE, myEmptyArray);
+
+                // if you have the last set of headers we can enfoce checks against the end
+                // ensure the last block's timestamp matches the superblock's proposed timestamp
+                if(superblockInfo.timestamp != lastHeader.timestamp)
+                    return (ERR_SUPERBLOCK_INVALID_TIMESTAMP, myEmptyArray);
+                // ensure last headers hash matches the last hash of the superblock
+                if(lastHeader.blockHash != superblockInfo.lastHash)
+                    return (ERR_SUPERBLOCK_HASH_SUPERBLOCK, myEmptyArray);
+        
             }
+            else
+                session.merkleRoots.push(makeMerkle(blockHashes));
+            
             return (ERR_SUPERBLOCK_OK, blockHeadersParsed);
         }
         return (ERR_SUPERBLOCK_BAD_STATUS, myEmptyArray);
@@ -706,19 +728,24 @@ contract SyscoinBattleManager is Initializable, SyscoinErrorCodes {
         uint numHeaders
         ) onlyClaimant(sessionId) public {
         BattleSession storage session = sessions[sessionId];
-        if(net == Network.MAINNET && numHeaders != 15)
-            revert();
-        (uint err, BlockHeader[] memory blockHeadersParsed ) = doRespondBlockHeaders(session, blockHeaders, numHeaders);
+        if(net == Network.MAINNET){
+            if((session.merkleRoots.length <= 2 && numHeaders != 16) ||
+            (session.merkleRoots.length == 3 && numHeaders != 12))
+                revert();
+        }
+        SyscoinSuperblocksI.SuperblockInfo memory superblockInfo;
+        (superblockInfo.blocksMerkleRoot, superblockInfo.accumulatedWork,superblockInfo.timestamp,superblockInfo.lastHash,superblockInfo.lastBits,superblockInfo.parentId,,,superblockInfo.height) = getSuperblockInfo(session.superblockHash);
+        (uint err, BlockHeader[] memory blockHeadersParsed ) = doRespondBlockHeaders(session, superblockInfo, blockHeaders, numHeaders);
         if (err != ERR_SUPERBLOCK_OK) {
             convictSubmitter(sessionId, err);
         }else{
             session.lastActionTimestamp = block.timestamp;
-            err = validateHeaders(session, blockHeadersParsed);
+            err = validateHeaders(session, superblockInfo, blockHeadersParsed);
             if (err != ERR_SUPERBLOCK_OK) {
                 convictSubmitter(sessionId, err);
             }
             // only convict challenger at the end if all headers have been provided
-            if(session.blockHashes.length >= superblockDuration || (net != Network.MAINNET && numHeaders < 15)){
+            if(numHeaders == 12 || net != Network.MAINNET){
                 convictChallenger(sessionId, err);
             }
         }
@@ -773,7 +800,8 @@ contract SyscoinBattleManager is Initializable, SyscoinErrorCodes {
             BlockHeader memory thisHeader = blockHeadersParsed[i];
             BlockHeader memory prevHeader = blockHeadersParsed[i-1];
             // except for the last header except all the bits to match
-            if(session.blockHashes.length < superblockDuration || i < (blockHeadersParsed.length-1)){
+            // last chunk has 12 headers which is the only time we care to skip the last header
+            if(blockHeadersParsed.length != 12 || i < (blockHeadersParsed.length-1)){
                 if(prevBits != thisHeader.bits || thisHeader.bits != prevHeader.bits)
                     return ERR_SUPERBLOCK_BITS_PREVBLOCK;
             }
@@ -785,7 +813,7 @@ contract SyscoinBattleManager is Initializable, SyscoinErrorCodes {
                 return ERR_SUPERBLOCK_TIMESTAMP_PREVBLOCK;
         }
         // enforce linking against previous submitted batch of blocks
-        if(session.blockHashes.length >= 30){
+        if(session.merkleRoots.length >= 2){
             BlockHeader memory firstHeader = blockHeadersParsed[0];
             if(session.prevSubmitBits != prevBits)
                 return ERR_SUPERBLOCK_BITS_PREVBLOCK;
@@ -797,23 +825,12 @@ contract SyscoinBattleManager is Initializable, SyscoinErrorCodes {
         return ERR_SUPERBLOCK_OK;
     }   
     // @dev - Validate superblock accumulated work + other block header fields
-    function validateHeaders(BattleSession storage session, BlockHeader[] memory blockHeadersParsed) internal returns (uint) {
-        SyscoinSuperblocksI.SuperblockInfo memory superblockInfo;
+    function validateHeaders(BattleSession storage session, SyscoinSuperblocksI.SuperblockInfo memory superblockInfo, BlockHeader[] memory blockHeadersParsed) internal returns (uint) {
         SyscoinSuperblocksI.SuperblockInfo memory prevSuperblockInfo;
-        (superblockInfo.blocksMerkleRoot, superblockInfo.accumulatedWork,superblockInfo.timestamp,superblockInfo.lastHash,superblockInfo.lastBits,superblockInfo.parentId,,,superblockInfo.height) = getSuperblockInfo(session.superblockHash);
         BlockHeader memory lastHeader = blockHeadersParsed[blockHeadersParsed.length-1];
-        // if you have the last set of headers we can enfoce checks against the end
-        if(session.blockHashes.length < 15 || session.blockHashes.length >= superblockDuration){
-            // ensure the last block's timestamp matches the superblock's proposed timestamp
-            if(superblockInfo.timestamp != lastHeader.timestamp)
-                return ERR_SUPERBLOCK_INVALID_TIMESTAMP;
-            // ensure last headers hash matches the last hash of the superblock
-            if(lastHeader.blockHash != superblockInfo.lastHash)
-                return ERR_SUPERBLOCK_HASH_SUPERBLOCK;
-        }
         (, prevSuperblockInfo.accumulatedWork,prevSuperblockInfo.timestamp,prevSuperblockInfo.lastHash,prevSuperblockInfo.lastBits,, ,,) = getSuperblockInfo(superblockInfo.parentId);
-        // for blocks 0 -> 15 we can check the first header
-        if(session.blockHashes.length <= 15){
+        // for blocks 0 -> 16 we can check the first header
+        if(session.merkleRoots.length <= 1){
             // ensure first headers prev block matches the last hash of the prev superblock
             if(blockHeadersParsed[0].prevBlock != prevSuperblockInfo.lastHash)
                 return ERR_SUPERBLOCK_HASH_PREVSUPERBLOCK;  
@@ -827,16 +844,14 @@ contract SyscoinBattleManager is Initializable, SyscoinErrorCodes {
         if(err != ERR_SUPERBLOCK_OK)
             return err;
         // for every batch of blocks up to the last one (at superblockDuration blocks we have all the headers so we can complete the game)
-        if(session.blockHashes.length < superblockDuration){
+        if(blockHeadersParsed.length != 12){
             // set the last block header details in the session for subsequent batch of blocks to validate it connects to this header
             session.prevSubmitBits = prevSuperblockInfo.lastBits;
             session.prevSubmitTimestamp = lastHeader.timestamp;
             session.prevSubmitBlockhash = lastHeader.blockHash;
         }
         // once all the headers are received we can check merkle and enforce difficulty
-        if(session.blockHashes.length < 15 || session.blockHashes.length >= superblockDuration){
-            if (superblockInfo.blocksMerkleRoot != makeMerkle(session.blockHashes))
-                return ERR_SUPERBLOCK_INVALID_MERKLE;
+        else{
 
             
             // make sure every 6th superblock adjusts difficulty

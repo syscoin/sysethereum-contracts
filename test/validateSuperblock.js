@@ -96,6 +96,7 @@ contract('validateSuperblocks', (accounts) => {
 
   
     it('Reject invalid timestamp', async () => {
+      await claimManager.methods.makeDeposit().send({ value: utils.DEPOSITS.MIN_REWARD, from: submitter, gas: 300000 });
       result = await claimManager.methods.proposeSuperblock(
         proposedSuperblock1.merkleRoot,
         proposedSuperblock1.accumulatedWork.toString(),
@@ -128,6 +129,7 @@ contract('validateSuperblocks', (accounts) => {
     });
 
     it('Reject invalid last hash', async () => {
+      await claimManager.methods.makeDeposit().send({ value: utils.DEPOSITS.MIN_REWARD, from: submitter, gas: 300000 });
       result = await claimManager.methods.proposeSuperblock(
         proposedSuperblock1.merkleRoot,
         proposedSuperblock1.accumulatedWork.toString(),
@@ -147,7 +149,6 @@ contract('validateSuperblocks', (accounts) => {
       assert.ok(result.events.VerificationGameStarted, 'Battle started');
       
       battleSessionId = result.events.VerificationGameStarted.returnValues.sessionId;
-
       result = await battleManager.methods.respondBlockHeaders(battleSessionId, Buffer.from(headers1.join(""), 'hex'), headers1.length).send({ from: submitter, gas: 5000000 });
       assert.ok(result.events.SubmitterConvicted, 'Submitter failed');
       assert.ok(result.events.SubmitterConvicted.returnValues.err, '50150', 'Bad last hash');
