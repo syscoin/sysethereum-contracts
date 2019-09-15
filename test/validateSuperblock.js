@@ -119,7 +119,7 @@ contract('validateSuperblocks', (accounts) => {
 
       result = await battleManager.methods.respondBlockHeaders(battleSessionId, Buffer.from(headers1.join(""), 'hex'), headers1.length).send({ from: submitter, gas: 5000000 });
       assert.ok(result.events.SubmitterConvicted, 'Submitter failed');
-      assert.ok(result.events.SubmitterConvicted.returnValues.err, '50035', 'Bad timestamp');
+      assert.equal(result.events.SubmitterConvicted.returnValues.err, '50036');
 
       // Confirm superblock
 
@@ -151,7 +151,7 @@ contract('validateSuperblocks', (accounts) => {
       battleSessionId = result.events.VerificationGameStarted.returnValues.sessionId;
       result = await battleManager.methods.respondBlockHeaders(battleSessionId, Buffer.from(headers1.join(""), 'hex'), headers1.length).send({ from: submitter, gas: 5000000 });
       assert.ok(result.events.SubmitterConvicted, 'Submitter failed');
-      assert.ok(result.events.SubmitterConvicted.returnValues.err, '50150', 'Bad last hash');
+      assert.equal(result.events.SubmitterConvicted.returnValues.err, '50059');
 
       await utils.blockchainTimeoutSeconds(2*utils.SUPERBLOCK_OPTIONS_LOCAL.TIMEOUT);
       result = await battleManager.methods.timeout(battleSessionId).send({ from: challenger, gas: 300000 });

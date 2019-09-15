@@ -94,7 +94,7 @@ contract('validateDifficultyAdjustmentPOW', (accounts) => {
    // 72718 - 2318bbc21fdbd2386460db02b535214360670c68cd86b267469c00e8442c2513
    // 72719 - fd22a4edb82ca2687f221b8aa0990397763e0a0da5ab73f3daa5373fafae012f
    // 72720 - 5ae7ce675c87eda1ecd77f31757b77fc21110748bc45284316bb7644d3679415
-   const superblock6Headers = [
+   let superblock6Headers = [
     `040100105a03b5e605225023a22301a488c3cdfeb2b89262b54087cbbf0f992c4e1908d39046f4fb10756a5874932043a3e420cf75bce24b3f531ff35e6ab05e185c0c2e9e3a325d999f0a180000000001000000010000000000000000000000000000000000000000000000000000000000000000ffffffff640373f1082cfabe6d6dcb45118082e8aa5d98f8de85da4a8344d7b20a4c20885b1ec3ad6fa00fc4ea4d10000000f09f909f00124d696e6564206279207768787a38383838380000000000000000000000000000000000000000000000000005009abc0000000000000498a9de4c000000001976a914c825a1ecf2a6830c4401620c3a16f1995057c2ab88ac00000000000000002f6a24aa21a9edb91039f3cd1f9045c8647b9c256b1c7c9e557541a9ee0a5c18e276edf02d841c08000000000000000000000000000000002c6a4c2952534b424c4f434b3ace62674a4e00f76422e3cfd2c24e05b058a76e273aee0f603a058868309eead30000000000000000266a24b9e11b6d8ef921d7d24e498f591afe24af219b5a9efb640d8484dc2f819854737ff1c6e66d57603a00000000000000000000000000000000000000000000000000000000000000000c4f3b29e06c293f2dc172502356e375885955ec4a79d337bbf10821fd3d384b5b7bdbe1e6cfda846d1eeace996d723149c0e36a873f7fd69edae3b68bbe0dfd3cba3b22353f675885ff7e2dd1c3a4ae96b7ef1227936142bc266e0dfd4b9436ddcdb8736948f6c4d5067ac1117bb0a5cc9321e9e4d3e6cb5b5aae8d917fd1424c4ae8a043bdf6591f3c73470bf2a8510879635781f7e862eff81271f49de1fc75dfd6e458c9d16b84648d1598431e00defb3acaf0f706a562d1960a4deb686397b1bc2b930338a47ae80f4bcb3966a6c6d8b87f4bca02a03f3285086aa0c55e14c622993ad3d5e1f58463b97bd2982c0fb82fec11f2b2ada69871eb9fafc46ebae3ed6eb227f884e275d424b82e4c5bddd3de8de5f3163db0a978b4b9bc7098cec64675eb308f5aa00ea505b29679d07a959e5b9883cbbb3d4b4acf168b678a2bc96a56c6406866e8cce39702d247d55c402c4eb8ee490d7885d50f777d3aeed4ff74388df95c7b89f5e67ba3b5aa45ad590988ce7598a498e21c206da9a2bb58000000000400595f6f219fbf2be19ba38c95b6c9d14025e7baa0622913892c19ecd044b8da3feee5244c18afb612c4846a8bf1b07759fedbdec9d139ade9f4c82736e17fe8f3cbcc7a733c420d930ab67ca666d6046d3c15d860af8fad21596366ec0e73697bb02ad5244553f2dda89d865e4ed3554d3fdca6c833e4ca5f3f4151034507100e00000000004020a84429e38abb08172fe536e8a5d477b9691316fd1df30500000000000000000081d14860a489c5c05420317e1abf6c7d6b466fcde3bf967b678c580563eb03f0d13a325d9b0d1f17215b9e20`,
     `04010010d2d2a84268d6ce5739aeefcc8d5677a68d10bccc855b733769c97fd8f903619155e652170b2b6ce14a954b810f263db2c4503ce0873d1dc14cc4c3e4115f8c43da3a325d999f0a180000000001000000010000000000000000000000000000000000000000000000000000000000000000ffffffff640373f1082cfabe6d6d88ec25dfff8c35bddc210f8ce0dce8be3d6a042f3af1110c71e02296386a181510000000f09f909f000f4d696e656420627920736473677a6d000000000000000000000000000000000000000000000000000000000500ce1100000000000004c3eae84c000000001976a914c825a1ecf2a6830c4401620c3a16f1995057c2ab88ac00000000000000002f6a24aa21a9ed3836e1949d499e9a4c44956f68e8c3a67b1c2e3672c0fc23599ca13d70680ad708000000000000000000000000000000002c6a4c2952534b424c4f434b3a998fc876dce3d8e564d5ffc734da9acb0c9d58085b3204a4aa21ff503c72250d0000000000000000266a24b9e11b6d53869554643275182153cb5e48ac6743c1959067f23c64fb15d328869fbe54c7c5c8fe3b00000000000000000000000000000000000000000000000000000000000000000c4f3b29e06c293f2dc172502356e375885955ec4a79d337bbf10821fd3d384b5b8eea3dcef5bdf65d9c97f873da9eac3c70074eb22c9921d23fd2616bec31748472f84b840c5824a3068989742c78e1739974bfd03d93e0f4b47199f3e3967439f17c80f289dc0e4d3ae4acd4600128f6a2465a2056c0da9d7af5bba266913ae5442050648e5856f7af847b7034d355824eeef3ccd3d5354d2816b0ae1b7e7f3719f0d39baa5cf250dabd54abf90ccfa4c910de2889608804456bd27a7266421e9e81e19a28eb3d18d70c075023a3698ea2de69a95d84cdeddff56ec61335cf1393697c12295c7637d0198ae708824ef711345775e5775e3e817ba8f10697947c691fed3a5b51487fc0e05db7651ca12d5c2114adeb8fa31b8ea78cd93848315bf7b836c15205f875374e62aee4157103f73cf9522b4198209136d3198dc50ce8ec6991352503c6c383ce3fe8084ab68e390b2e8ab6aaa50e32d3ccbbc9ad868df299758b6c303076a4cd90aa847f6e75162f2d61933970ee1068d1b273ba49c200000000048f621f86671b7cd5b6852589746b4ec3f18ddf1ecce880aa10ef2292eb5d99f93feee5244c18afb612c4846a8bf1b07759fedbdec9d139ade9f4c82736e17fe8f3cbcc7a733c420d930ab67ca666d6046d3c15d860af8fad21596366ec0e73695be23ea98437d1776e177775b5be5240251d13689b30cab6b29956d8f214e7af0e00000000e00020a84429e38abb08172fe536e8a5d477b9691316fd1df3050000000000000000004e522c9676142d94d8872ea659f9d52d8bfcb72462781e5d48ba90e991976e57f33a325d9b0d1f1707135789`,
     `04010010e71d7216f70d392e059d9b10d3697e24593612ae965cdc82be6ede7aa5235358b1b9c1b13276fce5278dc7a7e64cda6a3ffe789b1001e1b4c686f5b186a58915f63a325d999f0a180000000001000000010000000000000000000000000000000000000000000000000000000000000000ffffffff640373f1082cfabe6d6db0485c871def2b2798dabae9055b852953da99a969623de633eba9509df962cf10000000f09f909f00114d696e65642062792079616e6731393836000000000000000000000000000000000000000000000000000005000ba2e33800000000043cc30a4d000000001976a914c825a1ecf2a6830c4401620c3a16f1995057c2ab88ac00000000000000002f6a24aa21a9edef69806e15a4d9496b858b773977eeab1098ec9e0662932db504cb1ee98a846308000000000000000000000000000000002c6a4c2952534b424c4f434b3a05353ae613d7efcc4142b2e954bcfca2d838db70301d791a104e0e1ee165b7340000000000000000266a24b9e11b6dc41aa2dfee54174e5aa8e4b9ce23edc99a6e2aa1fa82f58fd82d07600c22b3078817294100000000000000000000000000000000000000000000000000000000000000000c60ebb7cf9a9a6155e20b86c161344a8f98492c8a0be4d90e8b54a0f9efbe1e3360403d0e0b3434d05672e84e964a37593d3a83c5cf84e486bf0a7b59d6065b1d96e84ecbdb12a18cf813601757eb26d302cd9f8ebdccc8c79833deea2f4b82735dcb036c92ce1719897c0fe2aef76e3777632c9763868470fa3d78470fffa7fca85db4863eb638f796396bcf2a0b31bae8a8678f5071711d4750d5a75b81c637c82ca28dc537f452581c9cb038db13f1aa6b69198e04ef57f7417a679e9516a89b78fe9d977392604ed1e1d7c9cb7cdb0d3500cf2b428c20f2b52fffcc25c5ed753ae1b0b5bfa840a4e1834aff7f23f82dd2530e9f5d702f7c3dbc83cdcd021cd19acf4e140d081b541ae9d76f5e517f43bd24adcf34561ea25d1cfaebb472e1305429bf54578a3b02a97e5d1d523ecaaf83fd92a75c307245f3597dfc569a72830fb5087551bf291b6a9303fcce2cf225fbaf9d86ef34792c238f9362d2676064db81ddf2c1d3f47709e0b3132307b3c6f86ff72d447d53bb2d3ded04591f6b00000000043ec921276ef1ddd3b18eb5a8687ca4c3c2d344e2c76ff0be4607932d8376858c3feee5244c18afb612c4846a8bf1b07759fedbdec9d139ade9f4c82736e17fe851a389055af18027a9081cf008549690e3847ce465eca637fbc0943b92d98bb83d9305f73f0d29175d1fa80d39321bdcbac05e10f99a3f6fa1694c676d4250740e00000000000020a84429e38abb08172fe536e8a5d477b9691316fd1df30500000000000000000084f3ff83e23b06bda84f74edc991a0e3c7444ba2626e38fe2c42f59f8fccfd3b3b3b325d9b0d1f17f291593c`,
@@ -156,15 +156,16 @@ contract('validateDifficultyAdjustmentPOW', (accounts) => {
     `0401001013252c44e8009c4667b286cd680c6760432135b502db606438d2db1fc2bb182394dfc977c4deffaf2c4b1b1fe447f557fd2c0bc7ffea4846d3fa08245303ff0c6047325d999f0a180000000001000000010000000000000000000000000000000000000000000000000000000000000000ffffffff64037bf1082cfabe6d6d17a4abffe3db62cb5997e2b94e1f3d93e5c3fd0f6beee491e6e586ffe402e9bd10000000f09f909f00114d696e656420627920676f6c647363687300000000000000000000000000000000000000000000000000000500c90000fd00000000045572ce4e000000001976a914c825a1ecf2a6830c4401620c3a16f1995057c2ab88ac00000000000000002f6a24aa21a9ed070bac90910dfc556a7737623727e3652cab70a4abbadab75f8257d702ed5a3a08000000000000000000000000000000002c6a4c2952534b424c4f434b3ac9cdddbdb137f692927fa4ebffbe4233f2d4d1bba973b040ffedaf979793ba0f0000000000000000266a24b9e11b6d7b36e31a60267c857bd96db47c90a528404e01315c90868551760c366144a03a500db83900000000000000000000000000000000000000000000000000000000000000000c5240a279e48fb425836384b6acb7fe8c3f276a171c91b1005ed17184a0de36e114970974b7c8a94c1c6057fbe27fd09e42b1626a2d3928ffd86e7da9ee2ce10ba36f5e36be6f3dd16be6aac4234e33034f128b493ea91e8757753a36648b583fc02516532880ea2f01a06592656c058205f1ac843eb99aa5d2f7f6cdb077b6f2a88f1d15cec6b816da6fc97b14f6941a3ceb476184e8d22615b69cedc7c2a9b2e19ddb9b0cb9f67e3b73713cea3663d5012f60698673ee987985fcec92a2b365b331eceb1e35722077aca4e9350a063f596b20d64abea792984cdec1ac7f2dfeb554ba21de61c39ebc43c9aaf22fe0590300cd1519981ff6ff50450b049088a0a54e6cb1673cafdf0c1bea34a353c9d32c4fb886304c71d10485ec186e311f4869b0faa36e2ea09e9a8ec5f6ce7f4ef9281bb194ce83fb0231e9ebde5416a8859260b2f90fea0bbc424ef612166fdc0aa99e225c9329cabedb0da5d534d782427162f388a08bf510cff8ba671e33a8dccd00ef6cbd5ba55558556714129374d4000000000470f6c5481bb0f261824fd67f00dffc2a539602e7c304f320ecf45206c70dca1e3feee5244c18afb612c4846a8bf1b07759fedbdec9d139ade9f4c82736e17fe816c3d127360b742fe8689e799c7f251db2c9bce76a3bb84df19e67e950246ef7387d8e64252afa334ccd00736630343080153fc35b143c0f8c820882b9e913c60e0000000000002019ffe30ecee3d425c85c265f1d995c28e104301dc5441e000000000000000000b780219d6e12794c90a8b4c823c55f3790475f5b8dfbf6439910ed631392a8e90148325d9b0d1f173ed45a10`,
     `040100102f01aeaf3f37a5daf373aba50d0a3e76970399a08a1b227f68a22cb8eda422fd790a9adb66001f2b7333b9e5636ace76bf8b72592d0ceb8ca88522ae1df6b2f1fb47325dcf8409180000000001000000010000000000000000000000000000000000000000000000000000000000000000ffffffff59037cf108162f5669614254432f4d696e65642062792073636d6c2f2cfabe6d6d2bbef34cb938576b4de41805e08397274a6f230c6742fc3215c1bc0b6363f573100000000000000010e375e70cf5b86497e85e153a631b0100ffffffff028049ee4b000000001976a914536ffa992491508dca0354e52f32a3a7a679a53a88ac0000000000000000266a24aa21a9ed45d3e0786f58001f4ae1c4dcd9fb121bba6ef02cb31fbd2c8f415967fdba7eb40000000000000000000000000000000000000000000000000000000000000000000000000c4417269fe91a66ddcd091d41c6bb3d6e055d6de1da051704d37b47afb40cc227649d34c53fd72923e0a2509c83e27c3dbb29ed5ed82af8935c1745c82473e0df826b25dedc2cc63677fff56f0b370a0fda77f56e59516d1a9988fa06d9a3204e9f4890c12ed425fd710c721f9f4d7f53fb44b7ac029fa466af9f90e73b52c0adb56c8e351301ea1bb960187dc501950986be05a40c5bb715365aac14534ece096b5b8b2e3a0934f1d5d8e51d47e827d23a8331309bb021719c4fb3fd8ada9c4f993100479b4dd3111dbb541acc3c057d8b249755f4717f56e1690a75431dbf7ed820f0de1a37c92bd826e92e6f9e0bde52590082272af8fd7650a3f5f92aae73a1dcfce92d965ad698d0d37889683c7ada252362be922dfbbb281e3276b91aba50a0e26927517c6a8753a8308f7913123fe868780d3517e203aee41a76337e02eb5f55f8b0820097f15b1f1bc324f43ad7002a61119913147ea8433c259aefa0e0df8671310be7fc5787ed45cc0765ce6a6a4848a1c12e3c696bfcbac07e40b600000000040000000000000000000000000000000000000000000000000000000000000000e2f61c3f71d1defd3fa999dfa36953755c690689799962b48bebd836974e8cf94811ea1c2a96e4d21eff6aef3eb1daadccd78eb80a5093792b8e38b2e4e311f12787016ec2c741c41bab9accd7241ecf62b3680f5ab059393ad5b3b18356d9730e00000000000020f2894719fdb747be38c9b8f032fbd0e519fb3dcacda90b000000000000000000a99e7adea556dfbfbe8e35c0e8d620401e3294fa94e1d6620671b30e230c3c6d1348325d9b0d1f1776fdd31f`
 ];
+    const superblock6HeadersCopy = Array.from(superblock6Headers);
     const superblock0 = utils.makeSuperblock(superblock0Headers, initParentId, web3.utils.toBN("0x000000000000000000000000000000000000000000152f36aee354691c6a98e8"));
     const superblock1 = utils.makeSuperblock(superblock1Headers, superblock0.superblockHash, superblock0.accumulatedWork);
     const superblock2 = utils.makeSuperblock(superblock2Headers, superblock1.superblockHash, superblock1.accumulatedWork);
     const superblock3 = utils.makeSuperblock(superblock3Headers, superblock2.superblockHash, superblock2.accumulatedWork);
     const superblock4 = utils.makeSuperblock(superblock4Headers, superblock3.superblockHash, superblock3.accumulatedWork);
     const superblock5 = utils.makeSuperblock(superblock5Headers, superblock4.superblockHash, 0, web3.utils.toBN("0x000000000000000000000000000000000000000000154b8c15e2fea81f5e006c")); // work at 72660
-    const superblock6 = utils.makeSuperblock(superblock6Headers, superblock5.superblockHash, 0, web3.utils.toBN("0x000000000000000000000000000000000000000000155134be311a827524a837")); // work at 72720
-
-
+    let superblock6;
+    let result;
+    let best;
     async function initSuperblockChain() {
         ({
             superblocks,
@@ -182,126 +183,117 @@ contract('validateDifficultyAdjustmentPOW', (accounts) => {
         //FIXME: ganache-cli creates the same transaction hash if two accounts send the same amount
         await claimManager.methods.makeDeposit().send({ value: utils.DEPOSITS.MIN_REWARD * 3, from: submitter, gas: 300000 });
         await claimManager.methods.makeDeposit().send({ value: utils.DEPOSITS.MIN_REWARD * 3, from: challenger, gas: 300000 });
+    
+    }
+    async function deploySuperblocks(){
+        superblock6 = utils.makeSuperblock(superblock6Headers, superblock5.superblockHash, 0, web3.utils.toBN("0x000000000000000000000000000000000000000000155134be311a827524a837")); // work at 72720
+        let superblock5Id;
+        result  = await claimManager.methods.proposeSuperblock(
+            superblock1.merkleRoot,
+            superblock1.accumulatedWork.toString(),
+            superblock1.timestamp,
+            superblock1.lastHash,
+            superblock1.lastBits,
+            superblock1.parentId).send({ from: submitter, gas: 2100000 });
+        assert.ok(result.events.SuperblockClaimCreated, 'New superblock proposed');
+        superblock1Id = result.events.SuperblockClaimCreated.returnValues.superblockHash;
+        
+
+       
+        await utils.blockchainTimeoutSeconds(2*utils.SUPERBLOCK_OPTIONS_LOCAL.TIMEOUT);
+        result = await claimManager.methods.checkClaimFinished(superblock1Id).send({ from: challenger, gas: 300000 });
+        assert.ok(result.events.SuperblockClaimSuccessful, 'Superblock challenged');
+        best = await superblocks.methods.getBestSuperblock().call();
+        assert.equal(superblock1Id, best, 'Best superblock should match');
+       
+   
+        result  = await claimManager.methods.proposeSuperblock(
+            superblock2.merkleRoot,
+            superblock2.accumulatedWork.toString(),
+            superblock2.timestamp,
+            superblock2.lastHash,
+            superblock2.lastBits,
+            superblock2.parentId).send({ from: submitter, gas: 2100000 });
+        assert.ok(result.events.SuperblockClaimCreated, 'New superblock proposed');
+        superblock2Id = result.events.SuperblockClaimCreated.returnValues.superblockHash;
+
+
+
+        await utils.blockchainTimeoutSeconds(2*utils.SUPERBLOCK_OPTIONS_LOCAL.TIMEOUT);
+        result = await claimManager.methods.checkClaimFinished(superblock2Id).send({ from: challenger, gas: 300000 });
+        assert.ok(result.events.SuperblockClaimSuccessful, 'Superblock challenged');
+        best = await superblocks.methods.getBestSuperblock().call();
+        assert.equal(superblock2Id, best, 'Best superblock should match');
+         
+
+        result  = await claimManager.methods.proposeSuperblock(
+            superblock3.merkleRoot,
+            superblock3.accumulatedWork.toString(),
+            superblock3.timestamp,
+            superblock3.lastHash,
+            superblock3.lastBits,
+            superblock3.parentId).send({ from: submitter, gas: 2100000 });
+        assert.ok(result.events.SuperblockClaimCreated, 'New superblock proposed');
+        superblock3Id = result.events.SuperblockClaimCreated.returnValues.superblockHash;
+
+
+
+        await utils.blockchainTimeoutSeconds(2*utils.SUPERBLOCK_OPTIONS_LOCAL.TIMEOUT);
+        result = await claimManager.methods.checkClaimFinished(superblock3Id).send({ from: challenger, gas: 300000 });
+        assert.ok(result.events.SuperblockClaimSuccessful, 'Superblock challenged');
+        best = await superblocks.methods.getBestSuperblock().call();
+        assert.equal(superblock3Id, best, 'Best superblock should match');
+
+        result  = await claimManager.methods.proposeSuperblock(
+            superblock4.merkleRoot,
+            superblock4.accumulatedWork.toString(),
+            superblock4.timestamp,
+            superblock4.lastHash,
+            superblock4.lastBits,
+            superblock4.parentId).send({ from: submitter, gas: 2100000 });
+        assert.ok(result.events.SuperblockClaimCreated, 'New superblock proposed');
+        superblock4Id = result.events.SuperblockClaimCreated.returnValues.superblockHash;
+        
+
+        await utils.blockchainTimeoutSeconds(2*utils.SUPERBLOCK_OPTIONS_LOCAL.TIMEOUT);
+        result = await claimManager.methods.checkClaimFinished(superblock4Id).send({ from: challenger, gas: 300000 });
+        assert.ok(result.events.SuperblockClaimSuccessful, 'Superblock challenged');
+        best = await superblocks.methods.getBestSuperblock().call();
+        assert.equal(superblock4Id, best, 'Best superblock should match');
+
+        result  = await claimManager.methods.proposeSuperblock(
+            superblock5.merkleRoot,
+            superblock5.accumulatedWork.toString(),
+            superblock5.timestamp,
+            superblock5.lastHash,
+            superblock5.lastBits,
+            superblock5.parentId).send({ from: submitter, gas: 2100000 });
+        assert.ok(result.events.SuperblockClaimCreated, 'New superblock proposed');
+        superblock5Id = result.events.SuperblockClaimCreated.returnValues.superblockHash;
+
+
+        await utils.blockchainTimeoutSeconds(2*utils.SUPERBLOCK_OPTIONS_LOCAL.TIMEOUT);
+        result = await claimManager.methods.checkClaimFinished(superblock5Id).send({ from: challenger, gas: 300000 });
+        assert.ok(result.events.SuperblockClaimSuccessful, 'Superblock challenged');
+        best = await superblocks.methods.getBestSuperblock().call();
+        assert.equal(superblock5Id, best, 'Best superblock should match');
+
+        superblock5Id = superblock5.superblockHash;
+        best = await superblocks.methods.getBestSuperblock().call();
+        assert.equal(superblock5Id, best, 'Best superblock should match');
+
+        
     }
 
-    describe('Approve first five', () => {
-        let superblock0Id;
-        let superblock1Id;
-        let superblock2Id;
-        let superblock3Id;
-        let superblock4Id;
-        let superblock5Id;
-
+    describe('Propose and challenge sixth', async () => {
         before(initSuperblockChain);
-
-        it('Initialized', async () => {
-            superblock0Id = superblock0.superblockHash;
-            const best = await superblocks.methods.getBestSuperblock().call();
-            assert.equal(superblock0Id, best, 'Best superblock should match');
+        it('Deploy superblocks', async () => {
+            await deploySuperblocks();
         });
-
-        it('Propose superblock 1', async () => {
-            const result  = await claimManager.methods.proposeSuperblock(
-                superblock1.merkleRoot,
-                superblock1.accumulatedWork.toString(),
-                superblock1.timestamp,
-                superblock1.lastHash,
-                superblock1.lastBits,
-                superblock1.parentId).send({ from: submitter, gas: 2100000 });
-            assert.ok(result.events.SuperblockClaimCreated, 'New superblock proposed');
-            superblock1Id = result.events.SuperblockClaimCreated.returnValues.superblockHash;
-        });
-
-        it('Approve superblock 1', async () => {
-            await utils.blockchainTimeoutSeconds(2*utils.SUPERBLOCK_OPTIONS_LOCAL.TIMEOUT);
-            result = await claimManager.methods.checkClaimFinished(superblock1Id).send({ from: challenger, gas: 300000 });
-            assert.ok(result.events.SuperblockClaimSuccessful, 'Superblock challenged');
-            const best = await superblocks.methods.getBestSuperblock().call();
-            assert.equal(superblock1Id, best, 'Best superblock should match');
-        });
-        it('Propose superblock 2', async () => {
-            const result  = await claimManager.methods.proposeSuperblock(
-                superblock2.merkleRoot,
-                superblock2.accumulatedWork.toString(),
-                superblock2.timestamp,
-                superblock2.lastHash,
-                superblock2.lastBits,
-                superblock2.parentId).send({ from: submitter, gas: 2100000 });
-            assert.ok(result.events.SuperblockClaimCreated, 'New superblock proposed');
-            superblock2Id = result.events.SuperblockClaimCreated.returnValues.superblockHash;
-        });
-
-        it('Approve superblock 2', async () => {
-            await utils.blockchainTimeoutSeconds(2*utils.SUPERBLOCK_OPTIONS_LOCAL.TIMEOUT);
-            result = await claimManager.methods.checkClaimFinished(superblock2Id).send({ from: challenger, gas: 300000 });
-            assert.ok(result.events.SuperblockClaimSuccessful, 'Superblock challenged');
-            const best = await superblocks.methods.getBestSuperblock().call();
-            assert.equal(superblock2Id, best, 'Best superblock should match');
-        });  
-        it('Propose superblock 3', async () => {
-            const result  = await claimManager.methods.proposeSuperblock(
-                superblock3.merkleRoot,
-                superblock3.accumulatedWork.toString(),
-                superblock3.timestamp,
-                superblock3.lastHash,
-                superblock3.lastBits,
-                superblock3.parentId).send({ from: submitter, gas: 2100000 });
-            assert.ok(result.events.SuperblockClaimCreated, 'New superblock proposed');
-            superblock3Id = result.events.SuperblockClaimCreated.returnValues.superblockHash;
-        });
-
-        it('Approve superblock 3', async () => {
-            await utils.blockchainTimeoutSeconds(2*utils.SUPERBLOCK_OPTIONS_LOCAL.TIMEOUT);
-            result = await claimManager.methods.checkClaimFinished(superblock3Id).send({ from: challenger, gas: 300000 });
-            assert.ok(result.events.SuperblockClaimSuccessful, 'Superblock challenged');
-            const best = await superblocks.methods.getBestSuperblock().call();
-            assert.equal(superblock3Id, best, 'Best superblock should match');
-        }); 
-        it('Propose superblock 4', async () => {
-            const result  = await claimManager.methods.proposeSuperblock(
-                superblock4.merkleRoot,
-                superblock4.accumulatedWork.toString(),
-                superblock4.timestamp,
-                superblock4.lastHash,
-                superblock4.lastBits,
-                superblock4.parentId).send({ from: submitter, gas: 2100000 });
-            assert.ok(result.events.SuperblockClaimCreated, 'New superblock proposed');
-            superblock4Id = result.events.SuperblockClaimCreated.returnValues.superblockHash;
-        });
-
-        it('Approve superblock 4', async () => {
-            await utils.blockchainTimeoutSeconds(2*utils.SUPERBLOCK_OPTIONS_LOCAL.TIMEOUT);
-            result = await claimManager.methods.checkClaimFinished(superblock4Id).send({ from: challenger, gas: 300000 });
-            assert.ok(result.events.SuperblockClaimSuccessful, 'Superblock challenged');
-            const best = await superblocks.methods.getBestSuperblock().call();
-            assert.equal(superblock4Id, best, 'Best superblock should match');
-        });
-        it('Propose superblock 5', async () => {
-            const result  = await claimManager.methods.proposeSuperblock(
-                superblock5.merkleRoot,
-                superblock5.accumulatedWork.toString(),
-                superblock5.timestamp,
-                superblock5.lastHash,
-                superblock5.lastBits,
-                superblock5.parentId).send({ from: submitter, gas: 2100000 });
-            assert.ok(result.events.SuperblockClaimCreated, 'New superblock proposed');
-            superblock5Id = result.events.SuperblockClaimCreated.returnValues.superblockHash;
-        });
-
-        it('Approve superblock 5', async () => {
-            await utils.blockchainTimeoutSeconds(2*utils.SUPERBLOCK_OPTIONS_LOCAL.TIMEOUT);
-            result = await claimManager.methods.checkClaimFinished(superblock5Id).send({ from: challenger, gas: 300000 });
-            assert.ok(result.events.SuperblockClaimSuccessful, 'Superblock challenged');
-            const best = await superblocks.methods.getBestSuperblock().call();
-            assert.equal(superblock5Id, best, 'Best superblock should match');
-        });                             
-    });
-
-    describe('Propose and challenge sixth', () => {
         let superblock6Id;
         let battleSessionId;
         it('Propose superblock 6', async () => {
-            const result  = await claimManager.methods.proposeSuperblock(
+            result  = await claimManager.methods.proposeSuperblock(
                 superblock6.merkleRoot,
                 superblock6.accumulatedWork.toString(),
                 superblock6.timestamp,
@@ -342,5 +334,5 @@ contract('validateDifficultyAdjustmentPOW', (accounts) => {
             const result = await claimManager.methods.checkClaimFinished(superblock6Id).send({ from: challenger, gas: 300000 });
             assert.ok(result.events.SuperblockClaimPending, 'Superblock challenged');
         });
-    });
+    });   
 });

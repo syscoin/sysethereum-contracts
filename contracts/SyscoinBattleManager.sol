@@ -816,11 +816,11 @@ contract SyscoinBattleManager is Initializable, SyscoinErrorCodes {
         if(session.merkleRoots.length >= 2){
             BlockHeader memory firstHeader = blockHeadersParsed[0];
             if(session.prevSubmitBits != prevBits)
-                return ERR_SUPERBLOCK_BITS_PREVBLOCK;
+                return ERR_SUPERBLOCK_BITS_INTERIM_PREVBLOCK;
             if(session.prevSubmitBlockhash != firstHeader.prevBlock)
-                return ERR_SUPERBLOCK_HASH_PREVBLOCK; 
+                return ERR_SUPERBLOCK_HASH_INTERIM_PREVBLOCK; 
             if(session.prevSubmitTimestamp > firstHeader.timestamp || (session.prevSubmitTimestamp < (firstHeader.timestamp - 7200)))
-                return ERR_SUPERBLOCK_TIMESTAMP_PREVBLOCK;                          
+                return ERR_SUPERBLOCK_TIMESTAMP_INTERIM_PREVBLOCK;                          
         }
         return ERR_SUPERBLOCK_OK;
     }   
