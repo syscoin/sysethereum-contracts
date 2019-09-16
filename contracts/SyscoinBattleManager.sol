@@ -80,6 +80,7 @@ contract SyscoinBattleManager is Initializable, SyscoinErrorCodes {
     event NewBattle(bytes32 superblockHash, bytes32 sessionId, address submitter, address challenger);
     event ChallengerConvicted(bytes32 sessionId, uint err, address challenger);
     event SubmitterConvicted(bytes32 sessionId, uint err, address submitter);
+    event RespondBlockHeaders(bytes32 sessionId, uint merkleHashCount);
     modifier onlyFrom(address sender) {
         require(msg.sender == sender);
         _;
@@ -743,11 +744,14 @@ contract SyscoinBattleManager is Initializable, SyscoinErrorCodes {
             err = validateHeaders(session, superblockInfo, blockHeadersParsed);
             if (err != ERR_SUPERBLOCK_OK) {
                 convictSubmitter(sessionId, err);
+                return;
             }
             // only convict challenger at the end if all headers have been provided
             if(numHeaders == 12 || net != Network.MAINNET){
                 convictChallenger(sessionId, err);
+                return;
             }
+            emit RespondBlockHeaders(sessionId, session.merkleRoots.length);
         }
     }     
     // @dev - Converts a bytes of size 4 to uint32,
@@ -927,7 +931,9 @@ contract SyscoinBattleManager is Initializable, SyscoinErrorCodes {
         BattleSession storage session = sessions[sessionId];
         return (block.timestamp > session.lastActionTimestamp + superblockTimeout);
     }
-
+    function getNumMerkleHashesBySession(bytes32 sessionId) public view returns (uint) {
+        return sessions[sessionId].merkleRoots.length;
+    }
     function getSuperblockBySession(bytes32 sessionId) public view returns (bytes32) {
         return sessions[sessionId].superblockHash;
     }

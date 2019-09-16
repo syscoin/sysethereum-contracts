@@ -313,15 +313,15 @@ contract('validateDifficultyAdjustmentPOW', (accounts) => {
         it('Verify headers', async () => {
             console.log("sending first...");
             result = await battleManager.methods.respondBlockHeaders(battleSessionId, Buffer.from(superblock6Headers.slice(0, 16).join(""), 'hex'), 16).send({ from: submitter, gas: 3500000 });
-            assert.ok(Object.keys(result.events).length == 0);
+            assert.ok(result.events.RespondBlockHeaders, 'Block headers not provided');
             await utils.mineBlocks(web3, 1);
             console.log("sending second...");
             result = await battleManager.methods.respondBlockHeaders(battleSessionId, Buffer.from(superblock6Headers.slice(16, 32).join(""), 'hex'), 16).send({ from: submitter, gas: 3500000 });
-            assert.ok(Object.keys(result.events).length == 0);
+            assert.ok(result.events.RespondBlockHeaders, 'Block headers not provided');
             console.log("sending third...");
             await utils.mineBlocks(web3, 1);
             result = await battleManager.methods.respondBlockHeaders(battleSessionId, Buffer.from(superblock6Headers.slice(32, 48).join(""), 'hex'), 16).send({ from: submitter, gas: 3500000 });
-            assert.ok(Object.keys(result.events).length == 0);
+            assert.ok(result.events.RespondBlockHeaders, 'Block headers not provided');
             console.log("sending fourth...");
             await utils.mineBlocks(web3, 1);
             result = await battleManager.methods.respondBlockHeaders(battleSessionId, Buffer.from(superblock6Headers.slice(48, 60).join(""), 'hex'), 12).send({ from: submitter, gas: 3500000 });
