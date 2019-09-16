@@ -15,4 +15,4 @@ $WEB3JBIN truffle generate --solidityTypes $CONTRACTS/SyscoinBattleManager.json 
 $WEB3JBIN truffle generate --solidityTypes $CONTRACTS/SyscoinSuperblocks.json -o ./ -p $OUTPACKAGE
 
 truffle exec  --network $ETHNETWORK scripts/init_contracts_integration.js
-truffle run verify SyscoinBattleManager SyscoinClaimManager SyscoinSuperblocks SyscoinERC20Manager --network $ETHNETWORK
+#truffle run verify SyscoinBattleManager SyscoinClaimManager SyscoinSuperblocks SyscoinERC20Manager --network $ETHNETWORK

@@ -78,9 +78,9 @@ contract SyscoinBattleManager is Initializable, SyscoinErrorCodes {
     SyscoinSuperblocksI trustedSuperblocks;
 
     event NewBattle(bytes32 superblockHash, bytes32 sessionId, address submitter, address challenger);
-    event ChallengerConvicted(bytes32 sessionId, uint err, address challenger);
-    event SubmitterConvicted(bytes32 sessionId, uint err, address submitter);
-    event RespondBlockHeaders(bytes32 sessionId, uint merkleHashCount);
+    event ChallengerConvicted(bytes32 superblockHash, bytes32 sessionId, uint err, address challenger);
+    event SubmitterConvicted(bytes32 superblockHash, bytes32 sessionId, uint err, address submitter);
+    event RespondBlockHeaders(bytes32 superblockHash, bytes32 sessionId, uint merkleHashCount, address submitter);
     modifier onlyFrom(address sender) {
         require(msg.sender == sender);
         _;
@@ -751,7 +751,7 @@ contract SyscoinBattleManager is Initializable, SyscoinErrorCodes {
                 convictChallenger(sessionId, err);
                 return;
             }
-            emit RespondBlockHeaders(sessionId, session.merkleRoots.length);
+            emit RespondBlockHeaders(sessionId, session.superblockHash, session.merkleRoots.length, session.submitter);
         }
     }     
     // @dev - Converts a bytes of size 4 to uint32,
@@ -907,7 +907,7 @@ contract SyscoinBattleManager is Initializable, SyscoinErrorCodes {
     function convictChallenger(bytes32 sessionId, uint err) internal {
         BattleSession storage session = sessions[sessionId];
         sessionDecided(sessionId, session.superblockHash, session.submitter, session.challenger);
-        emit ChallengerConvicted(sessionId, err, session.challenger);
+        emit ChallengerConvicted(sessionId, session.superblockHash, err, session.challenger);
         disable(sessionId);
     }
 
@@ -915,7 +915,7 @@ contract SyscoinBattleManager is Initializable, SyscoinErrorCodes {
     function convictSubmitter(bytes32 sessionId, uint err) internal {
         BattleSession storage session = sessions[sessionId];
         sessionDecided(sessionId, session.superblockHash, session.challenger, session.submitter);
-        emit SubmitterConvicted(sessionId, err, session.submitter);
+        emit SubmitterConvicted(sessionId, session.superblockHash, err, session.submitter);
         disable(sessionId);
     }
 
@@ -932,10 +932,10 @@ contract SyscoinBattleManager is Initializable, SyscoinErrorCodes {
         return (block.timestamp > session.lastActionTimestamp + superblockTimeout);
     }
     function getNumMerkleHashesBySession(bytes32 sessionId) public view returns (uint) {
+        BattleSession memory session = sessions[sessionId];
+        if(session.id == 0x0)
+            return 0;
         return sessions[sessionId].merkleRoots.length;
-    }
-    function getSuperblockBySession(bytes32 sessionId) public view returns (bytes32) {
-        return sessions[sessionId].superblockHash;
     }
     function getSessionChallengeState(bytes32 sessionId) public view returns (ChallengeState) {
         return sessions[sessionId].challengeState;
