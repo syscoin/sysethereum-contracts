@@ -28,7 +28,6 @@ contract SyscoinBattleManager is Initializable, SyscoinErrorCodes {
         uint lastActionTimestamp;         // Last action timestamp
         ChallengeState challengeState;    // Claim state
         uint32 prevSubmitBits;
-        uint32 prevSubmitTimestamp;
         bytes32 prevSubmitBlockhash;
         bytes32[] merkleRoots;            // interim merkle roots to recreate final root hash on last set of headers
     }
@@ -811,10 +810,6 @@ contract SyscoinBattleManager is Initializable, SyscoinErrorCodes {
             }
             if(prevHeader.blockHash != thisHeader.prevBlock)
                 return ERR_SUPERBLOCK_HASH_PREVBLOCK;
-
-            // if previous block timestamp was greator or the next block timestamp was greator than 2 hours from previous timestamp
-            if(prevHeader.timestamp > thisHeader.timestamp || (prevHeader.timestamp < (thisHeader.timestamp - 7200)))
-                return ERR_SUPERBLOCK_TIMESTAMP_PREVBLOCK;
         }
         // enforce linking against previous submitted batch of blocks
         if(session.merkleRoots.length >= 2){
@@ -822,9 +817,7 @@ contract SyscoinBattleManager is Initializable, SyscoinErrorCodes {
             if(session.prevSubmitBits != prevBits)
                 return ERR_SUPERBLOCK_BITS_INTERIM_PREVBLOCK;
             if(session.prevSubmitBlockhash != firstHeader.prevBlock)
-                return ERR_SUPERBLOCK_HASH_INTERIM_PREVBLOCK; 
-            if(session.prevSubmitTimestamp > firstHeader.timestamp || (session.prevSubmitTimestamp < (firstHeader.timestamp - 7200)))
-                return ERR_SUPERBLOCK_TIMESTAMP_INTERIM_PREVBLOCK;                          
+                return ERR_SUPERBLOCK_HASH_INTERIM_PREVBLOCK;                        
         }
         return ERR_SUPERBLOCK_OK;
     }   
@@ -838,10 +831,7 @@ contract SyscoinBattleManager is Initializable, SyscoinErrorCodes {
             // ensure first headers prev block matches the last hash of the prev superblock
             if(blockHeadersParsed[0].prevBlock != prevSuperblockInfo.lastHash)
                 return ERR_SUPERBLOCK_HASH_PREVSUPERBLOCK;  
-    
-            // timestamp check against prev block in prev superblock
-            if((prevSuperblockInfo.timestamp > blockHeadersParsed[0].timestamp) || (prevSuperblockInfo.timestamp < (blockHeadersParsed[0].timestamp - 7200)))
-                return ERR_SUPERBLOCK_TIMESTAMP_SUPERBLOCK;
+
         }
         // make sure all bits are the same and timestamps are within range as well as headers are all linked
         uint err = checkBlocks(session, blockHeadersParsed, prevSuperblockInfo.lastBits);
@@ -851,13 +841,10 @@ contract SyscoinBattleManager is Initializable, SyscoinErrorCodes {
         if(blockHeadersParsed.length != 12){
             // set the last block header details in the session for subsequent batch of blocks to validate it connects to this header
             session.prevSubmitBits = prevSuperblockInfo.lastBits;
-            session.prevSubmitTimestamp = lastHeader.timestamp;
             session.prevSubmitBlockhash = lastHeader.blockHash;
         }
         // once all the headers are received we can check merkle and enforce difficulty
-        else{
-
-            
+        else{         
             // make sure every 6th superblock adjusts difficulty
             // calculate the new work from prevBits minus one as if its an adjustment we need to account for new bits, if not then just add one more prevBits work
             if(net == Network.MAINNET){
