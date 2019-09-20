@@ -6,9 +6,9 @@
     "test": "test"
   },
   "dependencies": {
-    "@openzeppelin/upgrades": "^2.5.2",
+    "@openzeppelin/upgrades": "^2.5.3",
     "bitcoin-proof": "2.0.0",
-    "bitcoinjs-lib": "^4.0.2",
+    "bitcoinjs-lib": "^5.1.6",
     "bitcore-message": "^1.0.4",
     "chai": "^4.2.0",
     "js-sha256": "^0.9.0",
@@ -16,13 +16,13 @@
     "openzeppelin-solidity": "^2.3.0",
     "openzeppelin-test-helpers": "^0.4.3",
     "solc": "^0.5.11",
-    "truffle-assertions": "^0.8.2",
+    "truffle-assertions": "^0.9.1",
     "truffle-hdwallet-provider": "^1.0.9",
     "truffle-plugin-verify": "^0.3.3",
-    "web3": "^1.0.0-beta.37"
+    "web3": "^1.2.1"
   },
   "devDependencies": {
-    "@openzeppelin/cli": "^2.5.2"
+    "@openzeppelin/cli": "^2.5.3"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
