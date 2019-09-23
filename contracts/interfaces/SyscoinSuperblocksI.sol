@@ -8,6 +8,7 @@ interface SyscoinSuperblocksI {
         bytes32 blocksMerkleRoot;
         uint accumulatedWork;
         uint timestamp;
+        uint mtpTimestamp;
         bytes32 lastHash;
         bytes32 parentId;
         address submitter;
@@ -21,6 +22,7 @@ interface SyscoinSuperblocksI {
         bytes32 _blocksMerkleRoot,
         uint _accumulatedWork,
         uint _timestamp,
+        uint _mtpTimestamp,
         bytes32 _lastHash,
         uint32 _lastBits,
         bytes32 _parentId,
@@ -31,6 +33,7 @@ interface SyscoinSuperblocksI {
         bytes32 _blocksMerkleRoot,
         uint _accumulatedWork,
         uint _timestamp,
+        uint _mtpTimestamp,
         bytes32 _lastHash,
         uint32 _lastBits,
         bytes32 _parentId,
@@ -59,4 +62,5 @@ interface SyscoinSuperblocksI {
     function getSuperblockStatus(bytes32 _superblockHash) external view returns (Status);
     function getSuperblockAt(uint _height) external view returns (bytes32);
     function getSuperblockTimestamp(bytes32 _superblockHash) external view returns (uint);
+    function getSuperblockMedianTimestamp(bytes32 _superblockHash) external view returns (uint);
 }

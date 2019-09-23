@@ -155,6 +155,7 @@ contract SyscoinClaimManager is Initializable, SyscoinDepositsManager, SyscoinEr
     // @param _blocksMerkleRoot Root of the merkle tree of blocks contained in a superblock
     // @param _accumulatedWork Accumulated proof of work of the last block in the superblock
     // @param _timestamp Timestamp of the last block in the superblock
+    // @param _mtpTimestamp Median Timestamp of the last block in the superblock
     // @param _lastHash Hash of the last block in the superblock
     // @param _lastBits Difficulty bits of the last block in the superblock bits used to verify accumulatedWork through difficulty calculation
     // @param _parentHash Id of the parent superblock
@@ -163,6 +164,7 @@ contract SyscoinClaimManager is Initializable, SyscoinDepositsManager, SyscoinEr
         bytes32 _blocksMerkleRoot,
         uint _accumulatedWork,
         uint _timestamp,
+        uint _mtpTimestamp,
         bytes32 _lastHash,
         uint32 _lastBits,
         bytes32 _parentHash
@@ -182,7 +184,7 @@ contract SyscoinClaimManager is Initializable, SyscoinDepositsManager, SyscoinEr
         uint err;
         bytes32 superblockHash;
         (err, superblockHash) = trustedSuperblocks.propose(_blocksMerkleRoot, _accumulatedWork,
-            _timestamp, _lastHash, _lastBits, _parentHash,msg.sender);
+            _timestamp, _mtpTimestamp, _lastHash, _lastBits, _parentHash,msg.sender);
         if (err != 0) {
             emit ErrorClaim(superblockHash, err);
             return (err, superblockHash);
@@ -561,13 +563,14 @@ contract SyscoinClaimManager is Initializable, SyscoinDepositsManager, SyscoinEr
         return claim.challenger;
     }
     function getAbilityToProposeNextSuperblock(uint timestamp) public view returns (bool){
-        (, , uint timestampSuperblock ,,, , ,,) = getSuperblockInfo(trustedSuperblocks.getBestSuperblock());
+        (, , uint timestampSuperblock ,,,, , ,,) = getSuperblockInfo(trustedSuperblocks.getBestSuperblock());
         return timestampSuperblock + superblockDelay <= timestamp;
     }
     function getSuperblockInfo(bytes32 superblockHash) internal view returns (
         bytes32 _blocksMerkleRoot,
         uint _accumulatedWork,
         uint _timestamp,
+        uint _mtpTimestamp,
         bytes32 _lastHash,
         uint32 _lastBits,
         bytes32 _parentId,

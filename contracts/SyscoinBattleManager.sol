@@ -15,8 +15,8 @@ contract SyscoinBattleManager is Initializable, SyscoinErrorCodes {
 
     // For verifying Syscoin difficulty
     uint constant TARGET_TIMESPAN =  21600; 
-    uint constant TARGET_TIMESPAN_DIV_4 = TARGET_TIMESPAN / 4;
-    uint constant TARGET_TIMESPAN_MUL_4 = TARGET_TIMESPAN * 4;
+    uint constant TARGET_TIMESPAN_MIN = 17280; // TARGET_TIMESPAN * (8/10);
+    uint constant TARGET_TIMESPAN_MAX = 27000; // TARGET_TIMESPAN * (10/8);
     uint constant TARGET_TIMESPAN_ADJUSTMENT =  360;  // 6 hour
     uint constant POW_LIMIT =    0x00000fffffffffffffffffffffffffffffffffffffffffffffffffffffffffff;
     
@@ -590,10 +590,10 @@ contract SyscoinBattleManager is Initializable, SyscoinErrorCodes {
         return (~target / (target + 1)) + 1;
     }
     function getLowerBoundDifficultyTarget() internal pure returns (uint) {
-        return TARGET_TIMESPAN_DIV_4;
+        return TARGET_TIMESPAN_MIN;
     }
      function getUpperBoundDifficultyTarget() internal pure returns (uint) {
-        return TARGET_TIMESPAN_MUL_4;
+        return TARGET_TIMESPAN_MAX;
     }   
     // @param _actualTimespan - time elapsed from previous block creation til current block creation;
     // i.e., how much time it took to mine the current block
@@ -602,10 +602,10 @@ contract SyscoinBattleManager is Initializable, SyscoinErrorCodes {
     function calculateDifficulty(uint _actualTimespan, uint32 _bits) internal pure returns (uint32 result) {
         uint actualTimespan = _actualTimespan;
         // Limit adjustment step
-        if (actualTimespan < TARGET_TIMESPAN_DIV_4) {
-            actualTimespan = TARGET_TIMESPAN_DIV_4;
-        } else if (actualTimespan > TARGET_TIMESPAN_MUL_4) {
-            actualTimespan = TARGET_TIMESPAN_MUL_4;
+        if (actualTimespan < TARGET_TIMESPAN_MIN) {
+            actualTimespan = TARGET_TIMESPAN_MIN;
+        } else if (actualTimespan > TARGET_TIMESPAN_MAX) {
+            actualTimespan = TARGET_TIMESPAN_MAX;
         }
 
         // Retarget
@@ -734,7 +734,7 @@ contract SyscoinBattleManager is Initializable, SyscoinErrorCodes {
                 revert();
         }
         SyscoinSuperblocksI.SuperblockInfo memory superblockInfo;
-        (superblockInfo.blocksMerkleRoot, superblockInfo.accumulatedWork,superblockInfo.timestamp,superblockInfo.lastHash,superblockInfo.lastBits,superblockInfo.parentId,,,superblockInfo.height) = getSuperblockInfo(session.superblockHash);
+        (superblockInfo.blocksMerkleRoot, superblockInfo.accumulatedWork,superblockInfo.timestamp,superblockInfo.mtpTimestamp,superblockInfo.lastHash,superblockInfo.lastBits,superblockInfo.parentId,,,superblockInfo.height) = getSuperblockInfo(session.superblockHash);
         (uint err, BlockHeader[] memory blockHeadersParsed ) = doRespondBlockHeaders(session, superblockInfo, blockHeaders, numHeaders);
         if (err != ERR_SUPERBLOCK_OK) {
             convictSubmitter(sessionId, err);
@@ -820,12 +820,34 @@ contract SyscoinBattleManager is Initializable, SyscoinErrorCodes {
                 return ERR_SUPERBLOCK_HASH_INTERIM_PREVBLOCK;                        
         }
         return ERR_SUPERBLOCK_OK;
-    }   
+    } 
+    function sort_array(uint[11] memory arr) internal pure {
+        for(uint i = 0; i < 11; i++) {
+            for(uint j = i+1; j < 11 ;j++) {
+                if(arr[i] > arr[j]) {
+                    uint temp = arr[i];
+                    arr[i] = arr[j];
+                    arr[j] = temp;
+                }
+            }
+        }
+    }
+    
+    // @dev - Gets the median timestamp of the last 11 blocks
+    function getMedianTimestamp(BlockHeader[] memory blockHeadersParsed) internal pure returns (uint){
+        uint[11] memory timestamps;
+        // timestamps 0->10 = blockHeadersParsed 1->11
+        for(uint i=0;i<11;i++){
+            timestamps[i] = blockHeadersParsed[i+1].timestamp;
+        }
+        sort_array(timestamps);
+        return timestamps[5];
+    }  
     // @dev - Validate superblock accumulated work + other block header fields
     function validateHeaders(BattleSession storage session, SyscoinSuperblocksI.SuperblockInfo memory superblockInfo, BlockHeader[] memory blockHeadersParsed) internal returns (uint) {
         SyscoinSuperblocksI.SuperblockInfo memory prevSuperblockInfo;
         BlockHeader memory lastHeader = blockHeadersParsed[blockHeadersParsed.length-1];
-        (, prevSuperblockInfo.accumulatedWork,prevSuperblockInfo.timestamp,prevSuperblockInfo.lastHash,prevSuperblockInfo.lastBits,, ,,) = getSuperblockInfo(superblockInfo.parentId);
+        (, prevSuperblockInfo.accumulatedWork,prevSuperblockInfo.timestamp,prevSuperblockInfo.mtpTimestamp,prevSuperblockInfo.lastHash,prevSuperblockInfo.lastBits,, ,,) = getSuperblockInfo(superblockInfo.parentId);
         // for blocks 0 -> 16 we can check the first header
         if(session.merkleRoots.length <= 1){
             // ensure first headers prev block matches the last hash of the prev superblock
@@ -844,7 +866,25 @@ contract SyscoinBattleManager is Initializable, SyscoinErrorCodes {
             session.prevSubmitBlockhash = lastHeader.blockHash;
         }
         // once all the headers are received we can check merkle and enforce difficulty
-        else{         
+        else{
+            if(block.timestamp+7215 <= superblockInfo.timestamp)
+                return ERR_SUPERBLOCK_BAD_TIMESTAMP;
+            uint mtpTimestamp = getMedianTimestamp(blockHeadersParsed);
+
+            // make sure calculated MTP is same as superblock MTP
+            if(mtpTimestamp != superblockInfo.mtpTimestamp)
+                 return ERR_SUPERBLOCK_MISMATCH_TIMESTAMP_MTP;
+
+            // ensure MTP of this SB is > than last SB MTP
+            if(mtpTimestamp <= prevSuperblockInfo.mtpTimestamp)
+                return ERR_SUPERBLOCK_TOOSMALL_TIMESTAMP_MTP;
+
+            // ensure MTP of superblock atleast 3 hours old
+            if(block.timestamp <= mtpTimestamp+10800)
+                return ERR_SUPERBLOCK_BAD_TIMESTAMP_MTP;
+
+            // mtp timestamp must be greator than previous mtp timestamp
+
             // make sure every 6th superblock adjusts difficulty
             // calculate the new work from prevBits minus one as if its an adjustment we need to account for new bits, if not then just add one more prevBits work
             if(net == Network.MAINNET){
@@ -937,6 +977,7 @@ contract SyscoinBattleManager is Initializable, SyscoinErrorCodes {
         bytes32 _blocksMerkleRoot,
         uint _accumulatedWork,
         uint _timestamp,
+        uint _mtpTimestamp,
         bytes32 _lastHash,
         uint32 _lastBits,
         bytes32 _parentId,

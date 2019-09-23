@@ -54,6 +54,7 @@ contract('validateDifficultyAdjustment', (accounts) => {
         proposedSuperblock.merkleRoot,
         proposedSuperblock.accumulatedWork.toString(),
         proposedSuperblock.timestamp,
+        proposedSuperblock.mtpTimestamp,
         proposedSuperblock.lastHash,
         proposedSuperblock.lastBits,
         proposedSuperblock.parentId).send({ from: submitter, gas: 2100000 });

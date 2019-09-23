@@ -192,6 +192,7 @@ contract('validateDifficultyAdjustmentPOW', (accounts) => {
             superblock1.merkleRoot,
             superblock1.accumulatedWork.toString(),
             superblock1.timestamp,
+            superblock1.mtpTimestamp,
             superblock1.lastHash,
             superblock1.lastBits,
             superblock1.parentId).send({ from: submitter, gas: 2100000 });
@@ -211,6 +212,7 @@ contract('validateDifficultyAdjustmentPOW', (accounts) => {
             superblock2.merkleRoot,
             superblock2.accumulatedWork.toString(),
             superblock2.timestamp,
+            superblock2.mtpTimestamp,
             superblock2.lastHash,
             superblock2.lastBits,
             superblock2.parentId).send({ from: submitter, gas: 2100000 });
@@ -230,6 +232,7 @@ contract('validateDifficultyAdjustmentPOW', (accounts) => {
             superblock3.merkleRoot,
             superblock3.accumulatedWork.toString(),
             superblock3.timestamp,
+            superblock3.mtpTimestamp,
             superblock3.lastHash,
             superblock3.lastBits,
             superblock3.parentId).send({ from: submitter, gas: 2100000 });
@@ -248,6 +251,7 @@ contract('validateDifficultyAdjustmentPOW', (accounts) => {
             superblock4.merkleRoot,
             superblock4.accumulatedWork.toString(),
             superblock4.timestamp,
+            superblock4.mtpTimestamp,
             superblock4.lastHash,
             superblock4.lastBits,
             superblock4.parentId).send({ from: submitter, gas: 2100000 });
@@ -265,6 +269,7 @@ contract('validateDifficultyAdjustmentPOW', (accounts) => {
             superblock5.merkleRoot,
             superblock5.accumulatedWork.toString(),
             superblock5.timestamp,
+            superblock5.mtpTimestamp,
             superblock5.lastHash,
             superblock5.lastBits,
             superblock5.parentId).send({ from: submitter, gas: 2100000 });
@@ -297,6 +302,7 @@ contract('validateDifficultyAdjustmentPOW', (accounts) => {
                 superblock6.merkleRoot,
                 superblock6.accumulatedWork.toString(),
                 superblock6.timestamp,
+                superblock6.mtpTimestamp,
                 superblock6.lastHash,
                 superblock6.lastBits,
                 superblock6.parentId).send({ from: submitter, gas: 2100000 });
@@ -324,7 +330,7 @@ contract('validateDifficultyAdjustmentPOW', (accounts) => {
             assert.ok(result.events.RespondBlockHeaders, 'Block headers not provided');
             console.log("sending fourth...");
             await utils.mineBlocks(web3, 1);
-            result = await battleManager.methods.respondBlockHeaders(battleSessionId, Buffer.from(superblock6Headers.slice(48, 60).join(""), 'hex'), 12).send({ from: submitter, gas: 3500000 });
+            result = await battleManager.methods.respondBlockHeaders(battleSessionId, Buffer.from(superblock6Headers.slice(48, 60).join(""), 'hex'), 12).send({ from: submitter, gas: 40000000 });
             assert.ok(result.events.ChallengerConvicted, 'Challenger failed');
             await utils.mineBlocks(web3, 1);
         });

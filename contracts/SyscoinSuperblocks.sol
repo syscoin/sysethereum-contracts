@@ -61,6 +61,7 @@ contract SyscoinSuperblocks is Initializable, SyscoinSuperblocksI, SyscoinErrorC
     // @param _blocksMerkleRoot Root of the merkle tree of blocks contained in a superblock
     // @param _accumulatedWork Accumulated proof of work of the last block in the superblock
     // @param _timestamp Timestamp of the last block in the superblock
+    // @param _mtpTimestamp Median Timestamp of the last block in the superblock
     // @param _lastHash Hash of the last block in the superblock
     // @param _lastBits Difficulty bits of the last block in the superblock bits used to verify accumulatedWork through difficulty calculation
     // @param _parentId Id of the parent superblock  
@@ -70,6 +71,7 @@ contract SyscoinSuperblocks is Initializable, SyscoinSuperblocksI, SyscoinErrorC
         bytes32 _blocksMerkleRoot,
         uint _accumulatedWork,
         uint _timestamp,
+        uint _mtpTimestamp,
         bytes32 _lastHash,
         uint32 _lastBits,
         bytes32 _parentId
@@ -77,7 +79,7 @@ contract SyscoinSuperblocks is Initializable, SyscoinSuperblocksI, SyscoinErrorC
         require(bestSuperblock == 0);
         require(_parentId == 0);
 
-        bytes32 superblockHash = calcSuperblockHash(_blocksMerkleRoot, _accumulatedWork, _timestamp, _lastHash, _lastBits, _parentId);
+        bytes32 superblockHash = calcSuperblockHash(_blocksMerkleRoot, _accumulatedWork, _timestamp, _mtpTimestamp, _lastHash, _lastBits, _parentId);
         SuperblockInfo storage superblock = superblocks[superblockHash];
 
         require(superblock.status == Status.Uninitialized);
@@ -87,6 +89,7 @@ contract SyscoinSuperblocks is Initializable, SyscoinSuperblocksI, SyscoinErrorC
         superblock.blocksMerkleRoot = _blocksMerkleRoot;
         superblock.accumulatedWork = _accumulatedWork;
         superblock.timestamp = _timestamp;
+        superblock.mtpTimestamp = _mtpTimestamp;
         superblock.lastHash = _lastHash;
         superblock.parentId = _parentId;
         superblock.submitter = msg.sender;
@@ -114,6 +117,7 @@ contract SyscoinSuperblocks is Initializable, SyscoinSuperblocksI, SyscoinErrorC
     // @param _blocksMerkleRoot Root of the merkle tree of blocks contained in a superblock
     // @param _accumulatedWork Accumulated proof of work of the last block in the superblock
     // @param _timestamp Timestamp of the last block in the superblock
+    // @param _mtpTimestamp Median Timestamp of the last block in the superblock
     // @param _lastHash Hash of the last block in the superblock
     // @param _lastBits Difficulty bits of the last block in the superblock bits used to verify accumulatedWork through difficulty calculation
     // @param _parentId Id of the parent superblock
@@ -122,6 +126,7 @@ contract SyscoinSuperblocks is Initializable, SyscoinSuperblocksI, SyscoinErrorC
         bytes32 _blocksMerkleRoot,
         uint _accumulatedWork,
         uint _timestamp,
+        uint _mtpTimestamp,
         bytes32 _lastHash,
         uint32 _lastBits,
         bytes32 _parentId,
@@ -138,13 +143,14 @@ contract SyscoinSuperblocks is Initializable, SyscoinSuperblocksI, SyscoinErrorC
             return (ERR_SUPERBLOCK_BAD_PARENT, 0);
         }
 
-        bytes32 superblockHash = calcSuperblockHash(_blocksMerkleRoot, _accumulatedWork, _timestamp, _lastHash, _lastBits, _parentId);
+        bytes32 superblockHash = calcSuperblockHash(_blocksMerkleRoot, _accumulatedWork, _timestamp, _mtpTimestamp, _lastHash, _lastBits, _parentId);
         SuperblockInfo storage superblock = superblocks[superblockHash];
         if (superblock.status == Status.Uninitialized) {
             indexSuperblock[indexNextSuperblock] = superblockHash;
             superblock.blocksMerkleRoot = _blocksMerkleRoot;
             superblock.accumulatedWork = _accumulatedWork;
             superblock.timestamp = _timestamp;
+            superblock.mtpTimestamp = _mtpTimestamp;
             superblock.lastHash = _lastHash;
             superblock.parentId = _parentId;
             superblock.index = indexNextSuperblock;
@@ -397,6 +403,7 @@ contract SyscoinSuperblocks is Initializable, SyscoinSuperblocksI, SyscoinErrorC
     // @param _blocksMerkleRoot Root of the merkle tree of blocks contained in a superblock
     // @param _accumulatedWork Accumulated proof of work of the last block in the superblock
     // @param _timestamp Timestamp of the last block in the superblock
+    // @param _mtpTimestamp Median Timestamp of the last block in the superblock
     // @param _lastHash Hash of the last block in the superblock
     // @param _lastBits Difficulty bits of the last block in the superblock bits used to verify accumulatedWork through difficulty calculation
     // @param _parentId Id of the parent superblock 
@@ -405,6 +412,7 @@ contract SyscoinSuperblocks is Initializable, SyscoinSuperblocksI, SyscoinErrorC
         bytes32 _blocksMerkleRoot,
         uint _accumulatedWork,
         uint _timestamp,
+        uint _mtpTimestamp,
         bytes32 _lastHash,
         uint32 _lastBits,
         bytes32 _parentId
@@ -413,6 +421,7 @@ contract SyscoinSuperblocks is Initializable, SyscoinSuperblocksI, SyscoinErrorC
             _blocksMerkleRoot,
             _accumulatedWork,
             _timestamp,
+            _mtpTimestamp,
             _lastHash,
             _lastBits,
             _parentId
@@ -432,6 +441,7 @@ contract SyscoinSuperblocks is Initializable, SyscoinSuperblocksI, SyscoinErrorC
         bytes32 _blocksMerkleRoot,
         uint _accumulatedWork,
         uint _timestamp,
+        uint _mtpTimestamp,
         bytes32 _lastHash,
         uint32 _lastBits,
         bytes32 _parentId,
@@ -444,6 +454,7 @@ contract SyscoinSuperblocks is Initializable, SyscoinSuperblocksI, SyscoinErrorC
             superblock.blocksMerkleRoot,
             superblock.accumulatedWork,
             superblock.timestamp,
+            superblock.mtpTimestamp,
             superblock.lastHash,
             superblock.lastBits,
             superblock.parentId,
@@ -474,6 +485,10 @@ contract SyscoinSuperblocks is Initializable, SyscoinSuperblocksI, SyscoinErrorC
         return superblocks[_superblockHash].timestamp;
     }
 
+    // @dev - Return superblock median timestamp
+    function getSuperblockMedianTimestamp(bytes32 _superblockHash) public view returns (uint) {
+        return superblocks[_superblockHash].mtpTimestamp;
+    }
 
     // @dev - Return superblock parent
     function getSuperblockParentId(bytes32 _superblockHash) public view returns (bytes32) {

@@ -96,6 +96,7 @@ contract('rejectClaim', (accounts) => {
                 superblock1.merkleRoot,
                 superblock1.accumulatedWork.toString(),
                 superblock1.timestamp,
+                superblock1.mtpTimestamp,
                 superblock1.lastHash,
                 superblock1.lastBits,
                 superblock1.parentId).send({ from: submitter, gas: 2100000 });
@@ -109,6 +110,7 @@ contract('rejectClaim', (accounts) => {
                 superblock1.merkleRoot,
                 superblock1.accumulatedWork.toString(),
                 superblock1.timestamp,
+                superblock1.mtpTimestamp,
                 superblock1.lastHash,
                 superblock1.lastBits,
                 superblock1.parentId).send({ from: submitter, gas: 2100000 }));
@@ -119,6 +121,7 @@ contract('rejectClaim', (accounts) => {
                 superblock1.merkleRoot,
                 superblock1.accumulatedWork.toString(),
                 superblock1.timestamp,
+                superblock1.mtpTimestamp,
                 superblock1.lastHash,
                 superblock1.lastBits,
                 superblock1.parentId).send({ from: challenger, gas: 2100000 }));
@@ -138,6 +141,7 @@ contract('rejectClaim', (accounts) => {
                 superblock1.merkleRoot,
                 superblock1.accumulatedWork.toString(),
                 superblock1.timestamp,
+                superblock1.mtpTimestamp,
                 superblock1.lastHash,
                 superblock1.lastBits,
                 superblock1.parentId).send({ from: submitter, gas: 2100000 }));
@@ -148,6 +152,7 @@ contract('rejectClaim', (accounts) => {
                 superblock1.merkleRoot,
                 superblock1.accumulatedWork.toString(),
                 superblock1.timestamp,
+                superblock1.mtpTimestamp,
                 superblock1.lastHash,
                 superblock1.lastBits,
                 superblock1.parentId).send({ from: challenger, gas: 2100000 }));
@@ -164,6 +169,7 @@ contract('rejectClaim', (accounts) => {
                 superblockR0.merkleRoot,
                 superblockR0.accumulatedWork.toString(),
                 superblockR0.timestamp,
+                superblockR0.mtpTimestamp,
                 superblockR0.lastHash,
                 superblockR0.lastBits,
                 superblockR0.parentId).send({ from: submitter, gas: 2100000 });
@@ -183,6 +189,7 @@ contract('rejectClaim', (accounts) => {
                 superblock2.merkleRoot,
                 superblock2.accumulatedWork.toString(),
                 superblock2.timestamp,
+                superblock2.mtpTimestamp,
                 superblock2.lastHash,
                 superblock2.lastBits,
                 superblock2.parentId).send({ from: submitter, gas: 2100000 });
@@ -208,6 +215,7 @@ contract('rejectClaim', (accounts) => {
                 superblock3.merkleRoot,
                 superblock3.accumulatedWork.toString(),
                 superblock3.timestamp,
+                superblock3.mtpTimestamp,
                 superblock3.lastHash,
                 superblock3.lastBits,
                 superblock3.parentId).send({ from: submitter, gas: 2100000 });
@@ -228,6 +236,7 @@ contract('rejectClaim', (accounts) => {
                 superblock4.merkleRoot,
                 superblock4.accumulatedWork.toString(),
                 superblock4.timestamp,
+                superblock4.mtpTimestamp,
                 superblock4.lastHash,
                 superblock4.lastBits,
                 superblock4.parentId).send({ from: submitter, gas: 2100000 });
@@ -296,6 +305,7 @@ contract('rejectClaim', (accounts) => {
                 superblockR1.merkleRoot,
                 superblockR1.accumulatedWork.toString(),
                 superblockR1.timestamp,
+                superblockR1.mtpTimestamp,
                 superblockR1.lastHash,
                 superblockR1.lastBits,
                 superblockR1.parentId).send({ from: submitter, gas: 2100000 });

@@ -38,6 +38,7 @@ contract('SyscoinSuperblocks2', function(accounts) {
       genesisSuperblock.merkleRoot,
       genesisSuperblock.accumulatedWork.toString(),
       genesisSuperblock.timestamp,
+      genesisSuperblock.mtpTimestamp,
       genesisSuperblock.lastHash,
       genesisSuperblock.lastBits,
       genesisSuperblock.parentId).send({ from: user, gas: 300000 });
@@ -59,16 +60,17 @@ contract('SyscoinSuperblocks2', function(accounts) {
 
 
     // 2 keys per returned var
-    assert.equal(Object.keys(superblock).length, 18, 'Have enough data');
+    assert.equal(Object.keys(superblock).length, 20, 'Have enough data');
     assert.equal(superblock[0], genesisSuperblock.merkleRoot, 'Merkle root');
     assert.equal(superblock[1].toString(10), genesisSuperblock.accumulatedWork.toString(10), 'Accumulated work');
     assert.equal(superblock[2], genesisSuperblock.timestamp, 'Last block timestamp');
-    assert.equal(superblock[3], genesisSuperblock.lastHash, 'Last block hash');
-    assert.equal(superblock[4], genesisSuperblock.lastBits, 'Last block difficulty bits');
-    assert.equal(superblock[5], genesisSuperblock.parentId, 'Parent superblock');
-    assert.equal(superblock[6], user, 'Submitter');
-    assert.equal(superblock[7].toString(10), 4, 'Superblock status'); // Approved
-    assert.equal(superblock[8], 1, 'height');
+    assert.equal(superblock[3], genesisSuperblock.mtpTimestamp, 'Last block median timestamp');
+    assert.equal(superblock[4], genesisSuperblock.lastHash, 'Last block hash');
+    assert.equal(superblock[5], genesisSuperblock.lastBits, 'Last block difficulty bits');
+    assert.equal(superblock[6], genesisSuperblock.parentId, 'Parent superblock');
+    assert.equal(superblock[7], user, 'Submitter');
+    assert.equal(superblock[8].toString(10), 4, 'Superblock status'); // Approved
+    assert.equal(superblock[9], 1, 'height');
 
   });
 });

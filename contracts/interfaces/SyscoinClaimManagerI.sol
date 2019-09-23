@@ -11,6 +11,7 @@ interface SyscoinClaimManagerI {
         bytes32 _blocksMerkleRoot,
         uint _accumulatedWork,
         uint _timestamp,
+        uint _mtpTimestamp,
         bytes32 _lastHash,
         uint32 _lastBits,
         bytes32 _parentId,

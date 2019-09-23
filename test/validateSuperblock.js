@@ -67,6 +67,7 @@ contract('validateSuperblocks', (accounts) => {
         proposedSuperblock.merkleRoot,
         proposedSuperblock.accumulatedWork.toString(),
         proposedSuperblock.timestamp,
+        proposedSuperblock.mtpTimestamp,
         proposedSuperblock.lastHash,
         proposedSuperblock.lastBits,
         proposedSuperblock.parentId).send({ from: submitter, gas: 2100000 });
@@ -101,6 +102,7 @@ contract('validateSuperblocks', (accounts) => {
         proposedSuperblock1.merkleRoot,
         proposedSuperblock1.accumulatedWork.toString(),
         proposedSuperblock1.timestamp + 1,
+        proposedSuperblock1.mtpTimestamp,
         proposedSuperblock1.lastHash,
         proposedSuperblock1.lastBits,
         proposedSuperblock1.parentId).send({ from: submitter, gas: 2100000 });
@@ -134,6 +136,7 @@ contract('validateSuperblocks', (accounts) => {
         proposedSuperblock1.merkleRoot,
         proposedSuperblock1.accumulatedWork.toString(),
         proposedSuperblock1.timestamp,
+        proposedSuperblock1.mtpTimestamp,
         utils.ZERO_BYTES32, // proposedSuperblock.lastHash,
         proposedSuperblock1.lastBits,
         proposedSuperblock1.parentId).send({ from: submitter, gas: 2100000 });
@@ -168,6 +171,7 @@ contract('validateSuperblocks', (accounts) => {
           proposedSuperblock1.merkleRoot,
           proposedSuperblock1.accumulatedWork.toString(),
           proposedSuperblock1.timestamp,
+          proposedSuperblock1.mtpTimestamp,
           utils.ZERO_BYTES32, // proposedSuperblock.lastHash,
           proposedSuperblock1.lastBits,
           proposedSuperblock1.parentId
@@ -181,6 +185,7 @@ contract('validateSuperblocks', (accounts) => {
         proposedSuperblock1.merkleRoot,
         proposedSuperblock1.accumulatedWork.toString(),
         proposedSuperblock1.timestamp,
+        proposedSuperblock1.mtpTimestamp,
         utils.ZERO_BYTES32, // proposedSuperblock.lastHash,
         proposedSuperblock1.lastBits,
         proposedSuperblock1.parentId).send({ from: challenger, gas: 2100000 });
@@ -194,6 +199,7 @@ contract('validateSuperblocks', (accounts) => {
           proposedSuperblock1.merkleRoot,
           proposedSuperblock1.accumulatedWork.toString(),
           proposedSuperblock1.timestamp ,
+          proposedSuperblock1.mtpTimestamp ,
           utils.ZERO_BYTES32, // proposedSuperblock.lastHash,
           proposedSuperblock1.lastBits,
           proposedSuperblock1.parentId).send({ from: challenger, gas: 300000 })

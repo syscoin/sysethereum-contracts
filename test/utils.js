@@ -90,7 +90,29 @@ function getBlockTimestamp(blockHeader) {
   const timestamp = headerBin[68] + 256 * headerBin[69] + 256 * 256 * headerBin[70] + 256 * 256 * 256 * headerBin[71];
   return timestamp;
 }
+function sort_array(arr) {
+  for(var i = 0; i < 11; i++) {
+    for(var j = i+1; j < 11 ;j++) {
+        if(arr[i] > arr[j]) {
+            let temp = arr[i];
+            arr[i] = arr[j];
+            arr[j] = temp;
+        }
+    }
+  }
+  return arr;
+}
 
+// Gets the median timestamp of the last 11 blocks
+function getBlockMedianTimestamp(headers){
+  var timestamps = [];
+  // timestamps 0->10 = headers 49->59
+  for(var i=0;i<11;i++){
+      timestamps[10 - i] = getBlockTimestamp(headers[headers.length - i - 1]);
+  }
+  timestamps = sort_array(timestamps);
+  return timestamps[5];
+}  
 // Get difficulty bits from block header
 function getBlockDifficultyBits(blockHeader) {
   const headerBin = module.exports.fromHex(blockHeader).slice(0, 80);
@@ -198,12 +220,13 @@ function makeMerkleProofMap (blockHashes) {
   }
   
 // Calculate a superblock id
-function calcSuperblockHash(merkleRoot, accumulatedWork, timestamp, lastHash, lastBits, parentId) {
+function calcSuperblockHash(merkleRoot, accumulatedWork, timestamp, mtpTimestamp, lastHash, lastBits, parentId) {
   return `0x${Buffer.from(keccak256.arrayBuffer(
     Buffer.concat([
       module.exports.fromHex(merkleRoot),
       module.exports.fromHex(toUint256(accumulatedWork)),
       module.exports.fromHex(toUint256(timestamp)),
+      module.exports.fromHex(toUint256(mtpTimestamp)),
       module.exports.fromHex(lastHash),
       module.exports.fromHex(toUint32(lastBits)),
       module.exports.fromHex(parentId)
@@ -221,12 +244,17 @@ function makeSuperblock(headers, parentId, parentAccumulatedWork, absoluteAccWor
   const accumulatedWork = absoluteAccWork? absoluteAccWork: headers.reduce((work, header) => work.add(getBlockDifficulty(header)), web3.utils.toBN(parentAccumulatedWork));
   const merkleRoot = makeMerkle(blockHashes);
   const timestamp = getBlockTimestamp(headers[headers.length - 1]);
+  let mtpTimestamp = timestamp;
+  if(headers.length >= 11){
+    mtpTimestamp = getBlockMedianTimestamp(headers);
+  }
   const lastHash = calcBlockSha256Hash(headers[headers.length - 1]);
   const lastBits = getBlockDifficultyBits(headers[headers.length - 1]);
   return {
     merkleRoot,
     accumulatedWork,
     timestamp,
+    mtpTimestamp,
     lastHash,
     lastBits,
     parentId,
@@ -234,6 +262,7 @@ function makeSuperblock(headers, parentId, parentAccumulatedWork, absoluteAccWor
       merkleRoot,
       accumulatedWork,
       timestamp,
+      mtpTimestamp,
       lastHash,
       lastBits,
       parentId
@@ -249,12 +278,14 @@ function makeSuperblockFromHashes(blockHashes, parentId, parentAccumulatedWork) 
   const accumulatedWork = 0;
   const merkleRoot = makeMerkle(blockHashes);
   const timestamp = 1563155885;
+  const mtptimestamp = timestamp;
   const lastHash = blockHashes[blockHashes.length - 1];
   const lastBits = 108428188075
   return {
     merkleRoot,
     accumulatedWork,
     timestamp,
+    mtptimestamp,
     lastHash,
     lastBits,
     parentId,
@@ -262,6 +293,7 @@ function makeSuperblockFromHashes(blockHashes, parentId, parentAccumulatedWork) 
       merkleRoot,
       accumulatedWork,
       timestamp,
+      mtptimestamp,
       lastHash,
       lastBits,
       parentId
@@ -341,6 +373,7 @@ async function initSuperblockChain(options) {
     options.genesisSuperblock.merkleRoot,
     options.genesisSuperblock.accumulatedWork.toString(),
     options.genesisSuperblock.timestamp,
+    options.genesisSuperblock.mtpTimestamp,
     options.genesisSuperblock.lastHash,
     options.genesisSuperblock.lastBits,
     options.genesisSuperblock.parentId
@@ -455,6 +488,7 @@ module.exports = {
       genesisSuperblock.merkleRoot,
       genesisSuperblock.accumulatedWork,
       genesisSuperblock.timestamp,
+      genesisSuperblock.mtpTimestamp,
       genesisSuperblock.lastHash,
       genesisSuperblock.lastBits,
       genesisSuperblock.parentId,
@@ -476,6 +510,7 @@ module.exports = {
       proposedSuperblock.merkleRoot,
       proposedSuperblock.accumulatedWork,
       proposedSuperblock.timestamp,
+      proposedSuperblock.mtpTimestamp,
       proposedSuperblock.lastHash,
       proposedSuperblock.lastBits,
       proposedSuperblock.parentId,
@@ -564,6 +599,7 @@ module.exports = {
   headerToData,
   calcBlockSha256Hash,
   getBlockTimestamp,
+  getBlockMedianTimestamp,
   getBlockDifficultyBits,
   getBlockDifficulty,
   timeout,

@@ -159,6 +159,7 @@ contract('approveDescendant', (accounts) => {
                 superblock1.merkleRoot,
                 superblock1.accumulatedWork.toString(),
                 superblock1.timestamp,
+                superblock1.mtpTimestamp,
                 superblock1.lastHash,
                 superblock1.lastBits,
                 superblock1.parentId).send({ from: submitter, gas: 2100000 });
@@ -192,6 +193,7 @@ contract('approveDescendant', (accounts) => {
         //         superblock4.merkleRoot,
         //         superblock4.accumulatedWork,
         //         superblock4.timestamp,
+        //         superblock4.mtpTimestamp,
         //         superblock4.lastHash,
         //         superblock4.lastBits,
         //         superblock4.parentId,
@@ -240,6 +242,7 @@ contract('approveDescendant', (accounts) => {
                 superblock2.merkleRoot,
                 superblock2.accumulatedWork.toString(),
                 superblock2.timestamp,
+                superblock2.mtpTimestamp,
                 superblock2.lastHash,
                 superblock2.lastBits,
                 superblock2.parentId).send({ from: submitter, gas: 2100000 });
@@ -265,6 +268,7 @@ contract('approveDescendant', (accounts) => {
                 superblock3.merkleRoot,
                 superblock3.accumulatedWork.toString(),
                 superblock3.timestamp,
+                superblock3.mtpTimestamp,
                 superblock3.lastHash,
                 superblock3.lastBits,
                 superblock3.parentId).send({ from: submitter, gas: 2100000 });
@@ -319,6 +323,7 @@ contract('approveDescendant', (accounts) => {
                 superblock1.merkleRoot,
                 superblock1.accumulatedWork.toString(),
                 superblock1.timestamp,
+                superblock1.mtpTimestamp,
                 superblock1.lastHash,
                 superblock1.lastBits,
                 superblock1.parentId).send({ from: submitter, gas: 2100000 });
@@ -353,6 +358,7 @@ contract('approveDescendant', (accounts) => {
                 superblock2.merkleRoot,
                 superblock2.accumulatedWork.toString(),
                 superblock2.timestamp,
+                superblock2.mtpTimestamp,
                 superblock2.lastHash,
                 superblock2.lastBits,
                 superblock2.parentId).send({ from: submitter, gas: 2100000 });
@@ -386,6 +392,7 @@ contract('approveDescendant', (accounts) => {
                 superblock3.merkleRoot,
                 superblock3.accumulatedWork.toString(),
                 superblock3.timestamp,
+                superblock3.mtpTimestamp,
                 superblock3.lastHash,
                 superblock3.lastBits,
                 superblock3.parentId).send({ from: submitter, gas: 2100000 });
