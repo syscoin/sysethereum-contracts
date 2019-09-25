@@ -330,7 +330,7 @@ contract('validateDifficultyAdjustmentPOW', (accounts) => {
             assert.ok(result.events.RespondBlockHeaders, 'Block headers not provided');
             console.log("sending fourth...");
             await utils.mineBlocks(web3, 1);
-            result = await battleManager.methods.respondBlockHeaders(battleSessionId, Buffer.from(superblock6Headers.slice(48, 60).join(""), 'hex'), 12).send({ from: submitter, gas: 40000000 });
+            result = await battleManager.methods.respondBlockHeaders(battleSessionId, Buffer.from(superblock6Headers.slice(48, 60).join(""), 'hex'), 12).send({ from: submitter, gas: 3000000 });
             assert.ok(result.events.ChallengerConvicted, 'Challenger failed');
             await utils.mineBlocks(web3, 1);
         });
