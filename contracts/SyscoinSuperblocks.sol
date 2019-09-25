@@ -98,6 +98,11 @@ contract SyscoinSuperblocks is Initializable, SyscoinSuperblocksI, SyscoinErrorC
         superblock.lastBits = _lastBits;
         superblock.status = Status.Approved;
         superblock.ancestors = 0x0;
+        if(block.timestamp+7215 <= _timestamp)
+            return (ERR_SUPERBLOCK_BAD_TIMESTAMP, 0);
+        // ensure MTP of superblock atleast 3 hours old
+        if(block.timestamp <= _mtpTimestamp+10800)
+            return (ERR_SUPERBLOCK_BAD_TIMESTAMP_MTP, 0);
         indexNextSuperblock++;
 
         emit NewSuperblock(superblockHash, msg.sender);
@@ -157,6 +162,11 @@ contract SyscoinSuperblocks is Initializable, SyscoinSuperblocksI, SyscoinErrorC
             superblock.height = parent.height + 1;
             superblock.lastBits = _lastBits;
             superblock.ancestors = updateAncestors(parent.ancestors, parent.index, parent.height);
+            if(block.timestamp+7215 <= _timestamp)
+                return (ERR_SUPERBLOCK_BAD_TIMESTAMP, 0);
+            // ensure MTP of superblock atleast 3 hours old
+            if(block.timestamp <= _mtpTimestamp+10800)
+                return (ERR_SUPERBLOCK_BAD_TIMESTAMP_MTP, 0);
             indexNextSuperblock++; 
         }
         superblock.status = Status.New;

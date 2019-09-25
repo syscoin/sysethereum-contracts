@@ -867,8 +867,6 @@ contract SyscoinBattleManager is Initializable, SyscoinErrorCodes {
         }
         // once all the headers are received we can check merkle and enforce difficulty
         else{
-            if(block.timestamp+7215 <= superblockInfo.timestamp)
-                return ERR_SUPERBLOCK_BAD_TIMESTAMP;
             uint mtpTimestamp = getMedianTimestamp(blockHeadersParsed);
 
             // make sure calculated MTP is same as superblock MTP
@@ -879,9 +877,6 @@ contract SyscoinBattleManager is Initializable, SyscoinErrorCodes {
             if(mtpTimestamp <= prevSuperblockInfo.mtpTimestamp)
                 return ERR_SUPERBLOCK_TOOSMALL_TIMESTAMP_MTP;
 
-            // ensure MTP of superblock atleast 3 hours old
-            if(block.timestamp <= mtpTimestamp+10800)
-                return ERR_SUPERBLOCK_BAD_TIMESTAMP_MTP;
 
             // mtp timestamp must be greator than previous mtp timestamp
 
