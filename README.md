@@ -27,14 +27,7 @@ If you are new to the Syscoin <=> Ethereum bridge, please check the [docs](https
 
 * Install prerequisites
   * [nodejs](https://nodejs.org) v9.2.0 to v11.15.0.
-  * [truffle](http://truffleframework.com/) v5.0.24
-  ```
-    npm install -g truffle@5.0.24
-  ```
-  * [ganache-cli](https://github.com/trufflesuite/ganache-cli) v6.4.2 or above.
-  ```
-    npm install -g ganache-cli
-  ```
+  * [web3j](https://docs.web3j.io/command_line_tools/) command line tool
 * Clone this repo.
 * Install npm dependencies.
   * cd to the directory where the repo is cloned.
@@ -45,16 +38,16 @@ If you are new to the Syscoin <=> Ethereum bridge, please check the [docs](https
 * Compile contracts
   ```
     # compile contracts
-    truffle compile --all
+    npx truffle compile --all
   ```
 
 * Run tests:
   ```
     # first start ganache-cli - and do this again once your gas ran out
-    ganache-cli --gasLimit 4000000000000 -e 1000000
+    npx ganache-cli --gasLimit 4000000000000 -e 1000000
 
     # run tests
-    truffle test
+    npx truffle test
   ```
 
 ## Deployment
