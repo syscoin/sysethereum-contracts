@@ -563,8 +563,8 @@ contract SyscoinClaimManager is Initializable, SyscoinDepositsManager, SyscoinEr
         return claim.challenger;
     }
     function getAbilityToProposeNextSuperblock(uint timestamp) public view returns (bool){
-        (, , uint timestampSuperblock ,,,, , ,,) = getSuperblockInfo(trustedSuperblocks.getBestSuperblock());
-        return timestampSuperblock + superblockDelay <= timestamp;
+        (, , ,uint mptTimestampSuperblock,,, , ,,) = getSuperblockInfo(trustedSuperblocks.getBestSuperblock());
+        return mptTimestampSuperblock + superblockDelay <= timestamp;
     }
     function getSuperblockInfo(bytes32 superblockHash) internal view returns (
         bytes32 _blocksMerkleRoot,
