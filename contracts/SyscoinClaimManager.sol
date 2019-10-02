@@ -176,7 +176,7 @@ contract SyscoinClaimManager is Initializable, SyscoinDepositsManager, SyscoinEr
             return (ERR_SUPERBLOCK_MIN_DEPOSIT, 0);
         }
 
-        if (_timestamp + superblockDelay > block.timestamp) {
+        if (_mtpTimestamp + superblockDelay > block.timestamp) {
             emit ErrorClaim(0, ERR_SUPERBLOCK_BAD_TIMESTAMP);
             return (ERR_SUPERBLOCK_BAD_TIMESTAMP, 0);
         }
