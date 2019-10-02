@@ -797,7 +797,7 @@ contract SyscoinBattleManager is Initializable, SyscoinErrorCodes {
         }
         return hashes[0];
     }
-    // @dev - Validate prev bits, prev hash and timestamp of block header
+    // @dev - Validate prev bits, prev hash of block header
     function checkBlocks(BattleSession storage session, BlockHeader[] memory blockHeadersParsed, uint32 prevBits) internal view returns (uint) {
         for(uint i = blockHeadersParsed.length-1;i>0;i--){
             BlockHeader memory thisHeader = blockHeadersParsed[i];
@@ -877,8 +877,6 @@ contract SyscoinBattleManager is Initializable, SyscoinErrorCodes {
             if(mtpTimestamp <= prevSuperblockInfo.mtpTimestamp)
                 return ERR_SUPERBLOCK_TOOSMALL_TIMESTAMP_MTP;
 
-
-            // mtp timestamp must be greator than previous mtp timestamp
 
             // make sure every 6th superblock adjusts difficulty
             // calculate the new work from prevBits minus one as if its an adjustment we need to account for new bits, if not then just add one more prevBits work
