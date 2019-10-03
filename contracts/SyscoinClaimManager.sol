@@ -15,6 +15,9 @@ contract SyscoinClaimManager is Initializable, SyscoinDepositsManager, SyscoinEr
 
     using SafeMath for uint;
 
+    uint constant MAX_FUTURE_BLOCK_TIME_SYSCOIN = 7200;
+    uint constant MAX_FUTURE_BLOCK_TIME_ETHEREUM = 15;
+
     struct SuperblockClaim {
         bytes32 superblockHash;                       // Superblock Id
         address submitter;                           // Superblock submitter
@@ -177,6 +180,11 @@ contract SyscoinClaimManager is Initializable, SyscoinDepositsManager, SyscoinEr
         }
 
         if (_mtpTimestamp + superblockDelay > block.timestamp) {
+            emit ErrorClaim(0, ERR_SUPERBLOCK_BAD_TIMESTAMP_MTP);
+            return (ERR_SUPERBLOCK_BAD_TIMESTAMP_MTP, 0);
+        }
+
+        if (block.timestamp + MAX_FUTURE_BLOCK_TIME_SYSCOIN + MAX_FUTURE_BLOCK_TIME_ETHEREUM <= _timestamp) {
             emit ErrorClaim(0, ERR_SUPERBLOCK_BAD_TIMESTAMP);
             return (ERR_SUPERBLOCK_BAD_TIMESTAMP, 0);
         }
@@ -193,7 +201,7 @@ contract SyscoinClaimManager is Initializable, SyscoinDepositsManager, SyscoinEr
 
         SuperblockClaim storage claim = claims[superblockHash];
         // allow to propose an existing claim only if its invalid and decided and its a different submitter or not on the tip
-        // those are the ones that may actually be stuck and need to be proposed again, 
+        // those are the ones that may actually be stuck and need to be proposed again,
         // but we want to ensure its not the same submitter submitting the same thing
         if (claimExists(claim)) {
             bool allowed = claim.invalid == true && claim.decided == true && claim.submitter != msg.sender;
