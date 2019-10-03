@@ -1,6 +1,5 @@
 pragma solidity ^0.5.11;
 
-import "./Set.sol";
 import "../SyscoinTransactionProcessor.sol";
 import "openzeppelin-solidity/contracts/math/SafeMath.sol";
 import "../interfaces/SyscoinERC20AssetI.sol";
@@ -8,9 +7,27 @@ import "@openzeppelin/upgrades/contracts/Initializable.sol";
 
 contract SyscoinERC20Manager is Initializable {
 
+    // We define a new struct datatype that will be used to
+    // hold its data in the calling contract.
+    struct Data { 
+        mapping(uint => bool) flags; 
+    }
+
+    // Syscoin transactions that were already processed by processTransaction()
+    Data syscoinTxHashesAlreadyProcessed;
+
+    function contains(uint value) private view returns (bool) {
+        return syscoinTxHashesAlreadyProcessed.flags[value];
+    }
+
+    function insert(uint value) private returns (bool) {
+        if (contains(value))
+            return false; // already there
+        syscoinTxHashesAlreadyProcessed.flags[value] = true;
+        return true;
+    }
     using SafeMath for uint256;
     using SafeMath for uint8;
-    using Set for Set.Data;
 
     // Lock constants
     uint public constant MIN_LOCK_VALUE = 10; // 0.1 token
@@ -22,8 +39,6 @@ contract SyscoinERC20Manager is Initializable {
     // Only syscoin txs relayed from trustedRelayerContract will be accepted.
     address public trustedRelayerContract;
 
-    // Syscoin transactions that were already processed by processTransaction()
-    Set.Data syscoinTxHashesAlreadyProcessed;
 
     mapping(uint32 => uint256) public assetBalances;
 
@@ -59,7 +74,7 @@ contract SyscoinERC20Manager is Initializable {
     }
 
     function wasSyscoinTxProcessed(uint txHash) public view returns (bool) {
-        return syscoinTxHashesAlreadyProcessed.contains(txHash);
+        return contains(txHash);
     }
 
     function processTransaction(
@@ -81,7 +96,7 @@ contract SyscoinERC20Manager is Initializable {
         }
         requireMinimumValue(nLocalPrecision, value);
         // Add tx to the syscoinTxHashesAlreadyProcessed and Check tx was not already processed
-        require(syscoinTxHashesAlreadyProcessed.insert(txHash), "TX already processed");
+        require(insert(txHash), "TX already processed");
 
         // make sure we have enough balance for transfer
         if (erc20.balanceOf(address(this)) < value) {

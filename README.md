@@ -11,6 +11,7 @@ If you are new to the Syscoin <=> Ethereum bridge, please check the [docs](https
   * Keeps a copy of the Syscoin Superblockchain
   * Informs [SyscoinERC20Manager contract](contracts/token/SyscoinERC20Manager.sol) when a Syscoin transaction locked or unlocked funds.
   * It's kind of a Syscoin version of [BtcRelay](https://github.com/ethereum/btcrelay) but using Superblocks instead of blocks.
+  * Parsing/working with Syscoin blocks, txs and merkle trees 
 * [SyscoinERC20Manager contract](contracts/token/SyscoinERC20Manager.sol)
   * An ERC20 manager contract to hold deposits or and transfer funds on unlock
   * Tokens are minted or transferred (for existing ERC20) when coins are locked on the Syscoin blockchain.
@@ -20,8 +21,6 @@ If you are new to the Syscoin <=> Ethereum bridge, please check the [docs](https
 * [SyscoinERC20Asset](contracts/SyscoinParser/SyscoinERC20Asset.sol)
   - A mintable Syscoin ERC20 asset that follows ERC20 spec but is also mintable when moving from Syscoin to Ethereum
   - This is useful as some Syscoin assets originate on Syscoin and want to move to Ethereum. Legacy ERC20's must originate on Ethereum and have balances in order to move back to Ethereum from Syscoin. Legacy ERC20's are not mintable and thus only specific Syscoin ERC20 tokens are mintable when moving from Syscoin without balance existing in the SyscoinERC20Manager contract.
-* [SyscoinMessageLibrary](contracts/SyscoinParser/SyscoinMessageLibrary.sol)
-  - Library for parsing/working with Syscoin blocks, txs and merkle trees 
 
 ## Running the Tests
 

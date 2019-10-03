@@ -1,7 +1,6 @@
 pragma solidity ^0.5.11;
 
 import './SyscoinMessageLibrary.sol';
-
 // @dev - Manages a battle session between superblock submitter and challenger
 contract SyscoinMessageLibraryForTests {
 
@@ -41,7 +40,7 @@ contract SyscoinMessageLibraryForTests {
 
     // @dev - Converts a bytes of size 4 to uint32,
     // e.g. for input [0x01, 0x02, 0x03 0x04] returns 0x01020304
-    function bytesToUint32(bytes memory input, uint pos) internal pure returns (uint32 result) {
+    function bytesToUint32(bytes memory input, uint pos) private pure returns (uint32 result) {
         result = uint32(uint8(input[pos]))*(2**24) + uint32(uint8(input[pos + 1]))*(2**16) + uint32(uint8(input[pos + 2]))*(2**8) + uint32(uint8(input[pos + 3]));
     }
 
@@ -52,7 +51,7 @@ contract SyscoinMessageLibraryForTests {
     //
     // @param _rawBytes - arbitrary length bytes
     // @return - leftmost 32 or less bytes of input value; padded if less than 32
-    function bytesToBytes32(bytes memory _rawBytes, uint pos) internal pure returns (bytes32) {
+    function bytesToBytes32(bytes memory _rawBytes, uint pos) private pure returns (bytes32) {
         bytes32 out;
         assembly {
             out := mload(add(add(_rawBytes, 0x20), pos))

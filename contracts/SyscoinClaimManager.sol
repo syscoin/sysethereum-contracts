@@ -134,7 +134,7 @@ contract SyscoinClaimManager is Initializable, SyscoinDepositsManager, SyscoinEr
     // @param superblockHash – claim id.
     // @param account – user's address.
     // @return – user's deposit which was unbonded from the claim.
-    function unbondDeposit(bytes32 superblockHash, address account) internal returns (uint, uint) {
+    function unbondDeposit(bytes32 superblockHash, address account) private returns (uint, uint) {
         SuperblockClaim storage claim = claims[superblockHash];
         if (!claimExists(claim)) {
             return (ERR_SUPERBLOCK_BAD_CLAIM, 0);
@@ -497,7 +497,7 @@ contract SyscoinClaimManager is Initializable, SyscoinDepositsManager, SyscoinEr
     }
 
     // @dev - Pay challenger
-    function doPayChallenger(bytes32 superblockHash, SuperblockClaim storage claim) internal {
+    function doPayChallenger(bytes32 superblockHash, SuperblockClaim storage claim) private {
         if(claim.challenger != address(0))
         {
             uint reward = claim.bondedDeposits[claim.submitter];
@@ -509,7 +509,7 @@ contract SyscoinClaimManager is Initializable, SyscoinDepositsManager, SyscoinEr
     }
 
     // @dev - Pay submitter with challenger deposit
-    function doPaySubmitter(bytes32 superblockHash, SuperblockClaim storage claim) internal {
+    function doPaySubmitter(bytes32 superblockHash, SuperblockClaim storage claim) private {
         if(claim.challenger != address(0))
         {
             address challenger = claim.challenger;
@@ -574,7 +574,7 @@ contract SyscoinClaimManager is Initializable, SyscoinDepositsManager, SyscoinEr
         (, , ,uint mptTimestampSuperblock,,, , ,,) = getSuperblockInfo(trustedSuperblocks.getBestSuperblock());
         return mptTimestampSuperblock + superblockDelay <= timestamp;
     }
-    function getSuperblockInfo(bytes32 superblockHash) internal view returns (
+    function getSuperblockInfo(bytes32 superblockHash) private view returns (
         bytes32 _blocksMerkleRoot,
         uint _accumulatedWork,
         uint _timestamp,

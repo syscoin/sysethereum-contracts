@@ -20,7 +20,6 @@
     "truffle": "^5.0.38",
     "truffle-assertions": "^0.9.1",
     "truffle-hdwallet-provider": "^1.0.9",
-    "truffle-plugin-verify": "^0.3.3",
     "web3": "^1.2.1"
   },
   "devDependencies": {
