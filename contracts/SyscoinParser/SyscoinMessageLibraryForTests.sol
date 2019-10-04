@@ -1,4 +1,4 @@
-pragma solidity ^0.5.11;
+pragma solidity ^0.5.12;
 
 import './SyscoinMessageLibrary.sol';
 // @dev - Manages a battle session between superblock submitter and challenger

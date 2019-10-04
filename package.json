@@ -16,7 +16,7 @@
     "js-sha3": "^0.8.0",
     "openzeppelin-solidity": "^2.3.0",
     "openzeppelin-test-helpers": "^0.4.3",
-    "solc": "^0.5.11",
+    "solc": "^0.5.12",
     "truffle": "^5.0.38",
     "truffle-assertions": "^0.9.1",
     "truffle-hdwallet-provider": "^1.0.9",

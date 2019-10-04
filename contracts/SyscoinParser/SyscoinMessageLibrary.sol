@@ -1,4 +1,4 @@
-pragma solidity ^0.5.11;
+pragma solidity ^0.5.12;
 
 // parse a raw Syscoin transaction byte array
 library SyscoinMessageLibrary {
