@@ -136,7 +136,6 @@ contract SyscoinERC20Manager is Initializable {
         require(syscoinAddress.length > 0, "syscoinAddress cannot be zero");
         require(assetGUID > 0, "Asset GUID must not be 0");
         
-        assetBalances[assetGUID] = assetBalances[assetGUID].add(value);
 
         SyscoinERC20AssetI erc20 = SyscoinERC20AssetI(erc20ContractAddress);
         require(precision == erc20.decimals(), "Decimals were not provided with the correct value");
@@ -146,6 +145,9 @@ contract SyscoinERC20Manager is Initializable {
         } else { // no, it's original ERC20
             erc20.transferFrom(msg.sender, address(this), value);
         }
+        
+        assetBalances[assetGUID] = assetBalances[assetGUID].add(value);
+
         emit TokenFreeze(msg.sender, value);
 
         return true;
