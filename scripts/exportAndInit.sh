@@ -7,7 +7,10 @@ export ETHNETWORK=rinkeby
 export OUTPACKAGE=org.sysethereum.agents.contract
 
 rm -rf build
+rm -rf .openzeppelin
+
 # https://www.npmjs.com/package/npx#description
+npx oz init sysethereum-contracts 1.0.0
 npx truffle compile
 npx truffle migrate --reset --network $ETHNETWORK
 
