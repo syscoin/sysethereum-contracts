@@ -7,25 +7,6 @@ import "@openzeppelin/upgrades/contracts/Initializable.sol";
 
 contract SyscoinERC20Manager is Initializable {
 
-    // We define a new struct datatype that will be used to
-    // hold its data in the calling contract.
-    struct Data { 
-        mapping(uint => bool) flags; 
-    }
-
-    // Syscoin transactions that were already processed by processTransaction()
-    Data syscoinTxHashesAlreadyProcessed;
-
-    function contains(uint value) private view returns (bool) {
-        return syscoinTxHashesAlreadyProcessed.flags[value];
-    }
-
-    function insert(uint value) private returns (bool) {
-        if (contains(value))
-            return false; // already there
-        syscoinTxHashesAlreadyProcessed.flags[value] = true;
-        return true;
-    }
     using SafeMath for uint256;
     using SafeMath for uint8;
 
@@ -41,12 +22,25 @@ contract SyscoinERC20Manager is Initializable {
 
 
     mapping(uint32 => uint256) public assetBalances;
+    // Syscoin transactions that were already processed by processTransaction()
+    mapping(uint => bool) private syscoinTxHashesAlreadyProcessed;
+
 
     event TokenUnfreeze(address receipient, uint value);
     event TokenUnfreezeFee(address receipient, uint value);
     event TokenFreeze(address freezer, uint value);
 
+    function contains(uint value) private view returns (bool) {
+        return syscoinTxHashesAlreadyProcessed[value];
+    }
 
+    function insert(uint value) private returns (bool) {
+        if (contains(value))
+            return false; // already there
+        syscoinTxHashesAlreadyProcessed[value] = true;
+        return true;
+    }
+    
     function init(address _trustedRelayerContract) public initializer {
         trustedRelayerContract = _trustedRelayerContract;
     }
