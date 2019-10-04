@@ -31,7 +31,7 @@ contract SyscoinERC20Manager is Initializable {
 
     // Lock constants
     uint public constant MIN_LOCK_VALUE = 10; // 0.1 token
-    uint public constant SUPERBLOCK_SUBMITTER_LOCK_FEE = 1; // 1 = 0.1%
+    uint public constant SUPERBLOCK_SUBMITTER_LOCK_FEE = 10000; // 10000 = 0.01%
 
     // Variables set by constructor
 
@@ -109,7 +109,7 @@ contract SyscoinERC20Manager is Initializable {
 
         assetBalances[assetGUID] = assetBalances[assetGUID].sub(value);
 
-        uint superblockSubmitterFee = value.mul(SUPERBLOCK_SUBMITTER_LOCK_FEE).div(10000);
+        uint superblockSubmitterFee = value.div(SUPERBLOCK_SUBMITTER_LOCK_FEE);
         uint userValue = value.sub(superblockSubmitterFee);
 
         // pay the fee
