@@ -83,7 +83,7 @@ async function deploy(networkName, options, accounts, networkId, superblockOptio
   if (networkName in linkTemplates) {
     let link = linkTemplates[networkName];
 
-    console.log("\nLinks:");
+    console.log("\Proxies:");
     console.log("* %s/%s - superblocks", link, SyscoinSuperblocks.address);
     console.log("* %s/%s - battle manager", link, SyscoinBattleManager.address);
     console.log("* %s/%s - claim manager", link, SyscoinClaimManager.address);
