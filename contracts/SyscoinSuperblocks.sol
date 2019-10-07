@@ -64,8 +64,8 @@ contract SyscoinSuperblocks is Initializable, SyscoinSuperblocksI, SyscoinErrorC
     // @param _mtpTimestamp Median Timestamp of the last block in the superblock
     // @param _lastHash Hash of the last block in the superblock
     // @param _lastBits Difficulty bits of the last block in the superblock bits used to verify accumulatedWork through difficulty calculation
-    // @param _parentId Id of the parent superblock  
-    // @param _blockHeight Block height of last block in superblock  
+    // @param _parentId Id of the parent superblock
+    // @param _blockHeight Block height of last block in superblock
     // @return Error code and superblockHash
     function initialize(
         bytes32 _blocksMerkleRoot,
@@ -98,11 +98,7 @@ contract SyscoinSuperblocks is Initializable, SyscoinSuperblocksI, SyscoinErrorC
         superblock.lastBits = _lastBits;
         superblock.status = Status.Approved;
         superblock.ancestors = 0x0;
-        if(block.timestamp+7215 <= _timestamp)
-            return (ERR_SUPERBLOCK_BAD_TIMESTAMP, 0);
-        // ensure MTP of superblock atleast 3 hours old
-        if(block.timestamp <= _mtpTimestamp+10800)
-            return (ERR_SUPERBLOCK_BAD_TIMESTAMP_MTP, 0);
+
         indexNextSuperblock++;
 
         emit NewSuperblock(superblockHash, msg.sender);
@@ -167,7 +163,7 @@ contract SyscoinSuperblocks is Initializable, SyscoinSuperblocksI, SyscoinErrorC
             // ensure MTP of superblock atleast 3 hours old
             if(block.timestamp <= _mtpTimestamp+10800)
                 return (ERR_SUPERBLOCK_BAD_TIMESTAMP_MTP, 0);
-            indexNextSuperblock++; 
+            indexNextSuperblock++;
         }
         superblock.status = Status.New;
         superblock.submitter = submitter;
@@ -200,12 +196,12 @@ contract SyscoinSuperblocks is Initializable, SyscoinSuperblocksI, SyscoinErrorC
             return ERR_SUPERBLOCK_BAD_PARENT;
         }
         superblock.status = Status.Approved;
-        
+
         if (superblock.accumulatedWork > bestSuperblockAccumulatedWork) {
             bestSuperblock = _superblockHash;
             bestSuperblockAccumulatedWork = superblock.accumulatedWork;
         }
-        
+
         emit ApprovedSuperblock(_superblockHash, _validator);
         return ERR_SUPERBLOCK_OK;
     }
@@ -230,7 +226,7 @@ contract SyscoinSuperblocks is Initializable, SyscoinSuperblocksI, SyscoinErrorC
         }
         if(superblock.submitter == _challenger){
             emit ErrorSuperblock(_superblockHash, ERR_SUPERBLOCK_OWN_CHALLENGE);
-            return ERR_SUPERBLOCK_OWN_CHALLENGE;        
+            return ERR_SUPERBLOCK_OWN_CHALLENGE;
         }
         superblock.status = Status.InBattle;
         emit ChallengeSuperblock(_superblockHash, _challenger);
@@ -258,7 +254,7 @@ contract SyscoinSuperblocks is Initializable, SyscoinSuperblocksI, SyscoinErrorC
             return ERR_SUPERBLOCK_BAD_STATUS;
         }
         superblock.status = Status.SemiApproved;
-                
+
         emit SemiApprovedSuperblock(_superblockHash, _validator);
         return ERR_SUPERBLOCK_OK;
     }
@@ -335,7 +331,7 @@ contract SyscoinSuperblocks is Initializable, SyscoinSuperblocksI, SyscoinErrorC
             return value;
         }
         emit RelayTransaction(bytes32(0), ERR_RELAY_VERIFY);
-        return(ERR_RELAY_VERIFY);        
+        return(ERR_RELAY_VERIFY);
     }
 
     // @dev - Checks whether the transaction given by `_txBytes` is in the block identified by `_txBlockHeaderBytes`.
@@ -416,7 +412,7 @@ contract SyscoinSuperblocks is Initializable, SyscoinSuperblocksI, SyscoinErrorC
     // @param _mtpTimestamp Median Timestamp of the last block in the superblock
     // @param _lastHash Hash of the last block in the superblock
     // @param _lastBits Difficulty bits of the last block in the superblock bits used to verify accumulatedWork through difficulty calculation
-    // @param _parentId Id of the parent superblock 
+    // @param _parentId Id of the parent superblock
     // @return Superblock id
     function calcSuperblockHash(
         bytes32 _blocksMerkleRoot,
@@ -444,7 +440,7 @@ contract SyscoinSuperblocks is Initializable, SyscoinSuperblocksI, SyscoinErrorC
     function getBestSuperblock() public view returns (bytes32) {
         return bestSuperblock;
     }
- 
+
     // @dev - Returns the superblock data for the supplied superblock hash
     //
     function getSuperblock(bytes32 superblockHash) public view returns (
