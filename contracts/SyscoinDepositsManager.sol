@@ -1,4 +1,4 @@
-pragma solidity ^0.5.11;
+pragma solidity ^0.5.12;
 
 import 'openzeppelin-solidity/contracts/math/SafeMath.sol';
 
@@ -32,7 +32,7 @@ contract SyscoinDepositsManager {
 
     // @dev – increases an account's deposit.
     // @return – the given user's updated deposit amount.
-    function increaseDeposit(address who, uint amount) internal {
+    function increaseDeposit(address who, uint amount) private {
         deposits[who] = deposits[who].add(amount);
         emit DepositMade(who, amount);
     }

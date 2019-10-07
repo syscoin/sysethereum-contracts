@@ -31,7 +31,7 @@ const SUPERBLOCK_OPTIONS_LOCAL = {
   CONFIRMATIONS: 1 // Superblocks required to confirm semi approved superblock
 };
 
-async function deploy(options, accounts, networkId, superblockOptions) {
+async function deploy(networkName, options, accounts, networkId, superblockOptions) {
   // Register contracts in the zos project
   add({ contractsData: [{ name: 'SyscoinSuperblocks', alias: 'SyscoinSuperblocks' }] });
   add({ contractsData: [{ name: 'SyscoinERC20Manager', alias: 'SyscoinERC20Manager' }] });
@@ -74,6 +74,21 @@ async function deploy(options, accounts, networkId, superblockOptions) {
   console.log('Initializing SyscoinBattleManager...');
   tx = await SyscoinBattleManager.methods.setSyscoinClaimManager(SyscoinClaimManager.address).send({ from: accounts[0], gas: 300000 });
   console.log('TX hash: ', tx.transactionHash, '\n');
+
+  let linkTemplates = {
+    mainnet: "https://etherscan.io/address",
+    rinkeby: "https://rinkeby.etherscan.io/address"
+  };
+
+  if (networkName in linkTemplates) {
+    let link = linkTemplates[networkName];
+
+    console.log("\Proxies:");
+    console.log("* %s/%s - superblocks", link, SyscoinSuperblocks.address);
+    console.log("* %s/%s - battle manager", link, SyscoinBattleManager.address);
+    console.log("* %s/%s - claim manager", link, SyscoinClaimManager.address);
+  }
+
   return SyscoinERC20Manager.address;
 }
 
@@ -84,16 +99,16 @@ module.exports = function(deployer, networkName, accounts) {
     const { network, txParams } = await ConfigManager.initNetworkConfiguration({ network: networkName, from: accounts[0] })
 
     if (networkName === 'development') {
-      SyscoinERC20ManagerAddress = await deploy({ network, txParams }, accounts, SYSCOIN_MAINNET, SUPERBLOCK_OPTIONS_LOCAL);
+      SyscoinERC20ManagerAddress = await deploy(networkName, { network, txParams }, accounts, SYSCOIN_MAINNET, SUPERBLOCK_OPTIONS_LOCAL);
     } else {
       if (networkName === 'ropsten') {
-        SyscoinERC20ManagerAddress = await deploy({ network, txParams }, accounts, SYSCOIN_MAINNET, SUPERBLOCK_OPTIONS_INTEGRATION_FAST_SYNC);
+        SyscoinERC20ManagerAddress = await deploy(networkName, { network, txParams }, accounts, SYSCOIN_MAINNET, SUPERBLOCK_OPTIONS_INTEGRATION_FAST_SYNC);
       } else if (networkName === 'rinkeby') {
-        SyscoinERC20ManagerAddress = await deploy({ network, txParams }, accounts, SYSCOIN_TESTNET, SUPERBLOCK_OPTIONS_PRODUCTION);
+        SyscoinERC20ManagerAddress = await deploy(networkName, { network, txParams }, accounts, SYSCOIN_TESTNET, SUPERBLOCK_OPTIONS_PRODUCTION);
       } else if (networkName === 'mainnet') {
-        SyscoinERC20ManagerAddress = await deploy({ network, txParams }, accounts, SYSCOIN_MAINNET, SUPERBLOCK_OPTIONS_PRODUCTION);
+        SyscoinERC20ManagerAddress = await deploy(networkName, { network, txParams }, accounts, SYSCOIN_MAINNET, SUPERBLOCK_OPTIONS_PRODUCTION);
       } else if (networkName === 'integrationSyscoinRegtest') {
-        SyscoinERC20ManagerAddress = await deploy({ network, txParams }, accounts, SYSCOIN_REGTEST, SUPERBLOCK_OPTIONS_LOCAL);
+        SyscoinERC20ManagerAddress = await deploy(networkName, { network, txParams }, accounts, SYSCOIN_REGTEST, SUPERBLOCK_OPTIONS_LOCAL);
       }
       await deployer.deploy(SyscoinERC20Asset,
         "SyscoinToken", "SYSX", 8, SyscoinERC20ManagerAddress,

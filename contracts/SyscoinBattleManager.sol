@@ -1,4 +1,4 @@
-pragma solidity ^0.5.11;
+pragma solidity ^0.5.12;
 
 import './interfaces/SyscoinClaimManagerI.sol';
 import './interfaces/SyscoinSuperblocksI.sol';
@@ -149,7 +149,7 @@ contract SyscoinBattleManager is Initializable, SyscoinErrorCodes {
     // @param _blockHeader - Syscoin block header bytes
     // @param pos - where to start reading hash from
     // @return - hash of block's parent in big endian format
-    function getHashPrevBlock(bytes memory _blockHeader, uint pos) internal pure returns (uint) {
+    function getHashPrevBlock(bytes memory _blockHeader, uint pos) private pure returns (uint) {
         uint hashPrevBlock;
         uint index = 0x04+pos;
         assembly {
@@ -164,7 +164,7 @@ contract SyscoinBattleManager is Initializable, SyscoinErrorCodes {
     // @param _blockHeader - Syscoin block header bytes
     // @param pos - where to start reading bits from
     // @return - block's timestamp in big-endian format
-    function getTimestamp(bytes memory _blockHeader, uint pos) internal pure returns (uint32 time) {
+    function getTimestamp(bytes memory _blockHeader, uint pos) private pure returns (uint32 time) {
         return bytesToUint32Flipped(_blockHeader, 0x44+pos);
     }
 
@@ -173,14 +173,14 @@ contract SyscoinBattleManager is Initializable, SyscoinErrorCodes {
     // @param _blockHeader - Syscoin block header bytes
     // @param pos - where to start reading bits from
     // @return - block's difficulty in bits format, also big-endian
-    function getBits(bytes memory _blockHeader, uint pos) internal pure returns (uint32 bits) {
+    function getBits(bytes memory _blockHeader, uint pos) private pure returns (uint32 bits) {
         return bytesToUint32Flipped(_blockHeader, 0x48+pos);
     }
     // @dev - converts raw bytes representation of a Syscoin block header to struct representation
     //
     // @param _rawBytes - first 80 bytes of a block header
     // @return - exact same header information in BlockHeader struct form
-    function parseHeaderBytes(bytes memory _rawBytes, uint pos) internal view returns (BlockHeader memory bh) {
+    function parseHeaderBytes(bytes memory _rawBytes, uint pos) private view returns (BlockHeader memory bh) {
         bh.bits = getBits(_rawBytes, pos);
         bh.blockHash = bytes32(dblShaFlipMem(_rawBytes, pos, 80));
         bh.timestamp = getTimestamp(_rawBytes, pos);
@@ -204,12 +204,12 @@ contract SyscoinBattleManager is Initializable, SyscoinErrorCodes {
         }
     }
     // convert little endian bytes to uint
-    function getBytesLE(bytes memory data, uint pos, uint bits) internal pure returns (uint256 result) {
+    function getBytesLE(bytes memory data, uint pos, uint bits) private pure returns (uint256 result) {
         for (uint256 i = 0; i < bits / 8; i++) {
             result += uint256(uint8(data[pos + i])) * 2 ** (i * 8);
         }
     }
-    function parseAuxPoW(bytes memory rawBytes, uint pos) internal view
+    function parseAuxPoW(bytes memory rawBytes, uint pos) private view
              returns (AuxPoW memory auxpow)
     {
         bytes memory coinbaseScript;
@@ -302,14 +302,13 @@ contract SyscoinBattleManager is Initializable, SyscoinErrorCodes {
     }
 
     // @dev returns a portion of a given byte array specified by its starting and ending points
-    // Should be private, made internal for testing
     // Breaks underscore naming convention for parameters because it raises a compiler error
     // if `offset` is changed to `_offset`.
     //
     // @param _rawBytes - array to be sliced
     // @param offset - first byte of sliced array
     // @param _endIndex - last byte of sliced array
-    function sliceArray(bytes memory _rawBytes, uint offset, uint _endIndex) internal view returns (bytes memory) {
+    function sliceArray(bytes memory _rawBytes, uint offset, uint _endIndex) private view returns (bytes memory) {
         uint len = _endIndex - offset;
         bytes memory result = new bytes(len);
         assembly {
@@ -388,7 +387,7 @@ contract SyscoinBattleManager is Initializable, SyscoinErrorCodes {
     // @param _siblings - transaction's Merkle siblings
     // @return - Merkle tree root of the block the transaction belongs to if the proof is valid,
     // garbage if it's invalid
-    function computeMerkle(uint _txHash, uint _txIndex, uint[] memory _siblings) internal pure returns (uint) {
+    function computeMerkle(uint _txHash, uint _txIndex, uint[] memory _siblings) private pure returns (uint) {
         uint resultHash = _txHash;
         uint i = 0;
         while (i < _siblings.length) {
@@ -417,7 +416,7 @@ contract SyscoinBattleManager is Initializable, SyscoinErrorCodes {
     //
     // @param _input - little-endian value
     // @return - input value in big-endian format
-    function flip32Bytes(uint _input) internal pure returns (uint result) {
+    function flip32Bytes(uint _input) private pure returns (uint result) {
         assembly {
             let pos := mload(0x40)
             mstore8(add(pos, 0), byte(31, _input))
@@ -462,7 +461,7 @@ contract SyscoinBattleManager is Initializable, SyscoinErrorCodes {
     // @return - Merkle root of Bitcoin block that the Syscoin block
     // with this info was mined in if AuxPoW Merkle proof is correct,
     // garbage otherwise
-    function computeParentMerkle(AuxPoW memory _ap) internal pure returns (uint) {
+    function computeParentMerkle(AuxPoW memory _ap) private pure returns (uint) {
         return flip32Bytes(computeMerkle(_ap.txHash,
                                          _ap.coinbaseTxIndex,
                                          _ap.parentMerkleProof));
@@ -476,7 +475,7 @@ contract SyscoinBattleManager is Initializable, SyscoinErrorCodes {
     // @param _ap - AuxPoW information corresponding to said block
     // @return - Merkle root of auxiliary chain tree
     // if AuxPoW Merkle proof is correct, garbage otherwise
-    function computeChainMerkle(uint _blockHash, AuxPoW memory _ap) internal pure returns (uint) {
+    function computeChainMerkle(uint _blockHash, AuxPoW memory _ap) private pure returns (uint) {
         return computeMerkle(_blockHash,
                              _ap.syscoinHashIndex,
                              _ap.chainMerkleProof);
@@ -490,7 +489,7 @@ contract SyscoinBattleManager is Initializable, SyscoinErrorCodes {
     // @param _tx2 - Merkle node (either root or internal node), has to be `_tx1`'s sibling
     // @return - `_tx1` and `_tx2`'s parent, i.e. the result of concatenating them,
     // hashing that twice and flipping the bytes.
-    function concatHash(uint _tx1, uint _tx2) internal pure returns (uint) {
+    function concatHash(uint _tx1, uint _tx2) private pure returns (uint) {
         return flip32Bytes(uint(sha256(abi.encodePacked(sha256(abi.encodePacked(flip32Bytes(_tx1), flip32Bytes(_tx2)))))));
     }
 
@@ -502,7 +501,7 @@ contract SyscoinBattleManager is Initializable, SyscoinErrorCodes {
     // @param _ap - AuxPoW struct corresponding to the block
     // @return 1 if block was merge-mined and coinbase index, chain Merkle root and Merkle proofs are correct,
     // respective error code otherwise
-    function checkAuxPoW(uint _blockHash, AuxPoW memory _ap) internal pure returns (uint) {
+    function checkAuxPoW(uint _blockHash, AuxPoW memory _ap) private pure returns (uint) {
         if (_ap.coinbaseTxIndex != 0) {
             return ERR_COINBASE_INDEX;
         }
@@ -522,7 +521,7 @@ contract SyscoinBattleManager is Initializable, SyscoinErrorCodes {
         return 1;
     }
 
-    function sha256mem(bytes memory _rawBytes, uint offset, uint len) internal view returns (bytes32 result) {
+    function sha256mem(bytes memory _rawBytes, uint offset, uint len) private view returns (bytes32 result) {
         assembly {
             // Call sha256 precompiled contract (located in address 0x02) to copy data.
             // Assign to ptr the next available memory position (stored in memory position 0x40).
@@ -537,14 +536,14 @@ contract SyscoinBattleManager is Initializable, SyscoinErrorCodes {
     // @dev - Bitcoin-way of hashing
     // @param _dataBytes - raw data to be hashed
     // @return - result of applying SHA-256 twice to raw data and then flipping the bytes
-    function dblShaFlip(bytes memory _dataBytes) internal pure returns (uint) {
+    function dblShaFlip(bytes memory _dataBytes) private pure returns (uint) {
         return flip32Bytes(uint(sha256(abi.encodePacked(sha256(abi.encodePacked(_dataBytes))))));
     }
 
     // @dev - Bitcoin-way of hashing
     // @param _dataBytes - raw data to be hashed
     // @return - result of applying SHA-256 twice to raw data and then flipping the bytes
-    function dblShaFlipMem(bytes memory _rawBytes, uint offset, uint len) internal view returns (uint) {
+    function dblShaFlipMem(bytes memory _rawBytes, uint offset, uint len) private view returns (uint) {
         return flip32Bytes(uint(sha256(abi.encodePacked(sha256mem(_rawBytes, offset, len)))));
     }
 
@@ -553,7 +552,7 @@ contract SyscoinBattleManager is Initializable, SyscoinErrorCodes {
     //
     // @param _bits - difficulty in bits format
     // @return - difficulty in target format
-    function targetFromBits(uint32 _bits) internal pure returns (uint) {
+    function targetFromBits(uint32 _bits) private pure returns (uint) {
         uint exp = _bits / 0x1000000;  // 2**24
         uint mant = _bits & 0xffffff;
         return mant * 256**(exp - 3);
@@ -562,7 +561,7 @@ contract SyscoinBattleManager is Initializable, SyscoinErrorCodes {
     // @param _blockHeaderBytes - array of bytes with the block header
     // @param _pos - starting position of the block header
     // @return - [ErrorCode, BlockHeader, position]
-    function verifyBlockHeader(bytes memory _blockHeaderBytes, uint _pos) internal view returns (uint, BlockHeader memory, uint) {
+    function verifyBlockHeader(bytes memory _blockHeaderBytes, uint _pos) private view returns (uint, BlockHeader memory, uint) {
         BlockHeader memory blockHeader = parseHeaderBytes(_blockHeaderBytes, _pos);
         uint target = targetFromBits(blockHeader.bits);
         uint blockHash = uint(blockHeader.blockHash);
@@ -585,21 +584,21 @@ contract SyscoinBattleManager is Initializable, SyscoinErrorCodes {
         }
     }
       
-    function getWorkFromBits(uint32 bits) internal pure returns(uint) {
+    function getWorkFromBits(uint32 bits) private pure returns(uint) {
         uint target = targetFromBits(bits);
         return (~target / (target + 1)) + 1;
     }
-    function getLowerBoundDifficultyTarget() internal pure returns (uint) {
+    function getLowerBoundDifficultyTarget() private pure returns (uint) {
         return TARGET_TIMESPAN_MIN;
     }
-     function getUpperBoundDifficultyTarget() internal pure returns (uint) {
+     function getUpperBoundDifficultyTarget() private pure returns (uint) {
         return TARGET_TIMESPAN_MAX;
     }   
     // @param _actualTimespan - time elapsed from previous block creation til current block creation;
     // i.e., how much time it took to mine the current block
     // @param _bits - previous block header difficulty (in bits)
     // @return - expected difficulty for the next block
-    function calculateDifficulty(uint _actualTimespan, uint32 _bits) internal pure returns (uint32 result) {
+    function calculateDifficulty(uint _actualTimespan, uint32 _bits) private pure returns (uint32 result) {
         uint actualTimespan = _actualTimespan;
         // Limit adjustment step
         if (actualTimespan < TARGET_TIMESPAN_MIN) {
@@ -681,7 +680,7 @@ contract SyscoinBattleManager is Initializable, SyscoinErrorCodes {
         SyscoinSuperblocksI.SuperblockInfo memory superblockInfo,
         bytes memory blockHeaders,
         uint numHeaders
-    ) internal returns (uint, BlockHeader[] memory ) {
+    ) private returns (uint, BlockHeader[] memory ) {
         BlockHeader[] memory myEmptyArray;
         if (session.challengeState == ChallengeState.Challenged) {
             uint pos = 0;
@@ -755,7 +754,7 @@ contract SyscoinBattleManager is Initializable, SyscoinErrorCodes {
     }     
     // @dev - Converts a bytes of size 4 to uint32,
     // e.g. for input [0x01, 0x02, 0x03 0x04] returns 0x01020304
-    function bytesToUint32Flipped(bytes memory input, uint pos) internal pure returns (uint32 result) {
+    function bytesToUint32Flipped(bytes memory input, uint pos) private pure returns (uint32 result) {
         assembly {
             let data := mload(add(add(input, 0x20), pos))
             let flip := mload(0x40)
@@ -768,7 +767,7 @@ contract SyscoinBattleManager is Initializable, SyscoinErrorCodes {
     }
     uint32 constant VERSION_AUXPOW = (1 << 8);
     // @dev - checks version to determine if a block has merge mining information
-    function isMergeMined(bytes memory _rawBytes, uint pos) internal pure returns (bool) {
+    function isMergeMined(bytes memory _rawBytes, uint pos) private pure returns (bool) {
         return bytesToUint32Flipped(_rawBytes, pos) & VERSION_AUXPOW != 0;
     }
     // @dev - Evaluate the merkle root
@@ -777,7 +776,7 @@ contract SyscoinBattleManager is Initializable, SyscoinErrorCodes {
     // root of the merkle tree.
     //
     // @return root of merkle tree
-    function makeMerkle(bytes32[] memory hashes2) internal pure returns (bytes32) {
+    function makeMerkle(bytes32[] memory hashes2) private pure returns (bytes32) {
         bytes32[] memory hashes = hashes2;
         uint length = hashes.length;
         if (length == 1) return hashes[0];
@@ -798,7 +797,7 @@ contract SyscoinBattleManager is Initializable, SyscoinErrorCodes {
         return hashes[0];
     }
     // @dev - Validate prev bits, prev hash of block header
-    function checkBlocks(BattleSession storage session, BlockHeader[] memory blockHeadersParsed, uint32 prevBits) internal view returns (uint) {
+    function checkBlocks(BattleSession storage session, BlockHeader[] memory blockHeadersParsed, uint32 prevBits) private view returns (uint) {
         for(uint i = blockHeadersParsed.length-1;i>0;i--){
             BlockHeader memory thisHeader = blockHeadersParsed[i];
             BlockHeader memory prevHeader = blockHeadersParsed[i-1];
@@ -821,7 +820,7 @@ contract SyscoinBattleManager is Initializable, SyscoinErrorCodes {
         }
         return ERR_SUPERBLOCK_OK;
     } 
-    function sort_array(uint[11] memory arr) internal pure {
+    function sort_array(uint[11] memory arr) private pure {
         for(uint i = 0; i < 11; i++) {
             for(uint j = i+1; j < 11 ;j++) {
                 if(arr[i] > arr[j]) {
@@ -834,7 +833,7 @@ contract SyscoinBattleManager is Initializable, SyscoinErrorCodes {
     }
     
     // @dev - Gets the median timestamp of the last 11 blocks
-    function getMedianTimestamp(BlockHeader[] memory blockHeadersParsed) internal pure returns (uint){
+    function getMedianTimestamp(BlockHeader[] memory blockHeadersParsed) private pure returns (uint){
         uint[11] memory timestamps;
         // timestamps 0->10 = blockHeadersParsed 1->11
         for(uint i=0;i<11;i++){
@@ -844,7 +843,7 @@ contract SyscoinBattleManager is Initializable, SyscoinErrorCodes {
         return timestamps[5];
     }  
     // @dev - Validate superblock accumulated work + other block header fields
-    function validateHeaders(BattleSession storage session, SyscoinSuperblocksI.SuperblockInfo memory superblockInfo, BlockHeader[] memory blockHeadersParsed) internal returns (uint) {
+    function validateHeaders(BattleSession storage session, SyscoinSuperblocksI.SuperblockInfo memory superblockInfo, BlockHeader[] memory blockHeadersParsed) private returns (uint) {
         SyscoinSuperblocksI.SuperblockInfo memory prevSuperblockInfo;
         BlockHeader memory lastHeader = blockHeadersParsed[blockHeadersParsed.length-1];
         (, prevSuperblockInfo.accumulatedWork,prevSuperblockInfo.timestamp,prevSuperblockInfo.mtpTimestamp,prevSuperblockInfo.lastHash,prevSuperblockInfo.lastBits,, ,,) = getSuperblockInfo(superblockInfo.parentId);
@@ -924,7 +923,7 @@ contract SyscoinBattleManager is Initializable, SyscoinErrorCodes {
     }
 
     // @dev - To be called when a challenger is convicted
-    function convictChallenger(bytes32 sessionId, uint err) internal {
+    function convictChallenger(bytes32 sessionId, uint err) private {
         BattleSession storage session = sessions[sessionId];
         sessionDecided(sessionId, session.superblockHash, session.submitter, session.challenger);
         emit ChallengerConvicted(sessionId, session.superblockHash, err, session.challenger);
@@ -932,7 +931,7 @@ contract SyscoinBattleManager is Initializable, SyscoinErrorCodes {
     }
 
     // @dev - To be called when a submitter is convicted
-    function convictSubmitter(bytes32 sessionId, uint err) internal {
+    function convictSubmitter(bytes32 sessionId, uint err) private {
         BattleSession storage session = sessions[sessionId];
         sessionDecided(sessionId, session.superblockHash, session.challenger, session.submitter);
         emit SubmitterConvicted(sessionId, session.superblockHash, err, session.submitter);
@@ -941,7 +940,7 @@ contract SyscoinBattleManager is Initializable, SyscoinErrorCodes {
 
     // @dev - Disable session
     // It should be called only when either the submitter or the challenger were convicted.
-    function disable(bytes32 sessionId) internal {
+    function disable(bytes32 sessionId) private {
         delete sessions[sessionId];
     }
 
@@ -961,12 +960,12 @@ contract SyscoinBattleManager is Initializable, SyscoinErrorCodes {
         return sessions[sessionId].challengeState;
     }
     // @dev - To be called when a battle sessions  was decided
-    function sessionDecided(bytes32 sessionId, bytes32 superblockHash, address winner, address loser) internal {
+    function sessionDecided(bytes32 sessionId, bytes32 superblockHash, address winner, address loser) private {
         trustedSyscoinClaimManager.sessionDecided(sessionId, superblockHash, winner, loser);
     }
 
     // @dev - Retrieve superblock information
-    function getSuperblockInfo(bytes32 superblockHash) internal view returns (
+    function getSuperblockInfo(bytes32 superblockHash) private view returns (
         bytes32 _blocksMerkleRoot,
         uint _accumulatedWork,
         uint _timestamp,
@@ -982,12 +981,12 @@ contract SyscoinBattleManager is Initializable, SyscoinErrorCodes {
     }
     
     // @dev - Verify whether a user has a certain amount of deposits or more
-    function hasDeposit(address who, uint amount) internal view returns (bool) {
+    function hasDeposit(address who, uint amount) private view returns (bool) {
         return trustedSyscoinClaimManager.getDeposit(who) >= amount;
     }
 
     // @dev – locks up part of a user's deposit into a claim.
-    function bondDeposit(bytes32 superblockHash, address account, uint amount) internal returns (uint) {
+    function bondDeposit(bytes32 superblockHash, address account, uint amount) private returns (uint) {
         return trustedSyscoinClaimManager.bondDeposit(superblockHash, account, amount);
     }
 }

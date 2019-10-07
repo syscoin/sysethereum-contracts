@@ -55,7 +55,7 @@ contract('testRelayToSyscoinAssetToken', function(accounts) {
     assert.equal(erc20Address,erc20LegacyRinkeby);
     await erc20Manager.methods.processTransaction(txHash, amount.toString(), owner,superblockSubmitterAddress,erc20Legacy.address, assetGUID, precision.toString()).send({gas: 300000, from: trustedRelayerContract});
     // now check the user and superblock submitter balances reflect the mint amounts
-    const superblockSubmitterFee = burnVal/10000; 
+    const superblockSubmitterFee = burnVal/10000;
     const userValue = value - superblockSubmitterFee;
     assert.equal(await erc20Legacy.balanceOf(owner), userValue, `erc20Legacy's user balance after mint is not the expected one`);
     assert.equal(await erc20Legacy.balanceOf(superblockSubmitterAddress), superblockSubmitterFee, `erc20Legacy's superblock submitter balance after mint is not the expected one`);

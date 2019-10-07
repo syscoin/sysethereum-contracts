@@ -1,4 +1,4 @@
-pragma solidity ^0.5.11;
+pragma solidity ^0.5.12;
 
 import './interfaces/SyscoinSuperblocksI.sol';
 import './interfaces/SyscoinClaimManagerI.sol';
@@ -14,6 +14,9 @@ import "@openzeppelin/upgrades/contracts/Initializable.sol";
 contract SyscoinClaimManager is Initializable, SyscoinDepositsManager, SyscoinErrorCodes {
 
     using SafeMath for uint;
+
+    uint constant MAX_FUTURE_BLOCK_TIME_SYSCOIN = 7200;
+    uint constant MAX_FUTURE_BLOCK_TIME_ETHEREUM = 15;
 
     struct SuperblockClaim {
         bytes32 superblockHash;                       // Superblock Id
@@ -131,7 +134,7 @@ contract SyscoinClaimManager is Initializable, SyscoinDepositsManager, SyscoinEr
     // @param superblockHash – claim id.
     // @param account – user's address.
     // @return – user's deposit which was unbonded from the claim.
-    function unbondDeposit(bytes32 superblockHash, address account) internal returns (uint, uint) {
+    function unbondDeposit(bytes32 superblockHash, address account) private returns (uint, uint) {
         SuperblockClaim storage claim = claims[superblockHash];
         if (!claimExists(claim)) {
             return (ERR_SUPERBLOCK_BAD_CLAIM, 0);
@@ -177,6 +180,11 @@ contract SyscoinClaimManager is Initializable, SyscoinDepositsManager, SyscoinEr
         }
 
         if (_mtpTimestamp + superblockDelay > block.timestamp) {
+            emit ErrorClaim(0, ERR_SUPERBLOCK_BAD_TIMESTAMP_MTP);
+            return (ERR_SUPERBLOCK_BAD_TIMESTAMP_MTP, 0);
+        }
+
+        if (block.timestamp + MAX_FUTURE_BLOCK_TIME_SYSCOIN + MAX_FUTURE_BLOCK_TIME_ETHEREUM <= _timestamp) {
             emit ErrorClaim(0, ERR_SUPERBLOCK_BAD_TIMESTAMP);
             return (ERR_SUPERBLOCK_BAD_TIMESTAMP, 0);
         }
@@ -193,7 +201,7 @@ contract SyscoinClaimManager is Initializable, SyscoinDepositsManager, SyscoinEr
 
         SuperblockClaim storage claim = claims[superblockHash];
         // allow to propose an existing claim only if its invalid and decided and its a different submitter or not on the tip
-        // those are the ones that may actually be stuck and need to be proposed again, 
+        // those are the ones that may actually be stuck and need to be proposed again,
         // but we want to ensure its not the same submitter submitting the same thing
         if (claimExists(claim)) {
             bool allowed = claim.invalid == true && claim.decided == true && claim.submitter != msg.sender;
@@ -489,7 +497,7 @@ contract SyscoinClaimManager is Initializable, SyscoinDepositsManager, SyscoinEr
     }
 
     // @dev - Pay challenger
-    function doPayChallenger(bytes32 superblockHash, SuperblockClaim storage claim) internal {
+    function doPayChallenger(bytes32 superblockHash, SuperblockClaim storage claim) private {
         if(claim.challenger != address(0))
         {
             uint reward = claim.bondedDeposits[claim.submitter];
@@ -501,7 +509,7 @@ contract SyscoinClaimManager is Initializable, SyscoinDepositsManager, SyscoinEr
     }
 
     // @dev - Pay submitter with challenger deposit
-    function doPaySubmitter(bytes32 superblockHash, SuperblockClaim storage claim) internal {
+    function doPaySubmitter(bytes32 superblockHash, SuperblockClaim storage claim) private {
         if(claim.challenger != address(0))
         {
             address challenger = claim.challenger;
@@ -566,7 +574,7 @@ contract SyscoinClaimManager is Initializable, SyscoinDepositsManager, SyscoinEr
         (, , ,uint mptTimestampSuperblock,,, , ,,) = getSuperblockInfo(trustedSuperblocks.getBestSuperblock());
         return mptTimestampSuperblock + superblockDelay <= timestamp;
     }
-    function getSuperblockInfo(bytes32 superblockHash) internal view returns (
+    function getSuperblockInfo(bytes32 superblockHash) private view returns (
         bytes32 _blocksMerkleRoot,
         uint _accumulatedWork,
         uint _timestamp,
