@@ -749,7 +749,7 @@ contract SyscoinBattleManager is Initializable, SyscoinErrorCodes {
                 convictChallenger(sessionId, err);
                 return;
             }
-            emit RespondBlockHeaders(sessionId, session.superblockHash, session.merkleRoots.length, session.submitter);
+            emit RespondBlockHeaders(session.superblockHash, sessionId, session.merkleRoots.length, session.submitter);
         }
     }     
     // @dev - Converts a bytes of size 4 to uint32,
@@ -926,7 +926,7 @@ contract SyscoinBattleManager is Initializable, SyscoinErrorCodes {
     function convictChallenger(bytes32 sessionId, uint err) private {
         BattleSession storage session = sessions[sessionId];
         sessionDecided(sessionId, session.superblockHash, session.submitter, session.challenger);
-        emit ChallengerConvicted(sessionId, session.superblockHash, err, session.challenger);
+        emit ChallengerConvicted(session.superblockHash, sessionId, err, session.challenger);
         disable(sessionId);
     }
 
@@ -934,7 +934,7 @@ contract SyscoinBattleManager is Initializable, SyscoinErrorCodes {
     function convictSubmitter(bytes32 sessionId, uint err) private {
         BattleSession storage session = sessions[sessionId];
         sessionDecided(sessionId, session.superblockHash, session.challenger, session.submitter);
-        emit SubmitterConvicted(sessionId, session.superblockHash, err, session.submitter);
+        emit SubmitterConvicted(session.superblockHash, sessionId, err, session.submitter);
         disable(sessionId);
     }
 
