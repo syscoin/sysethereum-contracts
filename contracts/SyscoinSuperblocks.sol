@@ -491,8 +491,8 @@ contract SyscoinSuperblocks is Initializable, SyscoinSuperblocksI, SyscoinErrorC
 
         SuperblockInfo storage parent = superblocks[_parentId];
         if (parent.status != Status.SemiApproved && parent.status != Status.Approved) {
-            emit ErrorSuperblock(_parentId, uint(parent.status));
-            return (ERR_SUPERBLOCK_BAD_PARENT, 0);
+            emit ErrorSuperblock(_parentId, ERR_SUPERBLOCK_BAD_PARENT + uint(parent.status));
+            return (ERR_SUPERBLOCK_BAD_PARENT + uint(parent.status), 0);
         }
 
         bytes32 superblockHash = calcSuperblockHash(_blocksMerkleRoot, _accumulatedWork, _timestamp, _mtpTimestamp, _lastHash, _lastBits, _parentId);
@@ -671,7 +671,7 @@ contract SyscoinSuperblocks is Initializable, SyscoinSuperblocksI, SyscoinErrorC
             uint8 precision;
             (ret, value, destinationAddress, assetGUID, precision, erc20ContractAddress) = parseTransaction(_txBytes);
             if(ret != 0){
-                emit RelayTransaction(bytes32(0), ret);
+                emit RelayTransaction(bytes32(txHash), ret);
                 return ret;
             }
             syscoinERC20Manager.processTransaction(txHash, value, destinationAddress, superblocks[_superblockHash].submitter, erc20ContractAddress, assetGUID, precision);
