@@ -519,7 +519,7 @@ contract SyscoinClaimManager is Initializable, SyscoinDepositsManager, SyscoinEr
 
             unbondDeposit(superblockHash, challenger);
         }
-        unbondDeposit(superblockHash, claim.submitter);   
+        unbondDeposit(superblockHash, claim.submitter);
     }
 
     // @dev - Check if a superblock can be semi approved by calling checkClaimFinished
@@ -569,10 +569,6 @@ contract SyscoinClaimManager is Initializable, SyscoinDepositsManager, SyscoinEr
     function getClaimChallenger(bytes32 superblockHash) public view returns (address) {
         SuperblockClaim storage claim = claims[superblockHash];
         return claim.challenger;
-    }
-    function getAbilityToProposeNextSuperblock(uint timestamp) public view returns (bool){
-        (, , ,uint mptTimestampSuperblock,,, , ,,) = getSuperblockInfo(trustedSuperblocks.getBestSuperblock());
-        return mptTimestampSuperblock + superblockDelay <= timestamp;
     }
     function getSuperblockInfo(bytes32 superblockHash) private view returns (
         bytes32 _blocksMerkleRoot,
