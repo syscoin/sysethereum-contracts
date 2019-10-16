@@ -158,10 +158,10 @@ contract('validateDifficultyAdjustmentPOW', (accounts) => {
 ];
     const superblock6HeadersCopy = Array.from(superblock6Headers);
     const superblock0 = utils.makeSuperblock(superblock0Headers, initParentId, web3.utils.toBN("0x000000000000000000000000000000000000000000152f36aee354691c6a98e8"));
-    const superblock1 = utils.makeSuperblock(superblock1Headers, superblock0.superblockHash, superblock0.accumulatedWork);
-    const superblock2 = utils.makeSuperblock(superblock2Headers, superblock1.superblockHash, superblock1.accumulatedWork);
-    const superblock3 = utils.makeSuperblock(superblock3Headers, superblock2.superblockHash, superblock2.accumulatedWork);
-    const superblock4 = utils.makeSuperblock(superblock4Headers, superblock3.superblockHash, superblock3.accumulatedWork);
+    const superblock1 = utils.makeSuperblock(superblock1Headers, superblock0.superblockHash);
+    const superblock2 = utils.makeSuperblock(superblock2Headers, superblock1.superblockHash);
+    const superblock3 = utils.makeSuperblock(superblock3Headers, superblock2.superblockHash);
+    const superblock4 = utils.makeSuperblock(superblock4Headers, superblock3.superblockHash);
     const superblock5 = utils.makeSuperblock(superblock5Headers, superblock4.superblockHash, 0, web3.utils.toBN("0x000000000000000000000000000000000000000000154b8c15e2fea81f5e006c")); // work at 72660
     let superblock6;
     let result;
@@ -190,7 +190,6 @@ contract('validateDifficultyAdjustmentPOW', (accounts) => {
         let superblock5Id;
         result  = await claimManager.methods.proposeSuperblock(
             superblock1.merkleRoot,
-            superblock1.accumulatedWork.toString(),
             superblock1.timestamp,
             superblock1.mtpTimestamp,
             superblock1.lastHash,
@@ -210,7 +209,6 @@ contract('validateDifficultyAdjustmentPOW', (accounts) => {
    
         result  = await claimManager.methods.proposeSuperblock(
             superblock2.merkleRoot,
-            superblock2.accumulatedWork.toString(),
             superblock2.timestamp,
             superblock2.mtpTimestamp,
             superblock2.lastHash,
@@ -230,7 +228,6 @@ contract('validateDifficultyAdjustmentPOW', (accounts) => {
 
         result  = await claimManager.methods.proposeSuperblock(
             superblock3.merkleRoot,
-            superblock3.accumulatedWork.toString(),
             superblock3.timestamp,
             superblock3.mtpTimestamp,
             superblock3.lastHash,
@@ -249,7 +246,6 @@ contract('validateDifficultyAdjustmentPOW', (accounts) => {
 
         result  = await claimManager.methods.proposeSuperblock(
             superblock4.merkleRoot,
-            superblock4.accumulatedWork.toString(),
             superblock4.timestamp,
             superblock4.mtpTimestamp,
             superblock4.lastHash,
@@ -267,7 +263,6 @@ contract('validateDifficultyAdjustmentPOW', (accounts) => {
 
         result  = await claimManager.methods.proposeSuperblock(
             superblock5.merkleRoot,
-            superblock5.accumulatedWork.toString(),
             superblock5.timestamp,
             superblock5.mtpTimestamp,
             superblock5.lastHash,
@@ -300,7 +295,6 @@ contract('validateDifficultyAdjustmentPOW', (accounts) => {
         it('Propose superblock 6', async () => {
             result  = await claimManager.methods.proposeSuperblock(
                 superblock6.merkleRoot,
-                superblock6.accumulatedWork.toString(),
                 superblock6.timestamp,
                 superblock6.mtpTimestamp,
                 superblock6.lastHash,

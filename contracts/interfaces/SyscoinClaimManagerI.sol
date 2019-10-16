@@ -9,7 +9,6 @@ interface SyscoinClaimManagerI {
 
     function getSuperblockInfo(bytes32 superblockHash) external view returns (
         bytes32 _blocksMerkleRoot,
-        uint _accumulatedWork,
         uint _timestamp,
         uint _mtpTimestamp,
         bytes32 _lastHash,

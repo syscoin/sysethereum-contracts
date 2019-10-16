@@ -156,16 +156,14 @@ contract SyscoinClaimManager is Initializable, SyscoinDepositsManager, SyscoinEr
     // @dev – Propose a new superblock.
     //
     // @param _blocksMerkleRoot Root of the merkle tree of blocks contained in a superblock
-    // @param _accumulatedWork Accumulated proof of work of the last block in the superblock
     // @param _timestamp Timestamp of the last block in the superblock
     // @param _mtpTimestamp Median Timestamp of the last block in the superblock
     // @param _lastHash Hash of the last block in the superblock
-    // @param _lastBits Difficulty bits of the last block in the superblock bits used to verify accumulatedWork through difficulty calculation
+    // @param _lastBits Difficulty bits of the last block in the superblock bits
     // @param _parentHash Id of the parent superblock
     // @return Error code and superblockHash
     function proposeSuperblock(
         bytes32 _blocksMerkleRoot,
-        uint _accumulatedWork,
         uint _timestamp,
         uint _mtpTimestamp,
         bytes32 _lastHash,
@@ -191,8 +189,7 @@ contract SyscoinClaimManager is Initializable, SyscoinDepositsManager, SyscoinEr
 
         uint err;
         bytes32 superblockHash;
-        (err, superblockHash) = trustedSuperblocks.propose(_blocksMerkleRoot, _accumulatedWork,
-            _timestamp, _mtpTimestamp, _lastHash, _lastBits, _parentHash,msg.sender);
+        (err, superblockHash) = trustedSuperblocks.propose(_blocksMerkleRoot, _timestamp, _mtpTimestamp, _lastHash, _lastBits, _parentHash, msg.sender);
         if (err != 0) {
             emit ErrorClaim(superblockHash, err);
             return (err, superblockHash);
@@ -204,23 +201,7 @@ contract SyscoinClaimManager is Initializable, SyscoinDepositsManager, SyscoinEr
         // those are the ones that may actually be stuck and need to be proposed again,
         // but we want to ensure its not the same submitter submitting the same thing
         if (claimExists(claim)) {
-            bool allowed = claim.invalid == true && claim.decided == true && claim.submitter != msg.sender;
-            if(allowed){
-                // we also want to ensure that if parent is approved we are building on the tip and not anywhere else
-                if(trustedSuperblocks.getSuperblockStatus(_parentHash) == SyscoinSuperblocksI.Status.Approved){
-                    allowed = trustedSuperblocks.getBestSuperblock() == _parentHash;
-                }
-                // or if its semi approved allow to build on top as well
-                else if(trustedSuperblocks.getSuperblockStatus(_parentHash) == SyscoinSuperblocksI.Status.SemiApproved){
-                    allowed = true;
-                }
-                else{
-                    allowed = false;
-                }
-            }
-            if(!allowed){
-                revert();
-            }
+            require(claim.invalid == true && claim.decided == true && claim.submitter != msg.sender);
         }
 
         claim.superblockHash = superblockHash;
@@ -571,12 +552,11 @@ contract SyscoinClaimManager is Initializable, SyscoinDepositsManager, SyscoinEr
         return claim.challenger;
     }
     function getAbilityToProposeNextSuperblock(uint timestamp) public view returns (bool){
-        (, , ,uint mptTimestampSuperblock,,, , ,,) = getSuperblockInfo(trustedSuperblocks.getBestSuperblock());
+        (, ,uint mptTimestampSuperblock,,, , ,,) = getSuperblockInfo(trustedSuperblocks.getBestSuperblock());
         return mptTimestampSuperblock + superblockDelay <= timestamp;
     }
     function getSuperblockInfo(bytes32 superblockHash) private view returns (
         bytes32 _blocksMerkleRoot,
-        uint _accumulatedWork,
         uint _timestamp,
         uint _mtpTimestamp,
         bytes32 _lastHash,

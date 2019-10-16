@@ -109,10 +109,10 @@ contract('approveDescendant', (accounts) => {
     
     
 
-    const superblock0 = utils.makeSuperblock(superblock0Headers, initParentId, 0);
-    const superblock1 = utils.makeSuperblock(superblock1Headers, superblock0.superblockHash, superblock0.accumulatedWork);
-    const superblock2 = utils.makeSuperblock(superblock2Headers, superblock1.superblockHash, superblock1.accumulatedWork);
-    const superblock3 = utils.makeSuperblock(superblock3Headers, superblock2.superblockHash, superblock2.accumulatedWork);
+    const superblock0 = utils.makeSuperblock(superblock0Headers, initParentId);
+    const superblock1 = utils.makeSuperblock(superblock1Headers, superblock0.superblockHash);
+    const superblock2 = utils.makeSuperblock(superblock2Headers, superblock1.superblockHash);
+    const superblock3 = utils.makeSuperblock(superblock3Headers, superblock2.superblockHash);
 
 
     async function initSuperblockChain() {
@@ -157,7 +157,6 @@ contract('approveDescendant', (accounts) => {
         it('Propose superblock 1', async () => {
             const result  = await claimManager.methods.proposeSuperblock(
                 superblock1.merkleRoot,
-                superblock1.accumulatedWork.toString(),
                 superblock1.timestamp,
                 superblock1.mtpTimestamp,
                 superblock1.lastHash,
@@ -191,7 +190,6 @@ contract('approveDescendant', (accounts) => {
         // it('Propose superblock with 60 hashes', async () => {
         //     const result  = await claimManager.proposeSuperblock(
         //         superblock4.merkleRoot,
-        //         superblock4.accumulatedWork,
         //         superblock4.timestamp,
         //         superblock4.mtpTimestamp,
         //         superblock4.lastHash,
@@ -240,7 +238,6 @@ contract('approveDescendant', (accounts) => {
         it('Propose superblock 2', async () => {
             const result  = await claimManager.methods.proposeSuperblock(
                 superblock2.merkleRoot,
-                superblock2.accumulatedWork.toString(),
                 superblock2.timestamp,
                 superblock2.mtpTimestamp,
                 superblock2.lastHash,
@@ -266,7 +263,6 @@ contract('approveDescendant', (accounts) => {
         it('Propose superblock 3', async () => {
             const result  = await claimManager.methods.proposeSuperblock(
                 superblock3.merkleRoot,
-                superblock3.accumulatedWork.toString(),
                 superblock3.timestamp,
                 superblock3.mtpTimestamp,
                 superblock3.lastHash,
@@ -321,7 +317,6 @@ contract('approveDescendant', (accounts) => {
         it('Propose superblock 1', async () => {
             const result  = await claimManager.methods.proposeSuperblock(
                 superblock1.merkleRoot,
-                superblock1.accumulatedWork.toString(),
                 superblock1.timestamp,
                 superblock1.mtpTimestamp,
                 superblock1.lastHash,
@@ -356,7 +351,6 @@ contract('approveDescendant', (accounts) => {
         it('Propose superblock 2', async () => {
             const result  = await claimManager.methods.proposeSuperblock(
                 superblock2.merkleRoot,
-                superblock2.accumulatedWork.toString(),
                 superblock2.timestamp,
                 superblock2.mtpTimestamp,
                 superblock2.lastHash,
@@ -390,7 +384,6 @@ contract('approveDescendant', (accounts) => {
         it('Propose superblock 3', async () => {
             const result = await claimManager.methods.proposeSuperblock(
                 superblock3.merkleRoot,
-                superblock3.accumulatedWork.toString(),
                 superblock3.timestamp,
                 superblock3.mtpTimestamp,
                 superblock3.lastHash,

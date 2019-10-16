@@ -61,14 +61,13 @@ async function deploy(networkName, options, accounts, networkId, superblockOptio
   console.log('TX hash: ', tx.transactionHash, '\n');
 
   var blocksMerkleRoot = "0x000004fd0a684f4ce4d5e254f7230e7a620b3d5dc88a3facf555b8bab0a63f4b";
-  var accumulatedWork = "0x0000000000000000000000000000000000000000000000000000000016800168";
   var timestamp = 1566534575;
   var mtptimestamp = 1566534575;
   var lastHash = "0x000004fd0a684f4ce4d5e254f7230e7a620b3d5dc88a3facf555b8bab0a63f4b"; // 359
   var parentId = "0x0";
   var lastBits = 504365055; // 0x1E0FFFFF
 
-  let tx2 = await SyscoinSuperblocks.methods.initialize(blocksMerkleRoot, accumulatedWork, timestamp, mtptimestamp, lastHash, lastBits, parentId).send({ from: accounts[0], gas: 300000 });
+  let tx2 = await SyscoinSuperblocks.methods.initialize(blocksMerkleRoot, timestamp, mtptimestamp, lastHash, lastBits, parentId).send({ from: accounts[0], gas: 300000 });
   console.log('TX2 hash: ', tx2.transactionHash, '\n');
 
   console.log('Initializing SyscoinBattleManager...');
