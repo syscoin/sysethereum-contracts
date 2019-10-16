@@ -17,9 +17,8 @@ contract('validateSuperblocks', (accounts) => {
     `0000003040c32bf1f3e190842b1c5e8a24428dfb8cd200023424f6cc38ec90e4e900000095d0f7925a33a31b240131a93fcdb414cb5b28045430609bf337d5a5142247048045ef5bf0ff0f1e6d720000`,
     `000000302e5c540fc89b052a6d97b3aaad50a4f5b95a9a4d92213bf22ee99bc9a80c0000ddcca38b8f7cfb8835615509a1c63cdb0e2ea184397dcf9677409ac6758fcd308045ef5bf0ff0f1e90ba0000`,
   ];
-  const initAccumulatedWork = 1;
-  const initParentHash = '0x0000000000000000000000000000000000000000000000000000000000000000';
-  const genesisSuperblock = utils.makeSuperblock(genesisHeaders, initParentHash, initAccumulatedWork);
+    const initParentHash = '0x0000000000000000000000000000000000000000000000000000000000000000';
+  const genesisSuperblock = utils.makeSuperblock(genesisHeaders, initParentHash);
 
   const headers = [
     `0000003071a534b46710b515806719a97a38c187624bedfaefd0e1d3d37daaa5c10b00000ffc785adb93908ce3474201293870b26820d301494dd92993ed55f5fa5a4a908145ef5bf0ff0f1e14820000`,
@@ -31,12 +30,10 @@ contract('validateSuperblocks', (accounts) => {
     `0000003068e7376ba9e2e7dc38ff3fa060ad8a07876c574e5356d2f6d82736e90f020000af6b356754b9d70e7215179f650e7bf6133f82b89145e6643e3a4bbac21ab9cc8445ef5bf0ff0f1edb180000`,
   ];
   proposedSuperblock = utils.makeSuperblock(headers,
-    genesisSuperblock.superblockHash,
-    genesisSuperblock.accumulatedWork
+    genesisSuperblock.superblockHash
   );
   proposedSuperblock1 = utils.makeSuperblock(headers1,
-    proposedSuperblock.superblockHash,
-    proposedSuperblock.accumulatedWork
+    proposedSuperblock.superblockHash
   );
   async function initSuperblockChain() {
     ({
@@ -65,7 +62,6 @@ contract('validateSuperblocks', (accounts) => {
       await claimManager.methods.makeDeposit().send({ value: utils.DEPOSITS.MIN_REWARD, from: submitter, gas: 300000 });
       result = await claimManager.methods.proposeSuperblock(
         proposedSuperblock.merkleRoot,
-        proposedSuperblock.accumulatedWork.toString(),
         proposedSuperblock.timestamp,
         proposedSuperblock.mtpTimestamp,
         proposedSuperblock.lastHash,
@@ -100,7 +96,6 @@ contract('validateSuperblocks', (accounts) => {
       await claimManager.methods.makeDeposit().send({ value: utils.DEPOSITS.MIN_REWARD, from: submitter, gas: 300000 });
       result = await claimManager.methods.proposeSuperblock(
         proposedSuperblock1.merkleRoot,
-        proposedSuperblock1.accumulatedWork.toString(),
         proposedSuperblock1.timestamp + 1,
         proposedSuperblock1.mtpTimestamp,
         proposedSuperblock1.lastHash,
@@ -134,7 +129,6 @@ contract('validateSuperblocks', (accounts) => {
       await claimManager.methods.makeDeposit().send({ value: utils.DEPOSITS.MIN_REWARD, from: submitter, gas: 300000 });
       result = await claimManager.methods.proposeSuperblock(
         proposedSuperblock1.merkleRoot,
-        proposedSuperblock1.accumulatedWork.toString(),
         proposedSuperblock1.timestamp,
         proposedSuperblock1.mtpTimestamp,
         utils.ZERO_BYTES32, // proposedSuperblock.lastHash,
@@ -169,7 +163,6 @@ contract('validateSuperblocks', (accounts) => {
       await truffleAssert.reverts(
         claimManager.methods.proposeSuperblock(
           proposedSuperblock1.merkleRoot,
-          proposedSuperblock1.accumulatedWork.toString(),
           proposedSuperblock1.timestamp,
           proposedSuperblock1.mtpTimestamp,
           utils.ZERO_BYTES32, // proposedSuperblock.lastHash,
@@ -183,7 +176,6 @@ contract('validateSuperblocks', (accounts) => {
       await claimManager.methods.makeDeposit().send({ value: utils.DEPOSITS.MIN_REWARD, from: challenger, gas: 300000 });
       result = await claimManager.methods.proposeSuperblock(
         proposedSuperblock1.merkleRoot,
-        proposedSuperblock1.accumulatedWork.toString(),
         proposedSuperblock1.timestamp,
         proposedSuperblock1.mtpTimestamp,
         utils.ZERO_BYTES32, // proposedSuperblock.lastHash,
@@ -197,7 +189,6 @@ contract('validateSuperblocks', (accounts) => {
       await truffleAssert.reverts(
         claimManager.methods.proposeSuperblock(
           proposedSuperblock1.merkleRoot,
-          proposedSuperblock1.accumulatedWork.toString(),
           proposedSuperblock1.timestamp ,
           proposedSuperblock1.mtpTimestamp ,
           utils.ZERO_BYTES32, // proposedSuperblock.lastHash,

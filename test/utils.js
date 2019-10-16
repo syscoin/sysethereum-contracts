@@ -220,11 +220,10 @@ function makeMerkleProofMap (blockHashes) {
   }
   
 // Calculate a superblock id
-function calcSuperblockHash(merkleRoot, accumulatedWork, timestamp, mtpTimestamp, lastHash, lastBits, parentId) {
+function calcSuperblockHash(merkleRoot, timestamp, mtpTimestamp, lastHash, lastBits, parentId) {
   return `0x${Buffer.from(keccak256.arrayBuffer(
     Buffer.concat([
       module.exports.fromHex(merkleRoot),
-      module.exports.fromHex(toUint256(accumulatedWork)),
       module.exports.fromHex(toUint256(timestamp)),
       module.exports.fromHex(toUint256(mtpTimestamp)),
       module.exports.fromHex(lastHash),
@@ -235,13 +234,12 @@ function calcSuperblockHash(merkleRoot, accumulatedWork, timestamp, mtpTimestamp
 }
 
 // Construct a superblock from an array of block headers
-function makeSuperblock(headers, parentId, parentAccumulatedWork, absoluteAccWork) {
+function makeSuperblock(headers, parentId) {
   if (headers.length < 1) {
     throw new Error('Requires at least one header to build a superblock');
   }
   const blockHashes = headers.map(header => calcBlockSha256Hash(header));
   const strippedHashes =  blockHashes.map(x => x.slice(2)); // <- remove prefix '0x'
-  const accumulatedWork = absoluteAccWork? absoluteAccWork: headers.reduce((work, header) => work.add(getBlockDifficulty(header)), web3.utils.toBN(parentAccumulatedWork));
   const merkleRoot = makeMerkle(blockHashes);
   const timestamp = getBlockTimestamp(headers[headers.length - 1]);
   let mtpTimestamp = timestamp;
@@ -252,7 +250,6 @@ function makeSuperblock(headers, parentId, parentAccumulatedWork, absoluteAccWor
   const lastBits = getBlockDifficultyBits(headers[headers.length - 1]);
   return {
     merkleRoot,
-    accumulatedWork,
     timestamp,
     mtpTimestamp,
     lastHash,
@@ -260,7 +257,6 @@ function makeSuperblock(headers, parentId, parentAccumulatedWork, absoluteAccWor
     parentId,
     superblockHash: calcSuperblockHash(
       merkleRoot,
-      accumulatedWork,
       timestamp,
       mtpTimestamp,
       lastHash,
@@ -273,9 +269,8 @@ function makeSuperblock(headers, parentId, parentAccumulatedWork, absoluteAccWor
 }
 
 // use only for gas profiling. This function is faking a lot of data. Don't use for other testing
-function makeSuperblockFromHashes(blockHashes, parentId, parentAccumulatedWork) {
+function makeSuperblockFromHashes(blockHashes, parentId) {
   const strippedHashes =  blockHashes.map(x => x.slice(2)); // <- remove prefix '0x'
-  const accumulatedWork = 0;
   const merkleRoot = makeMerkle(blockHashes);
   const timestamp = 1563155885;
   const mtptimestamp = timestamp;
@@ -283,15 +278,13 @@ function makeSuperblockFromHashes(blockHashes, parentId, parentAccumulatedWork) 
   const lastBits = 108428188075
   return {
     merkleRoot,
-    accumulatedWork,
     timestamp,
     mtptimestamp,
     lastHash,
     lastBits,
     parentId,
     superblockHash: calcSuperblockHash(
-      merkleRoot,
-      accumulatedWork,
+      merkleRoot,  
       timestamp,
       mtptimestamp,
       lastHash,
@@ -371,7 +364,6 @@ async function initSuperblockChain(options) {
 
   await superblocks.methods.initialize(
     options.genesisSuperblock.merkleRoot,
-    options.genesisSuperblock.accumulatedWork.toString(),
     options.genesisSuperblock.timestamp,
     options.genesisSuperblock.mtpTimestamp,
     options.genesisSuperblock.lastHash,
@@ -486,7 +478,6 @@ module.exports = {
 
     await superblocks.initialize(
       genesisSuperblock.merkleRoot,
-      genesisSuperblock.accumulatedWork,
       genesisSuperblock.timestamp,
       genesisSuperblock.mtpTimestamp,
       genesisSuperblock.lastHash,
@@ -498,7 +489,6 @@ module.exports = {
     const proposedSuperblock = makeSuperblock(
       headers.slice(1),
       genesisSuperblock.superblockHash,
-      genesisSuperblock.accumulatedWork,
       130
     );
 
@@ -508,7 +498,6 @@ module.exports = {
 
     result = await claimManager.proposeSuperblock(
       proposedSuperblock.merkleRoot,
-      proposedSuperblock.accumulatedWork,
       proposedSuperblock.timestamp,
       proposedSuperblock.mtpTimestamp,
       proposedSuperblock.lastHash,

@@ -227,7 +227,6 @@ async function displaySuperblocksStatus({ superblockHash, fromBlock, toBlock }) 
     const displaySuperblock = async (superblockHash) => {
       const [
         blocksMerkleRoot,
-        accumulatedWork,
         timestamp,
         lastHash,
         parentId,

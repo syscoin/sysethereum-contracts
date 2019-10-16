@@ -23,7 +23,6 @@ contract SyscoinSuperblocks is Initializable, SyscoinSuperblocksI, SyscoinErrorC
     uint32 private indexNextSuperblock;
 
     bytes32 private bestSuperblock;
-    uint private bestSuperblockAccumulatedWork;
 
     SyscoinTransactionProcessor public syscoinERC20Manager;
 
@@ -79,7 +78,7 @@ contract SyscoinSuperblocks is Initializable, SyscoinSuperblocksI, SyscoinErrorC
             result += uint256(uint8(data[pos + i])) * 2 ** (i * 8);
         }
     }
-    
+
 
     // @dev - Parses a syscoin tx
     //
@@ -92,7 +91,7 @@ contract SyscoinSuperblocks is Initializable, SyscoinSuperblocksI, SyscoinErrorC
     function parseTransaction(bytes memory txBytes) private pure
              returns (uint, uint, address, uint32, uint8, address)
     {
-        
+
         uint output_value;
         uint32 assetGUID;
         address destinationAddress;
@@ -105,11 +104,11 @@ contract SyscoinSuperblocks is Initializable, SyscoinSuperblocksI, SyscoinErrorC
             return (ERR_PARSE_TX_SYS, output_value, destinationAddress, assetGUID, precision, erc20Address);
         }
         pos = skipInputs(txBytes, 4);
-            
+
         (output_value, destinationAddress, assetGUID, precision, erc20Address) = scanBurns(txBytes, pos);
         return (0, output_value, destinationAddress, assetGUID, precision, erc20Address);
     }
-  
+
 
     function skipInputs(bytes memory txBytes, uint pos) private pure
              returns (uint)
@@ -133,7 +132,7 @@ contract SyscoinSuperblocks is Initializable, SyscoinSuperblocksI, SyscoinErrorC
         }
 
         return pos;
-    }           
+    }
     // scan the burn outputs and return the value and script data of first burned output.
     function scanBurns(bytes memory txBytes, uint pos) private pure
              returns (uint, address, uint32, uint8, address)
@@ -159,27 +158,27 @@ contract SyscoinSuperblocks is Initializable, SyscoinSuperblocksI, SyscoinErrorC
             }
             // skip opreturn marker
             pos += 1;
-            (output_value, destinationAddress, assetGUID, precision, erc20Address) = scanAssetDetails(txBytes, pos);  
+            (output_value, destinationAddress, assetGUID, precision, erc20Address) = scanAssetDetails(txBytes, pos);
             // only one opreturn data allowed per transaction
             break;
         }
 
         return (output_value, destinationAddress, assetGUID, precision, erc20Address);
     }
-    
-    
+
+
     // Returns true if the tx output is an OP_RETURN output
     function isOpReturn(bytes memory txBytes, uint pos) private pure
              returns (bool) {
         // scriptPub format is
         // 0x6a OP_RETURN
-        return 
+        return
             txBytes[pos] == byte(0x6a);
-    }  
+    }
     // Returns asset data parsed from the op_return data output from syscoin asset burn transaction
     function scanAssetDetails(bytes memory txBytes, uint pos) private pure
              returns (uint, address, uint32, uint8, address) {
-                 
+
         uint32 assetGUID;
         address destinationAddress;
         address erc20Address;
@@ -213,7 +212,7 @@ contract SyscoinSuperblocks is Initializable, SyscoinSuperblocksI, SyscoinErrorC
         require(op == 0x14);
         erc20Address = readEthereumAddress(txBytes, pos);
         return (output_value, destinationAddress, assetGUID, precision, erc20Address);
-    }         
+    }
     // Read the ethereum address embedded in the tx output
     function readEthereumAddress(bytes memory txBytes, uint pos) private pure
              returns (address) {
@@ -275,7 +274,7 @@ contract SyscoinSuperblocks is Initializable, SyscoinSuperblocksI, SyscoinErrorC
     }
      function bytesToUint32(bytes memory input, uint pos) private pure returns (uint32 result) {
         result = uint32(uint8(input[pos+3])) + uint32(uint8(input[pos + 2]))*(2**8) + uint32(uint8(input[pos + 1]))*(2**16) + uint32(uint8(input[pos]))*(2**24);
-    }  
+    }
     // @dev - convert an unsigned integer from little-endian to big-endian representation
     //
     // @param _input - little-endian value
@@ -406,17 +405,15 @@ contract SyscoinSuperblocks is Initializable, SyscoinSuperblocksI, SyscoinErrorC
     // Initializes the superblock contract. It can only be called once.
     //
     // @param _blocksMerkleRoot Root of the merkle tree of blocks contained in a superblock
-    // @param _accumulatedWork Accumulated proof of work of the last block in the superblock
     // @param _timestamp Timestamp of the last block in the superblock
     // @param _mtpTimestamp Median Timestamp of the last block in the superblock
     // @param _lastHash Hash of the last block in the superblock
-    // @param _lastBits Difficulty bits of the last block in the superblock bits used to verify accumulatedWork through difficulty calculation
+    // @param _lastBits Difficulty bits of the last block in the superblock bits
     // @param _parentId Id of the parent superblock
     // @param _blockHeight Block height of last block in superblock
     // @return Error code and superblockHash
     function initialize(
         bytes32 _blocksMerkleRoot,
-        uint _accumulatedWork,
         uint _timestamp,
         uint _mtpTimestamp,
         bytes32 _lastHash,
@@ -426,7 +423,7 @@ contract SyscoinSuperblocks is Initializable, SyscoinSuperblocksI, SyscoinErrorC
         require(bestSuperblock == 0);
         require(_parentId == 0);
 
-        bytes32 superblockHash = calcSuperblockHash(_blocksMerkleRoot, _accumulatedWork, _timestamp, _mtpTimestamp, _lastHash, _lastBits, _parentId);
+        bytes32 superblockHash = calcSuperblockHash(_blocksMerkleRoot, _timestamp, _mtpTimestamp, _lastHash, _lastBits, _parentId);
         SuperblockInfo storage superblock = superblocks[superblockHash];
 
         require(superblock.status == Status.Uninitialized);
@@ -434,7 +431,6 @@ contract SyscoinSuperblocks is Initializable, SyscoinSuperblocksI, SyscoinErrorC
         indexSuperblock[indexNextSuperblock] = superblockHash;
 
         superblock.blocksMerkleRoot = _blocksMerkleRoot;
-        superblock.accumulatedWork = _accumulatedWork;
         superblock.timestamp = _timestamp;
         superblock.mtpTimestamp = _mtpTimestamp;
         superblock.lastHash = _lastHash;
@@ -451,7 +447,6 @@ contract SyscoinSuperblocks is Initializable, SyscoinSuperblocksI, SyscoinErrorC
         emit NewSuperblock(superblockHash, msg.sender);
 
         bestSuperblock = superblockHash;
-        bestSuperblockAccumulatedWork = _accumulatedWork;
         emit ApprovedSuperblock(superblockHash, msg.sender);
 
         return (ERR_SUPERBLOCK_OK, superblockHash);
@@ -463,16 +458,14 @@ contract SyscoinSuperblocks is Initializable, SyscoinSuperblocksI, SyscoinErrorC
     // either approved or semi-approved.
     //
     // @param _blocksMerkleRoot Root of the merkle tree of blocks contained in a superblock
-    // @param _accumulatedWork Accumulated proof of work of the last block in the superblock
     // @param _timestamp Timestamp of the last block in the superblock
     // @param _mtpTimestamp Median Timestamp of the last block in the superblock
     // @param _lastHash Hash of the last block in the superblock
-    // @param _lastBits Difficulty bits of the last block in the superblock bits used to verify accumulatedWork through difficulty calculation
+    // @param _lastBits Difficulty bits of the last block in the superblock bits
     // @param _parentId Id of the parent superblock
     // @return Error code and superblockHash
     function propose(
         bytes32 _blocksMerkleRoot,
-        uint _accumulatedWork,
         uint _timestamp,
         uint _mtpTimestamp,
         bytes32 _lastHash,
@@ -491,12 +484,16 @@ contract SyscoinSuperblocks is Initializable, SyscoinSuperblocksI, SyscoinErrorC
             return (ERR_SUPERBLOCK_BAD_PARENT + uint(parent.status), 0);
         }
 
-        bytes32 superblockHash = calcSuperblockHash(_blocksMerkleRoot, _accumulatedWork, _timestamp, _mtpTimestamp, _lastHash, _lastBits, _parentId);
+        if (parent.height < getChainHeight()) {
+            emit ErrorSuperblock(_parentId, ERR_SUPERBLOCK_BAD_BLOCKHEIGHT);
+            return (ERR_SUPERBLOCK_BAD_BLOCKHEIGHT, 0);
+        }
+
+        bytes32 superblockHash = calcSuperblockHash(_blocksMerkleRoot, _timestamp, _mtpTimestamp, _lastHash, _lastBits, _parentId);
         SuperblockInfo storage superblock = superblocks[superblockHash];
         if (superblock.status == Status.Uninitialized) {
             indexSuperblock[indexNextSuperblock] = superblockHash;
             superblock.blocksMerkleRoot = _blocksMerkleRoot;
-            superblock.accumulatedWork = _accumulatedWork;
             superblock.timestamp = _timestamp;
             superblock.mtpTimestamp = _mtpTimestamp;
             superblock.lastHash = _lastHash;
@@ -532,17 +529,20 @@ contract SyscoinSuperblocks is Initializable, SyscoinSuperblocksI, SyscoinErrorC
             emit ErrorSuperblock(_superblockHash, ERR_SUPERBLOCK_BAD_STATUS);
             return ERR_SUPERBLOCK_BAD_STATUS;
         }
+
+        if (superblock.height <= getChainHeight()) {
+            emit ErrorSuperblock(_superblockHash, ERR_SUPERBLOCK_BAD_BLOCKHEIGHT);
+            return ERR_SUPERBLOCK_BAD_BLOCKHEIGHT;
+        }
+
         SuperblockInfo storage parent = superblocks[superblock.parentId];
         if (parent.status != Status.Approved) {
             emit ErrorSuperblock(_superblockHash, ERR_SUPERBLOCK_BAD_PARENT);
             return ERR_SUPERBLOCK_BAD_PARENT;
         }
-        superblock.status = Status.Approved;
 
-        if (superblock.accumulatedWork > bestSuperblockAccumulatedWork) {
-            bestSuperblock = _superblockHash;
-            bestSuperblockAccumulatedWork = superblock.accumulatedWork;
-        }
+        superblock.status = Status.Approved;
+        bestSuperblock = _superblockHash;
 
         emit ApprovedSuperblock(_superblockHash, _validator);
         return ERR_SUPERBLOCK_OK;
@@ -748,16 +748,14 @@ contract SyscoinSuperblocks is Initializable, SyscoinSuperblocksI, SyscoinErrorC
     // @dev - Calculate superblock hash from superblock data
     //
     // @param _blocksMerkleRoot Root of the merkle tree of blocks contained in a superblock
-    // @param _accumulatedWork Accumulated proof of work of the last block in the superblock
     // @param _timestamp Timestamp of the last block in the superblock
     // @param _mtpTimestamp Median Timestamp of the last block in the superblock
     // @param _lastHash Hash of the last block in the superblock
-    // @param _lastBits Difficulty bits of the last block in the superblock bits used to verify accumulatedWork through difficulty calculation
+    // @param _lastBits Difficulty bits of the last block in the superblock bits
     // @param _parentId Id of the parent superblock
     // @return Superblock id
     function calcSuperblockHash(
         bytes32 _blocksMerkleRoot,
-        uint _accumulatedWork,
         uint _timestamp,
         uint _mtpTimestamp,
         bytes32 _lastHash,
@@ -766,7 +764,6 @@ contract SyscoinSuperblocks is Initializable, SyscoinSuperblocksI, SyscoinErrorC
     ) public pure returns (bytes32) {
         return keccak256(abi.encodePacked(
             _blocksMerkleRoot,
-            _accumulatedWork,
             _timestamp,
             _mtpTimestamp,
             _lastHash,
@@ -786,7 +783,6 @@ contract SyscoinSuperblocks is Initializable, SyscoinSuperblocksI, SyscoinErrorC
     //
     function getSuperblock(bytes32 superblockHash) public view returns (
         bytes32 _blocksMerkleRoot,
-        uint _accumulatedWork,
         uint _timestamp,
         uint _mtpTimestamp,
         bytes32 _lastHash,
@@ -799,7 +795,6 @@ contract SyscoinSuperblocks is Initializable, SyscoinSuperblocksI, SyscoinErrorC
         SuperblockInfo storage superblock = superblocks[superblockHash];
         return (
             superblock.blocksMerkleRoot,
-            superblock.accumulatedWork,
             superblock.timestamp,
             superblock.mtpTimestamp,
             superblock.lastHash,

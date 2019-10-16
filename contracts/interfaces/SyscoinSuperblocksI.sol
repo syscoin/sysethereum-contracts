@@ -6,7 +6,6 @@ interface SyscoinSuperblocksI {
     enum Status { Uninitialized, New, InBattle, SemiApproved, Approved, Invalid }
     struct SuperblockInfo {
         bytes32 blocksMerkleRoot;
-        uint accumulatedWork;
         uint timestamp;
         uint mtpTimestamp;
         bytes32 lastHash;
@@ -20,7 +19,6 @@ interface SyscoinSuperblocksI {
     }
     function propose(
         bytes32 _blocksMerkleRoot,
-        uint _accumulatedWork,
         uint _timestamp,
         uint _mtpTimestamp,
         bytes32 _lastHash,
@@ -31,7 +29,6 @@ interface SyscoinSuperblocksI {
 
     function getSuperblock(bytes32 superblockHash) external view returns (
         bytes32 _blocksMerkleRoot,
-        uint _accumulatedWork,
         uint _timestamp,
         uint _mtpTimestamp,
         bytes32 _lastHash,
