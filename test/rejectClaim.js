@@ -45,17 +45,14 @@ contract('rejectClaim', (accounts) => {
     const superblockR0Headers = [ superblock1Headers[0], superblock1Headers[1] ]; // this superblock should be semi-approved and then rejected
     const superblockR1Headers = [ superblock1Headers[2] ]; // this superblock should also be semi-approved and then rejected
 
-    const superblockR0Hashes = superblockR0Headers.map(utils.calcBlockSha256Hash);
-    const superblockR1Hashes = superblockR1Headers.map(utils.calcBlockSha256Hash);
+    const superblock0 = utils.makeSuperblock(superblock0Headers, initParentId);
+    const superblock1 = utils.makeSuperblock(superblock1Headers, superblock0.superblockHash);
+    const superblock2 = utils.makeSuperblock(superblock2Headers, superblock1.superblockHash);
+    const superblock3 = utils.makeSuperblock(superblock3Headers, superblock2.superblockHash);
+    const superblock4 = utils.makeSuperblock(superblock4Headers, superblock3.superblockHash);
 
-    const superblock0 = utils.makeSuperblock(superblock0Headers, initParentId, 2);
-    const superblock1 = utils.makeSuperblock(superblock1Headers, superblock0.superblockHash, 8);
-    const superblock2 = utils.makeSuperblock(superblock2Headers, superblock1.superblockHash, 14);
-    const superblock3 = utils.makeSuperblock(superblock3Headers, superblock2.superblockHash, 20);
-    const superblock4 = utils.makeSuperblock(superblock4Headers, superblock3.superblockHash, 26);
-
-    const superblockR0 = utils.makeSuperblock(superblockR0Headers, superblock0.superblockHash, 4);
-    const superblockR1 = utils.makeSuperblock(superblockR1Headers, superblockR0.superblockHash, 6);
+    const superblockR0 = utils.makeSuperblock(superblockR0Headers, superblock0.superblockHash);
+    const superblockR1 = utils.makeSuperblock(superblockR1Headers, superblockR0.superblockHash);
 
     describe('Propose superblocks and reject fork', () => {
         let superblock0Id;
@@ -124,34 +121,7 @@ contract('rejectClaim', (accounts) => {
             
 
         });
-        it('Confirm superblock 1', async () => {
-            await utils.blockchainTimeoutSeconds(2*utils.SUPERBLOCK_OPTIONS_LOCAL.TIMEOUT);
-            const result = await claimManager.methods.checkClaimFinished(superblock1Id).send({ from: submitter, gas: 300000 });
-            assert.ok(result.events.SuperblockClaimSuccessful, 'Superblock challenged');
-            const best = await superblocks.methods.getBestSuperblock().call();
-            assert.equal(superblock1Id, best, 'Best superblock should match');
-        });
-        it('Propose superblock 1 bad 2', async () => {
-            await claimManager.methods.makeDeposit().send({ value: utils.DEPOSITS.MIN_REWARD, from: submitter, gas: 300000 });
-            await truffleAssert.reverts(claimManager.methods.proposeSuperblock(
-                superblock1.merkleRoot,
-                superblock1.timestamp,
-                superblock1.mtpTimestamp,
-                superblock1.lastHash,
-                superblock1.lastBits,
-                superblock1.parentId).send({ from: submitter, gas: 2100000 }));
-           
-            await claimManager.methods.makeDeposit().send({ value: utils.DEPOSITS.MIN_REWARD, from: challenger, gas: 300000 });
 
-            await truffleAssert.reverts(claimManager.methods.proposeSuperblock(
-                superblock1.merkleRoot,
-                superblock1.timestamp,
-                superblock1.mtpTimestamp,
-                superblock1.lastHash,
-                superblock1.lastBits,
-                superblock1.parentId).send({ from: challenger, gas: 2100000 }));
-
-        });
         it('Claim does not exist', async () => {
             const result = await claimManager.methods.rejectClaim(superblockR0.superblockHash).send({ from: submitter, gas: 300000 });
             assert.ok(result.events.ErrorClaim, 'Claim has not been made');
@@ -169,6 +139,39 @@ contract('rejectClaim', (accounts) => {
             assert.ok(result.events.SuperblockClaimCreated, 'New superblock proposed');
             superblockR0Id = result.events.SuperblockClaimCreated.returnValues.superblockHash;
         });
+
+        it('Confirm superblock 1', async () => {
+            await utils.blockchainTimeoutSeconds(2*utils.SUPERBLOCK_OPTIONS_LOCAL.TIMEOUT);
+            const result = await claimManager.methods.checkClaimFinished(superblock1Id).send({ from: submitter, gas: 300000 });
+            assert.ok(result.events.SuperblockClaimSuccessful, 'Superblock challenged');
+            const best = await superblocks.methods.getBestSuperblock().call();
+            assert.equal(superblock1Id, best, 'Best superblock should match');
+        });
+        it('Propose superblock 1 bad 2', async () => {
+            await claimManager.methods.makeDeposit().send({ value: utils.DEPOSITS.MIN_REWARD, from: submitter, gas: 300000 });
+            const result = await claimManager.methods.proposeSuperblock(
+                superblock1.merkleRoot,
+                superblock1.timestamp,
+                superblock1.mtpTimestamp,
+                superblock1.lastHash,
+                superblock1.lastBits,
+                superblock1.parentId).send({ from: submitter, gas: 2100000 });
+
+            assert.ok(result.events.ErrorClaim, 'Submitter - propose - expected ErrorClaim');
+           
+            await claimManager.methods.makeDeposit().send({ value: utils.DEPOSITS.MIN_REWARD, from: challenger, gas: 300000 });
+
+            const result2 = await claimManager.methods.proposeSuperblock(
+                superblock1.merkleRoot,
+                superblock1.timestamp,
+                superblock1.mtpTimestamp,
+                superblock1.lastHash,
+                superblock1.lastBits,
+                superblock1.parentId).send({ from: challenger, gas: 2100000 });
+            
+            assert.ok(result2.events.ErrorClaim, 'Challenger - propose - expected ErrorClaim');
+        });
+      
 
         it('Missing confirmations after one superblock', async () => {
             const result = await claimManager.methods.rejectClaim(superblockR0Id).send({ from: submitter, gas: 300000 });
@@ -298,16 +301,7 @@ contract('rejectClaim', (accounts) => {
                 superblockR1.lastHash,
                 superblockR1.lastBits,
                 superblockR1.parentId).send({ from: submitter, gas: 2100000 });
-            assert.equal(result.events.SuperblockClaimCreated.event, 'SuperblockClaimCreated', 'New superblock proposed');
-            superblockR1Id = result.events.SuperblockClaimCreated.returnValues.superblockHash;
-        });
-
-        it('Confirm superblock R1', async () => {
-            await utils.blockchainTimeoutSeconds(2*utils.SUPERBLOCK_OPTIONS_LOCAL.TIMEOUT);
-            const result = await claimManager.methods.checkClaimFinished(superblockR1Id).send({ from: submitter, gas: 300000 });
-            assert.ok(result.events.SuperblockClaimPending, 'Superblock challenged');
-            const status = await superblocks.methods.getSuperblockStatus(superblockR1Id).call();
-            assert.equal(status, SEMI_APPROVED, 'Superblock was not semi-approved');
+            assert.ok(result.events.ErrorClaim, 'Expected ErrorClaim');
         });
 
         // Invalidate superblock and reject claim
@@ -317,13 +311,6 @@ contract('rejectClaim', (accounts) => {
             assert.ok(result.events.DepositUnbonded, 'DepositUnbonded event not found');
             const status = await superblocks.methods.getSuperblockStatus(superblockR0Id).call();
             assert.equal(status, INVALID, 'Superblock was not invalidated');
-        });
-
-        it('Reject superblock R1', async () => {
-            const result = await claimManager.methods.rejectClaim(superblockR1Id).send({ from: submitter, gas: 300000 });
-            assert.ok(result.events.SuperblockClaimFailed, 'SuperblockClaimFailed event not found');
-            const status = await superblocks.methods.getSuperblockStatus(superblockR1Id).call();
-            assert.equal(status, INVALID, 'Superblock was not invalidated');
-        });
+        });      
     });
 });
