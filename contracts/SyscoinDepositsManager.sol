@@ -19,7 +19,7 @@ contract SyscoinDepositsManager {
     // @dev – returns an account's deposit
     // @param who – the account's address.
     // @return – the account's deposit.
-    function getDeposit(address who) public view returns (uint) {
+    function getDeposit(address who) external view returns (uint) {
         return deposits[who];
     }
 
@@ -40,7 +40,7 @@ contract SyscoinDepositsManager {
     // @dev – allows a user to withdraw eth from their deposit.
     // @param amount – how much eth to withdraw
     // @return – sender's updated deposit amount.
-    function withdrawDeposit(uint amount) public returns (uint) {
+    function withdrawDeposit(uint amount) external returns (uint) {
         require(deposits[msg.sender] >= amount);
 
         deposits[msg.sender] = deposits[msg.sender].sub(amount);

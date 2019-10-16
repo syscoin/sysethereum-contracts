@@ -328,32 +328,7 @@ contract SyscoinSuperblocks is Initializable, SyscoinSuperblocksI, SyscoinErrorC
     function concatHash(uint _tx1, uint _tx2) private pure returns (uint) {
         return flip32Bytes(uint(sha256(abi.encodePacked(sha256(abi.encodePacked(flip32Bytes(_tx1), flip32Bytes(_tx2)))))));
     }
-     // @dev - Evaluate the merkle root
-    //
-    // Given an array of hashes it calculates the
-    // root of the merkle tree.
-    //
-    // @return root of merkle tree
-    function makeMerkleInternal(bytes32[] memory hashes2) private pure returns (bytes32) {
-        bytes32[] memory hashes = hashes2;
-        uint length = hashes.length;
-        if (length == 1) return hashes[0];
-        require(length > 0, "Must provide hashes");
-        uint i;
-        uint j;
-        uint k;
-        k = 0;
-        while (length > 1) {
-            k = 0;
-            for (i = 0; i < length; i += 2) {
-                j = i+1<length ? i+1 : length-1;
-                hashes[k] = bytes32(concatHash(uint(hashes[i]), uint(hashes[j])));
-                k += 1;
-            }
-            length = k;
-        }
-        return hashes[0];
-    }
+
     // @dev - For a valid proof, returns the root of the Merkle tree.
     //
     // @param _txHash - transaction hash
@@ -419,7 +394,7 @@ contract SyscoinSuperblocks is Initializable, SyscoinSuperblocksI, SyscoinErrorC
         bytes32 _lastHash,
         uint32 _lastBits,
         bytes32 _parentId
-    ) public returns (uint, bytes32) {
+    ) external returns (uint, bytes32) {
         require(bestSuperblock == 0);
         require(_parentId == 0);
 
@@ -472,7 +447,7 @@ contract SyscoinSuperblocks is Initializable, SyscoinSuperblocksI, SyscoinErrorC
         uint32 _lastBits,
         bytes32 _parentId,
         address submitter
-    ) public returns (uint, bytes32) {
+    ) external returns (uint, bytes32) {
         if (msg.sender != trustedClaimManager) {
             emit ErrorSuperblock(0, ERR_SUPERBLOCK_NOT_CLAIMMANAGER);
             return (ERR_SUPERBLOCK_NOT_CLAIMMANAGER, 0);
@@ -556,7 +531,7 @@ contract SyscoinSuperblocks is Initializable, SyscoinSuperblocksI, SyscoinErrorC
     // @param _superblockHash Id of the superblock to challenge
     // @param _challenger Address requesting a challenge
     // @return Error code and superblockHash
-    function challenge(bytes32 _superblockHash, address _challenger) public returns (uint) {
+    function challenge(bytes32 _superblockHash, address _challenger) external returns (uint) {
         if (msg.sender != trustedClaimManager) {
             emit ErrorSuperblock(_superblockHash, ERR_SUPERBLOCK_NOT_CLAIMMANAGER);
             return ERR_SUPERBLOCK_NOT_CLAIMMANAGER;
@@ -584,7 +559,7 @@ contract SyscoinSuperblocks is Initializable, SyscoinSuperblocksI, SyscoinErrorC
     // @param _superblockHash Id of the superblock to semi-approve
     // @param _validator Address requesting semi approval
     // @return Error code and superblockHash
-    function semiApprove(bytes32 _superblockHash, address _validator) public returns (uint) {
+    function semiApprove(bytes32 _superblockHash, address _validator) external returns (uint) {
         if (msg.sender != trustedClaimManager) {
             emit ErrorSuperblock(_superblockHash, ERR_SUPERBLOCK_NOT_CLAIMMANAGER);
             return ERR_SUPERBLOCK_NOT_CLAIMMANAGER;
@@ -611,7 +586,7 @@ contract SyscoinSuperblocks is Initializable, SyscoinSuperblocksI, SyscoinErrorC
     // @param _superblockHash Id of the superblock to invalidate
     // @param _validator Address requesting superblock invalidation
     // @return Error code and superblockHash
-    function invalidate(bytes32 _superblockHash, address _validator) public returns (uint) {
+    function invalidate(bytes32 _superblockHash, address _validator) external returns (uint) {
         if (msg.sender != trustedClaimManager) {
             emit ErrorSuperblock(_superblockHash, ERR_SUPERBLOCK_NOT_CLAIMMANAGER);
             return ERR_SUPERBLOCK_NOT_CLAIMMANAGER;
@@ -775,13 +750,13 @@ contract SyscoinSuperblocks is Initializable, SyscoinSuperblocksI, SyscoinErrorC
     // @dev - Returns the confirmed superblock with the most accumulated work
     //
     // @return Best superblock hash
-    function getBestSuperblock() public view returns (bytes32) {
+    function getBestSuperblock() external view returns (bytes32) {
         return bestSuperblock;
     }
 
     // @dev - Returns the superblock data for the supplied superblock hash
     //
-    function getSuperblock(bytes32 superblockHash) public view returns (
+    function getSuperblock(bytes32 superblockHash) external view returns (
         bytes32 _blocksMerkleRoot,
         uint _timestamp,
         uint _mtpTimestamp,
@@ -823,17 +798,17 @@ contract SyscoinSuperblocks is Initializable, SyscoinSuperblocksI, SyscoinErrorC
     }
 
     // @dev - Return superblock timestamp
-    function getSuperblockTimestamp(bytes32 _superblockHash) public view returns (uint) {
+    function getSuperblockTimestamp(bytes32 _superblockHash) external view returns (uint) {
         return superblocks[_superblockHash].timestamp;
     }
 
     // @dev - Return superblock median timestamp
-    function getSuperblockMedianTimestamp(bytes32 _superblockHash) public view returns (uint) {
+    function getSuperblockMedianTimestamp(bytes32 _superblockHash) external view returns (uint) {
         return superblocks[_superblockHash].mtpTimestamp;
     }
 
     // @dev - Return superblock parent
-    function getSuperblockParentId(bytes32 _superblockHash) public view returns (bytes32) {
+    function getSuperblockParentId(bytes32 _superblockHash) external view returns (bytes32) {
         return superblocks[_superblockHash].parentId;
     }
 
@@ -843,21 +818,8 @@ contract SyscoinSuperblocks is Initializable, SyscoinSuperblocksI, SyscoinErrorC
         return superblocks[_superblockHash].status;
     }
 
-    // @dev - Return indexNextSuperblock
-    function getIndexNextSuperblock() public view returns (uint32) {
-        return indexNextSuperblock;
-    }
-
-    // @dev - Calculate Merkle root from Syscoin block hashes
-    function makeMerkle(bytes32[] memory hashes) public pure returns (bytes32) {
-        return makeMerkleInternal(hashes);
-    }
-
-    function isApproved(bytes32 _superblockHash) public view returns (bool) {
+    function isApproved(bytes32 _superblockHash) private view returns (bool) {
         return (getSuperblockStatus(_superblockHash) == Status.Approved);
-    }
-    function isSemiApproved(bytes32 _superblockHash) public view returns (bool) {
-        return (getSuperblockStatus(_superblockHash) == Status.SemiApproved);
     }
     function getChainHeight() public view returns (uint) {
         return superblocks[bestSuperblock].height;
@@ -897,28 +859,6 @@ contract SyscoinSuperblocks is Initializable, SyscoinSuperblocksI, SyscoinErrorC
             ++i;
         }
         return ancestors;
-    }
-
-    // @dev - Returns a list of superblock hashes (9 hashes maximum) that helps an agent find out what
-    // superblocks are missing.
-    // The first position contains bestSuperblock, then
-    // bestSuperblock - 1,
-    // (bestSuperblock-1) - ((bestSuperblock-1) % 5), then
-    // (bestSuperblock-1) - ((bestSuperblock-1) % 25), ... until
-    // (bestSuperblock-1) - ((bestSuperblock-1) % 78125)
-    //
-    // @return - list of up to 9 ancestor supeerblock id
-    function getSuperblockLocator() public view returns (bytes32[9] memory) {
-        bytes32[9] memory locator;
-        locator[0] = bestSuperblock;
-        bytes32 ancestors = getSuperblockAncestors(bestSuperblock);
-        uint i = NUM_ANCESTOR_DEPTHS;
-        while (i > 0) {
-            locator[i] = indexSuperblock[uint32(uint256(ancestors) & uint256(0xFFFFFFFF))];
-            ancestors >>= 32;
-            --i;
-        }
-        return locator;
     }
 
     // @dev - Return ancestor at given index
