@@ -44,18 +44,10 @@ contract('SyscoinSuperblocks2', function(accounts) {
     const best = await superblocks.methods.getBestSuperblock().call();
     assert.equal(best, genesisSuperblock.superblockHash, 'Best superblock updated');
 
-    const locator = await superblocks.methods.getSuperblockLocator().call();
-    assert.equal(locator.length, 9, 'Superblock locator');
-    assert.equal(locator[0], genesisSuperblock.superblockHash, 'Superblock locator 0');
-    assert.equal(locator[1], genesisSuperblock.superblockHash, 'Superblock locator 1');
-    assert.equal(locator[2], genesisSuperblock.superblockHash, 'Superblock locator 2');
-    assert.equal(locator[8], genesisSuperblock.superblockHash, 'Superblock locator 8');
-
     const height = await superblocks.methods.getSuperblockHeight(best).call();
     assert.equal(height, 1, 'Superblock height');
 
     const superblock = await superblocks.methods.getSuperblock(best).call();
-
 
     // 2 keys per returned var
     assert.equal(Object.keys(superblock).length, 18, 'Have enough data');

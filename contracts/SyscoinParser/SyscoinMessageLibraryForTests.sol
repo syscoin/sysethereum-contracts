@@ -34,6 +34,10 @@ contract SyscoinMessageLibraryForTests {
         return SyscoinMessageLibrary.concatHash(tx1, tx2);
     }
 
+    function makeMerklePublic(bytes32[] memory hashes2) public pure returns (bytes32) {
+        return SyscoinMessageLibrary.makeMerkle(hashes2);
+    }
+
     function flip32BytesPublic(uint input) public pure returns (uint) {
         return SyscoinMessageLibrary.flip32Bytes(input);
     }

@@ -64,16 +64,6 @@ contract('SyscoinSuperblocks', (accounts) => {
       hash = utils.makeMerkle(manyHashes);
       assert.equal(hash, "0xee712eefe9b4c9ecd39a71d45e975b83c9427070e54953559e78f45d2cbb03b3", 'Many hashes array');
     })
-    it('Merkle solidity', async () => {
-      hash = await superblocks.methods.makeMerkle(oneHash).call();
-      assert.equal(hash, "0x57a8a9a8de6131bf61f5d385318c10e29a5d826eed6adbdbeedc3a0539908ed4", 'One hash array');
-      hash = await superblocks.methods.makeMerkle(twoHashes).call();
-      assert.equal(hash, "0xae1c24c61efe6b378017f6055b891dd62747deb23a7939cffe78002f1cfb79ab", 'Two hashes array');
-      hash = await superblocks.methods.makeMerkle(threeHashes).call();
-      assert.equal(hash, "0xe1c52ec93d4f4f83783aeede9e6b84b5ded007ec9591b521d6e5e4b6d9512d43", 'Three hashes array');
-      hash = await superblocks.methods.makeMerkle(manyHashes).call();
-      assert.equal(hash, "0xee712eefe9b4c9ecd39a71d45e975b83c9427070e54953559e78f45d2cbb03b3", 'Many hashes array');
-    });
     it('Superblock id', async () => {
       const merkleRoot = "0xbc89818e52613f36d6cea2edba2c9417f01ee910250dbd85a8647a92e655996b";
       const timestamp = "0x000000000000000000000000000000000000000000000000000000005ada05b9";
@@ -244,65 +234,6 @@ contract('SyscoinSuperblocks', (accounts) => {
 
       result = await superblocks.methods.invalidate(id3, claimManager).send({ from: claimManager, gas: 300000 });
       assert.equal(result.events.InvalidSuperblock.event, 'InvalidSuperblock', 'Superblock invalidated');
-    });
-  });
-  describe('Test locator', () => {
-    let id0;
-    let id1;
-    let id2;
-    let id3;
-    const merkleRoot = utils.makeMerkle(['0x0000000000000000000000000000000000000000000000000000000000000000']);
-    const timestamp = 1;
-    const mtptimestamp = 1;
-    const lastBits = 0;
-    const lastHash = '0x0000000000000000000000000000000000000000000000000000000000000000';
-    const parentHash = '0x0000000000000000000000000000000000000000000000000000000000000000';
-    before(async () => {
-      superblocks = await this.project.createProxy(SyscoinSuperblocks, {
-        initMethod: 'init',
-        initArgs: [erc20Manager, claimManager]
-      });
-    });
-    it('Initialized', async () => {
-      const result = await superblocks.methods.initialize(merkleRoot, timestamp, mtptimestamp, lastHash, lastBits,parentHash).send({ from: claimManager, gas: 300000 });
-      assert.equal(result.events.NewSuperblock.event, 'NewSuperblock', 'New superblock proposed');
-      id0 = result.events.NewSuperblock.returnValues.superblockHash;
-    });
-    it('Verify locator', async () => {
-      let parentId;
-      parentId = id0;
-      let superblockHash;
-      let result;
-      let prevLocator;
-      let locator;
-      prevLocator = locator = await superblocks.methods.getSuperblockLocator().call();
-      const sblocks = {};
-      sblocks[0] = id0;
-      for(let work = 1; work < 30; ++work) {
-        result = await superblocks.methods.propose(merkleRoot, 0, 0, lastHash, lastBits,parentId, utils.ZERO_ADDRESS).send({ from: claimManager, gas: 300000 });
-        assert.equal(result.events.NewSuperblock.event, 'NewSuperblock', 'ClaimManager can propose');
-        superblockHash = result.events.NewSuperblock.returnValues.superblockHash;
-
-        result = await superblocks.methods.confirm(superblockHash, claimManager).send({ from: claimManager, gas: 300000 });
-        assert.equal(result.events.ApprovedSuperblock.event, 'ApprovedSuperblock', 'Only claimManager can propose');
-
-        locator = await superblocks.methods.getSuperblockLocator().call();
-        assert.equal(locator[0], superblockHash, 'Position 0 current best superblock');
-        assert.equal(locator[1], parentId, 'Position 1 parent best superblock');
-        let step = 5;
-        // At index i we have superblockHash of height
-        // (bestSuperblock-1) - (bestSuperblock-1) % 5**(i-1)
-        for (let i=2; i<=8; ++i) {
-          let pos = work - 1 - (work - 1) % step;
-          assert.equal(locator[i], sblocks[pos], `Invalid superblock at ${i} ${step} ${pos}`);
-          step = step * 5;
-        }
-        if (work % 5 === 0) {
-          sblocks[work] = superblockHash;
-        }
-        parentId = superblockHash;
-        prevLocator = locator;
-      }
     });
   });
 });

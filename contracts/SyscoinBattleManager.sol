@@ -105,21 +105,21 @@ contract SyscoinBattleManager is Initializable, SyscoinErrorCodes {
         SyscoinSuperblocksI _superblocks,
         uint _superblockDuration,
         uint _superblockTimeout
-    ) public initializer {
+    ) external initializer {
         net = _network;
         trustedSuperblocks = _superblocks;
         superblockDuration = _superblockDuration;
         superblockTimeout = _superblockTimeout;
     }
 
-    function setSyscoinClaimManager(SyscoinClaimManagerI _syscoinClaimManager) public {
+    function setSyscoinClaimManager(SyscoinClaimManagerI _syscoinClaimManager) external {
         require(address(trustedSyscoinClaimManager) == address(0) && address(_syscoinClaimManager) != address(0));
         trustedSyscoinClaimManager = _syscoinClaimManager;
     }
 
     // @dev - Start a battle session
     function beginBattleSession(bytes32 superblockHash, address submitter, address challenger)
-        onlyFrom(address(trustedSyscoinClaimManager)) public returns (bytes32) {
+        external onlyFrom(address(trustedSyscoinClaimManager)) returns (bytes32) {
         bytes32 sessionId = keccak256(abi.encode(superblockHash, msg.sender, challenger));
         BattleSession storage session = sessions[sessionId];
         if(session.id != 0x0){
@@ -718,9 +718,9 @@ contract SyscoinBattleManager is Initializable, SyscoinErrorCodes {
     }
     function respondBlockHeaders (
         bytes32 sessionId,
-        bytes memory blockHeaders,
+        bytes calldata blockHeaders,
         uint numHeaders
-        ) onlyClaimant(sessionId) public {
+        ) external onlyClaimant(sessionId) {
         BattleSession storage session = sessions[sessionId];
         if(net == Network.MAINNET){
             if((session.merkleRoots.length <= 2 && numHeaders != 16) ||
@@ -902,7 +902,7 @@ contract SyscoinBattleManager is Initializable, SyscoinErrorCodes {
 
 
     // @dev - Trigger conviction if response is not received in time
-    function timeout(bytes32 sessionId) public returns (uint) {
+    function timeout(bytes32 sessionId) external returns (uint) {
         BattleSession storage session = sessions[sessionId];
         if (session.challengeState == ChallengeState.Challenged &&
             (block.timestamp > session.lastActionTimestamp + superblockTimeout)) {
@@ -936,17 +936,17 @@ contract SyscoinBattleManager is Initializable, SyscoinErrorCodes {
 
 
     // @dev - Check if a session's submitter did not respond before timeout
-    function getSubmitterHitTimeout(bytes32 sessionId) public view returns (bool) {
+    function getSubmitterHitTimeout(bytes32 sessionId) external view returns (bool) {
         BattleSession storage session = sessions[sessionId];
         return (block.timestamp > session.lastActionTimestamp + superblockTimeout);
     }
-    function getNumMerkleHashesBySession(bytes32 sessionId) public view returns (uint) {
+    function getNumMerkleHashesBySession(bytes32 sessionId) external view returns (uint) {
         BattleSession memory session = sessions[sessionId];
         if(session.id == 0x0)
             return 0;
         return sessions[sessionId].merkleRoots.length;
     }
-    function getSessionChallengeState(bytes32 sessionId) public view returns (ChallengeState) {
+    function getSessionChallengeState(bytes32 sessionId) external view returns (ChallengeState) {
         return sessions[sessionId].challengeState;
     }
     // @dev - To be called when a battle sessions  was decided
