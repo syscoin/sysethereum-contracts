@@ -126,10 +126,6 @@ contract SyscoinClaimManager is Initializable, SyscoinDepositsManager, SyscoinEr
         return claim.bondedDeposits[account];
     }
 
-    function getDeposit(address account) external view returns (uint) {
-        return deposits[account];
-    }
-
     // @dev – unlocks a user's bonded deposits from a claim.
     // @param superblockHash – claim id.
     // @param account – user's address.
@@ -548,19 +544,5 @@ contract SyscoinClaimManager is Initializable, SyscoinDepositsManager, SyscoinEr
     function getClaimChallenger(bytes32 superblockHash) external view returns (address) {
         SuperblockClaim storage claim = claims[superblockHash];
         return claim.challenger;
-    }
-    
-    function getSuperblockInfo(bytes32 superblockHash) private view returns (
-        bytes32 _blocksMerkleRoot,
-        uint _timestamp,
-        uint _mtpTimestamp,
-        bytes32 _lastHash,
-        uint32 _lastBits,
-        bytes32 _parentId,
-        address _submitter,
-        SyscoinSuperblocksI.Status _status,
-        uint32 _height
-    ) {
-        return trustedSuperblocks.getSuperblock(superblockHash);
     }
 }

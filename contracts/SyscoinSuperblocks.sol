@@ -494,7 +494,7 @@ contract SyscoinSuperblocks is Initializable, SyscoinSuperblocksI, SyscoinErrorC
     // @param _superblockHash Id of the superblock to confirm
     // @param _validator Address requesting superblock confirmation
     // @return Error code and superblockHash
-    function confirm(bytes32 _superblockHash, address _validator) public returns (uint) {
+    function confirm(bytes32 _superblockHash, address _validator) external returns (uint) {
         if (msg.sender != trustedClaimManager) {
             emit ErrorSuperblock(_superblockHash, ERR_SUPERBLOCK_NOT_CLAIMMANAGER);
             return ERR_SUPERBLOCK_NOT_CLAIMMANAGER;
@@ -626,7 +626,7 @@ contract SyscoinSuperblocks is Initializable, SyscoinSuperblocksI, SyscoinErrorC
     ) public returns (uint) {
         // Check if Syscoin block belongs to given superblock
         if (bytes32(computeMerkle(dblShaFlip(_syscoinBlockHeader), _syscoinBlockIndex, _syscoinBlockSiblings))
-            != getSuperblockMerkleRoot(_superblockHash)) {
+            != superblocks[_superblockHash].blocksMerkleRoot) {
             // Syscoin block is not in superblock
             emit RelayTransaction(bytes32(0), ERR_SUPERBLOCK);
             return ERR_SUPERBLOCK;
@@ -786,15 +786,9 @@ contract SyscoinSuperblocks is Initializable, SyscoinSuperblocksI, SyscoinErrorC
         return superblocks[superblockHash].height;
     }
 
-
     // @dev - Return superblock ancestors' indexes
-    function getSuperblockAncestors(bytes32 superblockHash) public view returns (bytes32) {
+    function getSuperblockAncestors(bytes32 superblockHash) external view returns (bytes32) {
         return superblocks[superblockHash].ancestors;
-    }
-
-    // @dev - Return superblock blocks' Merkle root
-    function getSuperblockMerkleRoot(bytes32 _superblockHash) public view returns (bytes32) {
-        return superblocks[_superblockHash].blocksMerkleRoot;
     }
 
     // @dev - Return superblock timestamp
