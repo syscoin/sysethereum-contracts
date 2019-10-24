@@ -400,6 +400,7 @@ contract SyscoinBattleManager is Initializable, SyscoinErrorCodes {
 
         return flip32Bytes(resultHash);
     }
+
     // @dev - convert an unsigned integer from little-endian to big-endian representation
     //
     // @param _input - little-endian value
@@ -467,19 +468,7 @@ contract SyscoinBattleManager is Initializable, SyscoinErrorCodes {
         return computeMerkle(_blockHash,
                              _ap.syscoinHashIndex,
                              _ap.chainMerkleProof);
-    }
-
-    // @dev - Helper function for Merkle root calculation.
-    // Given two sibling nodes in a Merkle tree, calculate their parent.
-    // Concatenates hashes `_tx1` and `_tx2`, then hashes the result.
-    //
-    // @param _tx1 - Merkle node (either root or internal node)
-    // @param _tx2 - Merkle node (either root or internal node), has to be `_tx1`'s sibling
-    // @return - `_tx1` and `_tx2`'s parent, i.e. the result of concatenating them,
-    // hashing that twice and flipping the bytes.
-    function concatHash(uint _tx1, uint _tx2) private pure returns (uint) {
-        return flip32Bytes(uint(sha256(abi.encodePacked(sha256(abi.encodePacked(flip32Bytes(_tx1), flip32Bytes(_tx2)))))));
-    }
+    }    
 
     // @dev - checks if a merge-mined block's Merkle proofs are correct,
     // i.e. Syscoin block hash is in coinbase Merkle tree
@@ -791,6 +780,7 @@ contract SyscoinBattleManager is Initializable, SyscoinErrorCodes {
     function isMergeMined(bytes memory _rawBytes, uint pos) private pure returns (bool) {
         return bytesToUint32Flipped(_rawBytes, pos) & VERSION_AUXPOW != 0;
     }
+    
     // @dev - Evaluate the merkle root
     //
     // Given an array of hashes it calculates the

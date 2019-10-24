@@ -316,18 +316,7 @@ contract SyscoinSuperblocks is Initializable, SyscoinSuperblocksI, SyscoinErrorC
             mstore8(add(pos, 31), byte(0, _input))
             result := mload(pos)
         }
-    }
-    // @dev - Helper function for Merkle root calculation.
-    // Given two sibling nodes in a Merkle tree, calculate their parent.
-    // Concatenates hashes `_tx1` and `_tx2`, then hashes the result.
-    //
-    // @param _tx1 - Merkle node (either root or internal node)
-    // @param _tx2 - Merkle node (either root or internal node), has to be `_tx1`'s sibling
-    // @return - `_tx1` and `_tx2`'s parent, i.e. the result of concatenating them,
-    // hashing that twice and flipping the bytes.
-    function concatHash(uint _tx1, uint _tx2) private pure returns (uint) {
-        return flip32Bytes(uint(sha256(abi.encodePacked(sha256(abi.encodePacked(flip32Bytes(_tx1), flip32Bytes(_tx2)))))));
-    }
+    }    
 
     // @dev - For a valid proof, returns the root of the Merkle tree.
     //
@@ -337,31 +326,37 @@ contract SyscoinSuperblocks is Initializable, SyscoinSuperblocksI, SyscoinErrorC
     // @return - Merkle tree root of the block the transaction belongs to if the proof is valid,
     // garbage if it's invalid
     function computeMerkle(uint _txHash, uint _txIndex, uint[] memory _siblings) private pure returns (uint) {
-        uint resultHash = _txHash;
-        uint i = 0;
-        while (i < _siblings.length) {
-            uint proofHex = _siblings[i];
+        
+        uint length = _siblings.length;
+        uint i;
+        for (i = 0; i < length; i++) {
+            _siblings[i] = flip32Bytes(_siblings[i]);
+        }
 
-            uint sideOfSiblings = _txIndex % 2;  // 0 means _siblings is on the right; 1 means left
+        i = 0;
+        uint resultHash = flip32Bytes(_txHash);        
+
+        while (i < length) {
+            uint proofHex = _siblings[i];
 
             uint left;
             uint right;
-            if (sideOfSiblings == 1) {
+            if (_txIndex % 2 == 1) { // 0 means _siblings is on the right; 1 means left
                 left = proofHex;
                 right = resultHash;
-            } else if (sideOfSiblings == 0) {
+            } else {
                 left = resultHash;
                 right = proofHex;
             }
-
-            resultHash = concatHash(left, right);
+            resultHash = uint(sha256(abi.encodePacked(sha256(abi.encodePacked(left, right)))));
 
             _txIndex /= 2;
             i += 1;
         }
 
-        return resultHash;
+        return flip32Bytes(resultHash);
     }
+
     // @dev - extract Merkle root field from a raw Syscoin block header
     //
     // @param _blockHeader - Syscoin block header bytes
