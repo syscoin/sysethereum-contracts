@@ -277,7 +277,7 @@ library SyscoinMessageLibrary {
     // root of the merkle tree.
     //
     // @return root of merkle tree
-    function makeMerkle(bytes32[] memory hashes) private pure returns (bytes32) {
+    function makeMerkle(bytes32[] memory hashes) internal pure returns (bytes32) {
         uint length = hashes.length;
 
         if (length == 1) return hashes[0];
@@ -310,7 +310,7 @@ library SyscoinMessageLibrary {
     // @param _siblings - transaction's Merkle siblings
     // @return - Merkle tree root of the block the transaction belongs to if the proof is valid,
     // garbage if it's invalid
-    function computeMerkle(uint _txHash, uint _txIndex, uint[] memory _siblings) private pure returns (uint) {
+    function computeMerkle(uint _txHash, uint _txIndex, uint[] memory _siblings) internal pure returns (uint) {
         
         uint length = _siblings.length;
         uint i;
