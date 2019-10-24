@@ -534,32 +534,6 @@ contract SyscoinBattleManager is Initializable, SyscoinErrorCodes {
         uint mant = _bits & 0xffffff;
         return mant * 256**(exp - 3);
     }
-    // @dev - Verify block header
-    // @param _blockHeaderBytes - array of bytes with the block header
-    // @param _pos - starting position of the block header
-    // @return - [ErrorCode, BlockHeader, position]
-    function verifyBlockHeader(bytes memory _blockHeaderBytes, uint _pos) private view returns (uint, BlockHeader memory, uint) {
-        BlockHeader memory blockHeader = parseHeaderBytes(_blockHeaderBytes, _pos);
-        uint target = targetFromBits(blockHeader.bits);
-        uint blockHash = uint(blockHeader.blockHash);
-        if (isMergeMined(_blockHeaderBytes, _pos)) {
-            AuxPoW memory ap = parseAuxPoW(_blockHeaderBytes, _pos);
-            if (ap.blockHash > target) {
-                return (ERR_PROOF_OF_WORK_AUXPOW, blockHeader,0);
-            }
-
-            uint auxPoWCode = checkAuxPoW(blockHash, ap);
-            if (auxPoWCode != 1) {
-                return (auxPoWCode, blockHeader,0);
-            }
-            return (0, blockHeader, ap.pos);
-        } else {
-            if (blockHash > target) {
-                return (ERR_PROOF_OF_WORK, blockHeader,0);
-            }
-            return (0, blockHeader, _pos+80);
-        }
-    }
     
     // @param _actualTimespan - time elapsed from previous block creation til current block creation;
     // i.e., how much time it took to mine the current block
