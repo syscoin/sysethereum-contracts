@@ -415,35 +415,29 @@ contract SyscoinClaimManager is Initializable, SyscoinDepositsManager, SyscoinEr
         }
 
         uint height = trustedSuperblocks.getSuperblockHeight(superblockHash);
-        bytes32 id = trustedSuperblocks.getBestSuperblock();
-        if (trustedSuperblocks.getSuperblockHeight(id) < height + superblockConfirmations) {
-            emit ErrorClaim(superblockHash, ERR_SUPERBLOCK_MISSING_CONFIRMATIONS);
+
+        if (height > trustedSuperblocks.getChainHeight()) {
+            emit ErrorClaim(superblockHash, ERR_SUPERBLOCK_BAD_BLOCKHEIGHT);
             return false;
         }
 
-        id = trustedSuperblocks.getSuperblockAt(height);
+        SyscoinSuperblocksI.Status status = trustedSuperblocks.getSuperblockStatus(superblockHash);
 
-        if (id != superblockHash) {
-            SyscoinSuperblocksI.Status status = trustedSuperblocks.getSuperblockStatus(superblockHash);
-
-            if (status != SyscoinSuperblocksI.Status.SemiApproved) {
-                emit ErrorClaim(superblockHash, ERR_SUPERBLOCK_BAD_STATUS);
-                return false;
-            }
-
-            if (!claim.decided) {
-                emit ErrorClaim(superblockHash, ERR_SUPERBLOCK_CLAIM_DECIDED);
-                return false;
-            }
-
-            uint err = trustedSuperblocks.invalidate(superblockHash, msg.sender);
-            require(err == ERR_SUPERBLOCK_OK);
-            emit SuperblockClaimFailed(superblockHash, claim.submitter);
-            doPayChallenger(superblockHash, claim);
-            return true;
+        if (status != SyscoinSuperblocksI.Status.SemiApproved) {
+            emit ErrorClaim(superblockHash, ERR_SUPERBLOCK_BAD_STATUS);
+            return false;
         }
 
-        return false;
+        if (!claim.decided) {
+            emit ErrorClaim(superblockHash, ERR_SUPERBLOCK_CLAIM_DECIDED);
+            return false;
+        }
+
+        uint err = trustedSuperblocks.invalidate(superblockHash, msg.sender);
+        require(err == ERR_SUPERBLOCK_OK);
+        emit SuperblockClaimFailed(superblockHash, claim.submitter);
+        doPayChallenger(superblockHash, claim);
+        return true;
     }
 
     // @dev – called when a battle session has ended.
