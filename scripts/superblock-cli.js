@@ -143,24 +143,6 @@ function statusToText(status) {
   return '--Status error--';
 }
 
-function challengeStateToText(state) {
-  const challengeStates = {
-    0: 'Unchallenged',
-    1: 'Challenged',
-    2: 'Merkle root hashes queried',
-    3: 'Merkle root hashes replied',
-    4: 'Block header queried',
-    5: 'Block header replied',
-    6: 'Superblock verification pending',
-    7: 'Superblock verified',
-    8: 'Superblock failed',
-  };
-  if (typeof challengeStates[state] !== 'undefined') {
-    return challengeStates[state];
-  }
-  return `--Invalid state (${state})--`;
-}
-
 async function displaySuperblocksStatus({ superblockHash, fromBlock, toBlock }) {
   try {
     const sb = await SyscoinSuperblocks.deployed();
@@ -170,24 +152,20 @@ async function displaySuperblocksStatus({ superblockHash, fromBlock, toBlock }) 
     const getBattleStatus = async (superblockHash) => {
       const sessionId = await cm.getSession(superblockHash);
       const [
-        id,
         superblockHash2,
         submitter,
         challenger2,
         lastActionTimestamp,
         lastActionClaimant,
-        challengeState,
       ] = await bm.sessions(sessionId);
       return {
         sessionId,
         battle: {
-          id,
           superblockHash: superblockHash2,
           submitter,
           challenger: challenger2,
           lastActionTimestamp,
           lastActionClaimant,
-          challengeState,
         },
       }
     };
@@ -220,8 +198,7 @@ async function displaySuperblocksStatus({ superblockHash, fromBlock, toBlock }) 
     };
 
     const displayBattle = (battle) => {
-      console.log(`        Last action timestamp: ${new Date(battle.lastActionTimestamp * 1000)}`);
-      console.log(`        State: ${challengeStateToText(battle.challengeState)}`);
+      console.log(`        Last action timestamp: ${new Date(battle.lastActionTimestamp * 1000)}`);      
     };
 
     const displaySuperblock = async (superblockHash) => {
@@ -264,7 +241,6 @@ async function displaySuperblocksStatus({ superblockHash, fromBlock, toBlock }) 
               console.log(`    Challenge state: ${claim.invalid ? 'succeeded' : 'failed'}`);
             } else if (claim.verificationOngoing) {
               displayBattle(battles.battle);
-              console.log(`    Challenge state: ${challengeStateToText(battles.battle.challengeState)}`);
             } else {
               console.log('    Challenge state: waiting');
             }
