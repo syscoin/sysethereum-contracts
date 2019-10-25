@@ -801,10 +801,14 @@ contract SyscoinBattleManager is Initializable, SyscoinErrorCodes {
             if(prevHeader.blockHash != thisHeader.prevBlock)
                 return ERR_SUPERBLOCK_HASH_PREVBLOCK;
         }
+
+        if (prevBits != blockHeadersParsed[0].bits) {
+            return ERR_SUPERBLOCK_BITS_PREVBLOCK;
+        }
+
         // enforce linking against previous submitted batch of blocks
-        if(session.merkleRoots.length >= 2){
-            BlockHeader memory firstHeader = blockHeadersParsed[0];
-            if(session.prevSubmitBlockhash != firstHeader.prevBlock)
+        if (session.merkleRoots.length >= 2) {
+            if (session.prevSubmitBlockhash != blockHeadersParsed[0].prevBlock)
                 return ERR_SUPERBLOCK_HASH_INTERIM_PREVBLOCK;
         }
         return ERR_SUPERBLOCK_OK;
@@ -868,7 +872,7 @@ contract SyscoinBattleManager is Initializable, SyscoinErrorCodes {
 
             // make sure every 6th superblock adjusts difficulty
             // calculate the new work from prevBits minus one as if its an adjustment we need to account for new bits, if not then just add one more prevBits work
-            if (net != Network.REGTEST){
+            if (net != Network.REGTEST) {
                 if (((superblockInfo.height-1) % 6) == 0) {
                     BlockHeader memory prevToLastHeader = blockHeadersParsed[blockHeadersParsed.length-2];
 
@@ -880,6 +884,10 @@ contract SyscoinBattleManager is Initializable, SyscoinErrorCodes {
                     // ensure bits of superblock match derived bits from calculateDifficulty
                     if (superblockInfo.lastBits != newBits) {
                         return ERR_SUPERBLOCK_BITS_SUPERBLOCK;
+                    }
+                } else {
+                    if (superblockInfo.lastBits != prevSuperblockInfo.lastBits) {
+                        return ERR_SUPERBLOCK_BITS_LASTBLOCK;
                     }
                 }
 
