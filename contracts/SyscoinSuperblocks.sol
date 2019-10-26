@@ -17,11 +17,6 @@ contract SyscoinSuperblocks is Initializable, SyscoinSuperblocksI, SyscoinErrorC
     // Mapping superblock id => superblock data
     mapping (bytes32 => SuperblockInfo) private superblocks;
 
-    // Index to superblock id
-    mapping (uint32 => bytes32) private indexSuperblock;
-
-    uint32 private indexNextSuperblock;
-
     bytes32 private bestSuperblock;
 
     SyscoinTransactionProcessor public syscoinERC20Manager;
@@ -317,17 +312,6 @@ contract SyscoinSuperblocks is Initializable, SyscoinSuperblocksI, SyscoinErrorC
             result := mload(pos)
         }
     }
-    // @dev - Helper function for Merkle root calculation.
-    // Given two sibling nodes in a Merkle tree, calculate their parent.
-    // Concatenates hashes `_tx1` and `_tx2`, then hashes the result.
-    //
-    // @param _tx1 - Merkle node (either root or internal node)
-    // @param _tx2 - Merkle node (either root or internal node), has to be `_tx1`'s sibling
-    // @return - `_tx1` and `_tx2`'s parent, i.e. the result of concatenating them,
-    // hashing that twice and flipping the bytes.
-    function concatHash(uint _tx1, uint _tx2) private pure returns (uint) {
-        return flip32Bytes(uint(sha256(abi.encodePacked(sha256(abi.encodePacked(flip32Bytes(_tx1), flip32Bytes(_tx2)))))));
-    }
 
     // @dev - For a valid proof, returns the root of the Merkle tree.
     //
@@ -337,31 +321,37 @@ contract SyscoinSuperblocks is Initializable, SyscoinSuperblocksI, SyscoinErrorC
     // @return - Merkle tree root of the block the transaction belongs to if the proof is valid,
     // garbage if it's invalid
     function computeMerkle(uint _txHash, uint _txIndex, uint[] memory _siblings) private pure returns (uint) {
-        uint resultHash = _txHash;
-        uint i = 0;
-        while (i < _siblings.length) {
-            uint proofHex = _siblings[i];
+        
+        uint length = _siblings.length;
+        uint i;
+        for (i = 0; i < length; i++) {
+            _siblings[i] = flip32Bytes(_siblings[i]);
+        }
 
-            uint sideOfSiblings = _txIndex % 2;  // 0 means _siblings is on the right; 1 means left
+        i = 0;
+        uint resultHash = flip32Bytes(_txHash);        
+
+        while (i < length) {
+            uint proofHex = _siblings[i];
 
             uint left;
             uint right;
-            if (sideOfSiblings == 1) {
+            if (_txIndex % 2 == 1) { // 0 means _siblings is on the right; 1 means left
                 left = proofHex;
                 right = resultHash;
-            } else if (sideOfSiblings == 0) {
+            } else {
                 left = resultHash;
                 right = proofHex;
             }
-
-            resultHash = concatHash(left, right);
+            resultHash = uint(sha256(abi.encodePacked(sha256(abi.encodePacked(left, right)))));
 
             _txIndex /= 2;
             i += 1;
         }
 
-        return resultHash;
+        return flip32Bytes(resultHash);
     }
+
     // @dev - extract Merkle root field from a raw Syscoin block header
     //
     // @param _blockHeader - Syscoin block header bytes
@@ -403,21 +393,15 @@ contract SyscoinSuperblocks is Initializable, SyscoinSuperblocksI, SyscoinErrorC
 
         require(superblock.status == Status.Uninitialized);
 
-        indexSuperblock[indexNextSuperblock] = superblockHash;
-
         superblock.blocksMerkleRoot = _blocksMerkleRoot;
         superblock.timestamp = _timestamp;
         superblock.mtpTimestamp = _mtpTimestamp;
         superblock.lastHash = _lastHash;
         superblock.parentId = _parentId;
         superblock.submitter = msg.sender;
-        superblock.index = indexNextSuperblock;
         superblock.height = 1;
         superblock.lastBits = _lastBits;
         superblock.status = Status.Approved;
-        superblock.ancestors = 0x0;
-
-        indexNextSuperblock++;
 
         emit NewSuperblock(superblockHash, msg.sender);
 
@@ -467,17 +451,13 @@ contract SyscoinSuperblocks is Initializable, SyscoinSuperblocksI, SyscoinErrorC
         bytes32 superblockHash = calcSuperblockHash(_blocksMerkleRoot, _timestamp, _mtpTimestamp, _lastHash, _lastBits, _parentId);
         SuperblockInfo storage superblock = superblocks[superblockHash];
         if (superblock.status == Status.Uninitialized) {
-            indexSuperblock[indexNextSuperblock] = superblockHash;
             superblock.blocksMerkleRoot = _blocksMerkleRoot;
             superblock.timestamp = _timestamp;
             superblock.mtpTimestamp = _mtpTimestamp;
             superblock.lastHash = _lastHash;
             superblock.parentId = _parentId;
-            superblock.index = indexNextSuperblock;
             superblock.height = parent.height + 1;
             superblock.lastBits = _lastBits;
-            superblock.ancestors = updateAncestors(parent.ancestors, parent.index, parent.height);
-            indexNextSuperblock++;
         }
         superblock.status = Status.New;
         superblock.submitter = submitter;
@@ -494,7 +474,7 @@ contract SyscoinSuperblocks is Initializable, SyscoinSuperblocksI, SyscoinErrorC
     // @param _superblockHash Id of the superblock to confirm
     // @param _validator Address requesting superblock confirmation
     // @return Error code and superblockHash
-    function confirm(bytes32 _superblockHash, address _validator) public returns (uint) {
+    function confirm(bytes32 _superblockHash, address _validator) external returns (uint) {
         if (msg.sender != trustedClaimManager) {
             emit ErrorSuperblock(_superblockHash, ERR_SUPERBLOCK_NOT_CLAIMMANAGER);
             return ERR_SUPERBLOCK_NOT_CLAIMMANAGER;
@@ -626,7 +606,7 @@ contract SyscoinSuperblocks is Initializable, SyscoinSuperblocksI, SyscoinErrorC
     ) public returns (uint) {
         // Check if Syscoin block belongs to given superblock
         if (bytes32(computeMerkle(dblShaFlip(_syscoinBlockHeader), _syscoinBlockIndex, _syscoinBlockSiblings))
-            != getSuperblockMerkleRoot(_superblockHash)) {
+            != superblocks[_superblockHash].blocksMerkleRoot) {
             // Syscoin block is not in superblock
             emit RelayTransaction(bytes32(0), ERR_SUPERBLOCK);
             return ERR_SUPERBLOCK;
@@ -706,7 +686,7 @@ contract SyscoinSuperblocks is Initializable, SyscoinSuperblocksI, SyscoinErrorC
     ) private returns (uint) {
 
         //TODO: Verify superblock is in superblock's main chain
-        if (!isApproved(_txsuperblockHash) || !inMainChain(_txsuperblockHash)) {
+        if (!isApproved(_txsuperblockHash)) {
             emit VerifyTransaction(bytes32(_txHash), ERR_CHAIN);
             return (ERR_CHAIN);
         }
@@ -786,17 +766,6 @@ contract SyscoinSuperblocks is Initializable, SyscoinSuperblocksI, SyscoinErrorC
         return superblocks[superblockHash].height;
     }
 
-
-    // @dev - Return superblock ancestors' indexes
-    function getSuperblockAncestors(bytes32 superblockHash) public view returns (bytes32) {
-        return superblocks[superblockHash].ancestors;
-    }
-
-    // @dev - Return superblock blocks' Merkle root
-    function getSuperblockMerkleRoot(bytes32 _superblockHash) public view returns (bytes32) {
-        return superblocks[_superblockHash].blocksMerkleRoot;
-    }
-
     // @dev - Return superblock timestamp
     function getSuperblockTimestamp(bytes32 _superblockHash) external view returns (uint) {
         return superblocks[_superblockHash].timestamp;
@@ -825,87 +794,17 @@ contract SyscoinSuperblocks is Initializable, SyscoinSuperblocksI, SyscoinErrorC
         return superblocks[bestSuperblock].height;
     }
 
-    // @dev - write `_fourBytes` into `_word` starting from `_position`
-    // This is useful for writing 32bit ints inside one 32 byte word
-    //
-    // @param _word - information to be partially overwritten
-    // @param _position - position to start writing from
-    // @param _eightBytes - information to be written
-    function writeUint32(bytes32 _word, uint _position, uint32 _fourBytes) private pure returns (bytes32) {
-        bytes32 result;
-        assembly {
-            let pointer := mload(0x40)
-            mstore(pointer, _word)
-            mstore8(add(pointer, _position), byte(28, _fourBytes))
-            mstore8(add(pointer, add(_position,1)), byte(29, _fourBytes))
-            mstore8(add(pointer, add(_position,2)), byte(30, _fourBytes))
-            mstore8(add(pointer, add(_position,3)), byte(31, _fourBytes))
-            result := mload(pointer)
-        }
-        return result;
-    }
-
-    uint constant ANCESTOR_STEP = 5;
-    uint constant NUM_ANCESTOR_DEPTHS = 8;
-
-    // @dev - Update ancestor to the new height
-    function updateAncestors(bytes32 ancestors, uint32 index, uint height) private pure returns (bytes32) {
-        uint step = ANCESTOR_STEP;
-        ancestors = writeUint32(ancestors, 0, index);
-        uint i = 1;
-        while (i<NUM_ANCESTOR_DEPTHS && (height % step == 1)) {
-            ancestors = writeUint32(ancestors, 4*i, index);
-            step *= ANCESTOR_STEP;
-            ++i;
-        }
-        return ancestors;
-    }
-
-    // @dev - Return ancestor at given index
-    function getSuperblockAncestor(bytes32 superblockHash, uint index) private view returns (bytes32) {
-        bytes32 ancestors = superblocks[superblockHash].ancestors;
-        uint32 ancestorsIndex =
-            uint32(uint8(ancestors[4*index + 0])) * 0x1000000 +
-            uint32(uint8(ancestors[4*index + 1])) * 0x10000 +
-            uint32(uint8(ancestors[4*index + 2])) * 0x100 +
-            uint32(uint8(ancestors[4*index + 3])) * 0x1;
-        return indexSuperblock[ancestorsIndex];
-    }
-
-    // dev - returns depth associated with an ancestor index; applies to any superblock
-    //
-    // @param _index - index of ancestor to be looked up; an integer between 0 and 7
-    // @return - depth corresponding to said index, i.e. 5**index
-    function getAncDepth(uint _index) private pure returns (uint) {
-        return ANCESTOR_STEP**(uint(_index));
-    }
-
     // @dev - return superblock hash at a given height in superblock main chain
     //
     // @param _height - superblock height
     // @return - hash corresponding to block of height _height
-    function getSuperblockAt(uint _height) public view returns (bytes32) {
+    function getSuperblockAt(uint _height) external view returns (bytes32) {
         bytes32 superblockHash = bestSuperblock;
-        uint index = NUM_ANCESTOR_DEPTHS - 1;
 
         while (getSuperblockHeight(superblockHash) > _height) {
-            while (getSuperblockHeight(superblockHash) - _height < getAncDepth(index) && index > 0) {
-                index -= 1;
-            }
-            superblockHash = getSuperblockAncestor(superblockHash, index);
+            superblockHash = superblocks[superblockHash].parentId;
         }
 
         return superblockHash;
-    }
-
-    // @dev - Checks if a superblock is in superblock main chain
-    //
-    // @param _blockHash - hash of the block being searched for in the main chain
-    // @return - true if the block identified by _blockHash is in the main chain,
-    // false otherwise
-    function inMainChain(bytes32 _superblockHash) private view returns (bool) {
-        uint height = getSuperblockHeight(_superblockHash);
-        if (height == 0) return false;
-        return (getSuperblockAt(height) == _superblockHash);
     }
 }

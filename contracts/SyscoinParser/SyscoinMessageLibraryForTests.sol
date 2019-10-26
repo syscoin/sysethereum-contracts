@@ -30,10 +30,6 @@ contract SyscoinMessageLibraryForTests {
         return mant * 256**(exp - 3);
     }
 
-    function concatHashPublic(uint tx1, uint tx2) public pure returns (uint) {
-        return SyscoinMessageLibrary.concatHash(tx1, tx2);
-    }
-
     function makeMerklePublic(bytes32[] memory hashes2) public pure returns (bytes32) {
         return SyscoinMessageLibrary.makeMerkle(hashes2);
     }

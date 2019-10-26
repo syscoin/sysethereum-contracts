@@ -126,10 +126,6 @@ contract SyscoinClaimManager is Initializable, SyscoinDepositsManager, SyscoinEr
         return claim.bondedDeposits[account];
     }
 
-    function getDeposit(address account) external view returns (uint) {
-        return deposits[account];
-    }
-
     // @dev – unlocks a user's bonded deposits from a claim.
     // @param superblockHash – claim id.
     // @param account – user's address.
@@ -419,35 +415,29 @@ contract SyscoinClaimManager is Initializable, SyscoinDepositsManager, SyscoinEr
         }
 
         uint height = trustedSuperblocks.getSuperblockHeight(superblockHash);
-        bytes32 id = trustedSuperblocks.getBestSuperblock();
-        if (trustedSuperblocks.getSuperblockHeight(id) < height + superblockConfirmations) {
-            emit ErrorClaim(superblockHash, ERR_SUPERBLOCK_MISSING_CONFIRMATIONS);
+
+        if (height > trustedSuperblocks.getChainHeight()) {
+            emit ErrorClaim(superblockHash, ERR_SUPERBLOCK_BAD_BLOCKHEIGHT);
             return false;
         }
 
-        id = trustedSuperblocks.getSuperblockAt(height);
+        SyscoinSuperblocksI.Status status = trustedSuperblocks.getSuperblockStatus(superblockHash);
 
-        if (id != superblockHash) {
-            SyscoinSuperblocksI.Status status = trustedSuperblocks.getSuperblockStatus(superblockHash);
-
-            if (status != SyscoinSuperblocksI.Status.SemiApproved) {
-                emit ErrorClaim(superblockHash, ERR_SUPERBLOCK_BAD_STATUS);
-                return false;
-            }
-
-            if (!claim.decided) {
-                emit ErrorClaim(superblockHash, ERR_SUPERBLOCK_CLAIM_DECIDED);
-                return false;
-            }
-
-            uint err = trustedSuperblocks.invalidate(superblockHash, msg.sender);
-            require(err == ERR_SUPERBLOCK_OK);
-            emit SuperblockClaimFailed(superblockHash, claim.submitter);
-            doPayChallenger(superblockHash, claim);
-            return true;
+        if (status != SyscoinSuperblocksI.Status.SemiApproved) {
+            emit ErrorClaim(superblockHash, ERR_SUPERBLOCK_BAD_STATUS);
+            return false;
         }
 
-        return false;
+        if (!claim.decided) {
+            emit ErrorClaim(superblockHash, ERR_SUPERBLOCK_CLAIM_DECIDED);
+            return false;
+        }
+
+        uint err = trustedSuperblocks.invalidate(superblockHash, msg.sender);
+        require(err == ERR_SUPERBLOCK_OK);
+        emit SuperblockClaimFailed(superblockHash, claim.submitter);
+        doPayChallenger(superblockHash, claim);
+        return true;
     }
 
     // @dev – called when a battle session has ended.
@@ -548,19 +538,5 @@ contract SyscoinClaimManager is Initializable, SyscoinDepositsManager, SyscoinEr
     function getClaimChallenger(bytes32 superblockHash) external view returns (address) {
         SuperblockClaim storage claim = claims[superblockHash];
         return claim.challenger;
-    }
-    
-    function getSuperblockInfo(bytes32 superblockHash) private view returns (
-        bytes32 _blocksMerkleRoot,
-        uint _timestamp,
-        uint _mtpTimestamp,
-        bytes32 _lastHash,
-        uint32 _lastBits,
-        bytes32 _parentId,
-        address _submitter,
-        SyscoinSuperblocksI.Status _status,
-        uint32 _height
-    ) {
-        return trustedSuperblocks.getSuperblock(superblockHash);
     }
 }

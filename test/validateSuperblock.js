@@ -151,9 +151,10 @@ contract('validateSuperblocks', (accounts) => {
       assert.equal(result.events.SubmitterConvicted.returnValues.err, '50059');
 
       await utils.blockchainTimeoutSeconds(2*utils.SUPERBLOCK_OPTIONS_LOCAL.TIMEOUT);
-      result = await battleManager.methods.timeout(battleSessionId).send({ from: challenger, gas: 300000 });
       // already convicted
-      assert.ok(Object.keys(result.events).length == 0);
+      await truffleAssert.reverts(
+        battleManager.methods.timeout(battleSessionId).send({ from: challenger, gas: 300000 })
+      );
 
       result = await claimManager.methods.checkClaimFinished(proposedSuperblockHash).send({ from: challenger, gas: 300000 });
       assert.ok(result.events.SuperblockClaimFailed, 'Superblock rejected');

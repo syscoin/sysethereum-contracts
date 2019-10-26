@@ -8,30 +8,22 @@ import "@openzeppelin/upgrades/contracts/Initializable.sol";
 // @dev - Manages a battle session between superblock submitter and challenger
 contract SyscoinBattleManager is Initializable, SyscoinErrorCodes {
 
-    enum ChallengeState {
-        Unchallenged,             // Unchallenged submission
-        Challenged                // Claims was challenged
-    }
-
     // For verifying Syscoin difficulty
-    uint constant TARGET_TIMESPAN =  21600; 
+    uint constant TARGET_TIMESPAN =  21600;
     uint constant TARGET_TIMESPAN_MIN = 17280; // TARGET_TIMESPAN * (8/10);
     uint constant TARGET_TIMESPAN_MAX = 27000; // TARGET_TIMESPAN * (10/8);
     uint constant TARGET_TIMESPAN_ADJUSTMENT =  360;  // 6 hour
     uint constant POW_LIMIT =    0x00000fffffffffffffffffffffffffffffffffffffffffffffffffffffffffff;
-    
+
     struct BattleSession {
-        bytes32 id;
         bytes32 superblockHash;
         address submitter;
         address challenger;
         uint lastActionTimestamp;         // Last action timestamp
-        ChallengeState challengeState;    // Claim state
-        uint32 prevSubmitBits;
         bytes32 prevSubmitBlockhash;
         bytes32[] merkleRoots;            // interim merkle roots to recreate final root hash on last set of headers
     }
-   // AuxPoW block fields
+    // AuxPoW block fields
     struct AuxPoW {
         uint blockHash;
 
@@ -85,11 +77,6 @@ contract SyscoinBattleManager is Initializable, SyscoinErrorCodes {
         _;
     }
 
-    modifier onlyClaimant(bytes32 sessionId) {
-        require(msg.sender == sessions[sessionId].submitter);
-        _;
-    }
-
     modifier onlyChallenger(bytes32 sessionId) {
         require(msg.sender == sessions[sessionId].challenger);
         _;
@@ -122,17 +109,14 @@ contract SyscoinBattleManager is Initializable, SyscoinErrorCodes {
         external onlyFrom(address(trustedSyscoinClaimManager)) returns (bytes32) {
         bytes32 sessionId = keccak256(abi.encode(superblockHash, msg.sender, challenger));
         BattleSession storage session = sessions[sessionId];
-        if(session.id != 0x0){
-            revert();
-        }
-        session.id = sessionId;
+
+        require(session.submitter == address(0));
+
         session.superblockHash = superblockHash;
         session.submitter = submitter;
         session.challenger = challenger;
         session.merkleRoots.length = 0;
         session.lastActionTimestamp = block.timestamp;
-        session.challengeState = ChallengeState.Challenged;
-
 
         emit NewBattle(superblockHash, sessionId, submitter, challenger);
         return sessionId;
@@ -378,8 +362,6 @@ contract SyscoinBattleManager is Initializable, SyscoinErrorCodes {
         }
     }
 
-
-
     // @dev - For a valid proof, returns the root of the Merkle tree.
     //
     // @param _txHash - transaction hash
@@ -388,30 +370,37 @@ contract SyscoinBattleManager is Initializable, SyscoinErrorCodes {
     // @return - Merkle tree root of the block the transaction belongs to if the proof is valid,
     // garbage if it's invalid
     function computeMerkle(uint _txHash, uint _txIndex, uint[] memory _siblings) private pure returns (uint) {
-        uint resultHash = _txHash;
-        uint i = 0;
-        while (i < _siblings.length) {
-            uint proofHex = _siblings[i];
+        
+        uint length = _siblings.length;
+        uint i;
+        for (i = 0; i < length; i++) {
+            _siblings[i] = flip32Bytes(_siblings[i]);
+        }
 
-            uint sideOfSiblings = _txIndex % 2;  // 0 means _siblings is on the right; 1 means left
+        i = 0;
+        uint resultHash = flip32Bytes(_txHash);        
+
+        while (i < length) {
+            uint proofHex = _siblings[i];
 
             uint left;
             uint right;
-            if (sideOfSiblings == 1) {
+            if (_txIndex % 2 == 1) { // 0 means _siblings is on the right; 1 means left
                 left = proofHex;
                 right = resultHash;
-            } else if (sideOfSiblings == 0) {
+            } else {
                 left = resultHash;
                 right = proofHex;
             }
-            resultHash = concatHash(left, right);
+            resultHash = uint(sha256(abi.encodePacked(sha256(abi.encodePacked(left, right)))));
 
             _txIndex /= 2;
             i += 1;
         }
 
-        return resultHash;
+        return flip32Bytes(resultHash);
     }
+
     // @dev - convert an unsigned integer from little-endian to big-endian representation
     //
     // @param _input - little-endian value
@@ -479,19 +468,7 @@ contract SyscoinBattleManager is Initializable, SyscoinErrorCodes {
         return computeMerkle(_blockHash,
                              _ap.syscoinHashIndex,
                              _ap.chainMerkleProof);
-    }
-
-    // @dev - Helper function for Merkle root calculation.
-    // Given two sibling nodes in a Merkle tree, calculate their parent.
-    // Concatenates hashes `_tx1` and `_tx2`, then hashes the result.
-    //
-    // @param _tx1 - Merkle node (either root or internal node)
-    // @param _tx2 - Merkle node (either root or internal node), has to be `_tx1`'s sibling
-    // @return - `_tx1` and `_tx2`'s parent, i.e. the result of concatenating them,
-    // hashing that twice and flipping the bytes.
-    function concatHash(uint _tx1, uint _tx2) private pure returns (uint) {
-        return flip32Bytes(uint(sha256(abi.encodePacked(sha256(abi.encodePacked(flip32Bytes(_tx1), flip32Bytes(_tx2)))))));
-    }
+    }    
 
     // @dev - checks if a merge-mined block's Merkle proofs are correct,
     // i.e. Syscoin block hash is in coinbase Merkle tree
@@ -557,38 +534,7 @@ contract SyscoinBattleManager is Initializable, SyscoinErrorCodes {
         uint mant = _bits & 0xffffff;
         return mant * 256**(exp - 3);
     }
-    // @dev - Verify block header
-    // @param _blockHeaderBytes - array of bytes with the block header
-    // @param _pos - starting position of the block header
-    // @return - [ErrorCode, BlockHeader, position]
-    function verifyBlockHeader(bytes memory _blockHeaderBytes, uint _pos) private view returns (uint, BlockHeader memory, uint) {
-        BlockHeader memory blockHeader = parseHeaderBytes(_blockHeaderBytes, _pos);
-        uint target = targetFromBits(blockHeader.bits);
-        uint blockHash = uint(blockHeader.blockHash);
-        if (isMergeMined(_blockHeaderBytes, _pos)) {
-            AuxPoW memory ap = parseAuxPoW(_blockHeaderBytes, _pos);
-            if (ap.blockHash > target) {
-                return (ERR_PROOF_OF_WORK_AUXPOW, blockHeader,0);
-            }
-
-            uint auxPoWCode = checkAuxPoW(blockHash, ap);
-            if (auxPoWCode != 1) {
-                return (auxPoWCode, blockHeader,0);
-            }
-            return (0, blockHeader, ap.pos);
-        } else {
-            if (blockHash > target) {
-                return (ERR_PROOF_OF_WORK, blockHeader,0);
-            }
-            return (0, blockHeader, _pos+80);
-        }
-    }
-    function getLowerBoundDifficultyTarget() private pure returns (uint) {
-        return TARGET_TIMESPAN_MIN;
-    }
-    function getUpperBoundDifficultyTarget() private pure returns (uint) {
-        return TARGET_TIMESPAN_MAX;
-    }
+    
     // @param _actualTimespan - time elapsed from previous block creation til current block creation;
     // i.e., how much time it took to mine the current block
     // @param _bits - previous block header difficulty (in bits)
@@ -673,78 +619,121 @@ contract SyscoinBattleManager is Initializable, SyscoinErrorCodes {
     function doRespondBlockHeaders(
         BattleSession storage session,
         SyscoinSuperblocksI.SuperblockInfo memory superblockInfo,
-        bytes memory blockHeaders,
-        uint numHeaders
-    ) private returns (uint, BlockHeader[] memory ) {
-        BlockHeader[] memory myEmptyArray;
-        if (session.challengeState == ChallengeState.Challenged) {
-            uint pos = 0;
-            uint err;
+        bytes32 merkleRoot,
+        BlockHeader memory lastHeader
+    ) private returns (uint) {
+        if (session.merkleRoots.length == 3 || net == Network.REGTEST) {
+            bytes32[] memory merkleRoots = new bytes32[](net != Network.REGTEST ? 4 : 1);
             uint i;
-            bytes32[] memory blockHashes = new bytes32[](numHeaders);
-            BlockHeader[] memory blockHeadersParsed = new BlockHeader[](numHeaders);
-            for (i = 0; i < blockHeadersParsed.length; i++){
-                (err, blockHeadersParsed[i], pos) = verifyBlockHeader(blockHeaders, pos);
-                if (err != ERR_SUPERBLOCK_OK) {
-                    return (err, myEmptyArray);
-                }
-                blockHashes[i] = blockHeadersParsed[i].blockHash;
+            for (i = 0; i < session.merkleRoots.length; i++) {
+                merkleRoots[i] = session.merkleRoots[i];
             }
-            if(session.merkleRoots.length == 3 || net != Network.MAINNET){
-                BlockHeader memory lastHeader = blockHeadersParsed[blockHeadersParsed.length-1];
-                bytes32[] memory merkleRoots = new bytes32[](net == Network.MAINNET? 4:1);
-                for (i = 0; i < session.merkleRoots.length; i++){
-                    merkleRoots[i] = session.merkleRoots[i];
-                }
-                merkleRoots[i] = makeMerkle(blockHashes);
-                if (superblockInfo.blocksMerkleRoot != makeMerkle(merkleRoots))
-                    return (ERR_SUPERBLOCK_INVALID_MERKLE, myEmptyArray);
-
-                // if you have the last set of headers we can enfoce checks against the end
-                // ensure the last block's timestamp matches the superblock's proposed timestamp
-                if(superblockInfo.timestamp != lastHeader.timestamp)
-                    return (ERR_SUPERBLOCK_INVALID_TIMESTAMP, myEmptyArray);
-                // ensure last headers hash matches the last hash of the superblock
-                if(lastHeader.blockHash != superblockInfo.lastHash)
-                    return (ERR_SUPERBLOCK_HASH_SUPERBLOCK, myEmptyArray);
-
+            merkleRoots[i] = merkleRoot;
+            if (superblockInfo.blocksMerkleRoot != makeMerkle(merkleRoots)) {
+                return ERR_SUPERBLOCK_INVALID_MERKLE;
             }
-            else
-                session.merkleRoots.push(makeMerkle(blockHashes));
 
-            return (ERR_SUPERBLOCK_OK, blockHeadersParsed);
+            // if you have the last set of headers we can enfoce checks against the end
+            // ensure the last block's timestamp matches the superblock's proposed timestamp
+            if (superblockInfo.timestamp != lastHeader.timestamp) {
+                return ERR_SUPERBLOCK_INVALID_TIMESTAMP;
+            }
+            // ensure last headers hash matches the last hash of the superblock
+            if (lastHeader.blockHash != superblockInfo.lastHash) {
+                return ERR_SUPERBLOCK_HASH_SUPERBLOCK;
+            }
+        } else {
+            session.merkleRoots.push(merkleRoot);
         }
-        return (ERR_SUPERBLOCK_BAD_STATUS, myEmptyArray);
+
+        return ERR_SUPERBLOCK_OK;
     }
+
     function respondBlockHeaders (
         bytes32 sessionId,
-        bytes calldata blockHeaders,
+        bytes memory blockHeaders,
         uint numHeaders
-        ) external onlyClaimant(sessionId) {
+    ) public {
         BattleSession storage session = sessions[sessionId];
-        if(net == Network.MAINNET){
-            if((session.merkleRoots.length <= 2 && numHeaders != 16) ||
-            (session.merkleRoots.length == 3 && numHeaders != 12))
+        address submitter = session.submitter;
+
+        require(msg.sender == submitter);
+
+        uint merkleRootsLen = session.merkleRoots.length;
+
+        if (net != Network.REGTEST) {
+            if ((merkleRootsLen <= 2 && numHeaders != 16) || (merkleRootsLen == 3 && numHeaders != 12)) {
                 revert();
+            }
         }
+
         SyscoinSuperblocksI.SuperblockInfo memory superblockInfo;
-        (superblockInfo.blocksMerkleRoot, superblockInfo.timestamp,superblockInfo.mtpTimestamp,superblockInfo.lastHash,superblockInfo.lastBits,superblockInfo.parentId,,,superblockInfo.height) = getSuperblockInfo(session.superblockHash);
-        (uint err, BlockHeader[] memory blockHeadersParsed ) = doRespondBlockHeaders(session, superblockInfo, blockHeaders, numHeaders);
+        bytes32 superblockHash = session.superblockHash;
+        (superblockInfo.blocksMerkleRoot, superblockInfo.timestamp,superblockInfo.mtpTimestamp,superblockInfo.lastHash,superblockInfo.lastBits,superblockInfo.parentId,,,superblockInfo.height) =
+            trustedSuperblocks.getSuperblock(superblockHash);
+
+        uint pos = 0;
+        bytes32[] memory blockHashes = new bytes32[](numHeaders);
+        BlockHeader[] memory parsedBlockHeaders = new BlockHeader[](numHeaders);
+
+        uint err = ERR_SUPERBLOCK_OK;
+
+        for (uint i = 0; i < parsedBlockHeaders.length; i++){
+            parsedBlockHeaders[i] = parseHeaderBytes(blockHeaders, pos);
+            uint target = targetFromBits(parsedBlockHeaders[i].bits);
+
+            if (isMergeMined(blockHeaders, pos)) {
+                AuxPoW memory ap = parseAuxPoW(blockHeaders, pos);
+                if (ap.blockHash > target) {
+                    err = ERR_PROOF_OF_WORK_AUXPOW;
+                    break;
+                }
+
+                uint auxPoWCode = checkAuxPoW(uint(parsedBlockHeaders[i].blockHash), ap);
+                if (auxPoWCode != 1) {
+                    err = auxPoWCode;
+                    break;
+                }
+
+                pos = ap.pos;
+            } else {
+                if (uint(parsedBlockHeaders[i].blockHash) > target) {
+                    err = ERR_PROOF_OF_WORK;
+                    break;
+                }
+
+                pos = pos+80;
+            }
+
+            blockHashes[i] = parsedBlockHeaders[i].blockHash;
+        }
+
         if (err != ERR_SUPERBLOCK_OK) {
-            convictSubmitter(sessionId, err);
-        }else{
+            convictSubmitter(sessionId, superblockHash, submitter, session.challenger, err);
+            return;
+        }
+
+        err = doRespondBlockHeaders(
+            session,
+            superblockInfo,
+            makeMerkle(blockHashes),
+            parsedBlockHeaders[parsedBlockHeaders.length-1]
+        );
+        if (err != ERR_SUPERBLOCK_OK) {
+            convictSubmitter(sessionId, superblockHash, submitter, session.challenger, err);
+        } else {
             session.lastActionTimestamp = block.timestamp;
-            err = validateHeaders(session, superblockInfo, blockHeadersParsed);
+            err = validateHeaders(session, superblockInfo, parsedBlockHeaders);
             if (err != ERR_SUPERBLOCK_OK) {
-                convictSubmitter(sessionId, err);
+                convictSubmitter(sessionId, superblockHash, submitter, session.challenger, err);
                 return;
             }
             // only convict challenger at the end if all headers have been provided
-            if(numHeaders == 12 || net != Network.MAINNET){
-                convictChallenger(sessionId, err);
+            if(numHeaders == 12 || net == Network.REGTEST){
+                convictChallenger(sessionId, superblockHash, submitter, session.challenger, err);
                 return;
             }
-            emit RespondBlockHeaders(session.superblockHash, sessionId, session.merkleRoots.length, session.submitter);
+            emit RespondBlockHeaders(superblockHash, sessionId, merkleRootsLen + 1, submitter);
         }
     }
     // @dev - Converts a bytes of size 4 to uint32,
@@ -765,32 +754,39 @@ contract SyscoinBattleManager is Initializable, SyscoinErrorCodes {
     function isMergeMined(bytes memory _rawBytes, uint pos) private pure returns (bool) {
         return bytesToUint32Flipped(_rawBytes, pos) & VERSION_AUXPOW != 0;
     }
+    
     // @dev - Evaluate the merkle root
     //
     // Given an array of hashes it calculates the
     // root of the merkle tree.
     //
     // @return root of merkle tree
-    function makeMerkle(bytes32[] memory hashes2) private pure returns (bytes32) {
-        bytes32[] memory hashes = hashes2;
+    function makeMerkle(bytes32[] memory hashes) private pure returns (bytes32) {
         uint length = hashes.length;
+
         if (length == 1) return hashes[0];
         require(length > 0, "Must provide hashes");
+
         uint i;
+        for (i = 0; i < length; i++) {
+            hashes[i] = bytes32(flip32Bytes(uint(hashes[i])));
+        }
+
         uint j;
         uint k;
-        k = 0;
+
         while (length > 1) {
             k = 0;
             for (i = 0; i < length; i += 2) {
-                j = i+1<length ? i+1 : length-1;
-                hashes[k] = bytes32(concatHash(uint(hashes[i]), uint(hashes[j])));
+                j = (i + 1 < length) ? i + 1 : length - 1;
+                hashes[k] = sha256(abi.encodePacked(sha256(abi.encodePacked(hashes[i], hashes[j]))));
                 k += 1;
             }
             length = k;
         }
-        return hashes[0];
+        return bytes32(flip32Bytes(uint(hashes[0])));
     }
+
     // @dev - Validate prev bits, prev hash of block header
     function checkBlocks(BattleSession storage session, BlockHeader[] memory blockHeadersParsed, uint32 prevBits) private view returns (uint) {
         for(uint i = blockHeadersParsed.length-1;i>0;i--){
@@ -798,19 +794,21 @@ contract SyscoinBattleManager is Initializable, SyscoinErrorCodes {
             BlockHeader memory prevHeader = blockHeadersParsed[i-1];
             // except for the last header except all the bits to match
             // last chunk has 12 headers which is the only time we care to skip the last header
-            if(blockHeadersParsed.length != 12 || i < (blockHeadersParsed.length-1)){
-                if(prevBits != thisHeader.bits || thisHeader.bits != prevHeader.bits)
+            if (blockHeadersParsed.length != 12 || i < (blockHeadersParsed.length-1)){
+                if (prevBits != thisHeader.bits)
                     return ERR_SUPERBLOCK_BITS_PREVBLOCK;
             }
             if(prevHeader.blockHash != thisHeader.prevBlock)
                 return ERR_SUPERBLOCK_HASH_PREVBLOCK;
         }
+
+        if (prevBits != blockHeadersParsed[0].bits) {
+            return ERR_SUPERBLOCK_BITS_PREVBLOCK;
+        }
+
         // enforce linking against previous submitted batch of blocks
-        if(session.merkleRoots.length >= 2){
-            BlockHeader memory firstHeader = blockHeadersParsed[0];
-            if(session.prevSubmitBits != prevBits)
-                return ERR_SUPERBLOCK_BITS_INTERIM_PREVBLOCK;
-            if(session.prevSubmitBlockhash != firstHeader.prevBlock)
+        if (session.merkleRoots.length >= 2) {
+            if (session.prevSubmitBlockhash != blockHeadersParsed[0].prevBlock)
                 return ERR_SUPERBLOCK_HASH_INTERIM_PREVBLOCK;
         }
         return ERR_SUPERBLOCK_OK;
@@ -841,7 +839,8 @@ contract SyscoinBattleManager is Initializable, SyscoinErrorCodes {
     function validateHeaders(BattleSession storage session, SyscoinSuperblocksI.SuperblockInfo memory superblockInfo, BlockHeader[] memory blockHeadersParsed) private returns (uint) {
         SyscoinSuperblocksI.SuperblockInfo memory prevSuperblockInfo;
         BlockHeader memory lastHeader = blockHeadersParsed[blockHeadersParsed.length-1];
-        (, prevSuperblockInfo.timestamp,prevSuperblockInfo.mtpTimestamp,prevSuperblockInfo.lastHash,prevSuperblockInfo.lastBits,, ,,) = getSuperblockInfo(superblockInfo.parentId);
+        (,,prevSuperblockInfo.mtpTimestamp,prevSuperblockInfo.lastHash,prevSuperblockInfo.lastBits,,,,) =
+            trustedSuperblocks.getSuperblock(superblockInfo.parentId);
         // for blocks 0 -> 16 we can check the first header
         if(session.merkleRoots.length <= 1){
             // ensure first headers prev block matches the last hash of the prev superblock
@@ -856,7 +855,6 @@ contract SyscoinBattleManager is Initializable, SyscoinErrorCodes {
         // for every batch of blocks up to the last one (at superblockDuration blocks we have all the headers so we can complete the game)
         if(blockHeadersParsed.length != 12){
             // set the last block header details in the session for subsequent batch of blocks to validate it connects to this header
-            session.prevSubmitBits = prevSuperblockInfo.lastBits;
             session.prevSubmitBlockhash = lastHeader.blockHash;
         }
         // once all the headers are received we can check merkle and enforce difficulty
@@ -874,7 +872,7 @@ contract SyscoinBattleManager is Initializable, SyscoinErrorCodes {
 
             // make sure every 6th superblock adjusts difficulty
             // calculate the new work from prevBits minus one as if its an adjustment we need to account for new bits, if not then just add one more prevBits work
-            if(net == Network.MAINNET){
+            if (net != Network.REGTEST) {
                 if (((superblockInfo.height-1) % 6) == 0) {
                     BlockHeader memory prevToLastHeader = blockHeadersParsed[blockHeadersParsed.length-2];
 
@@ -882,12 +880,14 @@ contract SyscoinBattleManager is Initializable, SyscoinErrorCodes {
                     // get 6 superblocks previous for second timestamp (for example block 360 has the timetamp 6 superblocks ago on second adjustment)
                     superblockInfo.timestamp = trustedSuperblocks.getSuperblockTimestamp(trustedSuperblocks.getSuperblockAt(superblockInfo.height - 6));
                     uint32 newBits = calculateDifficulty(prevToLastHeader.timestamp - superblockInfo.timestamp, prevSuperblockInfo.lastBits);
-                    // make sure difficulty adjustment is within bounds
-                    if(newBits < calculateDifficulty(getLowerBoundDifficultyTarget()-1, prevSuperblockInfo.lastBits) || newBits > calculateDifficulty(getUpperBoundDifficultyTarget()+1, prevSuperblockInfo.lastBits))
-                        return ERR_SUPERBLOCK_BAD_RETARGET;
+
                     // ensure bits of superblock match derived bits from calculateDifficulty
-                    if(superblockInfo.lastBits != newBits) {
+                    if (superblockInfo.lastBits != newBits) {
                         return ERR_SUPERBLOCK_BITS_SUPERBLOCK;
+                    }
+                } else {
+                    if (superblockInfo.lastBits != prevSuperblockInfo.lastBits) {
+                        return ERR_SUPERBLOCK_BITS_LASTBLOCK;
                     }
                 }
 
@@ -904,27 +904,26 @@ contract SyscoinBattleManager is Initializable, SyscoinErrorCodes {
     // @dev - Trigger conviction if response is not received in time
     function timeout(bytes32 sessionId) external returns (uint) {
         BattleSession storage session = sessions[sessionId];
-        if (session.challengeState == ChallengeState.Challenged &&
-            (block.timestamp > session.lastActionTimestamp + superblockTimeout)) {
-            convictSubmitter(sessionId, ERR_SUPERBLOCK_TIMEOUT);
+        require(session.submitter != address(0));
+
+        if (block.timestamp > session.lastActionTimestamp + superblockTimeout) {
+            convictSubmitter(sessionId, session.superblockHash, session.submitter, session.challenger, ERR_SUPERBLOCK_TIMEOUT);
             return ERR_SUPERBLOCK_TIMEOUT;
         }
         return ERR_SUPERBLOCK_NO_TIMEOUT;
     }
 
     // @dev - To be called when a challenger is convicted
-    function convictChallenger(bytes32 sessionId, uint err) private {
-        BattleSession storage session = sessions[sessionId];
-        sessionDecided(sessionId, session.superblockHash, session.submitter, session.challenger);
-        emit ChallengerConvicted(session.superblockHash, sessionId, err, session.challenger);
+    function convictChallenger(bytes32 sessionId, bytes32 superblockHash, address submitter, address challenger, uint err) private {
+        trustedSyscoinClaimManager.sessionDecided(sessionId, superblockHash, submitter, challenger);
+        emit ChallengerConvicted(superblockHash, sessionId, err, challenger);
         disable(sessionId);
     }
 
     // @dev - To be called when a submitter is convicted
-    function convictSubmitter(bytes32 sessionId, uint err) private {
-        BattleSession storage session = sessions[sessionId];
-        sessionDecided(sessionId, session.superblockHash, session.challenger, session.submitter);
-        emit SubmitterConvicted(session.superblockHash, sessionId, err, session.submitter);
+    function convictSubmitter(bytes32 sessionId, bytes32 superblockHash, address submitter, address challenger, uint err) private {
+        trustedSyscoinClaimManager.sessionDecided(sessionId, superblockHash, challenger, submitter);
+        emit SubmitterConvicted(superblockHash, sessionId, err, submitter);
         disable(sessionId);
     }
 
@@ -934,7 +933,6 @@ contract SyscoinBattleManager is Initializable, SyscoinErrorCodes {
         delete sessions[sessionId];
     }
 
-
     // @dev - Check if a session's submitter did not respond before timeout
     function getSubmitterHitTimeout(bytes32 sessionId) external view returns (bool) {
         BattleSession storage session = sessions[sessionId];
@@ -942,40 +940,11 @@ contract SyscoinBattleManager is Initializable, SyscoinErrorCodes {
     }
     function getNumMerkleHashesBySession(bytes32 sessionId) external view returns (uint) {
         BattleSession memory session = sessions[sessionId];
-        if(session.id == 0x0)
+        if (session.submitter == address(0))
             return 0;
         return sessions[sessionId].merkleRoots.length;
     }
-    function getSessionChallengeState(bytes32 sessionId) external view returns (ChallengeState) {
-        return sessions[sessionId].challengeState;
-    }
-    // @dev - To be called when a battle sessions  was decided
-    function sessionDecided(bytes32 sessionId, bytes32 superblockHash, address winner, address loser) private {
-        trustedSyscoinClaimManager.sessionDecided(sessionId, superblockHash, winner, loser);
-    }
-
-    // @dev - Retrieve superblock information
-    function getSuperblockInfo(bytes32 superblockHash) private view returns (
-        bytes32 _blocksMerkleRoot,
-        uint _timestamp,
-        uint _mtpTimestamp,
-        bytes32 _lastHash,
-        uint32 _lastBits,
-        bytes32 _parentId,
-        address _submitter,
-        SyscoinSuperblocksI.Status _status,
-        uint32 _height
-    ) {
-        return trustedSuperblocks.getSuperblock(superblockHash);
-    }
-
-    // @dev - Verify whether a user has a certain amount of deposits or more
-    function hasDeposit(address who, uint amount) private view returns (bool) {
-        return trustedSyscoinClaimManager.getDeposit(who) >= amount;
-    }
-
-    // @dev – locks up part of a user's deposit into a claim.
-    function bondDeposit(bytes32 superblockHash, address account, uint amount) private returns (uint) {
-        return trustedSyscoinClaimManager.bondDeposit(superblockHash, account, amount);
+    function sessionExists(bytes32 sessionId) external view returns (bool) {
+        return sessions[sessionId].submitter != address(0);
     }
 }

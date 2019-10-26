@@ -11,9 +11,7 @@ interface SyscoinSuperblocksI {
         bytes32 lastHash;
         bytes32 parentId;
         address submitter;
-        bytes32 ancestors;
         uint32 lastBits;
-        uint32 index;
         uint32 height;
         Status status;
     }
@@ -54,6 +52,7 @@ interface SyscoinSuperblocksI {
     function semiApprove(bytes32 _superblockHash, address _validator) external returns (uint);
     function invalidate(bytes32 _superblockHash, address _validator) external returns (uint);
     function getBestSuperblock() external view returns (bytes32);
+    function getChainHeight() external view returns (uint);
     function getSuperblockHeight(bytes32 superblockHash) external view returns (uint32);
     function getSuperblockParentId(bytes32 _superblockHash) external view returns (bytes32);
     function getSuperblockStatus(bytes32 _superblockHash) external view returns (Status);
