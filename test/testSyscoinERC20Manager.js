@@ -17,7 +17,6 @@ const SyscoinERC20ManagerV1 = Contracts.getFromLocal('SyscoinERC20ManagerForTest
 
 var SyscoinERC20Asset = artifacts.require("./token/SyscoinERC20AssetForTests.sol");
 var LegacyERC20 = artifacts.require("./token/LegacyERC20ForTests.sol");
-var Set = artifacts.require('./token/Set.sol');
 
 const { expectRevert } = require('openzeppelin-test-helpers');
 

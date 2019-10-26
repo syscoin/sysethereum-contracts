@@ -64,32 +64,22 @@ contract('SyscoinSuperblocks', (accounts) => {
       hash = utils.makeMerkle(manyHashes);
       assert.equal(hash, "0xee712eefe9b4c9ecd39a71d45e975b83c9427070e54953559e78f45d2cbb03b3", 'Many hashes array');
     })
-    it('Merkle solidity', async () => {
-      hash = await superblocks.methods.makeMerkle(oneHash).call();
-      assert.equal(hash, "0x57a8a9a8de6131bf61f5d385318c10e29a5d826eed6adbdbeedc3a0539908ed4", 'One hash array');
-      hash = await superblocks.methods.makeMerkle(twoHashes).call();
-      assert.equal(hash, "0xae1c24c61efe6b378017f6055b891dd62747deb23a7939cffe78002f1cfb79ab", 'Two hashes array');
-      hash = await superblocks.methods.makeMerkle(threeHashes).call();
-      assert.equal(hash, "0xe1c52ec93d4f4f83783aeede9e6b84b5ded007ec9591b521d6e5e4b6d9512d43", 'Three hashes array');
-      hash = await superblocks.methods.makeMerkle(manyHashes).call();
-      assert.equal(hash, "0xee712eefe9b4c9ecd39a71d45e975b83c9427070e54953559e78f45d2cbb03b3", 'Many hashes array');
-    });
     it('Superblock id', async () => {
       const merkleRoot = "0xbc89818e52613f36d6cea2edba2c9417f01ee910250dbd85a8647a92e655996b";
-      const accumulatedWork = "0x0000000000000000000000000000000000000000000000000000000000000023";
       const timestamp = "0x000000000000000000000000000000000000000000000000000000005ada05b9";
+      const mtpTimestamp = timestamp;
       const lastHash = "0xe0dd609916339ee7e12272cf5467cf5915d2d41a16816e7118116fb281337367";
       const parentId = "0xe70a134b97a4381e5b6c1f4ae0e1e3726b7284bf03506afacebf92401e255e97";
       const lastBits = "0x00000000";
       const superblockHash = utils.calcSuperblockHash(
         merkleRoot,
-        accumulatedWork,
         timestamp,
+        mtpTimestamp,
         lastHash,
         lastBits,
         parentId
       );
-      const id = await superblocks.methods.calcSuperblockHash(merkleRoot, accumulatedWork, timestamp, lastHash, lastBits, parentId).call();
+      const id = await superblocks.methods.calcSuperblockHash(merkleRoot, timestamp, mtpTimestamp, lastHash, lastBits, parentId).call();
       assert.equal(id, superblockHash, "Superblock hash should match");
     });
   });
@@ -99,8 +89,8 @@ contract('SyscoinSuperblocks', (accounts) => {
     let id2;
     let id3;
     const merkleRoot = utils.makeMerkle(['0x0000000000000000000000000000000000000000000000000000000000000000']);
-    const accumulatedWork = 1;
     const timestamp = 1;
+    const mtptimestamp = 1;
     const lastBits = 0;
     const lastHash = '0x0000000000000000000000000000000000000000000000000000000000000000';
     const parentHash = '0x0000000000000000000000000000000000000000000000000000000000000000';
@@ -111,23 +101,23 @@ contract('SyscoinSuperblocks', (accounts) => {
       });
     });
     it('Initialized', async () => {
-      const result = await superblocks.methods.initialize(merkleRoot, accumulatedWork, timestamp, lastHash, lastBits, parentHash).send({ from: claimManager, gas: 300000 });
+      const result = await superblocks.methods.initialize(merkleRoot, timestamp, mtptimestamp, lastHash, lastBits, parentHash).send({ from: claimManager, gas: 300000 });
       assert.equal(result.events.NewSuperblock.event, 'NewSuperblock', 'New superblock proposed');
       id0 = result.events.NewSuperblock.returnValues.superblockHash;
     });
     it('Propose', async () => {
 
-      const result = await superblocks.methods.propose(merkleRoot, accumulatedWork, timestamp, lastHash, lastBits,id0, utils.ZERO_ADDRESS).send({ from: claimManager, gas: 300000 });
+      const result = await superblocks.methods.propose(merkleRoot, timestamp, mtptimestamp, lastHash, lastBits,id0, utils.ZERO_ADDRESS).send({ from: claimManager, gas: 300000 });
       assert.equal(result.events.NewSuperblock.event, 'NewSuperblock', 'New superblock proposed');
       id1 = result.events.NewSuperblock.returnValues.superblockHash;
     });
     // re-propose works but claimmanager will reject() if validation fails
     it('Re-propose', async () => {
-      const result = await superblocks.methods.propose(merkleRoot, accumulatedWork, timestamp, lastHash, lastBits,id0, utils.ZERO_ADDRESS).send({ from: claimManager, gas: 300000 });
+      const result = await superblocks.methods.propose(merkleRoot, timestamp, mtptimestamp, lastHash, lastBits,id0, utils.ZERO_ADDRESS).send({ from: claimManager, gas: 300000 });
       assert.equal(result.events.NewSuperblock.event, 'NewSuperblock', 'New superblock proposed');
     });
     it('Bad parent', async () => {
-      const result = await superblocks.methods.propose(merkleRoot, accumulatedWork, timestamp, lastHash, lastBits,"0x0", utils.ZERO_ADDRESS).send({ from: claimManager, gas: 300000 });
+      const result = await superblocks.methods.propose(merkleRoot, timestamp, mtptimestamp, lastHash, lastBits,"0x0", utils.ZERO_ADDRESS).send({ from: claimManager, gas: 300000 });
       assert.equal(result.events.ErrorSuperblock.event, 'ErrorSuperblock', 'Superblock parent does not exist');
     });
     it('Approve', async () => {
@@ -135,7 +125,7 @@ contract('SyscoinSuperblocks', (accounts) => {
       assert.equal(result.events.ApprovedSuperblock.event, 'ApprovedSuperblock', 'Superblock confirmed');
     });
     it('Propose bits', async () => {
-      const result = await superblocks.methods.propose(merkleRoot, accumulatedWork, timestamp, lastHash, lastBits,id1, utils.ZERO_ADDRESS).send({ from: claimManager, gas: 300000 });
+      const result = await superblocks.methods.propose(merkleRoot, timestamp, mtptimestamp, lastHash, lastBits,id1, utils.ZERO_ADDRESS).send({ from: claimManager, gas: 300000 });
       assert.equal(result.events.NewSuperblock.event, 'NewSuperblock', 'New superblock proposed');
       id2 = result.events.NewSuperblock.returnValues.superblockHash;
     });
@@ -156,7 +146,7 @@ contract('SyscoinSuperblocks', (accounts) => {
       assert.equal(result.events.ErrorSuperblock.event, 'ErrorSuperblock', 'Superblock cannot invalidate');
     });
     it('Propose tris', async () => {
-      const result = await superblocks.methods.propose(merkleRoot, accumulatedWork, timestamp, lastHash, lastBits,id2, utils.ZERO_ADDRESS).send({ from: claimManager, gas: 300000 });
+      const result = await superblocks.methods.propose(merkleRoot, timestamp, mtptimestamp, lastHash, lastBits,id2, utils.ZERO_ADDRESS).send({ from: claimManager, gas: 300000 });
       assert.equal(result.events.NewSuperblock.event, 'NewSuperblock', 'New superblock proposed');
       id3 = result.events.NewSuperblock.returnValues.superblockHash;
     });
@@ -179,8 +169,8 @@ contract('SyscoinSuperblocks', (accounts) => {
     let id2;
     let id3;
     const merkleRoot = utils.makeMerkle(['0x0000000000000000000000000000000000000000000000000000000000000000']);
-    const accumulatedWork = 0;
-    const timestamp = Math.floor((new Date()).getTime() / 1000);
+    const timestamp = Math.floor((new Date()).getTime() / 1000) - 10801;
+    const mtptimestamp = timestamp;
     const lastHash = '0x00';
     const lastBits = 0;
     const parentHash = '0x00';
@@ -191,15 +181,15 @@ contract('SyscoinSuperblocks', (accounts) => {
       });
     });
     it('Initialized', async () => {
-      const result = await superblocks.methods.initialize(merkleRoot, accumulatedWork, timestamp, lastHash, lastBits,parentHash).send({ from: claimManager, gas: 300000 });
+      const result = await superblocks.methods.initialize(merkleRoot, timestamp, mtptimestamp, lastHash, lastBits,parentHash).send({ from: claimManager, gas: 300000 });
       assert.equal(result.events.NewSuperblock.event, 'NewSuperblock', 'New superblock proposed');
       id0 = result.events.NewSuperblock.returnValues.superblockHash;
     });
     it('Propose', async () => {
-      let result = await superblocks.methods.propose(merkleRoot, accumulatedWork, timestamp, lastHash, lastBits, id0, utils.ZERO_ADDRESS).send({from: randomAddress, gas: 300000});
+      let result = await superblocks.methods.propose(merkleRoot, timestamp, mtptimestamp, lastHash, lastBits, id0, utils.ZERO_ADDRESS).send({from: randomAddress, gas: 300000});
       assert.equal(result.events.ErrorSuperblock.event, 'ErrorSuperblock', 'Only claimManager can propose');
 
-      result = await superblocks.methods.propose(merkleRoot, accumulatedWork, timestamp, lastHash, lastBits, id0, utils.ZERO_ADDRESS).send({ from: claimManager, gas: 300000 });
+      result = await superblocks.methods.propose(merkleRoot, timestamp, mtptimestamp, lastHash, lastBits, id0, utils.ZERO_ADDRESS).send({ from: claimManager, gas: 300000 });
       assert.equal(result.events.NewSuperblock.event, 'NewSuperblock', 'ClaimManager can propose');
       id1 = result.events.NewSuperblock.returnValues.superblockHash;
     });
@@ -211,7 +201,7 @@ contract('SyscoinSuperblocks', (accounts) => {
       assert.equal(result.events.ApprovedSuperblock.event, 'ApprovedSuperblock', 'Only claimManager can propose');
     });
     it('Challenge', async () => {
-      let result = await superblocks.methods.propose(merkleRoot, accumulatedWork, timestamp, lastHash, lastBits,id1, utils.ZERO_ADDRESS).send({ from: claimManager, gas: 300000 });
+      let result = await superblocks.methods.propose(merkleRoot, timestamp, mtptimestamp, lastHash, lastBits,id1, utils.ZERO_ADDRESS).send({ from: claimManager, gas: 300000 });
       assert.equal(result.events.NewSuperblock.event, 'NewSuperblock', 'ClaimManager can propose');
       id2 = result.events.NewSuperblock.returnValues.superblockHash;
 
@@ -232,7 +222,7 @@ contract('SyscoinSuperblocks', (accounts) => {
       assert.equal(result.events.ApprovedSuperblock.event, 'ApprovedSuperblock', 'Superblock confirmed');
     });
     it('Invalidate', async () => {
-      let result = await superblocks.methods.propose(merkleRoot, accumulatedWork, timestamp, lastHash, lastBits,id2, utils.ZERO_ADDRESS).send({ from: claimManager, gas: 300000 });
+      let result = await superblocks.methods.propose(merkleRoot, timestamp, mtptimestamp, lastHash, lastBits,id2, utils.ZERO_ADDRESS).send({ from: claimManager, gas: 300000 });
       assert.equal(result.events.NewSuperblock.event, 'NewSuperblock', 'New superblock proposed');
       id3 = result.events.NewSuperblock.returnValues.superblockHash;
 
@@ -244,65 +234,6 @@ contract('SyscoinSuperblocks', (accounts) => {
 
       result = await superblocks.methods.invalidate(id3, claimManager).send({ from: claimManager, gas: 300000 });
       assert.equal(result.events.InvalidSuperblock.event, 'InvalidSuperblock', 'Superblock invalidated');
-    });
-  });
-  describe('Test locator', () => {
-    let id0;
-    let id1;
-    let id2;
-    let id3;
-    const merkleRoot = utils.makeMerkle(['0x0000000000000000000000000000000000000000000000000000000000000000']);
-    const accumulatedWork = 0;
-    const timestamp = 1;
-    const lastBits = 0;
-    const lastHash = '0x0000000000000000000000000000000000000000000000000000000000000000';
-    const parentHash = '0x0000000000000000000000000000000000000000000000000000000000000000';
-    before(async () => {
-      superblocks = await this.project.createProxy(SyscoinSuperblocks, {
-        initMethod: 'init',
-        initArgs: [erc20Manager, claimManager]
-      });
-    });
-    it('Initialized', async () => {
-      const result = await superblocks.methods.initialize(merkleRoot, accumulatedWork, timestamp, lastHash, lastBits,parentHash).send({ from: claimManager, gas: 300000 });
-      assert.equal(result.events.NewSuperblock.event, 'NewSuperblock', 'New superblock proposed');
-      id0 = result.events.NewSuperblock.returnValues.superblockHash;
-    });
-    it('Verify locator', async () => {
-      let parentId;
-      parentId = id0;
-      let superblockHash;
-      let result;
-      let prevLocator;
-      let locator;
-      prevLocator = locator = await superblocks.methods.getSuperblockLocator().call();
-      const sblocks = {};
-      sblocks[0] = id0;
-      for(let work = 1; work < 30; ++work) {
-        result = await superblocks.methods.propose(merkleRoot, work, 0, lastHash, lastBits,parentId, utils.ZERO_ADDRESS).send({ from: claimManager, gas: 300000 });
-        assert.equal(result.events.NewSuperblock.event, 'NewSuperblock', 'ClaimManager can propose');
-        superblockHash = result.events.NewSuperblock.returnValues.superblockHash;
-
-        result = await superblocks.methods.confirm(superblockHash, claimManager).send({ from: claimManager, gas: 300000 });
-        assert.equal(result.events.ApprovedSuperblock.event, 'ApprovedSuperblock', 'Only claimManager can propose');
-
-        locator = await superblocks.methods.getSuperblockLocator().call();
-        assert.equal(locator[0], superblockHash, 'Position 0 current best superblock');
-        assert.equal(locator[1], parentId, 'Position 1 parent best superblock');
-        let step = 5;
-        // At index i we have superblockHash of height
-        // (bestSuperblock-1) - (bestSuperblock-1) % 5**(i-1)
-        for (let i=2; i<=8; ++i) {
-          let pos = work - 1 - (work - 1) % step;
-          assert.equal(locator[i], sblocks[pos], `Invalid superblock at ${i} ${step} ${pos}`);
-          step = step * 5;
-        }
-        if (work % 5 === 0) {
-          sblocks[work] = superblockHash;
-        }
-        parentId = superblockHash;
-        prevLocator = locator;
-      }
     });
   });
 });

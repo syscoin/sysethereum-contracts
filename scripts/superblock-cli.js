@@ -143,67 +143,35 @@ function statusToText(status) {
   return '--Status error--';
 }
 
-function challengeStateToText(state) {
-  const challengeStates = {
-    0: 'Unchallenged',
-    1: 'Challenged',
-    2: 'Merkle root hashes queried',
-    3: 'Merkle root hashes replied',
-    4: 'Block header queried',
-    5: 'Block header replied',
-    6: 'Superblock verification pending',
-    7: 'Superblock verified',
-    8: 'Superblock failed',
-  };
-  if (typeof challengeStates[state] !== 'undefined') {
-    return challengeStates[state];
-  }
-  return `--Invalid state (${state})--`;
-}
-
 async function displaySuperblocksStatus({ superblockHash, fromBlock, toBlock }) {
   try {
     const sb = await SyscoinSuperblocks.deployed();
     const cm = await SyscoinClaimManager.deployed();
     const bm = await SyscoinBattleManager.deployed();
 
-    const getBattleStatus = async (superblockHash, challenger) => {
-      const sessionId = await cm.getSession(superblockHash, challenger);
+    const getBattleStatus = async (superblockHash) => {
+      const sessionId = await cm.getSession(superblockHash);
       const [
-        id,
         superblockHash2,
         submitter,
         challenger2,
         lastActionTimestamp,
         lastActionClaimant,
-        lastActionChallenger,
-        actionsCounter,
-        countBlockHeaderQueries,
-        countBlockHeaderResponses,
-        challengeState,
       ] = await bm.sessions(sessionId);
       return {
         sessionId,
         battle: {
-          id,
           superblockHash: superblockHash2,
           submitter,
           challenger: challenger2,
           lastActionTimestamp,
           lastActionClaimant,
-          lastActionChallenger,
-          actionsCounter,
-          countBlockHeaderQueries,
-          countBlockHeaderResponses,
-          challengeState,
         },
       }
     };
 
-    const getBattles = async (superblockHash, challengers) => {
-      return Promise.all(challengers.map((challenger) => {
-        return getBattleStatus(superblockHash, challenger);
-      }));
+    const getBattles = async (superblockHash) => {
+      return getBattleStatus(superblockHash);
     };
 
     const getClaimInfo = async (superblockHash) => {
@@ -230,15 +198,12 @@ async function displaySuperblocksStatus({ superblockHash, fromBlock, toBlock }) 
     };
 
     const displayBattle = (battle) => {
-      console.log(`        Last action timestamp: ${new Date(battle.lastActionTimestamp * 1000)}`);
-      console.log(`        Last action: ${parseInt(battle.lastActionClaimant) > parseInt(battle.lastActionChallenger) ? 'claimant' : 'challenger'}`);
-      console.log(`        State: ${challengeStateToText(battle.challengeState)}`);
+      console.log(`        Last action timestamp: ${new Date(battle.lastActionTimestamp * 1000)}`);      
     };
 
     const displaySuperblock = async (superblockHash) => {
       const [
         blocksMerkleRoot,
-        accumulatedWork,
         timestamp,
         lastHash,
         parentId,
@@ -249,7 +214,7 @@ async function displaySuperblocksStatus({ superblockHash, fromBlock, toBlock }) 
       ] = await sb.getSuperblock(superblockHash);
       const challengers = await cm.getClaimChallengers(superblockHash);
       const claim = await getClaimInfo(superblockHash);
-      const battles = await getBattles(superblockHash, challengers);
+      const battles = await getBattles(superblockHash);
       console.log(`Superblock: ${superblockHash}`);
       console.log(`Submitter: ${submitter}`);
       // console.log(`Block: ${blockNumber}, hash ${blockHash}`);
@@ -270,13 +235,12 @@ async function displaySuperblocksStatus({ superblockHash, fromBlock, toBlock }) 
         challengers.forEach((challenger, idx) => {
           console.log('    ----------');
           console.log(`    Challenger: ${challenger}`);
-          console.log(`    Battle session: ${battles[idx].sessionId}`);
+          console.log(`    Battle session: ${battles.sessionId}`);
           if (idx + 1 == claim.currentChallenger) {
             if (claim.decided) {
               console.log(`    Challenge state: ${claim.invalid ? 'succeeded' : 'failed'}`);
             } else if (claim.verificationOngoing) {
-              displayBattle(battles[idx].battle);
-              console.log(`    Challenge state: ${challengeStateToText(battles[idx].battle.challengeState)}`);
+              displayBattle(battles.battle);
             } else {
               console.log('    Challenge state: waiting');
             }

@@ -1,6 +1,5 @@
 const utils = require('./utils');
 const SyscoinMessageLibraryForTests = artifacts.require('SyscoinMessageLibraryForTests');
-const bitcoin = require('bitcoinjs-lib');
 const truffleAssert = require('truffle-assertions');
 contract('testParseTransaction', (accounts) => {
   let syscoinMessageLibraryForTests;

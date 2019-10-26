@@ -1,7 +1,6 @@
-pragma solidity ^0.5.10;
+pragma solidity ^0.5.12;
 
 import './SyscoinMessageLibrary.sol';
-
 // @dev - Manages a battle session between superblock submitter and challenger
 contract SyscoinMessageLibraryForTests {
 
@@ -13,58 +12,35 @@ contract SyscoinMessageLibraryForTests {
         return bytesToBytes32(b, 0);
     }
 
-    function sliceArrayPublic(bytes memory original, uint32 offset, uint32 endIndex) public view returns (bytes memory result) {
-        return SyscoinMessageLibrary.sliceArray(original, offset, endIndex);
+    function sliceArrayPublic(bytes memory _rawBytes, uint32 offset, uint32 _endIndex) public view returns (bytes memory) {
+        uint len = _endIndex - offset;
+        bytes memory result = new bytes(len);
+        assembly {
+            // Call precompiled contract to copy data
+            if iszero(staticcall(gas, 0x04, add(add(_rawBytes, 0x20), offset), len, add(result, 0x20), len)) {
+                revert(0, 0)
+            }
+        }
+        return result;
     }
 
-    function targetFromBitsPublic(uint32 bits) public pure returns (uint) {
-        return SyscoinMessageLibrary.targetFromBits(bits) ;
+    function targetFromBitsPublic(uint32 _bits) public pure returns (uint) {
+        uint exp = _bits / 0x1000000;  // 2**24
+        uint mant = _bits & 0xffffff;
+        return mant * 256**(exp - 3);
     }
 
-    function concatHashPublic(uint tx1, uint tx2) public pure returns (uint) {
-        return SyscoinMessageLibrary.concatHash(tx1, tx2);
+    function makeMerklePublic(bytes32[] memory hashes2) public pure returns (bytes32) {
+        return SyscoinMessageLibrary.makeMerkle(hashes2);
     }
 
     function flip32BytesPublic(uint input) public pure returns (uint) {
         return SyscoinMessageLibrary.flip32Bytes(input);
     }
 
-    function checkAuxPoWPublic(uint blockHash, bytes memory auxBytes) public view returns (uint) {
-        return checkAuxPoWForTests(blockHash, auxBytes);
-    }
-
-    // doesn't check merge mining to see if other error codes work
-    function checkAuxPoWForTests(uint _blockHash, bytes memory _auxBytes) internal view returns (uint) {
-        SyscoinMessageLibrary.AuxPoW memory ap = SyscoinMessageLibrary.parseAuxPoW(_auxBytes, 0);
-
-        //uint32 version = bytesToUint32Flipped(_auxBytes, 0);
-
-        if (!SyscoinMessageLibrary.isMergeMined(_auxBytes, 0)) {
-            return ERR_NOT_MERGE_MINED;
-        }
-
-        if (ap.coinbaseTxIndex != 0) {
-            return ERR_COINBASE_INDEX;
-        }
-
-        if (ap.coinbaseMerkleRootCode != 1) {
-            return ap.coinbaseMerkleRootCode;
-        }
-
-        if (SyscoinMessageLibrary.computeChainMerkle(_blockHash, ap) != ap.coinbaseMerkleRoot) {
-            return ERR_CHAIN_MERKLE;
-        }
-
-        if (SyscoinMessageLibrary.computeParentMerkle(ap) != ap.parentMerkleRoot) {
-            return ERR_PARENT_MERKLE;
-        }
-
-        return 1;
-    }
-
     // @dev - Converts a bytes of size 4 to uint32,
     // e.g. for input [0x01, 0x02, 0x03 0x04] returns 0x01020304
-    function bytesToUint32(bytes memory input, uint pos) internal pure returns (uint32 result) {
+    function bytesToUint32(bytes memory input, uint pos) private pure returns (uint32 result) {
         result = uint32(uint8(input[pos]))*(2**24) + uint32(uint8(input[pos + 1]))*(2**16) + uint32(uint8(input[pos + 2]))*(2**8) + uint32(uint8(input[pos + 3]));
     }
 
@@ -75,7 +51,7 @@ contract SyscoinMessageLibraryForTests {
     //
     // @param _rawBytes - arbitrary length bytes
     // @return - leftmost 32 or less bytes of input value; padded if less than 32
-    function bytesToBytes32(bytes memory _rawBytes, uint pos) internal pure returns (bytes32) {
+    function bytesToBytes32(bytes memory _rawBytes, uint pos) private pure returns (bytes32) {
         bytes32 out;
         assembly {
             out := mload(add(add(_rawBytes, 0x20), pos))

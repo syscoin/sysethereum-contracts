@@ -1,6 +1,5 @@
-pragma solidity ^0.5.10;
+pragma solidity ^0.5.12;
 
-import "./Set.sol";
 import "../SyscoinTransactionProcessor.sol";
 import "openzeppelin-solidity/contracts/math/SafeMath.sol";
 import "../interfaces/SyscoinERC20AssetI.sol";
@@ -10,11 +9,10 @@ contract SyscoinERC20Manager is Initializable {
 
     using SafeMath for uint256;
     using SafeMath for uint8;
-    using Set for Set.Data;
 
     // Lock constants
     uint public constant MIN_LOCK_VALUE = 10; // 0.1 token
-    uint public constant SUPERBLOCK_SUBMITTER_LOCK_FEE = 1; // 1 = 0.1%
+    uint public constant SUPERBLOCK_SUBMITTER_LOCK_FEE = 10000; // 10000 = 0.01%
 
     // Variables set by constructor
 
@@ -22,16 +20,27 @@ contract SyscoinERC20Manager is Initializable {
     // Only syscoin txs relayed from trustedRelayerContract will be accepted.
     address public trustedRelayerContract;
 
-    // Syscoin transactions that were already processed by processTransaction()
-    Set.Data syscoinTxHashesAlreadyProcessed;
 
     mapping(uint32 => uint256) public assetBalances;
+    // Syscoin transactions that were already processed by processTransaction()
+    mapping(uint => bool) private syscoinTxHashesAlreadyProcessed;
+
 
     event TokenUnfreeze(address receipient, uint value);
     event TokenUnfreezeFee(address receipient, uint value);
     event TokenFreeze(address freezer, uint value);
 
+    function contains(uint value) private view returns (bool) {
+        return syscoinTxHashesAlreadyProcessed[value];
+    }
 
+    function insert(uint value) private returns (bool) {
+        if (contains(value))
+            return false; // already there
+        syscoinTxHashesAlreadyProcessed[value] = true;
+        return true;
+    }
+    
     function init(address _trustedRelayerContract) public initializer {
         trustedRelayerContract = _trustedRelayerContract;
     }
@@ -59,7 +68,7 @@ contract SyscoinERC20Manager is Initializable {
     }
 
     function wasSyscoinTxProcessed(uint txHash) public view returns (bool) {
-        return syscoinTxHashesAlreadyProcessed.contains(txHash);
+        return contains(txHash);
     }
 
     function processTransaction(
@@ -81,7 +90,7 @@ contract SyscoinERC20Manager is Initializable {
         }
         requireMinimumValue(nLocalPrecision, value);
         // Add tx to the syscoinTxHashesAlreadyProcessed and Check tx was not already processed
-        require(syscoinTxHashesAlreadyProcessed.insert(txHash), "TX already processed");
+        require(insert(txHash), "TX already processed");
 
         // make sure we have enough balance for transfer
         if (erc20.balanceOf(address(this)) < value) {
@@ -94,7 +103,7 @@ contract SyscoinERC20Manager is Initializable {
 
         assetBalances[assetGUID] = assetBalances[assetGUID].sub(value);
 
-        uint superblockSubmitterFee = value.mul(SUPERBLOCK_SUBMITTER_LOCK_FEE).div(10000);
+        uint superblockSubmitterFee = value.div(SUPERBLOCK_SUBMITTER_LOCK_FEE);
         uint userValue = value.sub(superblockSubmitterFee);
 
         // pay the fee
@@ -121,7 +130,6 @@ contract SyscoinERC20Manager is Initializable {
         require(syscoinAddress.length > 0, "syscoinAddress cannot be zero");
         require(assetGUID > 0, "Asset GUID must not be 0");
         
-        assetBalances[assetGUID] = assetBalances[assetGUID].add(value);
 
         SyscoinERC20AssetI erc20 = SyscoinERC20AssetI(erc20ContractAddress);
         require(precision == erc20.decimals(), "Decimals were not provided with the correct value");
@@ -131,6 +139,9 @@ contract SyscoinERC20Manager is Initializable {
         } else { // no, it's original ERC20
             erc20.transferFrom(msg.sender, address(this), value);
         }
+        
+        assetBalances[assetGUID] = assetBalances[assetGUID].add(value);
+
         emit TokenFreeze(msg.sender, value);
 
         return true;

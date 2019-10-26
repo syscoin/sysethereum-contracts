@@ -30,14 +30,13 @@ contract('SyscoinSuperblocks2', function(accounts) {
   ];
   const hashes = headers.map(utils.calcBlockSha256Hash);
   const initParentId = '0x0000000000000000000000000000000000000000000000000000000000000000';
-  const initAccumulatedWork = 1;
-  const genesisSuperblock = utils.makeSuperblock(headers, initParentId, initAccumulatedWork);
+  const genesisSuperblock = utils.makeSuperblock(headers, initParentId);
   it('Initialize', async () => {
     let result;
     result = await superblocks.methods.initialize(
       genesisSuperblock.merkleRoot,
-      genesisSuperblock.accumulatedWork.toString(),
       genesisSuperblock.timestamp,
+      genesisSuperblock.mtpTimestamp,
       genesisSuperblock.lastHash,
       genesisSuperblock.lastBits,
       genesisSuperblock.parentId).send({ from: user, gas: 300000 });
@@ -45,24 +44,16 @@ contract('SyscoinSuperblocks2', function(accounts) {
     const best = await superblocks.methods.getBestSuperblock().call();
     assert.equal(best, genesisSuperblock.superblockHash, 'Best superblock updated');
 
-    const locator = await superblocks.methods.getSuperblockLocator().call();
-    assert.equal(locator.length, 9, 'Superblock locator');
-    assert.equal(locator[0], genesisSuperblock.superblockHash, 'Superblock locator 0');
-    assert.equal(locator[1], genesisSuperblock.superblockHash, 'Superblock locator 1');
-    assert.equal(locator[2], genesisSuperblock.superblockHash, 'Superblock locator 2');
-    assert.equal(locator[8], genesisSuperblock.superblockHash, 'Superblock locator 8');
-
     const height = await superblocks.methods.getSuperblockHeight(best).call();
     assert.equal(height, 1, 'Superblock height');
 
     const superblock = await superblocks.methods.getSuperblock(best).call();
 
-
     // 2 keys per returned var
     assert.equal(Object.keys(superblock).length, 18, 'Have enough data');
     assert.equal(superblock[0], genesisSuperblock.merkleRoot, 'Merkle root');
-    assert.equal(superblock[1].toString(10), genesisSuperblock.accumulatedWork.toString(10), 'Accumulated work');
-    assert.equal(superblock[2], genesisSuperblock.timestamp, 'Last block timestamp');
+    assert.equal(superblock[1], genesisSuperblock.timestamp, 'Last block timestamp');
+    assert.equal(superblock[2], genesisSuperblock.mtpTimestamp, 'Last block median timestamp');
     assert.equal(superblock[3], genesisSuperblock.lastHash, 'Last block hash');
     assert.equal(superblock[4], genesisSuperblock.lastBits, 'Last block difficulty bits');
     assert.equal(superblock[5], genesisSuperblock.parentId, 'Parent superblock');
