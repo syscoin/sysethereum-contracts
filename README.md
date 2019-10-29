@@ -1,6 +1,6 @@
 # Sysethereum contracts
 
-[![Build Status](https://travis-ci.org/syscoin/sysethereum/sysethereum-contracts.svg?branch=master)](https://travis-ci.org/syscoin/sysethereum/sysethereum-contracts)
+[![Build Status](https://travis-ci.org/syscoin/sysethereum/sysethereum-contracts.svg?branch=master)](https://travis-ci.org/syscoin/sysethereum-contracts)
 
 Ethereum contracts for the Syscoin <=> Ethereum bridge.
 
