@@ -5,7 +5,7 @@ const { Contracts, ZWeb3 } = require('@openzeppelin/upgrades');
 ZWeb3.initialize(web3.currentProvider);
 
 const SyscoinERC20Manager = Contracts.getFromLocal('SyscoinERC20Manager');
-var LegacyERC20 = artifacts.require("./token/LegacyERC20ForTests.sol");
+var ERC20 = artifacts.require("./token/SyscoinERC20.sol");
 const SyscoinMessageLibraryForTests = artifacts.require('SyscoinMessageLibraryForTests');
 const truffleAssert = require('truffle-assertions');
 
@@ -19,7 +19,7 @@ contract('testRelayToSyscoinAssetToken', function(accounts) {
   let assetGUIDParsed;
   let erc20Address;
   const trustedRelayerContract = accounts[0];
-  let erc20Manager, erc20Legacy, erc20ManagerLogic;
+  let erc20Manager, erc20Token;
   const superblockSubmitterAddress = accounts[4];
   let ret, amount, inputEthAddress, precision;
   const txHash = '0xfb9f37192e041f94d9b1db12ea50778f2019b167059f6063561477982162d8f2';
@@ -34,34 +34,34 @@ contract('testRelayToSyscoinAssetToken', function(accounts) {
 
     syscoinMessageLibraryForTests = await SyscoinMessageLibraryForTests.new();
     
-    erc20Legacy = await LegacyERC20.new("LegacyToken", "LEGX", 18, {from: owner});
-    await erc20Legacy.assign(owner, value);
-    await erc20Legacy.approve(erc20Manager.options.address, burnVal, {from: owner});
-    await erc20Manager.methods.freezeBurnERC20(burnVal, assetGUID, erc20Legacy.address, 18, syscoinAddress).send({from: owner, gas: 300000});
+    erc20Token = await ERC20.new("LegacyToken", "LEGX", 18, {from: owner});
+    await erc20Token.assign(owner, value);
+    await erc20Token.approve(erc20Manager.options.address, burnVal, {from: owner});
+    await erc20Manager.methods.freezeBurnERC20(burnVal, assetGUID, erc20Token.address, 18, syscoinAddress).send({from: owner, gas: 300000});
     
-    assert.equal(await erc20Legacy.balanceOf(erc20Manager.options.address), value - burnVal, "erc20Manager balance is not correct");
-    assert.equal(await erc20Legacy.balanceOf(owner), burnVal, `erc20Legacy's user balance after burn is not the expected one`);
+    assert.equal(await erc20Token.balanceOf(erc20Manager.options.address), value - burnVal, "erc20Manager balance is not correct");
+    assert.equal(await erc20Token.balanceOf(owner), burnVal, `erc20Token's user balance after burn is not the expected one`);
     assert.equal(await erc20Manager.methods.assetBalances(assetGUID).call(), burnVal, `assetBalances for ${assetGUID} GUID is not correct`);
     [ ret, amount, inputEthAddress, assetGUIDParsed, precision, erc20Address ]  = Object.values(await syscoinMessageLibraryForTests.parseTransaction(txData));
     
   });
 
   const address = web3.utils.toChecksumAddress('0xb0ea8c9ee8aa87efd28a12de8c034f947c144053');
-  it('test mint legacy asset', async () => {
+  it('test mint asset', async () => {
     assert.equal(assetGUIDParsed,986377920)
     assert.equal(inputEthAddress,address);
     assert.equal(amount,1000000000);
     assert.equal(precision,8);
     assert.equal(erc20Address,erc20LegacyRinkeby);
-    await erc20Manager.methods.processTransaction(txHash, amount.toString(), owner,superblockSubmitterAddress,erc20Legacy.address, assetGUID, precision.toString()).send({gas: 300000, from: trustedRelayerContract});
+    await erc20Manager.methods.processTransaction(txHash, amount.toString(), owner,superblockSubmitterAddress,erc20Token.address, assetGUID, precision.toString()).send({gas: 300000, from: trustedRelayerContract});
     // now check the user and superblock submitter balances reflect the mint amounts
     const superblockSubmitterFee = burnVal/10000;
     const userValue = value - superblockSubmitterFee;
-    assert.equal(await erc20Legacy.balanceOf(owner), userValue, `erc20Legacy's user balance after mint is not the expected one`);
-    assert.equal(await erc20Legacy.balanceOf(superblockSubmitterAddress), superblockSubmitterFee, `erc20Legacy's superblock submitter balance after mint is not the expected one`);
+    assert.equal(await erc20Token.balanceOf(owner), userValue, `erc20Token's user balance after mint is not the expected one`);
+    assert.equal(await erc20Token.balanceOf(superblockSubmitterAddress), superblockSubmitterFee, `erc20Token's superblock submitter balance after mint is not the expected one`);
   });
   it("processTransaction fail - tx already processed", async () => {
-    await erc20Legacy.approve(erc20Manager.options.address, burnVal, {from: owner});
-    await truffleAssert.reverts(erc20Manager.methods.processTransaction(txHash, amount.toString(), inputEthAddress,superblockSubmitterAddress,erc20Legacy.address, assetGUID, precision.toString()).send({from: trustedRelayerContract, gas: 300000}));
+    await erc20Token.approve(erc20Manager.options.address, burnVal, {from: owner});
+    await truffleAssert.reverts(erc20Manager.methods.processTransaction(txHash, amount.toString(), inputEthAddress,superblockSubmitterAddress,erc20Token.address, assetGUID, precision.toString()).send({from: trustedRelayerContract, gas: 300000}));
   });
 });

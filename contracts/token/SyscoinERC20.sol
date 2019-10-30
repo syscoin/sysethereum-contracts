@@ -3,7 +3,7 @@ pragma solidity ^0.5.12;
 import "openzeppelin-solidity/contracts/token/ERC20/ERC20.sol";
 import "openzeppelin-solidity/contracts/token/ERC20/ERC20Detailed.sol";
 
-contract LegacyERC20ForTests is ERC20, ERC20Detailed {
+contract SyscoinERC20 is ERC20, ERC20Detailed {
     constructor(
         string memory name,
         string memory symbol,

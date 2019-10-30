@@ -24,14 +24,9 @@ contract SyscoinERC20ManagerForTests is SyscoinERC20Manager {
         
         assetBalances[assetGUID] = assetBalances[assetGUID].add(value);
 
-        SyscoinERC20AssetI erc20 = SyscoinERC20AssetI(erc20ContractAddress);
+        SyscoinERC20I erc20 = SyscoinERC20I(erc20ContractAddress);
         require(precision == erc20.decimals(), "Decimals were not provided with the correct value");
-        // is this a Syscoin asset and we are allowed to mint?
-        if (isMinterOf(erc20ContractAddress)) {
-            erc20.burnFrom(msg.sender, value);
-        } else { // no, it's original ERC20
-            erc20.transferFrom(msg.sender, address(this), value);
-        }
+        erc20.transferFrom(msg.sender, address(this), value);
         emit TokenFreeze(msg.sender, value);
 
         return true;

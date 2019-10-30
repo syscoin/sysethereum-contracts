@@ -18,9 +18,9 @@ If you are new to the Syscoin <=> Ethereum bridge, please check the [docs](https
   * Tokens are destroyed when coins should go back to the Syscoin blockchain (balances are saved for when moving back to Ethereum).
 * [SyscoinClaimManager contract](contracts/SyscoinClaimManager.sol)
   * Manages the interactive (challenge/response) validation of Superblocks.
-* [SyscoinERC20Asset](contracts/SyscoinParser/SyscoinERC20Asset.sol)
-  - A mintable Syscoin ERC20 asset that follows ERC20 spec but is also mintable when moving from Syscoin to Ethereum
-  - This is useful as some Syscoin assets originate on Syscoin and want to move to Ethereum. Legacy ERC20's must originate on Ethereum and have balances in order to move back to Ethereum from Syscoin. Legacy ERC20's are not mintable and thus only specific Syscoin ERC20 tokens are mintable when moving from Syscoin without balance existing in the SyscoinERC20Manager contract.
+* [SyscoinERC20](contracts/SyscoinParser/SyscoinERC20.sol) / [SyscoinERC20I](contracts/interfaces/SyscoinERC20I.sol) 
+  - A class that follows ERC20 spec but is also has decimals, symbol and token name through the ERC20Detailed interface
+  - Only ERC20's that are derived from ERC20Detailed are able to work with the bridge as we need access to decimals() (99.99% of ERC20's are compatible). If you originate from Syscoin and are creating a new ERC20 to accompany the Syscoin SPT, then you should mint, approve ERC20 Manager and then call freezeBurnERC20 (pass in a dummy syscoinAddress such as "0x1" and not a real syscoinAddress here) on ERC20 Manager to lock funds to a specific asset guid (the Syscoin SPT). The amount locked is the amount that is transactable over the bridge, usually this is the total supply. If you originate from Ethereum as an existing ERC20 and wish to move to Syscoin for fast, cheap, secure transactions and settling on Syscoin blockchain, you may create a Syscoin SPT with a supply equivalent to the total supply of your Ethereum's ERC20 and then send the SPT tokens to the "burn" address. When moving from Ethereum to Syscoin, funds are extracted from the "burn" address of that SPT and moved into the users address based on the Ethereum proof-of-burn transaction (calling freezeBurnERC20).
 
 ## Running the Tests
 

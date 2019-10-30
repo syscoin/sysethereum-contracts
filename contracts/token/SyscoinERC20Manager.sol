@@ -2,7 +2,7 @@ pragma solidity ^0.5.12;
 
 import "../SyscoinTransactionProcessor.sol";
 import "openzeppelin-solidity/contracts/math/SafeMath.sol";
-import "../interfaces/SyscoinERC20AssetI.sol";
+import "../interfaces/SyscoinERC20I.sol";
 import "@openzeppelin/upgrades/contracts/Initializable.sol";
 
 contract SyscoinERC20Manager is Initializable {
@@ -51,7 +51,7 @@ contract SyscoinERC20Manager is Initializable {
     }
 
     modifier minimumValue(address erc20ContractAddress, uint value) {
-        uint256 decimals = SyscoinERC20AssetI(erc20ContractAddress).decimals();
+        uint256 decimals = SyscoinERC20I(erc20ContractAddress).decimals();
         require(
             value >= (uint256(10) ** decimals).div(MIN_LOCK_VALUE),
             "Value must be bigger or equal MIN_LOCK_VALUE"
@@ -80,7 +80,7 @@ contract SyscoinERC20Manager is Initializable {
         uint32 assetGUID,
         uint8 precision
     ) public onlyTrustedRelayer {
-        SyscoinERC20AssetI erc20 = SyscoinERC20AssetI(erc20ContractAddress);
+        SyscoinERC20I erc20 = SyscoinERC20I(erc20ContractAddress);
         uint8 nLocalPrecision = erc20.decimals();
         // see issue #372 on syscoin
         if(nLocalPrecision > precision){
@@ -92,14 +92,6 @@ contract SyscoinERC20Manager is Initializable {
         // Add tx to the syscoinTxHashesAlreadyProcessed and Check tx was not already processed
         require(insert(txHash), "TX already processed");
 
-        // make sure we have enough balance for transfer
-        if (erc20.balanceOf(address(this)) < value) {
-            // if not, try to mint token
-            erc20.mint(
-                address(this),
-                erc20.balanceOf(address(this)).sub(value)
-            );
-        }
 
         assetBalances[assetGUID] = assetBalances[assetGUID].sub(value);
 
@@ -131,42 +123,12 @@ contract SyscoinERC20Manager is Initializable {
         require(assetGUID > 0, "Asset GUID must not be 0");
         
 
-        SyscoinERC20AssetI erc20 = SyscoinERC20AssetI(erc20ContractAddress);
+        SyscoinERC20I erc20 = SyscoinERC20I(erc20ContractAddress);
         require(precision == erc20.decimals(), "Decimals were not provided with the correct value");
-        // is this a Syscoin asset and we are allowed to mint?
-        if (isMinterOf(erc20ContractAddress)) {
-            erc20.burnFrom(msg.sender, value);
-        } else { // no, it's original ERC20
-            erc20.transferFrom(msg.sender, address(this), value);
-        }
-        
+        erc20.transferFrom(msg.sender, address(this), value);
         assetBalances[assetGUID] = assetBalances[assetGUID].add(value);
-
         emit TokenFreeze(msg.sender, value);
 
         return true;
-    }
-
-    function isMinterOf(address erc20ContractAddress) internal returns (bool) {
-        // call isMinter(address) and get result
-        bytes4 sig = bytes4(keccak256("isMinter(address)"));
-        address me = address(this);
-        bool isMinterInterfaceSupport;
-        bool isMinter;
-        assembly {
-            let x := mload(0x40)    //Find empty storage location using "free memory pointer"
-            mstore(x,sig)           //Place signature at begining of empty storage 
-            mstore(add(x,0x04),me)  //Place first argument directly next to signature
-            isMinterInterfaceSupport := call(
-                5000,                   //5k gas
-                erc20ContractAddress,   //To addr
-                0,                      //No value
-                x,                      //Inputs are stored at location x
-                0x24,                   //Inputs are 36 bytes long
-                x,                      //Store output over input (saves space)
-                0x20)                   //Outputs are 32 bytes long
-            isMinter := mload(x)
-        }
-        return isMinterInterfaceSupport && isMinter;
     }
 }
