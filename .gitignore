@@ -5,12 +5,6 @@
 /org
 ._.DS_Store
 .DS_Store
-*.swp
-contracts/Timestamp*
-test/testTimestamp.js*
-test/parseAuxPoW.js*
-test/testRelayIntegration.js
-superblocknotes
 .idea
 
 .openzeppelin/.session
