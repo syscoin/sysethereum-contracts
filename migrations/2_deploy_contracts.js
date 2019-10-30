@@ -126,7 +126,7 @@ module.exports = function(deployer, networkName, accounts) {
     }
     let erc20ManagerBalance = await erc20Asset.balanceOf(SyscoinERC20Manager.address);
     if(erc20ManagerBalance != burnVal){
-      console.log('\nassetBalances for ERC20 manager is not correct: ' + erc20ManagerBalance);
+      console.log('\Token balance for ERC20 manager is not correct: ' + erc20ManagerBalance);
     }
   });
 };
