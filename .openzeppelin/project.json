@@ -1,0 +1,12 @@
+{
+  "manifestVersion": "2.2",
+  "contracts": {
+    "SyscoinSuperblocks": "SyscoinSuperblocks",
+    "SyscoinERC20Manager": "SyscoinERC20Manager",
+    "SyscoinBattleManager": "SyscoinBattleManager",
+    "SyscoinClaimManager": "SyscoinClaimManager"
+  },
+  "dependencies": {},
+  "name": "sysethereum-contracts",
+  "version": "1.0.0"
+}
