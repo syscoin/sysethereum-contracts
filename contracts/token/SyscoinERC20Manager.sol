@@ -61,10 +61,12 @@ contract SyscoinERC20Manager is Initializable {
 
     function requireMinimumValue(uint8 decimalsIn, uint value) private pure {
         uint256 decimals = uint256(decimalsIn);
+        require(value > 0, "Value must be positive");
         require(
             value >= (uint256(10) ** decimals).div(MIN_LOCK_VALUE),
             "Value must be bigger or equal MIN_LOCK_VALUE"
         );
+        
     }
 
     function wasSyscoinTxProcessed(uint txHash) public view returns (bool) {
