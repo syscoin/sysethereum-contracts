@@ -401,7 +401,7 @@
         "id": 60,
         "nodeType": "ImportDirective",
         "scope": 2904,
-        "sourceUnit": 9014,
+        "sourceUnit": 8991,
         "src": "74:46:1",
         "symbolAliases": [],
         "unitAlias": ""
@@ -423,7 +423,7 @@
         "id": 62,
         "nodeType": "ImportDirective",
         "scope": 2904,
-        "sourceUnit": 9573,
+        "sourceUnit": 9557,
         "src": "155:60:1",
         "symbolAliases": [],
         "unitAlias": ""
@@ -437,10 +437,10 @@
               "id": 63,
               "name": "Initializable",
               "nodeType": "UserDefinedTypeName",
-              "referencedDeclaration": 9572,
+              "referencedDeclaration": 9556,
               "src": "329:13:1",
               "typeDescriptions": {
-                "typeIdentifier": "t_contract$_Initializable_$9572",
+                "typeIdentifier": "t_contract$_Initializable_$9556",
                 "typeString": "contract Initializable"
               }
             },
@@ -469,7 +469,7 @@
         ],
         "contractDependencies": [
           4906,
-          9572
+          9556
         ],
         "contractKind": "contract",
         "documentation": null,
@@ -478,7 +478,7 @@
         "linearizedBaseContracts": [
           2903,
           4906,
-          9572
+          9556
         ],
         "name": "SyscoinBattleManager",
         "nodeType": "ContractDefinition",
@@ -1501,7 +1501,7 @@
             "stateVariable": true,
             "storageLocation": "default",
             "typeDescriptions": {
-              "typeIdentifier": "t_contract$_SyscoinSuperblocksI_$9013",
+              "typeIdentifier": "t_contract$_SyscoinSuperblocksI_$8990",
               "typeString": "contract SyscoinSuperblocksI"
             },
             "typeName": {
@@ -1509,10 +1509,10 @@
               "id": 146,
               "name": "SyscoinSuperblocksI",
               "nodeType": "UserDefinedTypeName",
-              "referencedDeclaration": 9013,
+              "referencedDeclaration": 8990,
               "src": "2697:19:1",
               "typeDescriptions": {
-                "typeIdentifier": "t_contract$_SyscoinSuperblocksI_$9013",
+                "typeIdentifier": "t_contract$_SyscoinSuperblocksI_$8990",
                 "typeString": "contract SyscoinSuperblocksI"
               }
             },
@@ -2045,7 +2045,7 @@
                             "name": "msg",
                             "nodeType": "Identifier",
                             "overloadedDeclarations": [],
-                            "referencedDeclaration": 10244,
+                            "referencedDeclaration": 10228,
                             "src": "3218:3:1",
                             "typeDescriptions": {
                               "typeIdentifier": "t_magic_message",
@@ -2099,10 +2099,10 @@
                       "name": "require",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [
-                        10247,
-                        10248
+                        10231,
+                        10232
                       ],
-                      "referencedDeclaration": 10247,
+                      "referencedDeclaration": 10231,
                       "src": "3210:7:1",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_require_pure$_t_bool_$returns$__$",
@@ -2204,7 +2204,7 @@
                             "name": "msg",
                             "nodeType": "Identifier",
                             "overloadedDeclarations": [],
-                            "referencedDeclaration": 10244,
+                            "referencedDeclaration": 10228,
                             "src": "3324:3:1",
                             "typeDescriptions": {
                               "typeIdentifier": "t_magic_message",
@@ -2301,10 +2301,10 @@
                       "name": "require",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [
-                        10247,
-                        10248
+                        10231,
+                        10232
                       ],
-                      "referencedDeclaration": 10247,
+                      "referencedDeclaration": 10231,
                       "src": "3316:7:1",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_require_pure$_t_bool_$returns$__$",
@@ -2445,7 +2445,7 @@
                       "referencedDeclaration": 147,
                       "src": "3948:18:1",
                       "typeDescriptions": {
-                        "typeIdentifier": "t_contract$_SyscoinSuperblocksI_$9013",
+                        "typeIdentifier": "t_contract$_SyscoinSuperblocksI_$8990",
                         "typeString": "contract SyscoinSuperblocksI"
                       }
                     },
@@ -2460,13 +2460,13 @@
                       "referencedDeclaration": 220,
                       "src": "3969:12:1",
                       "typeDescriptions": {
-                        "typeIdentifier": "t_contract$_SyscoinSuperblocksI_$9013",
+                        "typeIdentifier": "t_contract$_SyscoinSuperblocksI_$8990",
                         "typeString": "contract SyscoinSuperblocksI"
                       }
                     },
                     "src": "3948:33:1",
                     "typeDescriptions": {
-                      "typeIdentifier": "t_contract$_SyscoinSuperblocksI_$9013",
+                      "typeIdentifier": "t_contract$_SyscoinSuperblocksI_$8990",
                       "typeString": "contract SyscoinSuperblocksI"
                     }
                   },
@@ -2582,7 +2582,7 @@
                   "name": "initializer",
                   "nodeType": "Identifier",
                   "overloadedDeclarations": [],
-                  "referencedDeclaration": 9553,
+                  "referencedDeclaration": 9537,
                   "src": "3902:11:1",
                   "typeDescriptions": {
                     "typeIdentifier": "t_modifier$__$",
@@ -2637,7 +2637,7 @@
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
-                    "typeIdentifier": "t_contract$_SyscoinSuperblocksI_$9013",
+                    "typeIdentifier": "t_contract$_SyscoinSuperblocksI_$8990",
                     "typeString": "contract SyscoinSuperblocksI"
                   },
                   "typeName": {
@@ -2645,10 +2645,10 @@
                     "id": 219,
                     "name": "SyscoinSuperblocksI",
                     "nodeType": "UserDefinedTypeName",
-                    "referencedDeclaration": 9013,
+                    "referencedDeclaration": 8990,
                     "src": "3787:19:1",
                     "typeDescriptions": {
-                      "typeIdentifier": "t_contract$_SyscoinSuperblocksI_$9013",
+                      "typeIdentifier": "t_contract$_SyscoinSuperblocksI_$8990",
                       "typeString": "contract SyscoinSuperblocksI"
                     }
                   },
@@ -3015,10 +3015,10 @@
                       "name": "require",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [
-                        10247,
-                        10248
+                        10231,
+                        10232
                       ],
-                      "referencedDeclaration": 10247,
+                      "referencedDeclaration": 10231,
                       "src": "4186:7:1",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_require_pure$_t_bool_$returns$__$",
@@ -3211,7 +3211,7 @@
                               "name": "msg",
                               "nodeType": "Identifier",
                               "overloadedDeclarations": [],
-                              "referencedDeclaration": 10244,
+                              "referencedDeclaration": 10228,
                               "src": "4639:3:1",
                               "typeDescriptions": {
                                 "typeIdentifier": "t_magic_message",
@@ -3267,7 +3267,7 @@
                             "name": "abi",
                             "nodeType": "Identifier",
                             "overloadedDeclarations": [],
-                            "referencedDeclaration": 10231,
+                            "referencedDeclaration": 10215,
                             "src": "4612:3:1",
                             "typeDescriptions": {
                               "typeIdentifier": "t_magic_abi",
@@ -3314,7 +3314,7 @@
                       "name": "keccak256",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [],
-                      "referencedDeclaration": 10238,
+                      "referencedDeclaration": 10222,
                       "src": "4602:9:1",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_keccak256_pure$_t_bytes_memory_ptr_$returns$_t_bytes32_$",
@@ -3536,10 +3536,10 @@
                       "name": "require",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [
-                        10247,
-                        10248
+                        10231,
+                        10232
                       ],
-                      "referencedDeclaration": 10247,
+                      "referencedDeclaration": 10231,
                       "src": "4735:7:1",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_require_pure$_t_bool_$returns$__$",
@@ -3880,7 +3880,7 @@
                         "name": "block",
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
-                        "referencedDeclaration": 10234,
+                        "referencedDeclaration": 10218,
                         "src": "4985:5:1",
                         "typeDescriptions": {
                           "typeIdentifier": "t_magic_block",
@@ -9794,10 +9794,10 @@
                       "name": "require",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [
-                        10247,
-                        10248
+                        10231,
+                        10232
                       ],
-                      "referencedDeclaration": 10247,
+                      "referencedDeclaration": 10231,
                       "src": "9978:7:1",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_require_pure$_t_bool_$returns$__$",
@@ -12900,10 +12900,10 @@
                             "name": "require",
                             "nodeType": "Identifier",
                             "overloadedDeclarations": [
-                              10247,
-                              10248
+                              10231,
+                              10232
                             ],
-                            "referencedDeclaration": 10247,
+                            "referencedDeclaration": 10231,
                             "src": "13026:7:1",
                             "typeDescriptions": {
                               "typeIdentifier": "t_function_require_pure$_t_bool_$returns$__$",
@@ -13126,10 +13126,10 @@
                       "name": "require",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [
-                        10247,
-                        10248
+                        10231,
+                        10232
                       ],
-                      "referencedDeclaration": 10247,
+                      "referencedDeclaration": 10231,
                       "src": "13193:7:1",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_require_pure$_t_bool_$returns$__$",
@@ -15748,7 +15748,7 @@
                                                 "name": "abi",
                                                 "nodeType": "Identifier",
                                                 "overloadedDeclarations": [],
-                                                "referencedDeclaration": 10231,
+                                                "referencedDeclaration": 10215,
                                                 "src": "16074:3:1",
                                                 "typeDescriptions": {
                                                   "typeIdentifier": "t_magic_abi",
@@ -15795,7 +15795,7 @@
                                           "name": "sha256",
                                           "nodeType": "Identifier",
                                           "overloadedDeclarations": [],
-                                          "referencedDeclaration": 10253,
+                                          "referencedDeclaration": 10237,
                                           "src": "16067:6:1",
                                           "typeDescriptions": {
                                             "typeIdentifier": "t_function_sha256_pure$_t_bytes_memory_ptr_$returns$_t_bytes32_$",
@@ -15830,7 +15830,7 @@
                                         "name": "abi",
                                         "nodeType": "Identifier",
                                         "overloadedDeclarations": [],
-                                        "referencedDeclaration": 10231,
+                                        "referencedDeclaration": 10215,
                                         "src": "16050:3:1",
                                         "typeDescriptions": {
                                           "typeIdentifier": "t_magic_abi",
@@ -15877,7 +15877,7 @@
                                   "name": "sha256",
                                   "nodeType": "Identifier",
                                   "overloadedDeclarations": [],
-                                  "referencedDeclaration": 10253,
+                                  "referencedDeclaration": 10237,
                                   "src": "16043:6:1",
                                   "typeDescriptions": {
                                     "typeIdentifier": "t_function_sha256_pure$_t_bytes_memory_ptr_$returns$_t_bytes32_$",
@@ -16307,7 +16307,7 @@
                         "declaration": 1263,
                         "isOffset": false,
                         "isSlot": false,
-                        "src": "17607:6:1",
+                        "src": "17659:6:1",
                         "valueSize": 1
                       }
                     },
@@ -16317,15 +16317,6 @@
                         "isOffset": false,
                         "isSlot": false,
                         "src": "16576:6:1",
-                        "valueSize": 1
-                      }
-                    },
-                    {
-                      "_input": {
-                        "declaration": 1263,
-                        "isOffset": false,
-                        "isSlot": false,
-                        "src": "17659:6:1",
                         "valueSize": 1
                       }
                     },
@@ -16361,7 +16352,7 @@
                         "declaration": 1263,
                         "isOffset": false,
                         "isSlot": false,
-                        "src": "16729:6:1",
+                        "src": "17761:6:1",
                         "valueSize": 1
                       }
                     },
@@ -16370,7 +16361,7 @@
                         "declaration": 1263,
                         "isOffset": false,
                         "isSlot": false,
-                        "src": "17761:6:1",
+                        "src": "16729:6:1",
                         "valueSize": 1
                       }
                     },
@@ -16406,7 +16397,7 @@
                         "declaration": 1263,
                         "isOffset": false,
                         "isSlot": false,
-                        "src": "16882:6:1",
+                        "src": "17863:6:1",
                         "valueSize": 1
                       }
                     },
@@ -16415,7 +16406,7 @@
                         "declaration": 1263,
                         "isOffset": false,
                         "isSlot": false,
-                        "src": "17863:6:1",
+                        "src": "16882:6:1",
                         "valueSize": 1
                       }
                     },
@@ -16451,7 +16442,7 @@
                         "declaration": 1263,
                         "isOffset": false,
                         "isSlot": false,
-                        "src": "17035:6:1",
+                        "src": "17965:6:1",
                         "valueSize": 1
                       }
                     },
@@ -16460,7 +16451,7 @@
                         "declaration": 1263,
                         "isOffset": false,
                         "isSlot": false,
-                        "src": "17965:6:1",
+                        "src": "17035:6:1",
                         "valueSize": 1
                       }
                     },
@@ -16496,7 +16487,7 @@
                         "declaration": 1263,
                         "isOffset": false,
                         "isSlot": false,
-                        "src": "17191:6:1",
+                        "src": "18067:6:1",
                         "valueSize": 1
                       }
                     },
@@ -16505,7 +16496,7 @@
                         "declaration": 1263,
                         "isOffset": false,
                         "isSlot": false,
-                        "src": "18067:6:1",
+                        "src": "17191:6:1",
                         "valueSize": 1
                       }
                     },
@@ -16541,15 +16532,6 @@
                         "declaration": 1263,
                         "isOffset": false,
                         "isSlot": false,
-                        "src": "17347:6:1",
-                        "valueSize": 1
-                      }
-                    },
-                    {
-                      "_input": {
-                        "declaration": 1263,
-                        "isOffset": false,
-                        "isSlot": false,
                         "src": "18169:6:1",
                         "valueSize": 1
                       }
@@ -16560,6 +16542,15 @@
                         "isOffset": false,
                         "isSlot": false,
                         "src": "18190:6:1",
+                        "valueSize": 1
+                      }
+                    },
+                    {
+                      "_input": {
+                        "declaration": 1263,
+                        "isOffset": false,
+                        "isSlot": false,
+                        "src": "17347:6:1",
                         "valueSize": 1
                       }
                     },
@@ -16596,6 +16587,15 @@
                         "isOffset": false,
                         "isSlot": false,
                         "src": "17555:6:1",
+                        "valueSize": 1
+                      }
+                    },
+                    {
+                      "_input": {
+                        "declaration": 1263,
+                        "isOffset": false,
+                        "isSlot": false,
+                        "src": "17607:6:1",
                         "valueSize": 1
                       }
                     }
@@ -17819,15 +17819,6 @@
                 {
                   "externalReferences": [
                     {
-                      "result": {
-                        "declaration": 1366,
-                        "isOffset": false,
-                        "isSlot": false,
-                        "src": "21123:6:1",
-                        "valueSize": 1
-                      }
-                    },
-                    {
                       "_rawBytes": {
                         "declaration": 1359,
                         "isOffset": false,
@@ -17842,6 +17833,15 @@
                         "isOffset": false,
                         "isSlot": false,
                         "src": "21040:6:1",
+                        "valueSize": 1
+                      }
+                    },
+                    {
+                      "result": {
+                        "declaration": 1366,
+                        "isOffset": false,
+                        "isSlot": false,
+                        "src": "21123:6:1",
                         "valueSize": 1
                       }
                     },
@@ -18045,7 +18045,7 @@
                                             "name": "abi",
                                             "nodeType": "Identifier",
                                             "overloadedDeclarations": [],
-                                            "referencedDeclaration": 10231,
+                                            "referencedDeclaration": 10215,
                                             "src": "21479:3:1",
                                             "typeDescriptions": {
                                               "typeIdentifier": "t_magic_abi",
@@ -18092,7 +18092,7 @@
                                       "name": "sha256",
                                       "nodeType": "Identifier",
                                       "overloadedDeclarations": [],
-                                      "referencedDeclaration": 10253,
+                                      "referencedDeclaration": 10237,
                                       "src": "21472:6:1",
                                       "typeDescriptions": {
                                         "typeIdentifier": "t_function_sha256_pure$_t_bytes_memory_ptr_$returns$_t_bytes32_$",
@@ -18127,7 +18127,7 @@
                                     "name": "abi",
                                     "nodeType": "Identifier",
                                     "overloadedDeclarations": [],
-                                    "referencedDeclaration": 10231,
+                                    "referencedDeclaration": 10215,
                                     "src": "21455:3:1",
                                     "typeDescriptions": {
                                       "typeIdentifier": "t_magic_abi",
@@ -18174,7 +18174,7 @@
                               "name": "sha256",
                               "nodeType": "Identifier",
                               "overloadedDeclarations": [],
-                              "referencedDeclaration": 10253,
+                              "referencedDeclaration": 10237,
                               "src": "21448:6:1",
                               "typeDescriptions": {
                                 "typeIdentifier": "t_function_sha256_pure$_t_bytes_memory_ptr_$returns$_t_bytes32_$",
@@ -18465,7 +18465,7 @@
                                     "name": "abi",
                                     "nodeType": "Identifier",
                                     "overloadedDeclarations": [],
-                                    "referencedDeclaration": 10231,
+                                    "referencedDeclaration": 10215,
                                     "src": "21840:3:1",
                                     "typeDescriptions": {
                                       "typeIdentifier": "t_magic_abi",
@@ -18512,7 +18512,7 @@
                               "name": "sha256",
                               "nodeType": "Identifier",
                               "overloadedDeclarations": [],
-                              "referencedDeclaration": 10253,
+                              "referencedDeclaration": 10237,
                               "src": "21833:6:1",
                               "typeDescriptions": {
                                 "typeIdentifier": "t_function_sha256_pure$_t_bytes_memory_ptr_$returns$_t_bytes32_$",
@@ -23180,7 +23180,7 @@
                               "referencedDeclaration": 1682,
                               "src": "26310:14:1",
                               "typeDescriptions": {
-                                "typeIdentifier": "t_struct$_SuperblockInfo_$8859_memory_ptr",
+                                "typeIdentifier": "t_struct$_SuperblockInfo_$8836_memory_ptr",
                                 "typeString": "struct SyscoinSuperblocksI.SuperblockInfo memory"
                               }
                             },
@@ -23191,7 +23191,7 @@
                             "lValueRequested": false,
                             "memberName": "blocksMerkleRoot",
                             "nodeType": "MemberAccess",
-                            "referencedDeclaration": 8842,
+                            "referencedDeclaration": 8819,
                             "src": "26310:31:1",
                             "typeDescriptions": {
                               "typeIdentifier": "t_bytes32",
@@ -23309,7 +23309,7 @@
                               "referencedDeclaration": 1682,
                               "src": "26638:14:1",
                               "typeDescriptions": {
-                                "typeIdentifier": "t_struct$_SuperblockInfo_$8859_memory_ptr",
+                                "typeIdentifier": "t_struct$_SuperblockInfo_$8836_memory_ptr",
                                 "typeString": "struct SyscoinSuperblocksI.SuperblockInfo memory"
                               }
                             },
@@ -23320,7 +23320,7 @@
                             "lValueRequested": false,
                             "memberName": "timestamp",
                             "nodeType": "MemberAccess",
-                            "referencedDeclaration": 8844,
+                            "referencedDeclaration": 8821,
                             "src": "26638:24:1",
                             "typeDescriptions": {
                               "typeIdentifier": "t_uint256",
@@ -23449,7 +23449,7 @@
                               "referencedDeclaration": 1682,
                               "src": "26881:14:1",
                               "typeDescriptions": {
-                                "typeIdentifier": "t_struct$_SuperblockInfo_$8859_memory_ptr",
+                                "typeIdentifier": "t_struct$_SuperblockInfo_$8836_memory_ptr",
                                 "typeString": "struct SyscoinSuperblocksI.SuperblockInfo memory"
                               }
                             },
@@ -23460,7 +23460,7 @@
                             "lValueRequested": false,
                             "memberName": "lastHash",
                             "nodeType": "MemberAccess",
-                            "referencedDeclaration": 8848,
+                            "referencedDeclaration": 8825,
                             "src": "26881:23:1",
                             "typeDescriptions": {
                               "typeIdentifier": "t_bytes32",
@@ -23577,7 +23577,7 @@
                   "stateVariable": false,
                   "storageLocation": "memory",
                   "typeDescriptions": {
-                    "typeIdentifier": "t_struct$_SuperblockInfo_$8859_memory_ptr",
+                    "typeIdentifier": "t_struct$_SuperblockInfo_$8836_memory_ptr",
                     "typeString": "struct SyscoinSuperblocksI.SuperblockInfo"
                   },
                   "typeName": {
@@ -23585,10 +23585,10 @@
                     "id": 1681,
                     "name": "SyscoinSuperblocksI.SuperblockInfo",
                     "nodeType": "UserDefinedTypeName",
-                    "referencedDeclaration": 8859,
+                    "referencedDeclaration": 8836,
                     "src": "25781:34:1",
                     "typeDescriptions": {
-                      "typeIdentifier": "t_struct$_SuperblockInfo_$8859_storage_ptr",
+                      "typeIdentifier": "t_struct$_SuperblockInfo_$8836_storage_ptr",
                       "typeString": "struct SyscoinSuperblocksI.SuperblockInfo"
                     }
                   },
@@ -23864,7 +23864,7 @@
                             "name": "msg",
                             "nodeType": "Identifier",
                             "overloadedDeclarations": [],
-                            "referencedDeclaration": 10244,
+                            "referencedDeclaration": 10228,
                             "src": "27357:3:1",
                             "typeDescriptions": {
                               "typeIdentifier": "t_magic_message",
@@ -23918,10 +23918,10 @@
                       "name": "require",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [
-                        10247,
-                        10248
+                        10231,
+                        10232
                       ],
-                      "referencedDeclaration": 10247,
+                      "referencedDeclaration": 10231,
                       "src": "27349:7:1",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_require_pure$_t_bool_$returns$__$",
@@ -24409,10 +24409,10 @@
                                   "name": "revert",
                                   "nodeType": "Identifier",
                                   "overloadedDeclarations": [
-                                    10249,
-                                    10250
+                                    10233,
+                                    10234
                                   ],
-                                  "referencedDeclaration": 10249,
+                                  "referencedDeclaration": 10233,
                                   "src": "27603:6:1",
                                   "typeDescriptions": {
                                     "typeIdentifier": "t_function_revert_pure$__$returns$__$",
@@ -24458,7 +24458,7 @@
                       "stateVariable": false,
                       "storageLocation": "memory",
                       "typeDescriptions": {
-                        "typeIdentifier": "t_struct$_SuperblockInfo_$8859_memory_ptr",
+                        "typeIdentifier": "t_struct$_SuperblockInfo_$8836_memory_ptr",
                         "typeString": "struct SyscoinSuperblocksI.SuperblockInfo"
                       },
                       "typeName": {
@@ -24466,10 +24466,10 @@
                         "id": 1854,
                         "name": "SyscoinSuperblocksI.SuperblockInfo",
                         "nodeType": "UserDefinedTypeName",
-                        "referencedDeclaration": 8859,
+                        "referencedDeclaration": 8836,
                         "src": "27646:34:1",
                         "typeDescriptions": {
-                          "typeIdentifier": "t_struct$_SuperblockInfo_$8859_storage_ptr",
+                          "typeIdentifier": "t_struct$_SuperblockInfo_$8836_storage_ptr",
                           "typeString": "struct SyscoinSuperblocksI.SuperblockInfo"
                         }
                       },
@@ -24569,7 +24569,7 @@
                             "referencedDeclaration": 1855,
                             "src": "27770:14:1",
                             "typeDescriptions": {
-                              "typeIdentifier": "t_struct$_SuperblockInfo_$8859_memory_ptr",
+                              "typeIdentifier": "t_struct$_SuperblockInfo_$8836_memory_ptr",
                               "typeString": "struct SyscoinSuperblocksI.SuperblockInfo memory"
                             }
                           },
@@ -24580,7 +24580,7 @@
                           "lValueRequested": true,
                           "memberName": "blocksMerkleRoot",
                           "nodeType": "MemberAccess",
-                          "referencedDeclaration": 8842,
+                          "referencedDeclaration": 8819,
                           "src": "27770:31:1",
                           "typeDescriptions": {
                             "typeIdentifier": "t_bytes32",
@@ -24598,7 +24598,7 @@
                             "referencedDeclaration": 1855,
                             "src": "27803:14:1",
                             "typeDescriptions": {
-                              "typeIdentifier": "t_struct$_SuperblockInfo_$8859_memory_ptr",
+                              "typeIdentifier": "t_struct$_SuperblockInfo_$8836_memory_ptr",
                               "typeString": "struct SyscoinSuperblocksI.SuperblockInfo memory"
                             }
                           },
@@ -24609,7 +24609,7 @@
                           "lValueRequested": true,
                           "memberName": "timestamp",
                           "nodeType": "MemberAccess",
-                          "referencedDeclaration": 8844,
+                          "referencedDeclaration": 8821,
                           "src": "27803:24:1",
                           "typeDescriptions": {
                             "typeIdentifier": "t_uint256",
@@ -24627,7 +24627,7 @@
                             "referencedDeclaration": 1855,
                             "src": "27828:14:1",
                             "typeDescriptions": {
-                              "typeIdentifier": "t_struct$_SuperblockInfo_$8859_memory_ptr",
+                              "typeIdentifier": "t_struct$_SuperblockInfo_$8836_memory_ptr",
                               "typeString": "struct SyscoinSuperblocksI.SuperblockInfo memory"
                             }
                           },
@@ -24638,7 +24638,7 @@
                           "lValueRequested": true,
                           "memberName": "mtpTimestamp",
                           "nodeType": "MemberAccess",
-                          "referencedDeclaration": 8846,
+                          "referencedDeclaration": 8823,
                           "src": "27828:27:1",
                           "typeDescriptions": {
                             "typeIdentifier": "t_uint256",
@@ -24656,7 +24656,7 @@
                             "referencedDeclaration": 1855,
                             "src": "27856:14:1",
                             "typeDescriptions": {
-                              "typeIdentifier": "t_struct$_SuperblockInfo_$8859_memory_ptr",
+                              "typeIdentifier": "t_struct$_SuperblockInfo_$8836_memory_ptr",
                               "typeString": "struct SyscoinSuperblocksI.SuperblockInfo memory"
                             }
                           },
@@ -24667,7 +24667,7 @@
                           "lValueRequested": true,
                           "memberName": "lastHash",
                           "nodeType": "MemberAccess",
-                          "referencedDeclaration": 8848,
+                          "referencedDeclaration": 8825,
                           "src": "27856:23:1",
                           "typeDescriptions": {
                             "typeIdentifier": "t_bytes32",
@@ -24685,7 +24685,7 @@
                             "referencedDeclaration": 1855,
                             "src": "27880:14:1",
                             "typeDescriptions": {
-                              "typeIdentifier": "t_struct$_SuperblockInfo_$8859_memory_ptr",
+                              "typeIdentifier": "t_struct$_SuperblockInfo_$8836_memory_ptr",
                               "typeString": "struct SyscoinSuperblocksI.SuperblockInfo memory"
                             }
                           },
@@ -24696,7 +24696,7 @@
                           "lValueRequested": true,
                           "memberName": "lastBits",
                           "nodeType": "MemberAccess",
-                          "referencedDeclaration": 8854,
+                          "referencedDeclaration": 8831,
                           "src": "27880:23:1",
                           "typeDescriptions": {
                             "typeIdentifier": "t_uint32",
@@ -24714,7 +24714,7 @@
                             "referencedDeclaration": 1855,
                             "src": "27904:14:1",
                             "typeDescriptions": {
-                              "typeIdentifier": "t_struct$_SuperblockInfo_$8859_memory_ptr",
+                              "typeIdentifier": "t_struct$_SuperblockInfo_$8836_memory_ptr",
                               "typeString": "struct SyscoinSuperblocksI.SuperblockInfo memory"
                             }
                           },
@@ -24725,7 +24725,7 @@
                           "lValueRequested": true,
                           "memberName": "parentId",
                           "nodeType": "MemberAccess",
-                          "referencedDeclaration": 8850,
+                          "referencedDeclaration": 8827,
                           "src": "27904:23:1",
                           "typeDescriptions": {
                             "typeIdentifier": "t_bytes32",
@@ -24745,7 +24745,7 @@
                             "referencedDeclaration": 1855,
                             "src": "27930:14:1",
                             "typeDescriptions": {
-                              "typeIdentifier": "t_struct$_SuperblockInfo_$8859_memory_ptr",
+                              "typeIdentifier": "t_struct$_SuperblockInfo_$8836_memory_ptr",
                               "typeString": "struct SyscoinSuperblocksI.SuperblockInfo memory"
                             }
                           },
@@ -24756,7 +24756,7 @@
                           "lValueRequested": true,
                           "memberName": "height",
                           "nodeType": "MemberAccess",
-                          "referencedDeclaration": 8856,
+                          "referencedDeclaration": 8833,
                           "src": "27930:21:1",
                           "typeDescriptions": {
                             "typeIdentifier": "t_uint32",
@@ -24812,7 +24812,7 @@
                           "referencedDeclaration": 147,
                           "src": "27967:18:1",
                           "typeDescriptions": {
-                            "typeIdentifier": "t_contract$_SyscoinSuperblocksI_$9013",
+                            "typeIdentifier": "t_contract$_SyscoinSuperblocksI_$8990",
                             "typeString": "contract SyscoinSuperblocksI"
                           }
                         },
@@ -24823,10 +24823,10 @@
                         "lValueRequested": false,
                         "memberName": "getSuperblock",
                         "nodeType": "MemberAccess",
-                        "referencedDeclaration": 8903,
+                        "referencedDeclaration": 8880,
                         "src": "27967:32:1",
                         "typeDescriptions": {
-                          "typeIdentifier": "t_function_external_view$_t_bytes32_$returns$_t_bytes32_$_t_uint256_$_t_uint256_$_t_bytes32_$_t_uint32_$_t_bytes32_$_t_address_$_t_enum$_Status_$8840_$_t_uint32_$",
+                          "typeIdentifier": "t_function_external_view$_t_bytes32_$returns$_t_bytes32_$_t_uint256_$_t_uint256_$_t_bytes32_$_t_uint32_$_t_bytes32_$_t_address_$_t_enum$_Status_$8817_$_t_uint32_$",
                           "typeString": "function (bytes32) view external returns (bytes32,uint256,uint256,bytes32,uint32,bytes32,address,enum SyscoinSuperblocksI.Status,uint32)"
                         }
                       },
@@ -24840,7 +24840,7 @@
                       "nodeType": "FunctionCall",
                       "src": "27967:48:1",
                       "typeDescriptions": {
-                        "typeIdentifier": "t_tuple$_t_bytes32_$_t_uint256_$_t_uint256_$_t_bytes32_$_t_uint32_$_t_bytes32_$_t_address_$_t_enum$_Status_$8840_$_t_uint32_$",
+                        "typeIdentifier": "t_tuple$_t_bytes32_$_t_uint256_$_t_uint256_$_t_bytes32_$_t_uint32_$_t_bytes32_$_t_address_$_t_enum$_Status_$8817_$_t_uint32_$",
                         "typeString": "tuple(bytes32,uint256,uint256,bytes32,uint32,bytes32,address,enum SyscoinSuperblocksI.Status,uint32)"
                       }
                     },
@@ -26921,7 +26921,7 @@
                           "referencedDeclaration": 1855,
                           "src": "29471:14:1",
                           "typeDescriptions": {
-                            "typeIdentifier": "t_struct$_SuperblockInfo_$8859_memory_ptr",
+                            "typeIdentifier": "t_struct$_SuperblockInfo_$8836_memory_ptr",
                             "typeString": "struct SyscoinSuperblocksI.SuperblockInfo memory"
                           }
                         },
@@ -27075,7 +27075,7 @@
                             "typeString": "struct SyscoinBattleManager.BattleSession storage pointer"
                           },
                           {
-                            "typeIdentifier": "t_struct$_SuperblockInfo_$8859_memory_ptr",
+                            "typeIdentifier": "t_struct$_SuperblockInfo_$8836_memory_ptr",
                             "typeString": "struct SyscoinSuperblocksI.SuperblockInfo memory"
                           },
                           {
@@ -27094,7 +27094,7 @@
                         "referencedDeclaration": 1791,
                         "src": "29415:21:1",
                         "typeDescriptions": {
-                          "typeIdentifier": "t_function_internal_nonpayable$_t_struct$_BattleSession_$95_storage_ptr_$_t_struct$_SuperblockInfo_$8859_memory_ptr_$_t_bytes32_$_t_struct$_BlockHeader_$129_memory_ptr_$returns$_t_uint256_$",
+                          "typeIdentifier": "t_function_internal_nonpayable$_t_struct$_BattleSession_$95_storage_ptr_$_t_struct$_SuperblockInfo_$8836_memory_ptr_$_t_bytes32_$_t_struct$_BlockHeader_$129_memory_ptr_$returns$_t_uint256_$",
                           "typeString": "function (struct SyscoinBattleManager.BattleSession storage pointer,struct SyscoinSuperblocksI.SuperblockInfo memory,bytes32,struct SyscoinBattleManager.BlockHeader memory) returns (uint256)"
                         }
                       },
@@ -27220,7 +27220,7 @@
                               "name": "block",
                               "nodeType": "Identifier",
                               "overloadedDeclarations": [],
-                              "referencedDeclaration": 10234,
+                              "referencedDeclaration": 10218,
                               "src": "29787:5:1",
                               "typeDescriptions": {
                                 "typeIdentifier": "t_magic_block",
@@ -27299,7 +27299,7 @@
                                 "referencedDeclaration": 1855,
                                 "src": "29847:14:1",
                                 "typeDescriptions": {
-                                  "typeIdentifier": "t_struct$_SuperblockInfo_$8859_memory_ptr",
+                                  "typeIdentifier": "t_struct$_SuperblockInfo_$8836_memory_ptr",
                                   "typeString": "struct SyscoinSuperblocksI.SuperblockInfo memory"
                                 }
                               },
@@ -27324,7 +27324,7 @@
                                   "typeString": "struct SyscoinBattleManager.BattleSession storage pointer"
                                 },
                                 {
-                                  "typeIdentifier": "t_struct$_SuperblockInfo_$8859_memory_ptr",
+                                  "typeIdentifier": "t_struct$_SuperblockInfo_$8836_memory_ptr",
                                   "typeString": "struct SyscoinSuperblocksI.SuperblockInfo memory"
                                 },
                                 {
@@ -27339,7 +27339,7 @@
                               "referencedDeclaration": 2707,
                               "src": "29822:15:1",
                               "typeDescriptions": {
-                                "typeIdentifier": "t_function_internal_nonpayable$_t_struct$_BattleSession_$95_storage_ptr_$_t_struct$_SuperblockInfo_$8859_memory_ptr_$_t_array$_t_struct$_BlockHeader_$129_memory_$dyn_memory_ptr_$returns$_t_uint256_$",
+                                "typeIdentifier": "t_function_internal_nonpayable$_t_struct$_BattleSession_$95_storage_ptr_$_t_struct$_SuperblockInfo_$8836_memory_ptr_$_t_array$_t_struct$_BlockHeader_$129_memory_$dyn_memory_ptr_$returns$_t_uint256_$",
                                 "typeString": "function (struct SyscoinBattleManager.BattleSession storage pointer,struct SyscoinSuperblocksI.SuperblockInfo memory,struct SyscoinBattleManager.BlockHeader memory[] memory) returns (uint256)"
                               }
                             },
@@ -29022,10 +29022,10 @@
                       "name": "require",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [
-                        10247,
-                        10248
+                        10231,
+                        10232
                       ],
-                      "referencedDeclaration": 10248,
+                      "referencedDeclaration": 10232,
                       "src": "31697:7:1",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_require_pure$_t_bool_$_t_string_memory_ptr_$returns$__$",
@@ -29984,7 +29984,7 @@
                                                   "name": "abi",
                                                   "nodeType": "Identifier",
                                                   "overloadedDeclarations": [],
-                                                  "referencedDeclaration": 10231,
+                                                  "referencedDeclaration": 10215,
                                                   "src": "32116:3:1",
                                                   "typeDescriptions": {
                                                     "typeIdentifier": "t_magic_abi",
@@ -30031,7 +30031,7 @@
                                             "name": "sha256",
                                             "nodeType": "Identifier",
                                             "overloadedDeclarations": [],
-                                            "referencedDeclaration": 10253,
+                                            "referencedDeclaration": 10237,
                                             "src": "32109:6:1",
                                             "typeDescriptions": {
                                               "typeIdentifier": "t_function_sha256_pure$_t_bytes_memory_ptr_$returns$_t_bytes32_$",
@@ -30066,7 +30066,7 @@
                                           "name": "abi",
                                           "nodeType": "Identifier",
                                           "overloadedDeclarations": [],
-                                          "referencedDeclaration": 10231,
+                                          "referencedDeclaration": 10215,
                                           "src": "32092:3:1",
                                           "typeDescriptions": {
                                             "typeIdentifier": "t_magic_abi",
@@ -30113,7 +30113,7 @@
                                     "name": "sha256",
                                     "nodeType": "Identifier",
                                     "overloadedDeclarations": [],
-                                    "referencedDeclaration": 10253,
+                                    "referencedDeclaration": 10237,
                                     "src": "32085:6:1",
                                     "typeDescriptions": {
                                       "typeIdentifier": "t_function_sha256_pure$_t_bytes_memory_ptr_$returns$_t_bytes32_$",
@@ -33394,7 +33394,7 @@
                       "stateVariable": false,
                       "storageLocation": "memory",
                       "typeDescriptions": {
-                        "typeIdentifier": "t_struct$_SuperblockInfo_$8859_memory_ptr",
+                        "typeIdentifier": "t_struct$_SuperblockInfo_$8836_memory_ptr",
                         "typeString": "struct SyscoinSuperblocksI.SuperblockInfo"
                       },
                       "typeName": {
@@ -33402,10 +33402,10 @@
                         "id": 2531,
                         "name": "SyscoinSuperblocksI.SuperblockInfo",
                         "nodeType": "UserDefinedTypeName",
-                        "referencedDeclaration": 8859,
+                        "referencedDeclaration": 8836,
                         "src": "34658:34:1",
                         "typeDescriptions": {
-                          "typeIdentifier": "t_struct$_SuperblockInfo_$8859_storage_ptr",
+                          "typeIdentifier": "t_struct$_SuperblockInfo_$8836_storage_ptr",
                           "typeString": "struct SyscoinSuperblocksI.SuperblockInfo"
                         }
                       },
@@ -33573,7 +33573,7 @@
                             "referencedDeclaration": 2532,
                             "src": "34820:18:1",
                             "typeDescriptions": {
-                              "typeIdentifier": "t_struct$_SuperblockInfo_$8859_memory_ptr",
+                              "typeIdentifier": "t_struct$_SuperblockInfo_$8836_memory_ptr",
                               "typeString": "struct SyscoinSuperblocksI.SuperblockInfo memory"
                             }
                           },
@@ -33584,7 +33584,7 @@
                           "lValueRequested": true,
                           "memberName": "mtpTimestamp",
                           "nodeType": "MemberAccess",
-                          "referencedDeclaration": 8846,
+                          "referencedDeclaration": 8823,
                           "src": "34820:31:1",
                           "typeDescriptions": {
                             "typeIdentifier": "t_uint256",
@@ -33602,7 +33602,7 @@
                             "referencedDeclaration": 2532,
                             "src": "34852:18:1",
                             "typeDescriptions": {
-                              "typeIdentifier": "t_struct$_SuperblockInfo_$8859_memory_ptr",
+                              "typeIdentifier": "t_struct$_SuperblockInfo_$8836_memory_ptr",
                               "typeString": "struct SyscoinSuperblocksI.SuperblockInfo memory"
                             }
                           },
@@ -33613,7 +33613,7 @@
                           "lValueRequested": true,
                           "memberName": "lastHash",
                           "nodeType": "MemberAccess",
-                          "referencedDeclaration": 8848,
+                          "referencedDeclaration": 8825,
                           "src": "34852:27:1",
                           "typeDescriptions": {
                             "typeIdentifier": "t_bytes32",
@@ -33631,7 +33631,7 @@
                             "referencedDeclaration": 2532,
                             "src": "34880:18:1",
                             "typeDescriptions": {
-                              "typeIdentifier": "t_struct$_SuperblockInfo_$8859_memory_ptr",
+                              "typeIdentifier": "t_struct$_SuperblockInfo_$8836_memory_ptr",
                               "typeString": "struct SyscoinSuperblocksI.SuperblockInfo memory"
                             }
                           },
@@ -33642,7 +33642,7 @@
                           "lValueRequested": true,
                           "memberName": "lastBits",
                           "nodeType": "MemberAccess",
-                          "referencedDeclaration": 8854,
+                          "referencedDeclaration": 8831,
                           "src": "34880:27:1",
                           "typeDescriptions": {
                             "typeIdentifier": "t_uint32",
@@ -33683,7 +33683,7 @@
                             "referencedDeclaration": 2521,
                             "src": "34960:14:1",
                             "typeDescriptions": {
-                              "typeIdentifier": "t_struct$_SuperblockInfo_$8859_memory_ptr",
+                              "typeIdentifier": "t_struct$_SuperblockInfo_$8836_memory_ptr",
                               "typeString": "struct SyscoinSuperblocksI.SuperblockInfo memory"
                             }
                           },
@@ -33694,7 +33694,7 @@
                           "lValueRequested": false,
                           "memberName": "parentId",
                           "nodeType": "MemberAccess",
-                          "referencedDeclaration": 8850,
+                          "referencedDeclaration": 8827,
                           "src": "34960:23:1",
                           "typeDescriptions": {
                             "typeIdentifier": "t_bytes32",
@@ -33718,7 +33718,7 @@
                           "referencedDeclaration": 147,
                           "src": "34927:18:1",
                           "typeDescriptions": {
-                            "typeIdentifier": "t_contract$_SyscoinSuperblocksI_$9013",
+                            "typeIdentifier": "t_contract$_SyscoinSuperblocksI_$8990",
                             "typeString": "contract SyscoinSuperblocksI"
                           }
                         },
@@ -33729,10 +33729,10 @@
                         "lValueRequested": false,
                         "memberName": "getSuperblock",
                         "nodeType": "MemberAccess",
-                        "referencedDeclaration": 8903,
+                        "referencedDeclaration": 8880,
                         "src": "34927:32:1",
                         "typeDescriptions": {
-                          "typeIdentifier": "t_function_external_view$_t_bytes32_$returns$_t_bytes32_$_t_uint256_$_t_uint256_$_t_bytes32_$_t_uint32_$_t_bytes32_$_t_address_$_t_enum$_Status_$8840_$_t_uint32_$",
+                          "typeIdentifier": "t_function_external_view$_t_bytes32_$returns$_t_bytes32_$_t_uint256_$_t_uint256_$_t_bytes32_$_t_uint32_$_t_bytes32_$_t_address_$_t_enum$_Status_$8817_$_t_uint32_$",
                           "typeString": "function (bytes32) view external returns (bytes32,uint256,uint256,bytes32,uint32,bytes32,address,enum SyscoinSuperblocksI.Status,uint32)"
                         }
                       },
@@ -33746,7 +33746,7 @@
                       "nodeType": "FunctionCall",
                       "src": "34927:57:1",
                       "typeDescriptions": {
-                        "typeIdentifier": "t_tuple$_t_bytes32_$_t_uint256_$_t_uint256_$_t_bytes32_$_t_uint32_$_t_bytes32_$_t_address_$_t_enum$_Status_$8840_$_t_uint32_$",
+                        "typeIdentifier": "t_tuple$_t_bytes32_$_t_uint256_$_t_uint256_$_t_bytes32_$_t_uint32_$_t_bytes32_$_t_address_$_t_enum$_Status_$8817_$_t_uint32_$",
                         "typeString": "tuple(bytes32,uint256,uint256,bytes32,uint32,bytes32,address,enum SyscoinSuperblocksI.Status,uint32)"
                       }
                     },
@@ -33938,7 +33938,7 @@
                               "referencedDeclaration": 2532,
                               "src": "35233:18:1",
                               "typeDescriptions": {
-                                "typeIdentifier": "t_struct$_SuperblockInfo_$8859_memory_ptr",
+                                "typeIdentifier": "t_struct$_SuperblockInfo_$8836_memory_ptr",
                                 "typeString": "struct SyscoinSuperblocksI.SuperblockInfo memory"
                               }
                             },
@@ -33949,7 +33949,7 @@
                             "lValueRequested": false,
                             "memberName": "lastHash",
                             "nodeType": "MemberAccess",
-                            "referencedDeclaration": 8848,
+                            "referencedDeclaration": 8825,
                             "src": "35233:27:1",
                             "typeDescriptions": {
                               "typeIdentifier": "t_bytes32",
@@ -34062,7 +34062,7 @@
                           "referencedDeclaration": 2532,
                           "src": "35501:18:1",
                           "typeDescriptions": {
-                            "typeIdentifier": "t_struct$_SuperblockInfo_$8859_memory_ptr",
+                            "typeIdentifier": "t_struct$_SuperblockInfo_$8836_memory_ptr",
                             "typeString": "struct SyscoinSuperblocksI.SuperblockInfo memory"
                           }
                         },
@@ -34073,7 +34073,7 @@
                         "lValueRequested": false,
                         "memberName": "lastBits",
                         "nodeType": "MemberAccess",
-                        "referencedDeclaration": 8854,
+                        "referencedDeclaration": 8831,
                         "src": "35501:27:1",
                         "typeDescriptions": {
                           "typeIdentifier": "t_uint32",
@@ -34389,7 +34389,7 @@
                               "referencedDeclaration": 2521,
                               "src": "36256:14:1",
                               "typeDescriptions": {
-                                "typeIdentifier": "t_struct$_SuperblockInfo_$8859_memory_ptr",
+                                "typeIdentifier": "t_struct$_SuperblockInfo_$8836_memory_ptr",
                                 "typeString": "struct SyscoinSuperblocksI.SuperblockInfo memory"
                               }
                             },
@@ -34400,7 +34400,7 @@
                             "lValueRequested": false,
                             "memberName": "mtpTimestamp",
                             "nodeType": "MemberAccess",
-                            "referencedDeclaration": 8846,
+                            "referencedDeclaration": 8823,
                             "src": "36256:27:1",
                             "typeDescriptions": {
                               "typeIdentifier": "t_uint256",
@@ -34475,7 +34475,7 @@
                               "referencedDeclaration": 2532,
                               "src": "36439:18:1",
                               "typeDescriptions": {
-                                "typeIdentifier": "t_struct$_SuperblockInfo_$8859_memory_ptr",
+                                "typeIdentifier": "t_struct$_SuperblockInfo_$8836_memory_ptr",
                                 "typeString": "struct SyscoinSuperblocksI.SuperblockInfo memory"
                               }
                             },
@@ -34486,7 +34486,7 @@
                             "lValueRequested": false,
                             "memberName": "mtpTimestamp",
                             "nodeType": "MemberAccess",
-                            "referencedDeclaration": 8846,
+                            "referencedDeclaration": 8823,
                             "src": "36439:31:1",
                             "typeDescriptions": {
                               "typeIdentifier": "t_uint256",
@@ -34645,7 +34645,7 @@
                                                 "referencedDeclaration": 2521,
                                                 "src": "36828:14:1",
                                                 "typeDescriptions": {
-                                                  "typeIdentifier": "t_struct$_SuperblockInfo_$8859_memory_ptr",
+                                                  "typeIdentifier": "t_struct$_SuperblockInfo_$8836_memory_ptr",
                                                   "typeString": "struct SyscoinSuperblocksI.SuperblockInfo memory"
                                                 }
                                               },
@@ -34656,7 +34656,7 @@
                                               "lValueRequested": false,
                                               "memberName": "height",
                                               "nodeType": "MemberAccess",
-                                              "referencedDeclaration": 8856,
+                                              "referencedDeclaration": 8833,
                                               "src": "36828:21:1",
                                               "typeDescriptions": {
                                                 "typeIdentifier": "t_uint32",
@@ -34797,7 +34797,7 @@
                                           "referencedDeclaration": 2521,
                                           "src": "37840:14:1",
                                           "typeDescriptions": {
-                                            "typeIdentifier": "t_struct$_SuperblockInfo_$8859_memory_ptr",
+                                            "typeIdentifier": "t_struct$_SuperblockInfo_$8836_memory_ptr",
                                             "typeString": "struct SyscoinSuperblocksI.SuperblockInfo memory"
                                           }
                                         },
@@ -34808,7 +34808,7 @@
                                         "lValueRequested": false,
                                         "memberName": "lastBits",
                                         "nodeType": "MemberAccess",
-                                        "referencedDeclaration": 8854,
+                                        "referencedDeclaration": 8831,
                                         "src": "37840:23:1",
                                         "typeDescriptions": {
                                           "typeIdentifier": "t_uint32",
@@ -34828,7 +34828,7 @@
                                           "referencedDeclaration": 2532,
                                           "src": "37867:18:1",
                                           "typeDescriptions": {
-                                            "typeIdentifier": "t_struct$_SuperblockInfo_$8859_memory_ptr",
+                                            "typeIdentifier": "t_struct$_SuperblockInfo_$8836_memory_ptr",
                                             "typeString": "struct SyscoinSuperblocksI.SuperblockInfo memory"
                                           }
                                         },
@@ -34839,7 +34839,7 @@
                                         "lValueRequested": false,
                                         "memberName": "lastBits",
                                         "nodeType": "MemberAccess",
-                                        "referencedDeclaration": 8854,
+                                        "referencedDeclaration": 8831,
                                         "src": "37867:27:1",
                                         "typeDescriptions": {
                                           "typeIdentifier": "t_uint32",
@@ -35043,7 +35043,7 @@
                                           "referencedDeclaration": 2521,
                                           "src": "37275:14:1",
                                           "typeDescriptions": {
-                                            "typeIdentifier": "t_struct$_SuperblockInfo_$8859_memory_ptr",
+                                            "typeIdentifier": "t_struct$_SuperblockInfo_$8836_memory_ptr",
                                             "typeString": "struct SyscoinSuperblocksI.SuperblockInfo memory"
                                           }
                                         },
@@ -35054,7 +35054,7 @@
                                         "lValueRequested": true,
                                         "memberName": "timestamp",
                                         "nodeType": "MemberAccess",
-                                        "referencedDeclaration": 8844,
+                                        "referencedDeclaration": 8821,
                                         "src": "37275:24:1",
                                         "typeDescriptions": {
                                           "typeIdentifier": "t_uint256",
@@ -35091,7 +35091,7 @@
                                                     "referencedDeclaration": 2521,
                                                     "src": "37379:14:1",
                                                     "typeDescriptions": {
-                                                      "typeIdentifier": "t_struct$_SuperblockInfo_$8859_memory_ptr",
+                                                      "typeIdentifier": "t_struct$_SuperblockInfo_$8836_memory_ptr",
                                                       "typeString": "struct SyscoinSuperblocksI.SuperblockInfo memory"
                                                     }
                                                   },
@@ -35102,7 +35102,7 @@
                                                   "lValueRequested": false,
                                                   "memberName": "height",
                                                   "nodeType": "MemberAccess",
-                                                  "referencedDeclaration": 8856,
+                                                  "referencedDeclaration": 8833,
                                                   "src": "37379:21:1",
                                                   "typeDescriptions": {
                                                     "typeIdentifier": "t_uint32",
@@ -35152,7 +35152,7 @@
                                                 "referencedDeclaration": 147,
                                                 "src": "37344:18:1",
                                                 "typeDescriptions": {
-                                                  "typeIdentifier": "t_contract$_SyscoinSuperblocksI_$9013",
+                                                  "typeIdentifier": "t_contract$_SyscoinSuperblocksI_$8990",
                                                   "typeString": "contract SyscoinSuperblocksI"
                                                 }
                                               },
@@ -35163,7 +35163,7 @@
                                               "lValueRequested": false,
                                               "memberName": "getSuperblockAt",
                                               "nodeType": "MemberAccess",
-                                              "referencedDeclaration": 8998,
+                                              "referencedDeclaration": 8975,
                                               "src": "37344:34:1",
                                               "typeDescriptions": {
                                                 "typeIdentifier": "t_function_external_view$_t_uint256_$returns$_t_bytes32_$",
@@ -35201,7 +35201,7 @@
                                             "referencedDeclaration": 147,
                                             "src": "37302:18:1",
                                             "typeDescriptions": {
-                                              "typeIdentifier": "t_contract$_SyscoinSuperblocksI_$9013",
+                                              "typeIdentifier": "t_contract$_SyscoinSuperblocksI_$8990",
                                               "typeString": "contract SyscoinSuperblocksI"
                                             }
                                           },
@@ -35212,7 +35212,7 @@
                                           "lValueRequested": false,
                                           "memberName": "getSuperblockTimestamp",
                                           "nodeType": "MemberAccess",
-                                          "referencedDeclaration": 9005,
+                                          "referencedDeclaration": 8982,
                                           "src": "37302:41:1",
                                           "typeDescriptions": {
                                             "typeIdentifier": "t_function_external_view$_t_bytes32_$returns$_t_uint256_$",
@@ -35332,7 +35332,7 @@
                                               "referencedDeclaration": 2521,
                                               "src": "37494:14:1",
                                               "typeDescriptions": {
-                                                "typeIdentifier": "t_struct$_SuperblockInfo_$8859_memory_ptr",
+                                                "typeIdentifier": "t_struct$_SuperblockInfo_$8836_memory_ptr",
                                                 "typeString": "struct SyscoinSuperblocksI.SuperblockInfo memory"
                                               }
                                             },
@@ -35343,7 +35343,7 @@
                                             "lValueRequested": false,
                                             "memberName": "timestamp",
                                             "nodeType": "MemberAccess",
-                                            "referencedDeclaration": 8844,
+                                            "referencedDeclaration": 8821,
                                             "src": "37494:24:1",
                                             "typeDescriptions": {
                                               "typeIdentifier": "t_uint256",
@@ -35367,7 +35367,7 @@
                                             "referencedDeclaration": 2532,
                                             "src": "37520:18:1",
                                             "typeDescriptions": {
-                                              "typeIdentifier": "t_struct$_SuperblockInfo_$8859_memory_ptr",
+                                              "typeIdentifier": "t_struct$_SuperblockInfo_$8836_memory_ptr",
                                               "typeString": "struct SyscoinSuperblocksI.SuperblockInfo memory"
                                             }
                                           },
@@ -35378,7 +35378,7 @@
                                           "lValueRequested": false,
                                           "memberName": "lastBits",
                                           "nodeType": "MemberAccess",
-                                          "referencedDeclaration": 8854,
+                                          "referencedDeclaration": 8831,
                                           "src": "37520:27:1",
                                           "typeDescriptions": {
                                             "typeIdentifier": "t_uint32",
@@ -35448,7 +35448,7 @@
                                           "referencedDeclaration": 2521,
                                           "src": "37668:14:1",
                                           "typeDescriptions": {
-                                            "typeIdentifier": "t_struct$_SuperblockInfo_$8859_memory_ptr",
+                                            "typeIdentifier": "t_struct$_SuperblockInfo_$8836_memory_ptr",
                                             "typeString": "struct SyscoinSuperblocksI.SuperblockInfo memory"
                                           }
                                         },
@@ -35459,7 +35459,7 @@
                                         "lValueRequested": false,
                                         "memberName": "lastBits",
                                         "nodeType": "MemberAccess",
-                                        "referencedDeclaration": 8854,
+                                        "referencedDeclaration": 8831,
                                         "src": "37668:23:1",
                                         "typeDescriptions": {
                                           "typeIdentifier": "t_uint32",
@@ -35544,7 +35544,7 @@
                                     "referencedDeclaration": 2521,
                                     "src": "38095:14:1",
                                     "typeDescriptions": {
-                                      "typeIdentifier": "t_struct$_SuperblockInfo_$8859_memory_ptr",
+                                      "typeIdentifier": "t_struct$_SuperblockInfo_$8836_memory_ptr",
                                       "typeString": "struct SyscoinSuperblocksI.SuperblockInfo memory"
                                     }
                                   },
@@ -35555,7 +35555,7 @@
                                   "lValueRequested": false,
                                   "memberName": "lastBits",
                                   "nodeType": "MemberAccess",
-                                  "referencedDeclaration": 8854,
+                                  "referencedDeclaration": 8831,
                                   "src": "38095:23:1",
                                   "typeDescriptions": {
                                     "typeIdentifier": "t_uint32",
@@ -35787,7 +35787,7 @@
                   "stateVariable": false,
                   "storageLocation": "memory",
                   "typeDescriptions": {
-                    "typeIdentifier": "t_struct$_SuperblockInfo_$8859_memory_ptr",
+                    "typeIdentifier": "t_struct$_SuperblockInfo_$8836_memory_ptr",
                     "typeString": "struct SyscoinSuperblocksI.SuperblockInfo"
                   },
                   "typeName": {
@@ -35795,10 +35795,10 @@
                     "id": 2520,
                     "name": "SyscoinSuperblocksI.SuperblockInfo",
                     "nodeType": "UserDefinedTypeName",
-                    "referencedDeclaration": 8859,
+                    "referencedDeclaration": 8836,
                     "src": "34526:34:1",
                     "typeDescriptions": {
-                      "typeIdentifier": "t_struct$_SuperblockInfo_$8859_storage_ptr",
+                      "typeIdentifier": "t_struct$_SuperblockInfo_$8836_storage_ptr",
                       "typeString": "struct SyscoinSuperblocksI.SuperblockInfo"
                     }
                   },
@@ -36089,10 +36089,10 @@
                       "name": "require",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [
-                        10247,
-                        10248
+                        10231,
+                        10232
                       ],
-                      "referencedDeclaration": 10247,
+                      "referencedDeclaration": 10231,
                       "src": "38468:7:1",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_require_pure$_t_bool_$returns$__$",
@@ -36137,7 +36137,7 @@
                         "name": "block",
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
-                        "referencedDeclaration": 10234,
+                        "referencedDeclaration": 10218,
                         "src": "38523:5:1",
                         "typeDescriptions": {
                           "typeIdentifier": "t_magic_block",
@@ -37648,7 +37648,7 @@
                             "name": "block",
                             "nodeType": "Identifier",
                             "overloadedDeclarations": [],
-                            "referencedDeclaration": 10234,
+                            "referencedDeclaration": 10218,
                             "src": "40082:5:1",
                             "typeDescriptions": {
                               "typeIdentifier": "t_magic_block",
@@ -38484,7 +38484,7 @@
         "id": 60,
         "nodeType": "ImportDirective",
         "scope": 2904,
-        "sourceUnit": 9014,
+        "sourceUnit": 8991,
         "src": "74:46:1",
         "symbolAliases": [],
         "unitAlias": ""
@@ -38506,7 +38506,7 @@
         "id": 62,
         "nodeType": "ImportDirective",
         "scope": 2904,
-        "sourceUnit": 9573,
+        "sourceUnit": 9557,
         "src": "155:60:1",
         "symbolAliases": [],
         "unitAlias": ""
@@ -38520,10 +38520,10 @@
               "id": 63,
               "name": "Initializable",
               "nodeType": "UserDefinedTypeName",
-              "referencedDeclaration": 9572,
+              "referencedDeclaration": 9556,
               "src": "329:13:1",
               "typeDescriptions": {
-                "typeIdentifier": "t_contract$_Initializable_$9572",
+                "typeIdentifier": "t_contract$_Initializable_$9556",
                 "typeString": "contract Initializable"
               }
             },
@@ -38552,7 +38552,7 @@
         ],
         "contractDependencies": [
           4906,
-          9572
+          9556
         ],
         "contractKind": "contract",
         "documentation": null,
@@ -38561,7 +38561,7 @@
         "linearizedBaseContracts": [
           2903,
           4906,
-          9572
+          9556
         ],
         "name": "SyscoinBattleManager",
         "nodeType": "ContractDefinition",
@@ -39584,7 +39584,7 @@
             "stateVariable": true,
             "storageLocation": "default",
             "typeDescriptions": {
-              "typeIdentifier": "t_contract$_SyscoinSuperblocksI_$9013",
+              "typeIdentifier": "t_contract$_SyscoinSuperblocksI_$8990",
               "typeString": "contract SyscoinSuperblocksI"
             },
             "typeName": {
@@ -39592,10 +39592,10 @@
               "id": 146,
               "name": "SyscoinSuperblocksI",
               "nodeType": "UserDefinedTypeName",
-              "referencedDeclaration": 9013,
+              "referencedDeclaration": 8990,
               "src": "2697:19:1",
               "typeDescriptions": {
-                "typeIdentifier": "t_contract$_SyscoinSuperblocksI_$9013",
+                "typeIdentifier": "t_contract$_SyscoinSuperblocksI_$8990",
                 "typeString": "contract SyscoinSuperblocksI"
               }
             },
@@ -40128,7 +40128,7 @@
                             "name": "msg",
                             "nodeType": "Identifier",
                             "overloadedDeclarations": [],
-                            "referencedDeclaration": 10244,
+                            "referencedDeclaration": 10228,
                             "src": "3218:3:1",
                             "typeDescriptions": {
                               "typeIdentifier": "t_magic_message",
@@ -40182,10 +40182,10 @@
                       "name": "require",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [
-                        10247,
-                        10248
+                        10231,
+                        10232
                       ],
-                      "referencedDeclaration": 10247,
+                      "referencedDeclaration": 10231,
                       "src": "3210:7:1",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_require_pure$_t_bool_$returns$__$",
@@ -40287,7 +40287,7 @@
                             "name": "msg",
                             "nodeType": "Identifier",
                             "overloadedDeclarations": [],
-                            "referencedDeclaration": 10244,
+                            "referencedDeclaration": 10228,
                             "src": "3324:3:1",
                             "typeDescriptions": {
                               "typeIdentifier": "t_magic_message",
@@ -40384,10 +40384,10 @@
                       "name": "require",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [
-                        10247,
-                        10248
+                        10231,
+                        10232
                       ],
-                      "referencedDeclaration": 10247,
+                      "referencedDeclaration": 10231,
                       "src": "3316:7:1",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_require_pure$_t_bool_$returns$__$",
@@ -40528,7 +40528,7 @@
                       "referencedDeclaration": 147,
                       "src": "3948:18:1",
                       "typeDescriptions": {
-                        "typeIdentifier": "t_contract$_SyscoinSuperblocksI_$9013",
+                        "typeIdentifier": "t_contract$_SyscoinSuperblocksI_$8990",
                         "typeString": "contract SyscoinSuperblocksI"
                       }
                     },
@@ -40543,13 +40543,13 @@
                       "referencedDeclaration": 220,
                       "src": "3969:12:1",
                       "typeDescriptions": {
-                        "typeIdentifier": "t_contract$_SyscoinSuperblocksI_$9013",
+                        "typeIdentifier": "t_contract$_SyscoinSuperblocksI_$8990",
                         "typeString": "contract SyscoinSuperblocksI"
                       }
                     },
                     "src": "3948:33:1",
                     "typeDescriptions": {
-                      "typeIdentifier": "t_contract$_SyscoinSuperblocksI_$9013",
+                      "typeIdentifier": "t_contract$_SyscoinSuperblocksI_$8990",
                       "typeString": "contract SyscoinSuperblocksI"
                     }
                   },
@@ -40665,7 +40665,7 @@
                   "name": "initializer",
                   "nodeType": "Identifier",
                   "overloadedDeclarations": [],
-                  "referencedDeclaration": 9553,
+                  "referencedDeclaration": 9537,
                   "src": "3902:11:1",
                   "typeDescriptions": {
                     "typeIdentifier": "t_modifier$__$",
@@ -40720,7 +40720,7 @@
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
-                    "typeIdentifier": "t_contract$_SyscoinSuperblocksI_$9013",
+                    "typeIdentifier": "t_contract$_SyscoinSuperblocksI_$8990",
                     "typeString": "contract SyscoinSuperblocksI"
                   },
                   "typeName": {
@@ -40728,10 +40728,10 @@
                     "id": 219,
                     "name": "SyscoinSuperblocksI",
                     "nodeType": "UserDefinedTypeName",
-                    "referencedDeclaration": 9013,
+                    "referencedDeclaration": 8990,
                     "src": "3787:19:1",
                     "typeDescriptions": {
-                      "typeIdentifier": "t_contract$_SyscoinSuperblocksI_$9013",
+                      "typeIdentifier": "t_contract$_SyscoinSuperblocksI_$8990",
                       "typeString": "contract SyscoinSuperblocksI"
                     }
                   },
@@ -41098,10 +41098,10 @@
                       "name": "require",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [
-                        10247,
-                        10248
+                        10231,
+                        10232
                       ],
-                      "referencedDeclaration": 10247,
+                      "referencedDeclaration": 10231,
                       "src": "4186:7:1",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_require_pure$_t_bool_$returns$__$",
@@ -41294,7 +41294,7 @@
                               "name": "msg",
                               "nodeType": "Identifier",
                               "overloadedDeclarations": [],
-                              "referencedDeclaration": 10244,
+                              "referencedDeclaration": 10228,
                               "src": "4639:3:1",
                               "typeDescriptions": {
                                 "typeIdentifier": "t_magic_message",
@@ -41350,7 +41350,7 @@
                             "name": "abi",
                             "nodeType": "Identifier",
                             "overloadedDeclarations": [],
-                            "referencedDeclaration": 10231,
+                            "referencedDeclaration": 10215,
                             "src": "4612:3:1",
                             "typeDescriptions": {
                               "typeIdentifier": "t_magic_abi",
@@ -41397,7 +41397,7 @@
                       "name": "keccak256",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [],
-                      "referencedDeclaration": 10238,
+                      "referencedDeclaration": 10222,
                       "src": "4602:9:1",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_keccak256_pure$_t_bytes_memory_ptr_$returns$_t_bytes32_$",
@@ -41619,10 +41619,10 @@
                       "name": "require",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [
-                        10247,
-                        10248
+                        10231,
+                        10232
                       ],
-                      "referencedDeclaration": 10247,
+                      "referencedDeclaration": 10231,
                       "src": "4735:7:1",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_require_pure$_t_bool_$returns$__$",
@@ -41963,7 +41963,7 @@
                         "name": "block",
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
-                        "referencedDeclaration": 10234,
+                        "referencedDeclaration": 10218,
                         "src": "4985:5:1",
                         "typeDescriptions": {
                           "typeIdentifier": "t_magic_block",
@@ -47877,10 +47877,10 @@
                       "name": "require",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [
-                        10247,
-                        10248
+                        10231,
+                        10232
                       ],
-                      "referencedDeclaration": 10247,
+                      "referencedDeclaration": 10231,
                       "src": "9978:7:1",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_require_pure$_t_bool_$returns$__$",
@@ -50983,10 +50983,10 @@
                             "name": "require",
                             "nodeType": "Identifier",
                             "overloadedDeclarations": [
-                              10247,
-                              10248
+                              10231,
+                              10232
                             ],
-                            "referencedDeclaration": 10247,
+                            "referencedDeclaration": 10231,
                             "src": "13026:7:1",
                             "typeDescriptions": {
                               "typeIdentifier": "t_function_require_pure$_t_bool_$returns$__$",
@@ -51209,10 +51209,10 @@
                       "name": "require",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [
-                        10247,
-                        10248
+                        10231,
+                        10232
                       ],
-                      "referencedDeclaration": 10247,
+                      "referencedDeclaration": 10231,
                       "src": "13193:7:1",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_require_pure$_t_bool_$returns$__$",
@@ -53831,7 +53831,7 @@
                                                 "name": "abi",
                                                 "nodeType": "Identifier",
                                                 "overloadedDeclarations": [],
-                                                "referencedDeclaration": 10231,
+                                                "referencedDeclaration": 10215,
                                                 "src": "16074:3:1",
                                                 "typeDescriptions": {
                                                   "typeIdentifier": "t_magic_abi",
@@ -53878,7 +53878,7 @@
                                           "name": "sha256",
                                           "nodeType": "Identifier",
                                           "overloadedDeclarations": [],
-                                          "referencedDeclaration": 10253,
+                                          "referencedDeclaration": 10237,
                                           "src": "16067:6:1",
                                           "typeDescriptions": {
                                             "typeIdentifier": "t_function_sha256_pure$_t_bytes_memory_ptr_$returns$_t_bytes32_$",
@@ -53913,7 +53913,7 @@
                                         "name": "abi",
                                         "nodeType": "Identifier",
                                         "overloadedDeclarations": [],
-                                        "referencedDeclaration": 10231,
+                                        "referencedDeclaration": 10215,
                                         "src": "16050:3:1",
                                         "typeDescriptions": {
                                           "typeIdentifier": "t_magic_abi",
@@ -53960,7 +53960,7 @@
                                   "name": "sha256",
                                   "nodeType": "Identifier",
                                   "overloadedDeclarations": [],
-                                  "referencedDeclaration": 10253,
+                                  "referencedDeclaration": 10237,
                                   "src": "16043:6:1",
                                   "typeDescriptions": {
                                     "typeIdentifier": "t_function_sha256_pure$_t_bytes_memory_ptr_$returns$_t_bytes32_$",
@@ -54390,7 +54390,7 @@
                         "declaration": 1263,
                         "isOffset": false,
                         "isSlot": false,
-                        "src": "17607:6:1",
+                        "src": "17659:6:1",
                         "valueSize": 1
                       }
                     },
@@ -54400,15 +54400,6 @@
                         "isOffset": false,
                         "isSlot": false,
                         "src": "16576:6:1",
-                        "valueSize": 1
-                      }
-                    },
-                    {
-                      "_input": {
-                        "declaration": 1263,
-                        "isOffset": false,
-                        "isSlot": false,
-                        "src": "17659:6:1",
                         "valueSize": 1
                       }
                     },
@@ -54444,7 +54435,7 @@
                         "declaration": 1263,
                         "isOffset": false,
                         "isSlot": false,
-                        "src": "16729:6:1",
+                        "src": "17761:6:1",
                         "valueSize": 1
                       }
                     },
@@ -54453,7 +54444,7 @@
                         "declaration": 1263,
                         "isOffset": false,
                         "isSlot": false,
-                        "src": "17761:6:1",
+                        "src": "16729:6:1",
                         "valueSize": 1
                       }
                     },
@@ -54489,7 +54480,7 @@
                         "declaration": 1263,
                         "isOffset": false,
                         "isSlot": false,
-                        "src": "16882:6:1",
+                        "src": "17863:6:1",
                         "valueSize": 1
                       }
                     },
@@ -54498,7 +54489,7 @@
                         "declaration": 1263,
                         "isOffset": false,
                         "isSlot": false,
-                        "src": "17863:6:1",
+                        "src": "16882:6:1",
                         "valueSize": 1
                       }
                     },
@@ -54534,7 +54525,7 @@
                         "declaration": 1263,
                         "isOffset": false,
                         "isSlot": false,
-                        "src": "17035:6:1",
+                        "src": "17965:6:1",
                         "valueSize": 1
                       }
                     },
@@ -54543,7 +54534,7 @@
                         "declaration": 1263,
                         "isOffset": false,
                         "isSlot": false,
-                        "src": "17965:6:1",
+                        "src": "17035:6:1",
                         "valueSize": 1
                       }
                     },
@@ -54579,7 +54570,7 @@
                         "declaration": 1263,
                         "isOffset": false,
                         "isSlot": false,
-                        "src": "17191:6:1",
+                        "src": "18067:6:1",
                         "valueSize": 1
                       }
                     },
@@ -54588,7 +54579,7 @@
                         "declaration": 1263,
                         "isOffset": false,
                         "isSlot": false,
-                        "src": "18067:6:1",
+                        "src": "17191:6:1",
                         "valueSize": 1
                       }
                     },
@@ -54624,15 +54615,6 @@
                         "declaration": 1263,
                         "isOffset": false,
                         "isSlot": false,
-                        "src": "17347:6:1",
-                        "valueSize": 1
-                      }
-                    },
-                    {
-                      "_input": {
-                        "declaration": 1263,
-                        "isOffset": false,
-                        "isSlot": false,
                         "src": "18169:6:1",
                         "valueSize": 1
                       }
@@ -54643,6 +54625,15 @@
                         "isOffset": false,
                         "isSlot": false,
                         "src": "18190:6:1",
+                        "valueSize": 1
+                      }
+                    },
+                    {
+                      "_input": {
+                        "declaration": 1263,
+                        "isOffset": false,
+                        "isSlot": false,
+                        "src": "17347:6:1",
                         "valueSize": 1
                       }
                     },
@@ -54679,6 +54670,15 @@
                         "isOffset": false,
                         "isSlot": false,
                         "src": "17555:6:1",
+                        "valueSize": 1
+                      }
+                    },
+                    {
+                      "_input": {
+                        "declaration": 1263,
+                        "isOffset": false,
+                        "isSlot": false,
+                        "src": "17607:6:1",
                         "valueSize": 1
                       }
                     }
@@ -55902,15 +55902,6 @@
                 {
                   "externalReferences": [
                     {
-                      "result": {
-                        "declaration": 1366,
-                        "isOffset": false,
-                        "isSlot": false,
-                        "src": "21123:6:1",
-                        "valueSize": 1
-                      }
-                    },
-                    {
                       "_rawBytes": {
                         "declaration": 1359,
                         "isOffset": false,
@@ -55925,6 +55916,15 @@
                         "isOffset": false,
                         "isSlot": false,
                         "src": "21040:6:1",
+                        "valueSize": 1
+                      }
+                    },
+                    {
+                      "result": {
+                        "declaration": 1366,
+                        "isOffset": false,
+                        "isSlot": false,
+                        "src": "21123:6:1",
                         "valueSize": 1
                       }
                     },
@@ -56128,7 +56128,7 @@
                                             "name": "abi",
                                             "nodeType": "Identifier",
                                             "overloadedDeclarations": [],
-                                            "referencedDeclaration": 10231,
+                                            "referencedDeclaration": 10215,
                                             "src": "21479:3:1",
                                             "typeDescriptions": {
                                               "typeIdentifier": "t_magic_abi",
@@ -56175,7 +56175,7 @@
                                       "name": "sha256",
                                       "nodeType": "Identifier",
                                       "overloadedDeclarations": [],
-                                      "referencedDeclaration": 10253,
+                                      "referencedDeclaration": 10237,
                                       "src": "21472:6:1",
                                       "typeDescriptions": {
                                         "typeIdentifier": "t_function_sha256_pure$_t_bytes_memory_ptr_$returns$_t_bytes32_$",
@@ -56210,7 +56210,7 @@
                                     "name": "abi",
                                     "nodeType": "Identifier",
                                     "overloadedDeclarations": [],
-                                    "referencedDeclaration": 10231,
+                                    "referencedDeclaration": 10215,
                                     "src": "21455:3:1",
                                     "typeDescriptions": {
                                       "typeIdentifier": "t_magic_abi",
@@ -56257,7 +56257,7 @@
                               "name": "sha256",
                               "nodeType": "Identifier",
                               "overloadedDeclarations": [],
-                              "referencedDeclaration": 10253,
+                              "referencedDeclaration": 10237,
                               "src": "21448:6:1",
                               "typeDescriptions": {
                                 "typeIdentifier": "t_function_sha256_pure$_t_bytes_memory_ptr_$returns$_t_bytes32_$",
@@ -56548,7 +56548,7 @@
                                     "name": "abi",
                                     "nodeType": "Identifier",
                                     "overloadedDeclarations": [],
-                                    "referencedDeclaration": 10231,
+                                    "referencedDeclaration": 10215,
                                     "src": "21840:3:1",
                                     "typeDescriptions": {
                                       "typeIdentifier": "t_magic_abi",
@@ -56595,7 +56595,7 @@
                               "name": "sha256",
                               "nodeType": "Identifier",
                               "overloadedDeclarations": [],
-                              "referencedDeclaration": 10253,
+                              "referencedDeclaration": 10237,
                               "src": "21833:6:1",
                               "typeDescriptions": {
                                 "typeIdentifier": "t_function_sha256_pure$_t_bytes_memory_ptr_$returns$_t_bytes32_$",
@@ -61263,7 +61263,7 @@
                               "referencedDeclaration": 1682,
                               "src": "26310:14:1",
                               "typeDescriptions": {
-                                "typeIdentifier": "t_struct$_SuperblockInfo_$8859_memory_ptr",
+                                "typeIdentifier": "t_struct$_SuperblockInfo_$8836_memory_ptr",
                                 "typeString": "struct SyscoinSuperblocksI.SuperblockInfo memory"
                               }
                             },
@@ -61274,7 +61274,7 @@
                             "lValueRequested": false,
                             "memberName": "blocksMerkleRoot",
                             "nodeType": "MemberAccess",
-                            "referencedDeclaration": 8842,
+                            "referencedDeclaration": 8819,
                             "src": "26310:31:1",
                             "typeDescriptions": {
                               "typeIdentifier": "t_bytes32",
@@ -61392,7 +61392,7 @@
                               "referencedDeclaration": 1682,
                               "src": "26638:14:1",
                               "typeDescriptions": {
-                                "typeIdentifier": "t_struct$_SuperblockInfo_$8859_memory_ptr",
+                                "typeIdentifier": "t_struct$_SuperblockInfo_$8836_memory_ptr",
                                 "typeString": "struct SyscoinSuperblocksI.SuperblockInfo memory"
                               }
                             },
@@ -61403,7 +61403,7 @@
                             "lValueRequested": false,
                             "memberName": "timestamp",
                             "nodeType": "MemberAccess",
-                            "referencedDeclaration": 8844,
+                            "referencedDeclaration": 8821,
                             "src": "26638:24:1",
                             "typeDescriptions": {
                               "typeIdentifier": "t_uint256",
@@ -61532,7 +61532,7 @@
                               "referencedDeclaration": 1682,
                               "src": "26881:14:1",
                               "typeDescriptions": {
-                                "typeIdentifier": "t_struct$_SuperblockInfo_$8859_memory_ptr",
+                                "typeIdentifier": "t_struct$_SuperblockInfo_$8836_memory_ptr",
                                 "typeString": "struct SyscoinSuperblocksI.SuperblockInfo memory"
                               }
                             },
@@ -61543,7 +61543,7 @@
                             "lValueRequested": false,
                             "memberName": "lastHash",
                             "nodeType": "MemberAccess",
-                            "referencedDeclaration": 8848,
+                            "referencedDeclaration": 8825,
                             "src": "26881:23:1",
                             "typeDescriptions": {
                               "typeIdentifier": "t_bytes32",
@@ -61660,7 +61660,7 @@
                   "stateVariable": false,
                   "storageLocation": "memory",
                   "typeDescriptions": {
-                    "typeIdentifier": "t_struct$_SuperblockInfo_$8859_memory_ptr",
+                    "typeIdentifier": "t_struct$_SuperblockInfo_$8836_memory_ptr",
                     "typeString": "struct SyscoinSuperblocksI.SuperblockInfo"
                   },
                   "typeName": {
@@ -61668,10 +61668,10 @@
                     "id": 1681,
                     "name": "SyscoinSuperblocksI.SuperblockInfo",
                     "nodeType": "UserDefinedTypeName",
-                    "referencedDeclaration": 8859,
+                    "referencedDeclaration": 8836,
                     "src": "25781:34:1",
                     "typeDescriptions": {
-                      "typeIdentifier": "t_struct$_SuperblockInfo_$8859_storage_ptr",
+                      "typeIdentifier": "t_struct$_SuperblockInfo_$8836_storage_ptr",
                       "typeString": "struct SyscoinSuperblocksI.SuperblockInfo"
                     }
                   },
@@ -61947,7 +61947,7 @@
                             "name": "msg",
                             "nodeType": "Identifier",
                             "overloadedDeclarations": [],
-                            "referencedDeclaration": 10244,
+                            "referencedDeclaration": 10228,
                             "src": "27357:3:1",
                             "typeDescriptions": {
                               "typeIdentifier": "t_magic_message",
@@ -62001,10 +62001,10 @@
                       "name": "require",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [
-                        10247,
-                        10248
+                        10231,
+                        10232
                       ],
-                      "referencedDeclaration": 10247,
+                      "referencedDeclaration": 10231,
                       "src": "27349:7:1",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_require_pure$_t_bool_$returns$__$",
@@ -62492,10 +62492,10 @@
                                   "name": "revert",
                                   "nodeType": "Identifier",
                                   "overloadedDeclarations": [
-                                    10249,
-                                    10250
+                                    10233,
+                                    10234
                                   ],
-                                  "referencedDeclaration": 10249,
+                                  "referencedDeclaration": 10233,
                                   "src": "27603:6:1",
                                   "typeDescriptions": {
                                     "typeIdentifier": "t_function_revert_pure$__$returns$__$",
@@ -62541,7 +62541,7 @@
                       "stateVariable": false,
                       "storageLocation": "memory",
                       "typeDescriptions": {
-                        "typeIdentifier": "t_struct$_SuperblockInfo_$8859_memory_ptr",
+                        "typeIdentifier": "t_struct$_SuperblockInfo_$8836_memory_ptr",
                         "typeString": "struct SyscoinSuperblocksI.SuperblockInfo"
                       },
                       "typeName": {
@@ -62549,10 +62549,10 @@
                         "id": 1854,
                         "name": "SyscoinSuperblocksI.SuperblockInfo",
                         "nodeType": "UserDefinedTypeName",
-                        "referencedDeclaration": 8859,
+                        "referencedDeclaration": 8836,
                         "src": "27646:34:1",
                         "typeDescriptions": {
-                          "typeIdentifier": "t_struct$_SuperblockInfo_$8859_storage_ptr",
+                          "typeIdentifier": "t_struct$_SuperblockInfo_$8836_storage_ptr",
                           "typeString": "struct SyscoinSuperblocksI.SuperblockInfo"
                         }
                       },
@@ -62652,7 +62652,7 @@
                             "referencedDeclaration": 1855,
                             "src": "27770:14:1",
                             "typeDescriptions": {
-                              "typeIdentifier": "t_struct$_SuperblockInfo_$8859_memory_ptr",
+                              "typeIdentifier": "t_struct$_SuperblockInfo_$8836_memory_ptr",
                               "typeString": "struct SyscoinSuperblocksI.SuperblockInfo memory"
                             }
                           },
@@ -62663,7 +62663,7 @@
                           "lValueRequested": true,
                           "memberName": "blocksMerkleRoot",
                           "nodeType": "MemberAccess",
-                          "referencedDeclaration": 8842,
+                          "referencedDeclaration": 8819,
                           "src": "27770:31:1",
                           "typeDescriptions": {
                             "typeIdentifier": "t_bytes32",
@@ -62681,7 +62681,7 @@
                             "referencedDeclaration": 1855,
                             "src": "27803:14:1",
                             "typeDescriptions": {
-                              "typeIdentifier": "t_struct$_SuperblockInfo_$8859_memory_ptr",
+                              "typeIdentifier": "t_struct$_SuperblockInfo_$8836_memory_ptr",
                               "typeString": "struct SyscoinSuperblocksI.SuperblockInfo memory"
                             }
                           },
@@ -62692,7 +62692,7 @@
                           "lValueRequested": true,
                           "memberName": "timestamp",
                           "nodeType": "MemberAccess",
-                          "referencedDeclaration": 8844,
+                          "referencedDeclaration": 8821,
                           "src": "27803:24:1",
                           "typeDescriptions": {
                             "typeIdentifier": "t_uint256",
@@ -62710,7 +62710,7 @@
                             "referencedDeclaration": 1855,
                             "src": "27828:14:1",
                             "typeDescriptions": {
-                              "typeIdentifier": "t_struct$_SuperblockInfo_$8859_memory_ptr",
+                              "typeIdentifier": "t_struct$_SuperblockInfo_$8836_memory_ptr",
                               "typeString": "struct SyscoinSuperblocksI.SuperblockInfo memory"
                             }
                           },
@@ -62721,7 +62721,7 @@
                           "lValueRequested": true,
                           "memberName": "mtpTimestamp",
                           "nodeType": "MemberAccess",
-                          "referencedDeclaration": 8846,
+                          "referencedDeclaration": 8823,
                           "src": "27828:27:1",
                           "typeDescriptions": {
                             "typeIdentifier": "t_uint256",
@@ -62739,7 +62739,7 @@
                             "referencedDeclaration": 1855,
                             "src": "27856:14:1",
                             "typeDescriptions": {
-                              "typeIdentifier": "t_struct$_SuperblockInfo_$8859_memory_ptr",
+                              "typeIdentifier": "t_struct$_SuperblockInfo_$8836_memory_ptr",
                               "typeString": "struct SyscoinSuperblocksI.SuperblockInfo memory"
                             }
                           },
@@ -62750,7 +62750,7 @@
                           "lValueRequested": true,
                           "memberName": "lastHash",
                           "nodeType": "MemberAccess",
-                          "referencedDeclaration": 8848,
+                          "referencedDeclaration": 8825,
                           "src": "27856:23:1",
                           "typeDescriptions": {
                             "typeIdentifier": "t_bytes32",
@@ -62768,7 +62768,7 @@
                             "referencedDeclaration": 1855,
                             "src": "27880:14:1",
                             "typeDescriptions": {
-                              "typeIdentifier": "t_struct$_SuperblockInfo_$8859_memory_ptr",
+                              "typeIdentifier": "t_struct$_SuperblockInfo_$8836_memory_ptr",
                               "typeString": "struct SyscoinSuperblocksI.SuperblockInfo memory"
                             }
                           },
@@ -62779,7 +62779,7 @@
                           "lValueRequested": true,
                           "memberName": "lastBits",
                           "nodeType": "MemberAccess",
-                          "referencedDeclaration": 8854,
+                          "referencedDeclaration": 8831,
                           "src": "27880:23:1",
                           "typeDescriptions": {
                             "typeIdentifier": "t_uint32",
@@ -62797,7 +62797,7 @@
                             "referencedDeclaration": 1855,
                             "src": "27904:14:1",
                             "typeDescriptions": {
-                              "typeIdentifier": "t_struct$_SuperblockInfo_$8859_memory_ptr",
+                              "typeIdentifier": "t_struct$_SuperblockInfo_$8836_memory_ptr",
                               "typeString": "struct SyscoinSuperblocksI.SuperblockInfo memory"
                             }
                           },
@@ -62808,7 +62808,7 @@
                           "lValueRequested": true,
                           "memberName": "parentId",
                           "nodeType": "MemberAccess",
-                          "referencedDeclaration": 8850,
+                          "referencedDeclaration": 8827,
                           "src": "27904:23:1",
                           "typeDescriptions": {
                             "typeIdentifier": "t_bytes32",
@@ -62828,7 +62828,7 @@
                             "referencedDeclaration": 1855,
                             "src": "27930:14:1",
                             "typeDescriptions": {
-                              "typeIdentifier": "t_struct$_SuperblockInfo_$8859_memory_ptr",
+                              "typeIdentifier": "t_struct$_SuperblockInfo_$8836_memory_ptr",
                               "typeString": "struct SyscoinSuperblocksI.SuperblockInfo memory"
                             }
                           },
@@ -62839,7 +62839,7 @@
                           "lValueRequested": true,
                           "memberName": "height",
                           "nodeType": "MemberAccess",
-                          "referencedDeclaration": 8856,
+                          "referencedDeclaration": 8833,
                           "src": "27930:21:1",
                           "typeDescriptions": {
                             "typeIdentifier": "t_uint32",
@@ -62895,7 +62895,7 @@
                           "referencedDeclaration": 147,
                           "src": "27967:18:1",
                           "typeDescriptions": {
-                            "typeIdentifier": "t_contract$_SyscoinSuperblocksI_$9013",
+                            "typeIdentifier": "t_contract$_SyscoinSuperblocksI_$8990",
                             "typeString": "contract SyscoinSuperblocksI"
                           }
                         },
@@ -62906,10 +62906,10 @@
                         "lValueRequested": false,
                         "memberName": "getSuperblock",
                         "nodeType": "MemberAccess",
-                        "referencedDeclaration": 8903,
+                        "referencedDeclaration": 8880,
                         "src": "27967:32:1",
                         "typeDescriptions": {
-                          "typeIdentifier": "t_function_external_view$_t_bytes32_$returns$_t_bytes32_$_t_uint256_$_t_uint256_$_t_bytes32_$_t_uint32_$_t_bytes32_$_t_address_$_t_enum$_Status_$8840_$_t_uint32_$",
+                          "typeIdentifier": "t_function_external_view$_t_bytes32_$returns$_t_bytes32_$_t_uint256_$_t_uint256_$_t_bytes32_$_t_uint32_$_t_bytes32_$_t_address_$_t_enum$_Status_$8817_$_t_uint32_$",
                           "typeString": "function (bytes32) view external returns (bytes32,uint256,uint256,bytes32,uint32,bytes32,address,enum SyscoinSuperblocksI.Status,uint32)"
                         }
                       },
@@ -62923,7 +62923,7 @@
                       "nodeType": "FunctionCall",
                       "src": "27967:48:1",
                       "typeDescriptions": {
-                        "typeIdentifier": "t_tuple$_t_bytes32_$_t_uint256_$_t_uint256_$_t_bytes32_$_t_uint32_$_t_bytes32_$_t_address_$_t_enum$_Status_$8840_$_t_uint32_$",
+                        "typeIdentifier": "t_tuple$_t_bytes32_$_t_uint256_$_t_uint256_$_t_bytes32_$_t_uint32_$_t_bytes32_$_t_address_$_t_enum$_Status_$8817_$_t_uint32_$",
                         "typeString": "tuple(bytes32,uint256,uint256,bytes32,uint32,bytes32,address,enum SyscoinSuperblocksI.Status,uint32)"
                       }
                     },
@@ -65004,7 +65004,7 @@
                           "referencedDeclaration": 1855,
                           "src": "29471:14:1",
                           "typeDescriptions": {
-                            "typeIdentifier": "t_struct$_SuperblockInfo_$8859_memory_ptr",
+                            "typeIdentifier": "t_struct$_SuperblockInfo_$8836_memory_ptr",
                             "typeString": "struct SyscoinSuperblocksI.SuperblockInfo memory"
                           }
                         },
@@ -65158,7 +65158,7 @@
                             "typeString": "struct SyscoinBattleManager.BattleSession storage pointer"
                           },
                           {
-                            "typeIdentifier": "t_struct$_SuperblockInfo_$8859_memory_ptr",
+                            "typeIdentifier": "t_struct$_SuperblockInfo_$8836_memory_ptr",
                             "typeString": "struct SyscoinSuperblocksI.SuperblockInfo memory"
                           },
                           {
@@ -65177,7 +65177,7 @@
                         "referencedDeclaration": 1791,
                         "src": "29415:21:1",
                         "typeDescriptions": {
-                          "typeIdentifier": "t_function_internal_nonpayable$_t_struct$_BattleSession_$95_storage_ptr_$_t_struct$_SuperblockInfo_$8859_memory_ptr_$_t_bytes32_$_t_struct$_BlockHeader_$129_memory_ptr_$returns$_t_uint256_$",
+                          "typeIdentifier": "t_function_internal_nonpayable$_t_struct$_BattleSession_$95_storage_ptr_$_t_struct$_SuperblockInfo_$8836_memory_ptr_$_t_bytes32_$_t_struct$_BlockHeader_$129_memory_ptr_$returns$_t_uint256_$",
                           "typeString": "function (struct SyscoinBattleManager.BattleSession storage pointer,struct SyscoinSuperblocksI.SuperblockInfo memory,bytes32,struct SyscoinBattleManager.BlockHeader memory) returns (uint256)"
                         }
                       },
@@ -65303,7 +65303,7 @@
                               "name": "block",
                               "nodeType": "Identifier",
                               "overloadedDeclarations": [],
-                              "referencedDeclaration": 10234,
+                              "referencedDeclaration": 10218,
                               "src": "29787:5:1",
                               "typeDescriptions": {
                                 "typeIdentifier": "t_magic_block",
@@ -65382,7 +65382,7 @@
                                 "referencedDeclaration": 1855,
                                 "src": "29847:14:1",
                                 "typeDescriptions": {
-                                  "typeIdentifier": "t_struct$_SuperblockInfo_$8859_memory_ptr",
+                                  "typeIdentifier": "t_struct$_SuperblockInfo_$8836_memory_ptr",
                                   "typeString": "struct SyscoinSuperblocksI.SuperblockInfo memory"
                                 }
                               },
@@ -65407,7 +65407,7 @@
                                   "typeString": "struct SyscoinBattleManager.BattleSession storage pointer"
                                 },
                                 {
-                                  "typeIdentifier": "t_struct$_SuperblockInfo_$8859_memory_ptr",
+                                  "typeIdentifier": "t_struct$_SuperblockInfo_$8836_memory_ptr",
                                   "typeString": "struct SyscoinSuperblocksI.SuperblockInfo memory"
                                 },
                                 {
@@ -65422,7 +65422,7 @@
                               "referencedDeclaration": 2707,
                               "src": "29822:15:1",
                               "typeDescriptions": {
-                                "typeIdentifier": "t_function_internal_nonpayable$_t_struct$_BattleSession_$95_storage_ptr_$_t_struct$_SuperblockInfo_$8859_memory_ptr_$_t_array$_t_struct$_BlockHeader_$129_memory_$dyn_memory_ptr_$returns$_t_uint256_$",
+                                "typeIdentifier": "t_function_internal_nonpayable$_t_struct$_BattleSession_$95_storage_ptr_$_t_struct$_SuperblockInfo_$8836_memory_ptr_$_t_array$_t_struct$_BlockHeader_$129_memory_$dyn_memory_ptr_$returns$_t_uint256_$",
                                 "typeString": "function (struct SyscoinBattleManager.BattleSession storage pointer,struct SyscoinSuperblocksI.SuperblockInfo memory,struct SyscoinBattleManager.BlockHeader memory[] memory) returns (uint256)"
                               }
                             },
@@ -67105,10 +67105,10 @@
                       "name": "require",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [
-                        10247,
-                        10248
+                        10231,
+                        10232
                       ],
-                      "referencedDeclaration": 10248,
+                      "referencedDeclaration": 10232,
                       "src": "31697:7:1",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_require_pure$_t_bool_$_t_string_memory_ptr_$returns$__$",
@@ -68067,7 +68067,7 @@
                                                   "name": "abi",
                                                   "nodeType": "Identifier",
                                                   "overloadedDeclarations": [],
-                                                  "referencedDeclaration": 10231,
+                                                  "referencedDeclaration": 10215,
                                                   "src": "32116:3:1",
                                                   "typeDescriptions": {
                                                     "typeIdentifier": "t_magic_abi",
@@ -68114,7 +68114,7 @@
                                             "name": "sha256",
                                             "nodeType": "Identifier",
                                             "overloadedDeclarations": [],
-                                            "referencedDeclaration": 10253,
+                                            "referencedDeclaration": 10237,
                                             "src": "32109:6:1",
                                             "typeDescriptions": {
                                               "typeIdentifier": "t_function_sha256_pure$_t_bytes_memory_ptr_$returns$_t_bytes32_$",
@@ -68149,7 +68149,7 @@
                                           "name": "abi",
                                           "nodeType": "Identifier",
                                           "overloadedDeclarations": [],
-                                          "referencedDeclaration": 10231,
+                                          "referencedDeclaration": 10215,
                                           "src": "32092:3:1",
                                           "typeDescriptions": {
                                             "typeIdentifier": "t_magic_abi",
@@ -68196,7 +68196,7 @@
                                     "name": "sha256",
                                     "nodeType": "Identifier",
                                     "overloadedDeclarations": [],
-                                    "referencedDeclaration": 10253,
+                                    "referencedDeclaration": 10237,
                                     "src": "32085:6:1",
                                     "typeDescriptions": {
                                       "typeIdentifier": "t_function_sha256_pure$_t_bytes_memory_ptr_$returns$_t_bytes32_$",
@@ -71477,7 +71477,7 @@
                       "stateVariable": false,
                       "storageLocation": "memory",
                       "typeDescriptions": {
-                        "typeIdentifier": "t_struct$_SuperblockInfo_$8859_memory_ptr",
+                        "typeIdentifier": "t_struct$_SuperblockInfo_$8836_memory_ptr",
                         "typeString": "struct SyscoinSuperblocksI.SuperblockInfo"
                       },
                       "typeName": {
@@ -71485,10 +71485,10 @@
                         "id": 2531,
                         "name": "SyscoinSuperblocksI.SuperblockInfo",
                         "nodeType": "UserDefinedTypeName",
-                        "referencedDeclaration": 8859,
+                        "referencedDeclaration": 8836,
                         "src": "34658:34:1",
                         "typeDescriptions": {
-                          "typeIdentifier": "t_struct$_SuperblockInfo_$8859_storage_ptr",
+                          "typeIdentifier": "t_struct$_SuperblockInfo_$8836_storage_ptr",
                           "typeString": "struct SyscoinSuperblocksI.SuperblockInfo"
                         }
                       },
@@ -71656,7 +71656,7 @@
                             "referencedDeclaration": 2532,
                             "src": "34820:18:1",
                             "typeDescriptions": {
-                              "typeIdentifier": "t_struct$_SuperblockInfo_$8859_memory_ptr",
+                              "typeIdentifier": "t_struct$_SuperblockInfo_$8836_memory_ptr",
                               "typeString": "struct SyscoinSuperblocksI.SuperblockInfo memory"
                             }
                           },
@@ -71667,7 +71667,7 @@
                           "lValueRequested": true,
                           "memberName": "mtpTimestamp",
                           "nodeType": "MemberAccess",
-                          "referencedDeclaration": 8846,
+                          "referencedDeclaration": 8823,
                           "src": "34820:31:1",
                           "typeDescriptions": {
                             "typeIdentifier": "t_uint256",
@@ -71685,7 +71685,7 @@
                             "referencedDeclaration": 2532,
                             "src": "34852:18:1",
                             "typeDescriptions": {
-                              "typeIdentifier": "t_struct$_SuperblockInfo_$8859_memory_ptr",
+                              "typeIdentifier": "t_struct$_SuperblockInfo_$8836_memory_ptr",
                               "typeString": "struct SyscoinSuperblocksI.SuperblockInfo memory"
                             }
                           },
@@ -71696,7 +71696,7 @@
                           "lValueRequested": true,
                           "memberName": "lastHash",
                           "nodeType": "MemberAccess",
-                          "referencedDeclaration": 8848,
+                          "referencedDeclaration": 8825,
                           "src": "34852:27:1",
                           "typeDescriptions": {
                             "typeIdentifier": "t_bytes32",
@@ -71714,7 +71714,7 @@
                             "referencedDeclaration": 2532,
                             "src": "34880:18:1",
                             "typeDescriptions": {
-                              "typeIdentifier": "t_struct$_SuperblockInfo_$8859_memory_ptr",
+                              "typeIdentifier": "t_struct$_SuperblockInfo_$8836_memory_ptr",
                               "typeString": "struct SyscoinSuperblocksI.SuperblockInfo memory"
                             }
                           },
@@ -71725,7 +71725,7 @@
                           "lValueRequested": true,
                           "memberName": "lastBits",
                           "nodeType": "MemberAccess",
-                          "referencedDeclaration": 8854,
+                          "referencedDeclaration": 8831,
                           "src": "34880:27:1",
                           "typeDescriptions": {
                             "typeIdentifier": "t_uint32",
@@ -71766,7 +71766,7 @@
                             "referencedDeclaration": 2521,
                             "src": "34960:14:1",
                             "typeDescriptions": {
-                              "typeIdentifier": "t_struct$_SuperblockInfo_$8859_memory_ptr",
+                              "typeIdentifier": "t_struct$_SuperblockInfo_$8836_memory_ptr",
                               "typeString": "struct SyscoinSuperblocksI.SuperblockInfo memory"
                             }
                           },
@@ -71777,7 +71777,7 @@
                           "lValueRequested": false,
                           "memberName": "parentId",
                           "nodeType": "MemberAccess",
-                          "referencedDeclaration": 8850,
+                          "referencedDeclaration": 8827,
                           "src": "34960:23:1",
                           "typeDescriptions": {
                             "typeIdentifier": "t_bytes32",
@@ -71801,7 +71801,7 @@
                           "referencedDeclaration": 147,
                           "src": "34927:18:1",
                           "typeDescriptions": {
-                            "typeIdentifier": "t_contract$_SyscoinSuperblocksI_$9013",
+                            "typeIdentifier": "t_contract$_SyscoinSuperblocksI_$8990",
                             "typeString": "contract SyscoinSuperblocksI"
                           }
                         },
@@ -71812,10 +71812,10 @@
                         "lValueRequested": false,
                         "memberName": "getSuperblock",
                         "nodeType": "MemberAccess",
-                        "referencedDeclaration": 8903,
+                        "referencedDeclaration": 8880,
                         "src": "34927:32:1",
                         "typeDescriptions": {
-                          "typeIdentifier": "t_function_external_view$_t_bytes32_$returns$_t_bytes32_$_t_uint256_$_t_uint256_$_t_bytes32_$_t_uint32_$_t_bytes32_$_t_address_$_t_enum$_Status_$8840_$_t_uint32_$",
+                          "typeIdentifier": "t_function_external_view$_t_bytes32_$returns$_t_bytes32_$_t_uint256_$_t_uint256_$_t_bytes32_$_t_uint32_$_t_bytes32_$_t_address_$_t_enum$_Status_$8817_$_t_uint32_$",
                           "typeString": "function (bytes32) view external returns (bytes32,uint256,uint256,bytes32,uint32,bytes32,address,enum SyscoinSuperblocksI.Status,uint32)"
                         }
                       },
@@ -71829,7 +71829,7 @@
                       "nodeType": "FunctionCall",
                       "src": "34927:57:1",
                       "typeDescriptions": {
-                        "typeIdentifier": "t_tuple$_t_bytes32_$_t_uint256_$_t_uint256_$_t_bytes32_$_t_uint32_$_t_bytes32_$_t_address_$_t_enum$_Status_$8840_$_t_uint32_$",
+                        "typeIdentifier": "t_tuple$_t_bytes32_$_t_uint256_$_t_uint256_$_t_bytes32_$_t_uint32_$_t_bytes32_$_t_address_$_t_enum$_Status_$8817_$_t_uint32_$",
                         "typeString": "tuple(bytes32,uint256,uint256,bytes32,uint32,bytes32,address,enum SyscoinSuperblocksI.Status,uint32)"
                       }
                     },
@@ -72021,7 +72021,7 @@
                               "referencedDeclaration": 2532,
                               "src": "35233:18:1",
                               "typeDescriptions": {
-                                "typeIdentifier": "t_struct$_SuperblockInfo_$8859_memory_ptr",
+                                "typeIdentifier": "t_struct$_SuperblockInfo_$8836_memory_ptr",
                                 "typeString": "struct SyscoinSuperblocksI.SuperblockInfo memory"
                               }
                             },
@@ -72032,7 +72032,7 @@
                             "lValueRequested": false,
                             "memberName": "lastHash",
                             "nodeType": "MemberAccess",
-                            "referencedDeclaration": 8848,
+                            "referencedDeclaration": 8825,
                             "src": "35233:27:1",
                             "typeDescriptions": {
                               "typeIdentifier": "t_bytes32",
@@ -72145,7 +72145,7 @@
                           "referencedDeclaration": 2532,
                           "src": "35501:18:1",
                           "typeDescriptions": {
-                            "typeIdentifier": "t_struct$_SuperblockInfo_$8859_memory_ptr",
+                            "typeIdentifier": "t_struct$_SuperblockInfo_$8836_memory_ptr",
                             "typeString": "struct SyscoinSuperblocksI.SuperblockInfo memory"
                           }
                         },
@@ -72156,7 +72156,7 @@
                         "lValueRequested": false,
                         "memberName": "lastBits",
                         "nodeType": "MemberAccess",
-                        "referencedDeclaration": 8854,
+                        "referencedDeclaration": 8831,
                         "src": "35501:27:1",
                         "typeDescriptions": {
                           "typeIdentifier": "t_uint32",
@@ -72472,7 +72472,7 @@
                               "referencedDeclaration": 2521,
                               "src": "36256:14:1",
                               "typeDescriptions": {
-                                "typeIdentifier": "t_struct$_SuperblockInfo_$8859_memory_ptr",
+                                "typeIdentifier": "t_struct$_SuperblockInfo_$8836_memory_ptr",
                                 "typeString": "struct SyscoinSuperblocksI.SuperblockInfo memory"
                               }
                             },
@@ -72483,7 +72483,7 @@
                             "lValueRequested": false,
                             "memberName": "mtpTimestamp",
                             "nodeType": "MemberAccess",
-                            "referencedDeclaration": 8846,
+                            "referencedDeclaration": 8823,
                             "src": "36256:27:1",
                             "typeDescriptions": {
                               "typeIdentifier": "t_uint256",
@@ -72558,7 +72558,7 @@
                               "referencedDeclaration": 2532,
                               "src": "36439:18:1",
                               "typeDescriptions": {
-                                "typeIdentifier": "t_struct$_SuperblockInfo_$8859_memory_ptr",
+                                "typeIdentifier": "t_struct$_SuperblockInfo_$8836_memory_ptr",
                                 "typeString": "struct SyscoinSuperblocksI.SuperblockInfo memory"
                               }
                             },
@@ -72569,7 +72569,7 @@
                             "lValueRequested": false,
                             "memberName": "mtpTimestamp",
                             "nodeType": "MemberAccess",
-                            "referencedDeclaration": 8846,
+                            "referencedDeclaration": 8823,
                             "src": "36439:31:1",
                             "typeDescriptions": {
                               "typeIdentifier": "t_uint256",
@@ -72728,7 +72728,7 @@
                                                 "referencedDeclaration": 2521,
                                                 "src": "36828:14:1",
                                                 "typeDescriptions": {
-                                                  "typeIdentifier": "t_struct$_SuperblockInfo_$8859_memory_ptr",
+                                                  "typeIdentifier": "t_struct$_SuperblockInfo_$8836_memory_ptr",
                                                   "typeString": "struct SyscoinSuperblocksI.SuperblockInfo memory"
                                                 }
                                               },
@@ -72739,7 +72739,7 @@
                                               "lValueRequested": false,
                                               "memberName": "height",
                                               "nodeType": "MemberAccess",
-                                              "referencedDeclaration": 8856,
+                                              "referencedDeclaration": 8833,
                                               "src": "36828:21:1",
                                               "typeDescriptions": {
                                                 "typeIdentifier": "t_uint32",
@@ -72880,7 +72880,7 @@
                                           "referencedDeclaration": 2521,
                                           "src": "37840:14:1",
                                           "typeDescriptions": {
-                                            "typeIdentifier": "t_struct$_SuperblockInfo_$8859_memory_ptr",
+                                            "typeIdentifier": "t_struct$_SuperblockInfo_$8836_memory_ptr",
                                             "typeString": "struct SyscoinSuperblocksI.SuperblockInfo memory"
                                           }
                                         },
@@ -72891,7 +72891,7 @@
                                         "lValueRequested": false,
                                         "memberName": "lastBits",
                                         "nodeType": "MemberAccess",
-                                        "referencedDeclaration": 8854,
+                                        "referencedDeclaration": 8831,
                                         "src": "37840:23:1",
                                         "typeDescriptions": {
                                           "typeIdentifier": "t_uint32",
@@ -72911,7 +72911,7 @@
                                           "referencedDeclaration": 2532,
                                           "src": "37867:18:1",
                                           "typeDescriptions": {
-                                            "typeIdentifier": "t_struct$_SuperblockInfo_$8859_memory_ptr",
+                                            "typeIdentifier": "t_struct$_SuperblockInfo_$8836_memory_ptr",
                                             "typeString": "struct SyscoinSuperblocksI.SuperblockInfo memory"
                                           }
                                         },
@@ -72922,7 +72922,7 @@
                                         "lValueRequested": false,
                                         "memberName": "lastBits",
                                         "nodeType": "MemberAccess",
-                                        "referencedDeclaration": 8854,
+                                        "referencedDeclaration": 8831,
                                         "src": "37867:27:1",
                                         "typeDescriptions": {
                                           "typeIdentifier": "t_uint32",
@@ -73126,7 +73126,7 @@
                                           "referencedDeclaration": 2521,
                                           "src": "37275:14:1",
                                           "typeDescriptions": {
-                                            "typeIdentifier": "t_struct$_SuperblockInfo_$8859_memory_ptr",
+                                            "typeIdentifier": "t_struct$_SuperblockInfo_$8836_memory_ptr",
                                             "typeString": "struct SyscoinSuperblocksI.SuperblockInfo memory"
                                           }
                                         },
@@ -73137,7 +73137,7 @@
                                         "lValueRequested": true,
                                         "memberName": "timestamp",
                                         "nodeType": "MemberAccess",
-                                        "referencedDeclaration": 8844,
+                                        "referencedDeclaration": 8821,
                                         "src": "37275:24:1",
                                         "typeDescriptions": {
                                           "typeIdentifier": "t_uint256",
@@ -73174,7 +73174,7 @@
                                                     "referencedDeclaration": 2521,
                                                     "src": "37379:14:1",
                                                     "typeDescriptions": {
-                                                      "typeIdentifier": "t_struct$_SuperblockInfo_$8859_memory_ptr",
+                                                      "typeIdentifier": "t_struct$_SuperblockInfo_$8836_memory_ptr",
                                                       "typeString": "struct SyscoinSuperblocksI.SuperblockInfo memory"
                                                     }
                                                   },
@@ -73185,7 +73185,7 @@
                                                   "lValueRequested": false,
                                                   "memberName": "height",
                                                   "nodeType": "MemberAccess",
-                                                  "referencedDeclaration": 8856,
+                                                  "referencedDeclaration": 8833,
                                                   "src": "37379:21:1",
                                                   "typeDescriptions": {
                                                     "typeIdentifier": "t_uint32",
@@ -73235,7 +73235,7 @@
                                                 "referencedDeclaration": 147,
                                                 "src": "37344:18:1",
                                                 "typeDescriptions": {
-                                                  "typeIdentifier": "t_contract$_SyscoinSuperblocksI_$9013",
+                                                  "typeIdentifier": "t_contract$_SyscoinSuperblocksI_$8990",
                                                   "typeString": "contract SyscoinSuperblocksI"
                                                 }
                                               },
@@ -73246,7 +73246,7 @@
                                               "lValueRequested": false,
                                               "memberName": "getSuperblockAt",
                                               "nodeType": "MemberAccess",
-                                              "referencedDeclaration": 8998,
+                                              "referencedDeclaration": 8975,
                                               "src": "37344:34:1",
                                               "typeDescriptions": {
                                                 "typeIdentifier": "t_function_external_view$_t_uint256_$returns$_t_bytes32_$",
@@ -73284,7 +73284,7 @@
                                             "referencedDeclaration": 147,
                                             "src": "37302:18:1",
                                             "typeDescriptions": {
-                                              "typeIdentifier": "t_contract$_SyscoinSuperblocksI_$9013",
+                                              "typeIdentifier": "t_contract$_SyscoinSuperblocksI_$8990",
                                               "typeString": "contract SyscoinSuperblocksI"
                                             }
                                           },
@@ -73295,7 +73295,7 @@
                                           "lValueRequested": false,
                                           "memberName": "getSuperblockTimestamp",
                                           "nodeType": "MemberAccess",
-                                          "referencedDeclaration": 9005,
+                                          "referencedDeclaration": 8982,
                                           "src": "37302:41:1",
                                           "typeDescriptions": {
                                             "typeIdentifier": "t_function_external_view$_t_bytes32_$returns$_t_uint256_$",
@@ -73415,7 +73415,7 @@
                                               "referencedDeclaration": 2521,
                                               "src": "37494:14:1",
                                               "typeDescriptions": {
-                                                "typeIdentifier": "t_struct$_SuperblockInfo_$8859_memory_ptr",
+                                                "typeIdentifier": "t_struct$_SuperblockInfo_$8836_memory_ptr",
                                                 "typeString": "struct SyscoinSuperblocksI.SuperblockInfo memory"
                                               }
                                             },
@@ -73426,7 +73426,7 @@
                                             "lValueRequested": false,
                                             "memberName": "timestamp",
                                             "nodeType": "MemberAccess",
-                                            "referencedDeclaration": 8844,
+                                            "referencedDeclaration": 8821,
                                             "src": "37494:24:1",
                                             "typeDescriptions": {
                                               "typeIdentifier": "t_uint256",
@@ -73450,7 +73450,7 @@
                                             "referencedDeclaration": 2532,
                                             "src": "37520:18:1",
                                             "typeDescriptions": {
-                                              "typeIdentifier": "t_struct$_SuperblockInfo_$8859_memory_ptr",
+                                              "typeIdentifier": "t_struct$_SuperblockInfo_$8836_memory_ptr",
                                               "typeString": "struct SyscoinSuperblocksI.SuperblockInfo memory"
                                             }
                                           },
@@ -73461,7 +73461,7 @@
                                           "lValueRequested": false,
                                           "memberName": "lastBits",
                                           "nodeType": "MemberAccess",
-                                          "referencedDeclaration": 8854,
+                                          "referencedDeclaration": 8831,
                                           "src": "37520:27:1",
                                           "typeDescriptions": {
                                             "typeIdentifier": "t_uint32",
@@ -73531,7 +73531,7 @@
                                           "referencedDeclaration": 2521,
                                           "src": "37668:14:1",
                                           "typeDescriptions": {
-                                            "typeIdentifier": "t_struct$_SuperblockInfo_$8859_memory_ptr",
+                                            "typeIdentifier": "t_struct$_SuperblockInfo_$8836_memory_ptr",
                                             "typeString": "struct SyscoinSuperblocksI.SuperblockInfo memory"
                                           }
                                         },
@@ -73542,7 +73542,7 @@
                                         "lValueRequested": false,
                                         "memberName": "lastBits",
                                         "nodeType": "MemberAccess",
-                                        "referencedDeclaration": 8854,
+                                        "referencedDeclaration": 8831,
                                         "src": "37668:23:1",
                                         "typeDescriptions": {
                                           "typeIdentifier": "t_uint32",
@@ -73627,7 +73627,7 @@
                                     "referencedDeclaration": 2521,
                                     "src": "38095:14:1",
                                     "typeDescriptions": {
-                                      "typeIdentifier": "t_struct$_SuperblockInfo_$8859_memory_ptr",
+                                      "typeIdentifier": "t_struct$_SuperblockInfo_$8836_memory_ptr",
                                       "typeString": "struct SyscoinSuperblocksI.SuperblockInfo memory"
                                     }
                                   },
@@ -73638,7 +73638,7 @@
                                   "lValueRequested": false,
                                   "memberName": "lastBits",
                                   "nodeType": "MemberAccess",
-                                  "referencedDeclaration": 8854,
+                                  "referencedDeclaration": 8831,
                                   "src": "38095:23:1",
                                   "typeDescriptions": {
                                     "typeIdentifier": "t_uint32",
@@ -73870,7 +73870,7 @@
                   "stateVariable": false,
                   "storageLocation": "memory",
                   "typeDescriptions": {
-                    "typeIdentifier": "t_struct$_SuperblockInfo_$8859_memory_ptr",
+                    "typeIdentifier": "t_struct$_SuperblockInfo_$8836_memory_ptr",
                     "typeString": "struct SyscoinSuperblocksI.SuperblockInfo"
                   },
                   "typeName": {
@@ -73878,10 +73878,10 @@
                     "id": 2520,
                     "name": "SyscoinSuperblocksI.SuperblockInfo",
                     "nodeType": "UserDefinedTypeName",
-                    "referencedDeclaration": 8859,
+                    "referencedDeclaration": 8836,
                     "src": "34526:34:1",
                     "typeDescriptions": {
-                      "typeIdentifier": "t_struct$_SuperblockInfo_$8859_storage_ptr",
+                      "typeIdentifier": "t_struct$_SuperblockInfo_$8836_storage_ptr",
                       "typeString": "struct SyscoinSuperblocksI.SuperblockInfo"
                     }
                   },
@@ -74172,10 +74172,10 @@
                       "name": "require",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [
-                        10247,
-                        10248
+                        10231,
+                        10232
                       ],
-                      "referencedDeclaration": 10247,
+                      "referencedDeclaration": 10231,
                       "src": "38468:7:1",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_require_pure$_t_bool_$returns$__$",
@@ -74220,7 +74220,7 @@
                         "name": "block",
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
-                        "referencedDeclaration": 10234,
+                        "referencedDeclaration": 10218,
                         "src": "38523:5:1",
                         "typeDescriptions": {
                           "typeIdentifier": "t_magic_block",
@@ -75731,7 +75731,7 @@
                             "name": "block",
                             "nodeType": "Identifier",
                             "overloadedDeclarations": [],
-                            "referencedDeclaration": 10234,
+                            "referencedDeclaration": 10218,
                             "src": "40082:5:1",
                             "typeDescriptions": {
                               "typeIdentifier": "t_magic_block",
@@ -76534,15 +76534,15 @@
     "version": "0.5.12+commit.7709ece9.Emscripten.clang"
   },
   "networks": {
-    "4": {
+    "1572629143254": {
       "links": {},
       "events": {},
-      "address": "0x8eE2791CD3b2D0224885b89208C3E60b1C3c876C",
-      "updated_at": 1572457047857
+      "address": "0x1C73fF73bF9318A1861AA946a3F7775639DB8a5f",
+      "updated_at": 1572629202658
     }
   },
   "schemaVersion": "3.0.16",
-  "updatedAt": "2019-10-30T17:35:16.958Z",
+  "updatedAt": "2019-11-01T17:28:07.819Z",
   "devdoc": {
     "methods": {}
   },

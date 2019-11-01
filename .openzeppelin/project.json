@@ -8,5 +8,11 @@
   },
   "dependencies": {},
   "name": "sysethereum-contracts",
-  "version": "1.0.0"
+  "version": "1.0.0",
+  "compiler": {
+    "manager": "truffle",
+    "compilerSettings": {
+      "optimizer": {}
+    }
+  }
 }
