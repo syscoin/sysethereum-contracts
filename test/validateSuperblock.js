@@ -11,7 +11,6 @@ contract('validateSuperblocks', (accounts) => {
   let proposedSuperblock1;
   let genesisSuperblockHash;
   let proposedSuperblockHash;
-  let battleSessionId;
 
   const genesisHeaders = [
     `0000003040c32bf1f3e190842b1c5e8a24428dfb8cd200023424f6cc38ec90e4e900000095d0f7925a33a31b240131a93fcdb414cb5b28045430609bf337d5a5142247048045ef5bf0ff0f1e6d720000`,
@@ -79,9 +78,8 @@ contract('validateSuperblocks', (accounts) => {
 
       assert.ok(result.events.VerificationGameStarted, 'Battle started');
       
-      battleSessionId = result.events.VerificationGameStarted.returnValues.sessionId;
  
-      result = await battleManager.methods.respondBlockHeaders(battleSessionId, Buffer.from(headers.join(""), 'hex'), headers.length).send({ from: submitter, gas: 5000000 });
+      result = await battleManager.methods.respondBlockHeaders(proposedSuperblockHash, Buffer.from(headers.join(""), 'hex'), headers.length).send({ from: submitter, gas: 5000000 });
       assert.ok(result.events.ChallengerConvicted, 'Challenger failed');
 
 
@@ -112,9 +110,8 @@ contract('validateSuperblocks', (accounts) => {
       assert.equal(claim1, result.events.SuperblockClaimChallenged.returnValues.superblockHash);
       assert.ok(result.events.VerificationGameStarted, 'Battle started');
       
-      battleSessionId = result.events.VerificationGameStarted.returnValues.sessionId;
 
-      result = await battleManager.methods.respondBlockHeaders(battleSessionId, Buffer.from(headers1.join(""), 'hex'), headers1.length).send({ from: submitter, gas: 5000000 });
+      result = await battleManager.methods.respondBlockHeaders(proposedSuperblockHash, Buffer.from(headers1.join(""), 'hex'), headers1.length).send({ from: submitter, gas: 5000000 });
       assert.ok(result.events.SubmitterConvicted, 'Submitter failed');
       assert.equal(result.events.SubmitterConvicted.returnValues.err, '50036');
 
@@ -145,15 +142,14 @@ contract('validateSuperblocks', (accounts) => {
 
       assert.ok(result.events.VerificationGameStarted, 'Battle started');
       
-      battleSessionId = result.events.VerificationGameStarted.returnValues.sessionId;
-      result = await battleManager.methods.respondBlockHeaders(battleSessionId, Buffer.from(headers1.join(""), 'hex'), headers1.length).send({ from: submitter, gas: 5000000 });
+      result = await battleManager.methods.respondBlockHeaders(proposedSuperblockHash, Buffer.from(headers1.join(""), 'hex'), headers1.length).send({ from: submitter, gas: 5000000 });
       assert.ok(result.events.SubmitterConvicted, 'Submitter failed');
       assert.equal(result.events.SubmitterConvicted.returnValues.err, '50059');
 
       await utils.blockchainTimeoutSeconds(2*utils.SUPERBLOCK_OPTIONS_LOCAL.TIMEOUT);
       // already convicted
       await truffleAssert.reverts(
-        battleManager.methods.timeout(battleSessionId).send({ from: challenger, gas: 300000 })
+        battleManager.methods.timeout(proposedSuperblockHash).send({ from: challenger, gas: 300000 })
       );
 
       result = await claimManager.methods.checkClaimFinished(proposedSuperblockHash).send({ from: challenger, gas: 300000 });

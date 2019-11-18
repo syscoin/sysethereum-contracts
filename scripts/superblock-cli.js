@@ -83,7 +83,6 @@ async function challengeNextSuperblock(from, toChallenge, deposit) {
       const nextSuperblock = await sb.getSuperblock(challengeEvent.args.superblockHash);
       if (newBattleEvent) {
         console.log('Battle started');
-        console.log(`sessionId: ${newBattleEvent.args.sessionId}`);
         console.log(`submitter: ${newBattleEvent.args.submitter}`);
         console.log(`challenger: ${newBattleEvent.args.challenger}`);
       } else {
@@ -150,16 +149,15 @@ async function displaySuperblocksStatus({ superblockHash, fromBlock, toBlock }) 
     const bm = await SyscoinBattleManager.deployed();
 
     const getBattleStatus = async (superblockHash) => {
-      const sessionId = await cm.getSession(superblockHash);
       const [
         superblockHash2,
         submitter,
         challenger2,
         lastActionTimestamp,
         lastActionClaimant,
-      ] = await bm.sessions(sessionId);
+      ] = await bm.sessions(superblockHash);
       return {
-        sessionId,
+        superblockHash,
         battle: {
           superblockHash: superblockHash2,
           submitter,
@@ -235,7 +233,6 @@ async function displaySuperblocksStatus({ superblockHash, fromBlock, toBlock }) 
         challengers.forEach((challenger, idx) => {
           console.log('    ----------');
           console.log(`    Challenger: ${challenger}`);
-          console.log(`    Battle session: ${battles.sessionId}`);
           if (idx + 1 == claim.currentChallenger) {
             if (claim.decided) {
               console.log(`    Challenge state: ${claim.invalid ? 'succeeded' : 'failed'}`);

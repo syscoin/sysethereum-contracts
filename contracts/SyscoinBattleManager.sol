@@ -16,7 +16,6 @@ contract SyscoinBattleManager is Initializable, SyscoinErrorCodes {
     uint constant POW_LIMIT =    0x00000fffffffffffffffffffffffffffffffffffffffffffffffffffffffffff;
 
     struct BattleSession {
-        bytes32 superblockHash;
         address submitter;
         address challenger;
         uint lastActionTimestamp;         // Last action timestamp
@@ -68,17 +67,17 @@ contract SyscoinBattleManager is Initializable, SyscoinErrorCodes {
     // Superblocks contract
     SyscoinSuperblocksI trustedSuperblocks;
 
-    event NewBattle(bytes32 superblockHash, bytes32 sessionId, address submitter, address challenger);
-    event ChallengerConvicted(bytes32 superblockHash, bytes32 sessionId, uint err, address challenger);
-    event SubmitterConvicted(bytes32 superblockHash, bytes32 sessionId, uint err, address submitter);
-    event RespondBlockHeaders(bytes32 superblockHash, bytes32 sessionId, uint merkleHashCount, address submitter);
+    event NewBattle(bytes32 superblockHash,address submitter, address challenger);
+    event ChallengerConvicted(bytes32 superblockHash, uint err, address challenger);
+    event SubmitterConvicted(bytes32 superblockHash, uint err, address submitter);
+    event RespondBlockHeaders(bytes32 superblockHash, uint merkleHashCount, address submitter);
     modifier onlyFrom(address sender) {
         require(msg.sender == sender);
         _;
     }
 
-    modifier onlyChallenger(bytes32 sessionId) {
-        require(msg.sender == sessions[sessionId].challenger);
+    modifier onlyChallenger(bytes32 superblockHash) {
+        require(msg.sender == sessions[superblockHash].challenger);
         _;
     }
 
@@ -106,20 +105,17 @@ contract SyscoinBattleManager is Initializable, SyscoinErrorCodes {
 
     // @dev - Start a battle session
     function beginBattleSession(bytes32 superblockHash, address submitter, address challenger)
-        external onlyFrom(address(trustedSyscoinClaimManager)) returns (bytes32) {
-        bytes32 sessionId = keccak256(abi.encode(superblockHash, msg.sender, challenger));
-        BattleSession storage session = sessions[sessionId];
+        external onlyFrom(address(trustedSyscoinClaimManager)) {
+        BattleSession storage session = sessions[superblockHash];
 
         require(session.submitter == address(0));
 
-        session.superblockHash = superblockHash;
         session.submitter = submitter;
         session.challenger = challenger;
         session.merkleRoots.length = 0;
         session.lastActionTimestamp = block.timestamp;
 
-        emit NewBattle(superblockHash, sessionId, submitter, challenger);
-        return sessionId;
+        emit NewBattle(superblockHash, submitter, challenger);
     }
     // 0x00 version
     // 0x04 prev block hash
@@ -650,11 +646,11 @@ contract SyscoinBattleManager is Initializable, SyscoinErrorCodes {
     }
 
     function respondBlockHeaders (
-        bytes32 sessionId,
+        bytes32 superblockHash,
         bytes memory blockHeaders,
         uint numHeaders
     ) public {
-        BattleSession storage session = sessions[sessionId];
+        BattleSession storage session = sessions[superblockHash];
         address submitter = session.submitter;
 
         require(msg.sender == submitter);
@@ -668,7 +664,6 @@ contract SyscoinBattleManager is Initializable, SyscoinErrorCodes {
         }
 
         SyscoinSuperblocksI.SuperblockInfo memory superblockInfo;
-        bytes32 superblockHash = session.superblockHash;
         (superblockInfo.blocksMerkleRoot, superblockInfo.timestamp,superblockInfo.mtpTimestamp,superblockInfo.lastHash,superblockInfo.lastBits,superblockInfo.parentId,,,superblockInfo.height) =
             trustedSuperblocks.getSuperblock(superblockHash);
 
@@ -709,7 +704,7 @@ contract SyscoinBattleManager is Initializable, SyscoinErrorCodes {
         }
 
         if (err != ERR_SUPERBLOCK_OK) {
-            convictSubmitter(sessionId, superblockHash, submitter, session.challenger, err);
+            convictSubmitter(superblockHash, submitter, session.challenger, err);
             return;
         }
 
@@ -720,20 +715,20 @@ contract SyscoinBattleManager is Initializable, SyscoinErrorCodes {
             parsedBlockHeaders[parsedBlockHeaders.length-1]
         );
         if (err != ERR_SUPERBLOCK_OK) {
-            convictSubmitter(sessionId, superblockHash, submitter, session.challenger, err);
+            convictSubmitter(superblockHash, submitter, session.challenger, err);
         } else {
             session.lastActionTimestamp = block.timestamp;
             err = validateHeaders(session, superblockInfo, parsedBlockHeaders);
             if (err != ERR_SUPERBLOCK_OK) {
-                convictSubmitter(sessionId, superblockHash, submitter, session.challenger, err);
+                convictSubmitter(superblockHash, submitter, session.challenger, err);
                 return;
             }
             // only convict challenger at the end if all headers have been provided
             if(numHeaders == 12 || net == Network.REGTEST){
-                convictChallenger(sessionId, superblockHash, submitter, session.challenger, err);
+                convictChallenger(superblockHash, submitter, session.challenger, err);
                 return;
             }
-            emit RespondBlockHeaders(superblockHash, sessionId, merkleRootsLen + 1, submitter);
+            emit RespondBlockHeaders(superblockHash, merkleRootsLen + 1, submitter);
         }
     }
     // @dev - Converts a bytes of size 4 to uint32,
@@ -902,49 +897,49 @@ contract SyscoinBattleManager is Initializable, SyscoinErrorCodes {
 
 
     // @dev - Trigger conviction if response is not received in time
-    function timeout(bytes32 sessionId) external returns (uint) {
-        BattleSession storage session = sessions[sessionId];
+    function timeout(bytes32 superblockHash) external returns (uint) {
+        BattleSession storage session = sessions[superblockHash];
         require(session.submitter != address(0));
 
         if (block.timestamp > session.lastActionTimestamp + superblockTimeout) {
-            convictSubmitter(sessionId, session.superblockHash, session.submitter, session.challenger, ERR_SUPERBLOCK_TIMEOUT);
+            convictSubmitter(superblockHash, session.submitter, session.challenger, ERR_SUPERBLOCK_TIMEOUT);
             return ERR_SUPERBLOCK_TIMEOUT;
         }
         return ERR_SUPERBLOCK_NO_TIMEOUT;
     }
 
     // @dev - To be called when a challenger is convicted
-    function convictChallenger(bytes32 sessionId, bytes32 superblockHash, address submitter, address challenger, uint err) private {
-        trustedSyscoinClaimManager.sessionDecided(sessionId, superblockHash, submitter, challenger);
-        emit ChallengerConvicted(superblockHash, sessionId, err, challenger);
-        disable(sessionId);
+    function convictChallenger(bytes32 superblockHash, address submitter, address challenger, uint err) private {
+        trustedSyscoinClaimManager.sessionDecided(superblockHash, submitter, challenger);
+        emit ChallengerConvicted(superblockHash, err, challenger);
+        disable(superblockHash);
     }
 
     // @dev - To be called when a submitter is convicted
-    function convictSubmitter(bytes32 sessionId, bytes32 superblockHash, address submitter, address challenger, uint err) private {
-        trustedSyscoinClaimManager.sessionDecided(sessionId, superblockHash, challenger, submitter);
-        emit SubmitterConvicted(superblockHash, sessionId, err, submitter);
-        disable(sessionId);
+    function convictSubmitter(bytes32 superblockHash, address submitter, address challenger, uint err) private {
+        trustedSyscoinClaimManager.sessionDecided(superblockHash, challenger, submitter);
+        emit SubmitterConvicted(superblockHash, err, submitter);
+        disable(superblockHash);
     }
 
     // @dev - Disable session
     // It should be called only when either the submitter or the challenger were convicted.
-    function disable(bytes32 sessionId) private {
-        delete sessions[sessionId];
+    function disable(bytes32 superblockHash) private {
+        delete sessions[superblockHash];
     }
 
     // @dev - Check if a session's submitter did not respond before timeout
-    function getSubmitterHitTimeout(bytes32 sessionId) external view returns (bool) {
-        BattleSession storage session = sessions[sessionId];
+    function getSubmitterHitTimeout(bytes32 superblockHash) external view returns (bool) {
+        BattleSession storage session = sessions[superblockHash];
         return (block.timestamp > session.lastActionTimestamp + superblockTimeout);
     }
-    function getNumMerkleHashesBySession(bytes32 sessionId) external view returns (uint) {
-        BattleSession memory session = sessions[sessionId];
+    function getNumMerkleHashesBySession(bytes32 superblockHash) external view returns (uint) {
+        BattleSession memory session = sessions[superblockHash];
         if (session.submitter == address(0))
             return 0;
-        return sessions[sessionId].merkleRoots.length;
+        return sessions[superblockHash].merkleRoots.length;
     }
-    function sessionExists(bytes32 sessionId) external view returns (bool) {
-        return sessions[sessionId].submitter != address(0);
+    function sessionExists(bytes32 superblockHash) external view returns (bool) {
+        return sessions[superblockHash].submitter != address(0);
     }
 }

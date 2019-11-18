@@ -87,7 +87,6 @@ contract('SyscoinClaimManager', (accounts) => {
   describe('Confirm superblock after block header verification', () => {
     let genesisSuperblockHash;
     let proposedSuperblockHash;
-    let battleSessionId;
     let result;
     before(initSuperblockChain);
     
@@ -117,11 +116,10 @@ contract('SyscoinClaimManager', (accounts) => {
       assert.ok(result.events.SuperblockClaimChallenged, 'Superblock challenged');
       assert.equal(proposedSuperblockHash, result.events.SuperblockClaimChallenged.returnValues.superblockHash);
       assert.ok(result.events.VerificationGameStarted, 'Battle started');
-      battleSessionId = result.events.VerificationGameStarted.returnValues.sessionId;
     });
 
     it('Verify headers', async () => {
-      result = await battleManager.methods.respondBlockHeaders(battleSessionId, Buffer.from(headers.slice(0, 2).join(""), 'hex'), headers.slice(0, 2).length).send({ from: submitter, gas: 5000000 });
+      result = await battleManager.methods.respondBlockHeaders(proposedSuperblockHash, Buffer.from(headers.slice(0, 2).join(""), 'hex'), headers.slice(0, 2).length).send({ from: submitter, gas: 5000000 });
       assert.ok(result.events.ChallengerConvicted, 'Challenger failed');
     });
     
@@ -135,7 +133,6 @@ contract('SyscoinClaimManager', (accounts) => {
   describe('Challenge superblock', () => {
     let genesisSuperblockHash;
     let proposedSuperblockHash;
-    let battleSessionId;
     let result;
     before(initSuperblockChain);
   
@@ -168,11 +165,10 @@ contract('SyscoinClaimManager', (accounts) => {
       assert.ok(result.events.SuperblockClaimChallenged, 'Superblock challenged');
       assert.equal(proposedSuperblockHash, result.events.SuperblockClaimChallenged.returnValues.superblockHash);
       assert.ok(result.events.VerificationGameStarted, 'Battle started');
-      battleSessionId = result.events.VerificationGameStarted.returnValues.sessionId;
     });
   
     it('Verify headers', async () => {
-      result = await battleManager.methods.respondBlockHeaders(battleSessionId, Buffer.from(headers.join(""), 'hex'), headers.length).send({ from: submitter, gas: 5000000 });
+      result = await battleManager.methods.respondBlockHeaders(proposedSuperblockHash, Buffer.from(headers.join(""), 'hex'), headers.length).send({ from: submitter, gas: 5000000 });
       assert.ok(result.events.ChallengerConvicted, 'Superblock verified');
     });
     
@@ -184,9 +180,7 @@ contract('SyscoinClaimManager', (accounts) => {
   });
 
   describe('Challenge timeouts', () => {
-    let genesisSuperblockHash;
     let proposedSuperblockHash;
-    let battleSessionId;
     const beginNewChallenge = async () => {
       let result;
       ({
@@ -221,7 +215,6 @@ contract('SyscoinClaimManager', (accounts) => {
       await claimManager.methods.makeDeposit().send({ value: utils.DEPOSITS.MIN_REWARD, from: challenger, gas: 300000 });
       result = await claimManager.methods.challengeSuperblock(proposedSuperblockHash).send({ from: challenger, gas: 2100000 });
       assert.ok(result.events.VerificationGameStarted, 'Battle started');
-      battleSessionId = result.events.VerificationGameStarted.returnValues.sessionId;
     };
 
     beforeEach(async () => {
@@ -230,10 +223,10 @@ contract('SyscoinClaimManager', (accounts) => {
     
     it('Timeout respond headers', async () => {
       let result;
-      result = await battleManager.methods.timeout(battleSessionId).send({ from: submitter, gas: 300000 });
+      result = await battleManager.methods.timeout(proposedSuperblockHash).send({ from: submitter, gas: 300000 });
       assert.ok(Object.keys(result.events).length == 0);
       await utils.blockchainTimeoutSeconds(2*utils.SUPERBLOCK_OPTIONS_LOCAL.TIMEOUT);
-      result = await battleManager.methods.timeout(battleSessionId).send({ from: submitter, gas: 300000 });
+      result = await battleManager.methods.timeout(proposedSuperblockHash).send({ from: submitter, gas: 300000 });
       assert.ok(result.events.SubmitterConvicted, 'Should convict submitter');
     });
 
@@ -242,7 +235,7 @@ contract('SyscoinClaimManager', (accounts) => {
       let result;
       let data;
 
-      result = await battleManager.methods.respondBlockHeaders(battleSessionId, Buffer.from(headers.slice(0, 2).join(""), 'hex'), headers.slice(0, 2).length).send({ from: submitter, gas: 5000000 });
+      result = await battleManager.methods.respondBlockHeaders(proposedSuperblockHash, Buffer.from(headers.slice(0, 2).join(""), 'hex'), headers.slice(0, 2).length).send({ from: submitter, gas: 5000000 });
       assert.ok(result.events.ChallengerConvicted, 'Should convict challenger');
 
       await utils.blockchainTimeoutSeconds(2*utils.SUPERBLOCK_OPTIONS_LOCAL.TIMEOUT);

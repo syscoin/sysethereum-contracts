@@ -140,10 +140,6 @@ contract('approveDescendant', (accounts) => {
         let superblock1Id;
         let superblock2Id;
         let superblock3Id;
-        let superblockR0Id;
-        let superblock4Id;
-
-        let session1;
 
         before(initSuperblockChain);
 
@@ -171,7 +167,6 @@ contract('approveDescendant', (accounts) => {
             assert.ok(result.events.SuperblockClaimChallenged, 'Superblock challenged');
             assert.equal(superblock1Id, result.events.SuperblockClaimChallenged.returnValues.superblockHash);
             assert.ok(result.events.VerificationGameStarted, 'Battle started');
-            session1 = result.events.VerificationGameStarted.returnValues.sessionId;
         });
         it('Try to rechallenge superblock 1', async () => {
             const result = await claimManager.methods.challengeSuperblock(superblock1Id).send({ from: challenger, gas: 2100000 });
@@ -179,7 +174,7 @@ contract('approveDescendant', (accounts) => {
             
         });
         it('Verify headers', async () => {
-            result = await battleManager.methods.respondBlockHeaders(session1, Buffer.from(superblock1Headers.join(""), 'hex'), superblock1Headers.length).send({ from: submitter, gas: 5000000 });
+            result = await battleManager.methods.respondBlockHeaders(superblock1Id, Buffer.from(superblock1Headers.join(""), 'hex'), superblock1Headers.length).send({ from: submitter, gas: 5000000 });
             assert.ok(result.events.ChallengerConvicted, 'Challenger not convicted despite fork being initially valid');
         });
 
@@ -210,16 +205,15 @@ contract('approveDescendant', (accounts) => {
         //     assert.equal(superblock4Id, superblockClaimChallengedEvent.args.superblockHash);
         //     const verificationGameStartedEvent = utils.findEvent(result.logs, 'VerificationGameStarted');
         //     assert.ok(verificationGameStartedEvent, 'Battle started');
-        //     session1 = verificationGameStartedEvent.args.sessionId;
         // });
         // it('Query and verify 60 hashes', async () => {
 
-        //     result = await battleManager.queryMerkleRootHashes(session1, { from: challenger });
+        //     result = await battleManager.queryMerkleRootHashes(superblock4Id, { from: challenger });
         //     utils.printGas(result, "queryMerkleRootHashes 4");
         //     assert.ok(utils.findEvent(result.logs, 'QueryMerkleRootHashes'), 'Query merkle root hashes');
             
 
-        //     result = await battleManager.respondMerkleRootHashes(session1, superblock4Hashes, { from: submitter });
+        //     result = await battleManager.respondMerkleRootHashes(superblock4Id, superblock4Hashes, { from: submitter });
         //     utils.printGas(result, "respondMerkleRootHashes 4");
         //     assert.ok(utils.findEvent(result.logs, 'RespondMerkleRootHashes'), 'Respond merkle root hashes');
         // });
@@ -301,9 +295,7 @@ contract('approveDescendant', (accounts) => {
         let superblock1Id;
         let superblock2Id;
         let superblock3Id;
-        let superblockR0Id;
-
-        let session1;
+ 
 
         before(initSuperblockChain);
 
@@ -331,11 +323,10 @@ contract('approveDescendant', (accounts) => {
             assert.ok(result.events.SuperblockClaimChallenged, 'Superblock challenged');
             assert.equal(superblock1Id, result.events.SuperblockClaimChallenged.returnValues.superblockHash);
             assert.ok(result.events.VerificationGameStarted, 'Battle started');
-            session1 = result.events.VerificationGameStarted.returnValues.sessionId;
         });
 
         it('Verify headers', async () => {
-            result = await battleManager.methods.respondBlockHeaders(session1, Buffer.from(superblock1Headers.join(""), 'hex'), superblock1Headers.length).send({ from: submitter, gas: 5000000 });
+            result = await battleManager.methods.respondBlockHeaders(superblock1Id, Buffer.from(superblock1Headers.join(""), 'hex'), superblock1Headers.length).send({ from: submitter, gas: 5000000 });
             assert.ok(result.events.ChallengerConvicted, 'Challenger not convicted despite fork being initially valid');
         });
         
@@ -365,11 +356,10 @@ contract('approveDescendant', (accounts) => {
             assert.ok(result.events.SuperblockClaimChallenged, 'Superblock challenged');
             assert.equal(superblock2Id, result.events.SuperblockClaimChallenged.returnValues.superblockHash);
             assert.ok(result.events.VerificationGameStarted, 'Battle started');
-            session1 = result.events.VerificationGameStarted.returnValues.sessionId;
         });
 
         it('Verify headers', async () => {
-            result = await battleManager.methods.respondBlockHeaders(session1, Buffer.from(superblock2Headers.join(""), 'hex'), superblock2Headers.length).send({ from: submitter, gas: 5000000 });
+            result = await battleManager.methods.respondBlockHeaders(superblock2Id, Buffer.from(superblock2Headers.join(""), 'hex'), superblock2Headers.length).send({ from: submitter, gas: 5000000 });
             assert.ok(result.events.ChallengerConvicted, 'Challenger not convicted despite fork being initially valid');
         });
 

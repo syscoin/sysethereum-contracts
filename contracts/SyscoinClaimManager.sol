@@ -26,8 +26,6 @@ contract SyscoinClaimManager is Initializable, SyscoinDepositsManager, SyscoinEr
 
         mapping (address => uint) bondedDeposits;   // Deposit associated to submitter+challenger
 
-        bytes32 session;                            // Challenge session
-
         uint challengeTimeout;                      // Claim timeout
 
         bool verificationOngoing;                   // Challenge session has started
@@ -55,11 +53,11 @@ contract SyscoinClaimManager is Initializable, SyscoinDepositsManager, SyscoinEr
     event DepositUnbonded(bytes32 superblockHash, address account, uint amount);
     event SuperblockClaimCreated(bytes32 superblockHash, address submitter);
     event SuperblockClaimChallenged(bytes32 superblockHash, address challenger);
-    event SuperblockBattleDecided(bytes32 sessionId, address winner, address loser);
+    event SuperblockBattleDecided(bytes32 superblockHash, address winner, address loser);
     event SuperblockClaimSuccessful(bytes32 superblockHash, address submitter);
     event SuperblockClaimPending(bytes32 superblockHash, address submitter);
     event SuperblockClaimFailed(bytes32 superblockHash, address submitter);
-    event VerificationGameStarted(bytes32 superblockHash, address submitter, address challenger, bytes32 sessionId);
+    event VerificationGameStarted(bytes32 superblockHash, address submitter, address challenger);
 
     event ErrorClaim(bytes32 superblockHash, uint err);
 
@@ -255,11 +253,11 @@ contract SyscoinClaimManager is Initializable, SyscoinDepositsManager, SyscoinEr
         claim.challenger = msg.sender;
         emit SuperblockClaimChallenged(superblockHash, msg.sender);
 
-        claim.session = trustedSyscoinBattleManager.beginBattleSession(superblockHash, claim.submitter,
+        trustedSyscoinBattleManager.beginBattleSession(superblockHash, claim.submitter,
             claim.challenger);
 
         emit VerificationGameStarted(superblockHash, claim.submitter,
-            claim.challenger, claim.session);
+            claim.challenger);
 
         claim.verificationOngoing = true;
         return (ERR_SUPERBLOCK_OK, superblockHash);
@@ -442,11 +440,10 @@ contract SyscoinClaimManager is Initializable, SyscoinDepositsManager, SyscoinEr
 
     // @dev – called when a battle session has ended.
     //
-    // @param sessionId – session Id.
     // @param superblockHash - claim Id
     // @param winner – winner of verification game.
     // @param loser – loser of verification game.
-    function sessionDecided(bytes32 sessionId, bytes32 superblockHash, address winner, address loser) external onlyBattleManager {
+    function sessionDecided(bytes32 superblockHash, address winner, address loser) external onlyBattleManager {
         SuperblockClaim storage claim = claims[superblockHash];
 
         require(claimExists(claim));
@@ -460,7 +457,7 @@ contract SyscoinClaimManager is Initializable, SyscoinDepositsManager, SyscoinEr
             revert();
         }
 
-        emit SuperblockBattleDecided(sessionId, winner, loser);
+        emit SuperblockBattleDecided(superblockHash, winner, loser);
     }
 
     // @dev - Pay challenger
@@ -530,10 +527,6 @@ contract SyscoinClaimManager is Initializable, SyscoinDepositsManager, SyscoinEr
         return claims[superblockHash].invalid;
     }
 
-    // @dev – Return session by challenger
-    function getSession(bytes32 superblockHash) external view returns(bytes32) {
-        return claims[superblockHash].session;
-    }
 
     function getClaimChallenger(bytes32 superblockHash) external view returns (address) {
         SuperblockClaim storage claim = claims[superblockHash];
