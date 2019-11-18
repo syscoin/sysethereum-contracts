@@ -1,5 +1,4 @@
-var HDWalletProvider = require("truffle-hdwallet-provider");
-const fs = require('fs');
+var HDWalletProvider = require("@truffle/hdwallet-provider");
 const mainnet_mnemonic = process.env.MNEMONIC;
 const etherscanAPIKEY = process.env.ETHERSCAN;
 var mnenomic = "cup aisle bright dice when flame left assume laptop lock cry brown";
@@ -30,14 +29,11 @@ module.exports = {
       provider:   function () {
          return new HDWalletProvider(mnenomic, "https://rinkeby.infura.io/v3/d178aecf49154b12be98e68e998cfb8d");
       },
-      skipDryRun: true,
       network_id: "4",
+      skipDryRun: true,
       gasPrice: "6000000000"
     }
   },
-  plugins: [
-    'truffle-plugin-verify'
-  ],
   api_keys: {
     etherscan: etherscanAPIKEY
   },
