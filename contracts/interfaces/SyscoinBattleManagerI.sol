@@ -4,5 +4,5 @@ pragma solidity ^0.5.12;
 interface SyscoinBattleManagerI {
     // @dev - Start a battle session
     function beginBattleSession(bytes32 superblockHash, address submitter, address challenger)
-        external returns (bytes32);
+        external;
 }

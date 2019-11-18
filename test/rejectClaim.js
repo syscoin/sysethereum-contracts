@@ -60,8 +60,7 @@ contract('rejectClaim', (accounts) => {
         let superblock2Id;
         let superblock3Id;
         let superblockR0Id;
-        let superblockR1Id;
-        let session1;
+
 
         before(async () => {
             ({
@@ -257,7 +256,6 @@ contract('rejectClaim', (accounts) => {
             assert.ok(result.events.SuperblockClaimChallenged, 'Superblock challenged');
             assert.equal(superblockR0Id, result.events.SuperblockClaimChallenged.returnValues.superblockHash);
             assert.ok(result.events.VerificationGameStarted, 'Battle started');
-            session1 = result.events.VerificationGameStarted.returnValues.sessionId;
         });
 
         // Challenge multiple
@@ -274,7 +272,7 @@ contract('rejectClaim', (accounts) => {
         });
 
         it('verify headers', async () => {
-            result = await battleManager.methods.respondBlockHeaders(session1, Buffer.from(superblockR0Headers.join(""), 'hex'), superblockR0Headers.length).send({ from: submitter, gas: 5000000 });
+            result = await battleManager.methods.respondBlockHeaders(superblockR0Id, Buffer.from(superblockR0Headers.join(""), 'hex'), superblockR0Headers.length).send({ from: submitter, gas: 5000000 });
             assert.ok(result.events.ChallengerConvicted, 'Challenger not convicted despite fork being initially valid');
         });
 

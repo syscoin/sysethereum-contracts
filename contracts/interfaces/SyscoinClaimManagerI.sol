@@ -7,5 +7,5 @@ interface SyscoinClaimManagerI {
 
     function getDeposit(address account) external view returns (uint);
 
-    function sessionDecided(bytes32 sessionId, bytes32 superblockHash, address winner, address loser) external;
+    function sessionDecided(bytes32 superblockHash, address winner, address loser) external;
 }

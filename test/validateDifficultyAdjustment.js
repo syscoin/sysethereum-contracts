@@ -12,7 +12,6 @@ contract('validateDifficultyAdjustment', (accounts) => {
   describe('Validate difficulty adjustment algorithm', () => {
     let genesisSuperblockHash;
     let proposesSuperblockHash;
-    let battleSessionId;
     // 71999 - c1bc0d1b4ed2eefea08050aca58613d86f3834802bdff6b418bff8ce0bd29018
     const genesisHeaders = [
       `0401001047cbd4c89cc09df42d8677d04bf478b818b4649d36f605e25bc7b196f8ee92b35edd7df79d22806b599c84ec25b13bf5774f87dc0da9874b1e039e0c49f5e9780bab315de34a0a180000000001000000010000000000000000000000000000000000000000000000000000000000000000ffffffff590344f108162f5669614254432f4d696e6564206279206c7a71312f2cfabe6d6d03246f5c5a7ac61005245191ccf80f48d784645deb1cf9fd1424d8d20c69649c100000000000000010356fe50cd79458c147e565c03b920000ffffffff022d9fa44d000000001976a914536ffa992491508dca0354e52f32a3a7a679a53a88ac0000000000000000266a24aa21a9ed3c745ee959d0a96bba3cb37e8e3c950fbdedf1e5ebe5889ac2181e8491e3e1740000000000000000000000000000000000000000000000000000000000000000000000000c6ff9fa8b17ae305bd8ace6cedac837ff412c5d6d2fa38355ff7aaef3f8d72835aa7b91b7de9e02e2b061bccf9e2062b57aac2179f3b947bad8397d4ed47fde88087e7ce90ae9e0f674797b7a447a329a138963f6c45b4f1871545974118406928703d44df4836926f49259ff2f4927118e0931ae6d6e9c54c6d3d449a4cb8843fa2945e08e32931d21e7a5df0ecaf0974f0a36ffdd63275ae19eaaee165798b2728da659912e6bff521b156cc8089a20eab7bc77f783d4e67aeb170b2dcfb31f13b33aeb0b20de08a4fb2c767aeb566e33d360b3438b8619e53d23bae4e91fef69387bb0f7096b79aab4cedd16bf8ac682ea920c8d0f2628842a30c8b0aa1dab11c3cc4cad39b4f46e9a5a1f9112bb06d8f5d86bb95231f992a39b954103ee7a37e5181204f0fa8b776d030cd4ddef4b28379cc3b4c3f018b78b3f8666be0aad70b61a68a5907244964f06a7612f1e61351abdc66c91c9859e9dd66ce89a4e3605779751c60c43c041134e3563e51c913d735cc2cbb5784794ab3e169ee140a400000000040000000000000000000000000000000000000000000000000000000000000000e2f61c3f71d1defd3fa999dfa36953755c690689799962b48bebd836974e8cf9cc05624f2205c980deea3a65a31ec92af55a7810a1840b60a6d5f976f08848794ac9f5b61c01abce2bf69897cf6b9b4affdcd3c0e03c1499626388f6a6ef6c390e000000000000207f19065bbf8718c86acbe757b97145e0f59c5b1247a209000000000000000000ec9b4f0f3db9b7c4741a22b530823d1881efee377abc08f0b5bd81c0c990f9a20bab315d9b0d1f17037521a9`,
@@ -63,11 +62,10 @@ contract('validateDifficultyAdjustment', (accounts) => {
       assert.equal(claim1, result.events.SuperblockClaimChallenged.returnValues.superblockHash);
 
       assert.ok(result.events.VerificationGameStarted, 'Battle started');
-      battleSessionId = result.events.VerificationGameStarted.returnValues.sessionId;
 
 
 
-      result = await battleManager.methods.respondBlockHeaders(battleSessionId, Buffer.from(headers.join(""), 'hex'), headers.length).send({ from: submitter, gas: 5000000 });
+      result = await battleManager.methods.respondBlockHeaders(proposesSuperblockHash, Buffer.from(headers.join(""), 'hex'), headers.length).send({ from: submitter, gas: 5000000 });
       assert.ok(result.events.ChallengerConvicted, 'Challenger failed');
 
       // Confirm superblock
