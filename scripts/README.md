@@ -22,9 +22,9 @@ deployed with the gas limit of 4.7M gas.
 
 ## Initialize contracts
 
-This steps depends on the NETWORK for integrationSyscoinRegtest
+Deploys to network:
 
-    $ npx truffle exec --network integrationSyscoinRegtest scripts\init_contracts_local.js
+    $ ./scripts/exportAndInits.sh
 
 ## Send command to contracts
 

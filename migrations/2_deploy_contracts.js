@@ -17,12 +17,6 @@ const SUPERBLOCK_OPTIONS_PRODUCTION = {
   CONFIRMATIONS: 3 // Superblocks required to confirm semi approved superblock
 };
 
-const SUPERBLOCK_OPTIONS_INTEGRATION_FAST_SYNC = {
-  DURATION: 10,    // 10 blocks per superblock
-  DELAY: 300,       // 5 minutes
-  TIMEOUT: 300,      // 5 minutes
-  CONFIRMATIONS: 3 // Superblocks required to confirm semi approved superblock
-};
 
 const SUPERBLOCK_OPTIONS_LOCAL = {
   DURATION: 60,     // 10 blocks per superblock
@@ -100,13 +94,13 @@ module.exports = function(deployer, networkName, accounts) {
       SyscoinERC20Manager = await deploy(networkName, { network, txParams }, accounts, SYSCOIN_MAINNET, SUPERBLOCK_OPTIONS_LOCAL);
     } else {
       if (networkName === 'ropsten') {
-        SyscoinERC20Manager = await deploy(networkName, { network, txParams }, accounts, SYSCOIN_MAINNET, SUPERBLOCK_OPTIONS_INTEGRATION_FAST_SYNC);
+        SyscoinERC20Manager = await deploy(networkName, { network, txParams }, accounts, SYSCOIN_MAINNET, SUPERBLOCK_OPTIONS_PRODUCTION);
       } else if (networkName === 'rinkeby') {
         SyscoinERC20Manager = await deploy(networkName, { network, txParams }, accounts, SYSCOIN_TESTNET, SUPERBLOCK_OPTIONS_PRODUCTION);
       } else if (networkName === 'mainnet') {
         SyscoinERC20Manager = await deploy(networkName, { network, txParams }, accounts, SYSCOIN_MAINNET, SUPERBLOCK_OPTIONS_PRODUCTION);
       } else if (networkName === 'integrationSyscoinRegtest') {
-        SyscoinERC20Manager = await deploy(networkName, { network, txParams }, accounts, SYSCOIN_REGTEST, SUPERBLOCK_OPTIONS_LOCAL);
+        SyscoinERC20Manager = await deploy(networkName, { network, txParams }, accounts, SYSCOIN_REGTEST, SUPERBLOCK_OPTIONS_PRODUCTION);
       }
     }
     let burnVal = web3.utils.toWei("88.8", "finney"); // total supply 888m COIN on Syscoin mainnet
