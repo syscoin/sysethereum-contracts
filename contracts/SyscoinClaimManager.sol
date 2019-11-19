@@ -263,72 +263,6 @@ contract SyscoinClaimManager is Initializable, SyscoinDepositsManager, SyscoinEr
         return (ERR_SUPERBLOCK_OK, superblockHash);
     }
 
-
-
-    // @dev – check whether a claim has successfully withstood all challenges.
-    // If successful without challenges, it will mark the superblock as confirmed.
-    // If successful with at least one challenge, it will mark the superblock as semi-approved.
-    // If verification failed, it will mark the superblock as invalid.
-    //
-    // @param superblockHash – claim ID.
-    function checkClaimFinished(bytes32 superblockHash) external returns (bool) {
-        SuperblockClaim storage claim = claims[superblockHash];
-
-        if (!claimExists(claim) || claim.decided) {
-            emit ErrorClaim(superblockHash, ERR_SUPERBLOCK_BAD_CLAIM);
-            return false;
-        }
-
-        // check that there is no ongoing verification game.
-        if (claim.verificationOngoing) {
-            emit ErrorClaim(superblockHash, ERR_SUPERBLOCK_VERIFICATION_PENDING);
-            return false;
-        }
-
-        // an invalid superblock can be rejected immediately
-        if (claim.invalid) {
-            // The superblock is invalid, submitter abandoned
-            // or superblock data is inconsistent
-            claim.decided = true;
-            uint err = trustedSuperblocks.invalidate(superblockHash, msg.sender);
-            require(err == ERR_SUPERBLOCK_OK);
-            emit SuperblockClaimFailed(superblockHash, claim.submitter);
-            doPayChallenger(superblockHash, claim);
-            return false;
-        }
-
-        // check that the claim has exceeded the claim's specific challenge timeout.
-        if (block.timestamp <= claim.challengeTimeout) {
-            emit ErrorClaim(superblockHash, ERR_SUPERBLOCK_NO_TIMEOUT);
-            return false;
-        }
-
-        claim.decided = true;
-
-        bool confirmImmediately = false;
-        // No challenger and parent approved; confirm immediately
-        if (claim.challenger == address(0)) {
-            bytes32 parentId = trustedSuperblocks.getSuperblockParentId(superblockHash);
-            SyscoinSuperblocksI.Status status = trustedSuperblocks.getSuperblockStatus(parentId);
-            if (status == SyscoinSuperblocksI.Status.Approved) {
-                confirmImmediately = true;
-            }
-        }
-
-        if (confirmImmediately) {
-            uint err = trustedSuperblocks.confirm(superblockHash, msg.sender);
-            require(err == ERR_SUPERBLOCK_OK);
-            address submitter = claim.submitter;
-            unbondDeposit(superblockHash, submitter);
-            emit SuperblockClaimSuccessful(superblockHash, submitter);
-        } else {
-            uint err = trustedSuperblocks.semiApprove(superblockHash, msg.sender);
-            require(err == ERR_SUPERBLOCK_OK);
-            emit SuperblockClaimPending(superblockHash, claim.submitter);
-        }
-        return true;
-    }
-
     // @dev – confirm semi approved superblock.
     //
     // A semi approved superblock can be confirmed if it has several descendant
@@ -435,8 +369,78 @@ contract SyscoinClaimManager is Initializable, SyscoinDepositsManager, SyscoinEr
         require(err == ERR_SUPERBLOCK_OK);
         emit SuperblockClaimFailed(superblockHash, claim.submitter);
         doPayChallenger(superblockHash, claim);
+        claim.invalid = true;
         return true;
     }
+    
+    function claimFinished(bytes32 superblockHash) private returns (bool) {
+        SuperblockClaim storage claim = claims[superblockHash];
+
+        if (!claimExists(claim) || claim.decided) {
+            emit ErrorClaim(superblockHash, ERR_SUPERBLOCK_BAD_CLAIM);
+            return false;
+        }
+
+        // check that there is no ongoing verification game.
+        if (claim.verificationOngoing) {
+            emit ErrorClaim(superblockHash, ERR_SUPERBLOCK_VERIFICATION_PENDING);
+            return false;
+        }
+
+        // an invalid superblock can be rejected immediately
+        if (claim.invalid) {
+            // The superblock is invalid, submitter abandoned
+            // or superblock data is inconsistent
+            claim.decided = true;
+            uint err = trustedSuperblocks.invalidate(superblockHash, msg.sender);
+            require(err == ERR_SUPERBLOCK_OK);
+            emit SuperblockClaimFailed(superblockHash, claim.submitter);
+            doPayChallenger(superblockHash, claim);
+            return false;
+        }
+
+        // check that the claim has exceeded the claim's specific challenge timeout.
+        if (block.timestamp <= claim.challengeTimeout) {
+            emit ErrorClaim(superblockHash, ERR_SUPERBLOCK_NO_TIMEOUT);
+            return false;
+        }
+
+        claim.decided = true;
+
+        bool confirmImmediately = false;
+        // No challenger and parent approved; confirm immediately
+        if (claim.challenger == address(0)) {
+            bytes32 parentId = trustedSuperblocks.getSuperblockParentId(superblockHash);
+            SyscoinSuperblocksI.Status status = trustedSuperblocks.getSuperblockStatus(parentId);
+            if (status == SyscoinSuperblocksI.Status.Approved) {
+                confirmImmediately = true;
+            }
+        }
+
+        if (confirmImmediately) {
+            uint err = trustedSuperblocks.confirm(superblockHash, msg.sender);
+            require(err == ERR_SUPERBLOCK_OK);
+            address submitter = claim.submitter;
+            unbondDeposit(superblockHash, submitter);
+            emit SuperblockClaimSuccessful(superblockHash, submitter);
+        } else {
+            uint err = trustedSuperblocks.semiApprove(superblockHash, msg.sender);
+            require(err == ERR_SUPERBLOCK_OK);
+            emit SuperblockClaimPending(superblockHash, claim.submitter);
+        }
+        return true;
+    }
+
+    // @dev – check whether a claim has successfully withstood all challenges.
+    // If successful without challenges, it will mark the superblock as confirmed.
+    // If successful with at least one challenge, it will mark the superblock as semi-approved.
+    // If verification failed, it will mark the superblock as invalid.
+    //
+    // @param superblockHash – claim ID.
+    function checkClaimFinished(bytes32 superblockHash) external returns (bool) {
+        return claimFinished(superblockHash);
+    }
+
 
     // @dev – called when a battle session has ended.
     //
@@ -456,8 +460,8 @@ contract SyscoinClaimManager is Initializable, SyscoinDepositsManager, SyscoinEr
         } else if (submitter != winner) {
             revert();
         }
-
         emit SuperblockBattleDecided(superblockHash, winner, loser);
+        claimFinished(superblockHash);
     }
 
     // @dev - Pay challenger
