@@ -9,7 +9,7 @@ const ERC20Asset = artifacts.require('./token/SyscoinERC20.sol');
 const SYSCOIN_MAINNET = 0;
 const SYSCOIN_TESTNET = 1;
 const SYSCOIN_REGTEST = 2;
-const SYSX_ASSET_GUID = 541463697; // testnet sysx
+const SYSX_ASSET_GUID = 729627649; // testnet sysx
 const SUPERBLOCK_OPTIONS_PRODUCTION = {
   DURATION: 60,   // 60 blocks per superblock
   DELAY: 3 * 3600,  // 3 hours
@@ -54,10 +54,10 @@ async function deploy(networkName, options, accounts, networkId, superblockOptio
   let tx = await SyscoinSuperblocks.methods.init(SyscoinERC20Manager.address, SyscoinClaimManager.address).send({ from: accounts[0], gas: 300000 });
   console.log('TX hash: ', tx.transactionHash, '\n');
 
-  var blocksMerkleRoot = "0x00000f1a3b8f64527f2c0bd117b35ad27b845b650968fd3390e12ed231eec3b6";
-  var timestamp = 1574134667;
-  var mtptimestamp = 1574134435;
-  var lastHash = "0x00000f1a3b8f64527f2c0bd117b35ad27b845b650968fd3390e12ed231eec3b6"; // 160
+  var blocksMerkleRoot = "0x00000c04c5926f539074420b40088d4b099d748d07795df891ca391799b6e54c";
+  var timestamp = 1574178213;
+  var mtptimestamp = 1574178211;
+  var lastHash = "0x00000c04c5926f539074420b40088d4b099d748d07795df891ca391799b6e54c"; // 360
   var parentId = "0x0";
   var lastBits = 504365055; // 1e0fffff
 
