@@ -903,6 +903,7 @@ contract SyscoinBattleManager is Initializable, SyscoinErrorCodes {
 
         if (block.timestamp > session.lastActionTimestamp + superblockTimeout) {
             convictSubmitter(superblockHash, session.submitter, session.challenger, ERR_SUPERBLOCK_TIMEOUT);
+            trustedSyscoinClaimManager.checkClaimFinished(superblockHash);
             return ERR_SUPERBLOCK_TIMEOUT;
         }
         return ERR_SUPERBLOCK_NO_TIMEOUT;

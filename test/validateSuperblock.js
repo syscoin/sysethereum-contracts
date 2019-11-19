@@ -119,8 +119,7 @@ contract('validateSuperblocks', (accounts) => {
 
       await utils.blockchainTimeoutSeconds(2*utils.SUPERBLOCK_OPTIONS_LOCAL.TIMEOUT);
       result = await claimManager.methods.checkClaimFinished(proposedSuperblockHash).send({ from: challenger, gas: 300000 });
-      assert.ok(result.events.ErrorClaim, 'Superblock rejected');
-      assert.equal(result.events.ErrorClaim.returnValues.err, '50080');
+      assert.ok(result.events.SuperblockClaimFailed, 'Superblock rejected');
     });
 
     it('Reject invalid last hash', async () => {
@@ -154,8 +153,7 @@ contract('validateSuperblocks', (accounts) => {
       );
 
       result = await claimManager.methods.checkClaimFinished(proposedSuperblockHash).send({ from: challenger, gas: 300000 });
-      assert.ok(result.events.ErrorClaim, 'Superblock rejected');
-      assert.equal(result.events.ErrorClaim.returnValues.err, '50080');
+      assert.ok(result.events.SuperblockClaimFailed, 'Superblock rejected');
 
       await claimManager.methods.makeDeposit().send({ value: utils.DEPOSITS.MIN_REWARD, from: submitter, gas: 300000 });
       // Submitter cannot submit same superblock

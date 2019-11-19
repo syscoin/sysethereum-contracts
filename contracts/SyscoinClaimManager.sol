@@ -365,15 +365,21 @@ contract SyscoinClaimManager is Initializable, SyscoinDepositsManager, SyscoinEr
             return false;
         }
 
-        uint err = trustedSuperblocks.invalidate(superblockHash, msg.sender);
+        uint err = trustedSuperblocks.invalidate(superblockHash, claim.submitter);
         require(err == ERR_SUPERBLOCK_OK);
         emit SuperblockClaimFailed(superblockHash, claim.submitter);
         doPayChallenger(superblockHash, claim);
         claim.invalid = true;
         return true;
     }
-    
-    function claimFinished(bytes32 superblockHash) private returns (bool) {
+
+    // @dev – check whether a claim has successfully withstood all challenges.
+    // If successful without challenges, it will mark the superblock as confirmed.
+    // If successful with at least one challenge, it will mark the superblock as semi-approved.
+    // If verification failed, it will mark the superblock as invalid.
+    //
+    // @param superblockHash – claim ID.
+    function checkClaimFinished(bytes32 superblockHash) external returns (bool) {
         SuperblockClaim storage claim = claims[superblockHash];
 
         if (!claimExists(claim) || claim.decided) {
@@ -392,7 +398,7 @@ contract SyscoinClaimManager is Initializable, SyscoinDepositsManager, SyscoinEr
             // The superblock is invalid, submitter abandoned
             // or superblock data is inconsistent
             claim.decided = true;
-            uint err = trustedSuperblocks.invalidate(superblockHash, msg.sender);
+            uint err = trustedSuperblocks.invalidate(superblockHash, claim.submitter);
             require(err == ERR_SUPERBLOCK_OK);
             emit SuperblockClaimFailed(superblockHash, claim.submitter);
             doPayChallenger(superblockHash, claim);
@@ -431,16 +437,6 @@ contract SyscoinClaimManager is Initializable, SyscoinDepositsManager, SyscoinEr
         return true;
     }
 
-    // @dev – check whether a claim has successfully withstood all challenges.
-    // If successful without challenges, it will mark the superblock as confirmed.
-    // If successful with at least one challenge, it will mark the superblock as semi-approved.
-    // If verification failed, it will mark the superblock as invalid.
-    //
-    // @param superblockHash – claim ID.
-    function checkClaimFinished(bytes32 superblockHash) external returns (bool) {
-        return claimFinished(superblockHash);
-    }
-
 
     // @dev – called when a battle session has ended.
     //
@@ -461,7 +457,6 @@ contract SyscoinClaimManager is Initializable, SyscoinDepositsManager, SyscoinEr
             revert();
         }
         emit SuperblockBattleDecided(superblockHash, winner, loser);
-        claimFinished(superblockHash);
     }
 
     // @dev - Pay challenger
