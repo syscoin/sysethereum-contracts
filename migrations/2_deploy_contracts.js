@@ -57,7 +57,7 @@ async function deploy(networkName, options, accounts, networkId, superblockOptio
   var blocksMerkleRoot = "0x00000f1a3b8f64527f2c0bd117b35ad27b845b650968fd3390e12ed231eec3b6";
   var timestamp = 1574134667;
   var mtptimestamp = 1574134435;
-  var lastHash = "0x00000f1a3b8f64527f2c0bd117b35ad27b845b650968fd3390e12ed231eec3b6"; // 360
+  var lastHash = "0x00000f1a3b8f64527f2c0bd117b35ad27b845b650968fd3390e12ed231eec3b6"; // 160
   var parentId = "0x0";
   var lastBits = 504365055; // 1e0fffff
 
