@@ -733,6 +733,7 @@ public class SyscoinClaimManager extends Contract {
         return executeRemoteCallTransaction(function);
     }
 
+
     public RemoteFunctionCall<TransactionReceipt> sessionDecided(Bytes32 superblockHash, Address winner, Address loser) {
         final org.web3j.abi.datatypes.Function function = new org.web3j.abi.datatypes.Function(
                 FUNC_SESSIONDECIDED, 
