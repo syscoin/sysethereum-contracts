@@ -1,4 +1,4 @@
-pragma solidity ^0.5.12;
+pragma solidity ^0.5.13;
 
 // @dev - Manages a battle session between superblock submitter and challenger
 interface SyscoinBattleManagerI {
