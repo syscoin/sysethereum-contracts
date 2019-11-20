@@ -212,30 +212,30 @@
       "type": "function"
     }
   ],
-  "metadata": "{\"compiler\":{\"version\":\"0.5.12+commit.7709ece9\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"owner\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"spender\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"value\",\"type\":\"uint256\"}],\"name\":\"Approval\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"from\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"to\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"value\",\"type\":\"uint256\"}],\"name\":\"Transfer\",\"type\":\"event\"},{\"constant\":true,\"inputs\":[{\"internalType\":\"address\",\"name\":\"owner\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"spender\",\"type\":\"address\"}],\"name\":\"allowance\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"internalType\":\"address\",\"name\":\"spender\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\"}],\"name\":\"approve\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"}],\"name\":\"balanceOf\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"decimals\",\"outputs\":[{\"internalType\":\"uint8\",\"name\":\"\",\"type\":\"uint8\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"totalSupply\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"internalType\":\"address\",\"name\":\"recipient\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\"}],\"name\":\"transfer\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"internalType\":\"address\",\"name\":\"sender\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"recipient\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\"}],\"name\":\"transferFrom\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"}],\"devdoc\":{\"methods\":{\"allowance(address,address)\":{\"details\":\"Returns the remaining number of tokens that `spender` will be allowed to spend on behalf of `owner` through {transferFrom}. This is zero by default.     * This value changes when {approve} or {transferFrom} are called.\"},\"approve(address,uint256)\":{\"details\":\"Sets `amount` as the allowance of `spender` over the caller's tokens.     * Returns a boolean value indicating whether the operation succeeded.     * IMPORTANT: Beware that changing an allowance with this method brings the risk that someone may use both the old and the new allowance by unfortunate transaction ordering. One possible solution to mitigate this race condition is to first reduce the spender's allowance to 0 and set the desired value afterwards: https://github.com/ethereum/EIPs/issues/20#issuecomment-263524729     * Emits an {Approval} event.\"},\"balanceOf(address)\":{\"details\":\"Returns the amount of tokens owned by `account`.\"},\"totalSupply()\":{\"details\":\"Returns the amount of tokens in existence.\"},\"transfer(address,uint256)\":{\"details\":\"Moves `amount` tokens from the caller's account to `recipient`.     * Returns a boolean value indicating whether the operation succeeded.     * Emits a {Transfer} event.\"},\"transferFrom(address,address,uint256)\":{\"details\":\"Moves `amount` tokens from `sender` to `recipient` using the allowance mechanism. `amount` is then deducted from the caller's allowance.     * Returns a boolean value indicating whether the operation succeeded.     * Emits a {Transfer} event.\"}}},\"userdoc\":{\"methods\":{}}},\"settings\":{\"compilationTarget\":{\"/Users/jsidhu/Documents/GitHub/sysethereum-contracts1/contracts/interfaces/SyscoinERC20I.sol\":\"SyscoinERC20I\"},\"evmVersion\":\"petersburg\",\"libraries\":{},\"optimizer\":{\"enabled\":true,\"runs\":200},\"remappings\":[]},\"sources\":{\"/Users/jsidhu/Documents/GitHub/sysethereum-contracts1/contracts/interfaces/SyscoinERC20I.sol\":{\"keccak256\":\"0xf92e732042aec267ae9655ee3dbc50d749c1921d50597d2a803af1a2402173a0\",\"urls\":[\"bzz-raw://671a0d8a6e57e14b01e225f9c4a387ab8558489d587a4dbf1216d25e5ea0e223\",\"dweb:/ipfs/QmXMoDCRJUNc5rrQBbLs8RGJdJ5PAhjVo39UBVr457KuTn\"]},\"openzeppelin-solidity/contracts/token/ERC20/IERC20.sol\":{\"keccak256\":\"0xe5bb0f57cff3e299f360052ba50f1ea0fff046df2be070b6943e0e3c3fdad8a9\",\"urls\":[\"bzz-raw://59fd025151435da35faa8093a5c7a17de02de9d08ad27275c5cdf05050820d91\",\"dweb:/ipfs/QmQMvwEcPhoRXzbXyrdoeRtvLoifUW9Qh7Luho7bmUPRkc\"]}},\"version\":1}",
+  "metadata": "{\"compiler\":{\"version\":\"0.5.13+commit.5b0b510c\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"owner\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"spender\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"value\",\"type\":\"uint256\"}],\"name\":\"Approval\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"from\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"to\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"value\",\"type\":\"uint256\"}],\"name\":\"Transfer\",\"type\":\"event\"},{\"constant\":true,\"inputs\":[{\"internalType\":\"address\",\"name\":\"owner\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"spender\",\"type\":\"address\"}],\"name\":\"allowance\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"internalType\":\"address\",\"name\":\"spender\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\"}],\"name\":\"approve\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"}],\"name\":\"balanceOf\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"decimals\",\"outputs\":[{\"internalType\":\"uint8\",\"name\":\"\",\"type\":\"uint8\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"totalSupply\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"internalType\":\"address\",\"name\":\"recipient\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\"}],\"name\":\"transfer\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"internalType\":\"address\",\"name\":\"sender\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"recipient\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\"}],\"name\":\"transferFrom\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"}],\"devdoc\":{\"methods\":{\"allowance(address,address)\":{\"details\":\"Returns the remaining number of tokens that `spender` will be allowed to spend on behalf of `owner` through {transferFrom}. This is zero by default.     * This value changes when {approve} or {transferFrom} are called.\"},\"approve(address,uint256)\":{\"details\":\"Sets `amount` as the allowance of `spender` over the caller's tokens.     * Returns a boolean value indicating whether the operation succeeded.     * IMPORTANT: Beware that changing an allowance with this method brings the risk that someone may use both the old and the new allowance by unfortunate transaction ordering. One possible solution to mitigate this race condition is to first reduce the spender's allowance to 0 and set the desired value afterwards: https://github.com/ethereum/EIPs/issues/20#issuecomment-263524729     * Emits an {Approval} event.\"},\"balanceOf(address)\":{\"details\":\"Returns the amount of tokens owned by `account`.\"},\"totalSupply()\":{\"details\":\"Returns the amount of tokens in existence.\"},\"transfer(address,uint256)\":{\"details\":\"Moves `amount` tokens from the caller's account to `recipient`.     * Returns a boolean value indicating whether the operation succeeded.     * Emits a {Transfer} event.\"},\"transferFrom(address,address,uint256)\":{\"details\":\"Moves `amount` tokens from `sender` to `recipient` using the allowance mechanism. `amount` is then deducted from the caller's allowance.     * Returns a boolean value indicating whether the operation succeeded.     * Emits a {Transfer} event.\"}}},\"userdoc\":{\"methods\":{}}},\"settings\":{\"compilationTarget\":{\"/Users/jsidhu/Documents/GitHub/sysethereum-contracts1/contracts/interfaces/SyscoinERC20I.sol\":\"SyscoinERC20I\"},\"evmVersion\":\"petersburg\",\"libraries\":{},\"optimizer\":{\"enabled\":true,\"runs\":200},\"remappings\":[]},\"sources\":{\"/Users/jsidhu/Documents/GitHub/sysethereum-contracts1/contracts/interfaces/SyscoinERC20I.sol\":{\"keccak256\":\"0xb66109f1bd667eb953e087e1cdbf5208c119c0bc247e7286ae8ee44786daf26c\",\"urls\":[\"bzz-raw://37be28368df7ad29d842fc089a92aee43e2cf849212d43655b38c4ce118dd82e\",\"dweb:/ipfs/QmYMD8BRZfjL7gWzEpPAWZSgVmsbosU187pvYPe9FHC8Q8\"]},\"openzeppelin-solidity/contracts/token/ERC20/IERC20.sol\":{\"keccak256\":\"0xe5bb0f57cff3e299f360052ba50f1ea0fff046df2be070b6943e0e3c3fdad8a9\",\"urls\":[\"bzz-raw://59fd025151435da35faa8093a5c7a17de02de9d08ad27275c5cdf05050820d91\",\"dweb:/ipfs/QmQMvwEcPhoRXzbXyrdoeRtvLoifUW9Qh7Luho7bmUPRkc\"]}},\"version\":1}",
   "bytecode": "0x",
   "deployedBytecode": "0x",
   "sourceMap": "",
   "deployedSourceMap": "",
-  "source": "pragma solidity ^0.5.12;\n\nimport \"openzeppelin-solidity/contracts/token/ERC20/IERC20.sol\";\n\ncontract SyscoinERC20I is IERC20 {\n    function decimals() external view returns (uint8);\n}\n",
+  "source": "pragma solidity ^0.5.13;\n\nimport \"openzeppelin-solidity/contracts/token/ERC20/IERC20.sol\";\n\ncontract SyscoinERC20I is IERC20 {\n    function decimals() external view returns (uint8);\n}\n",
   "sourcePath": "/Users/jsidhu/Documents/GitHub/sysethereum-contracts1/contracts/interfaces/SyscoinERC20I.sol",
   "ast": {
     "absolutePath": "/Users/jsidhu/Documents/GitHub/sysethereum-contracts1/contracts/interfaces/SyscoinERC20I.sol",
     "exportedSymbols": {
       "SyscoinERC20I": [
-        8749
+        8746
       ]
     },
-    "id": 8750,
+    "id": 8747,
     "nodeType": "SourceUnit",
     "nodes": [
       {
-        "id": 8740,
+        "id": 8737,
         "literals": [
           "solidity",
           "^",
           "0.5",
-          ".12"
+          ".13"
         ],
         "nodeType": "PragmaDirective",
         "src": "0:24:11"
@@ -243,10 +243,10 @@
       {
         "absolutePath": "openzeppelin-solidity/contracts/token/ERC20/IERC20.sol",
         "file": "openzeppelin-solidity/contracts/token/ERC20/IERC20.sol",
-        "id": 8741,
+        "id": 8738,
         "nodeType": "ImportDirective",
-        "scope": 8750,
-        "sourceUnit": 10244,
+        "scope": 8747,
+        "sourceUnit": 10241,
         "src": "26:64:11",
         "symbolAliases": [],
         "unitAlias": ""
@@ -257,31 +257,31 @@
             "arguments": null,
             "baseName": {
               "contractScope": null,
-              "id": 8742,
+              "id": 8739,
               "name": "IERC20",
               "nodeType": "UserDefinedTypeName",
-              "referencedDeclaration": 10243,
+              "referencedDeclaration": 10240,
               "src": "118:6:11",
               "typeDescriptions": {
-                "typeIdentifier": "t_contract$_IERC20_$10243",
+                "typeIdentifier": "t_contract$_IERC20_$10240",
                 "typeString": "contract IERC20"
               }
             },
-            "id": 8743,
+            "id": 8740,
             "nodeType": "InheritanceSpecifier",
             "src": "118:6:11"
           }
         ],
         "contractDependencies": [
-          10243
+          10240
         ],
         "contractKind": "contract",
         "documentation": null,
         "fullyImplemented": false,
-        "id": 8749,
+        "id": 8746,
         "linearizedBaseContracts": [
-          8749,
-          10243
+          8746,
+          10240
         ],
         "name": "SyscoinERC20I",
         "nodeType": "ContractDefinition",
@@ -289,28 +289,28 @@
           {
             "body": null,
             "documentation": null,
-            "id": 8748,
+            "id": 8745,
             "implemented": false,
             "kind": "function",
             "modifiers": [],
             "name": "decimals",
             "nodeType": "FunctionDefinition",
             "parameters": {
-              "id": 8744,
+              "id": 8741,
               "nodeType": "ParameterList",
               "parameters": [],
               "src": "148:2:11"
             },
             "returnParameters": {
-              "id": 8747,
+              "id": 8744,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 8746,
+                  "id": 8743,
                   "name": "",
                   "nodeType": "VariableDeclaration",
-                  "scope": 8748,
+                  "scope": 8745,
                   "src": "174:5:11",
                   "stateVariable": false,
                   "storageLocation": "default",
@@ -319,7 +319,7 @@
                     "typeString": "uint8"
                   },
                   "typeName": {
-                    "id": 8745,
+                    "id": 8742,
                     "name": "uint8",
                     "nodeType": "ElementaryTypeName",
                     "src": "174:5:11",
@@ -334,14 +334,14 @@
               ],
               "src": "173:7:11"
             },
-            "scope": 8749,
+            "scope": 8746,
             "src": "131:50:11",
             "stateMutability": "view",
             "superFunction": null,
             "visibility": "external"
           }
         ],
-        "scope": 8750,
+        "scope": 8747,
         "src": "92:91:11"
       }
     ],
@@ -351,19 +351,19 @@
     "absolutePath": "/Users/jsidhu/Documents/GitHub/sysethereum-contracts1/contracts/interfaces/SyscoinERC20I.sol",
     "exportedSymbols": {
       "SyscoinERC20I": [
-        8749
+        8746
       ]
     },
-    "id": 8750,
+    "id": 8747,
     "nodeType": "SourceUnit",
     "nodes": [
       {
-        "id": 8740,
+        "id": 8737,
         "literals": [
           "solidity",
           "^",
           "0.5",
-          ".12"
+          ".13"
         ],
         "nodeType": "PragmaDirective",
         "src": "0:24:11"
@@ -371,10 +371,10 @@
       {
         "absolutePath": "openzeppelin-solidity/contracts/token/ERC20/IERC20.sol",
         "file": "openzeppelin-solidity/contracts/token/ERC20/IERC20.sol",
-        "id": 8741,
+        "id": 8738,
         "nodeType": "ImportDirective",
-        "scope": 8750,
-        "sourceUnit": 10244,
+        "scope": 8747,
+        "sourceUnit": 10241,
         "src": "26:64:11",
         "symbolAliases": [],
         "unitAlias": ""
@@ -385,31 +385,31 @@
             "arguments": null,
             "baseName": {
               "contractScope": null,
-              "id": 8742,
+              "id": 8739,
               "name": "IERC20",
               "nodeType": "UserDefinedTypeName",
-              "referencedDeclaration": 10243,
+              "referencedDeclaration": 10240,
               "src": "118:6:11",
               "typeDescriptions": {
-                "typeIdentifier": "t_contract$_IERC20_$10243",
+                "typeIdentifier": "t_contract$_IERC20_$10240",
                 "typeString": "contract IERC20"
               }
             },
-            "id": 8743,
+            "id": 8740,
             "nodeType": "InheritanceSpecifier",
             "src": "118:6:11"
           }
         ],
         "contractDependencies": [
-          10243
+          10240
         ],
         "contractKind": "contract",
         "documentation": null,
         "fullyImplemented": false,
-        "id": 8749,
+        "id": 8746,
         "linearizedBaseContracts": [
-          8749,
-          10243
+          8746,
+          10240
         ],
         "name": "SyscoinERC20I",
         "nodeType": "ContractDefinition",
@@ -417,28 +417,28 @@
           {
             "body": null,
             "documentation": null,
-            "id": 8748,
+            "id": 8745,
             "implemented": false,
             "kind": "function",
             "modifiers": [],
             "name": "decimals",
             "nodeType": "FunctionDefinition",
             "parameters": {
-              "id": 8744,
+              "id": 8741,
               "nodeType": "ParameterList",
               "parameters": [],
               "src": "148:2:11"
             },
             "returnParameters": {
-              "id": 8747,
+              "id": 8744,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 8746,
+                  "id": 8743,
                   "name": "",
                   "nodeType": "VariableDeclaration",
-                  "scope": 8748,
+                  "scope": 8745,
                   "src": "174:5:11",
                   "stateVariable": false,
                   "storageLocation": "default",
@@ -447,7 +447,7 @@
                     "typeString": "uint8"
                   },
                   "typeName": {
-                    "id": 8745,
+                    "id": 8742,
                     "name": "uint8",
                     "nodeType": "ElementaryTypeName",
                     "src": "174:5:11",
@@ -462,14 +462,14 @@
               ],
               "src": "173:7:11"
             },
-            "scope": 8749,
+            "scope": 8746,
             "src": "131:50:11",
             "stateMutability": "view",
             "superFunction": null,
             "visibility": "external"
           }
         ],
-        "scope": 8750,
+        "scope": 8747,
         "src": "92:91:11"
       }
     ],
@@ -477,11 +477,11 @@
   },
   "compiler": {
     "name": "solc",
-    "version": "0.5.12+commit.7709ece9.Emscripten.clang"
+    "version": "0.5.13+commit.5b0b510c.Emscripten.clang"
   },
   "networks": {},
   "schemaVersion": "3.0.19",
-  "updatedAt": "2019-11-19T15:46:16.279Z",
+  "updatedAt": "2019-11-20T22:28:05.373Z",
   "devdoc": {
     "methods": {
       "allowance(address,address)": {
