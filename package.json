@@ -17,10 +17,10 @@
     "js-sha3": "^0.8.0",
     "openzeppelin-solidity": "^2.4.0",
     "openzeppelin-test-helpers": "^0.4.3",
-    "solc": "^0.5.12",
+    "solc": "^0.5.13",
     "truffle": "^5.1.0",
     "truffle-assertions": "^0.9.1",
-    "web3": "^1.2.1"
+    "web3": "^1.2.4"
   },
   "devDependencies": {
     "@openzeppelin/cli": "^2.6.0"

@@ -1,4 +1,4 @@
-pragma solidity ^0.5.12;
+pragma solidity ^0.5.13;
 
 // Interface contract to be implemented by SyscoinERC20Manager
 interface SyscoinTransactionProcessor {
