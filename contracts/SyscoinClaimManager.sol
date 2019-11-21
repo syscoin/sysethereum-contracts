@@ -55,7 +55,7 @@ contract SyscoinClaimManager is Initializable, SyscoinDepositsManager, SyscoinEr
     event SuperblockBattleDecided(bytes32 superblockHash, address winner, address loser);
     event SuperblockClaimSuccessful(bytes32 superblockHash, address submitter);
     event SuperblockClaimPending(bytes32 superblockHash, address submitter);
-    event SuperblockClaimFailed(bytes32 superblockHash, address submitter);
+    event SuperblockClaimFailed(bytes32 superblockHash, address challenger);
     event VerificationGameStarted(bytes32 superblockHash, address submitter, address challenger);
 
     event ErrorClaim(bytes32 superblockHash, uint err);
@@ -371,7 +371,7 @@ contract SyscoinClaimManager is Initializable, SyscoinDepositsManager, SyscoinEr
 
         uint err = trustedSuperblocks.invalidate(superblockHash, claim.submitter);
         require(err == ERR_SUPERBLOCK_OK);
-        emit SuperblockClaimFailed(superblockHash, claim.submitter);
+        emit SuperblockClaimFailed(superblockHash, claim.challenger);
         doPayChallenger(superblockHash, claim);
         claim.invalid = true;
         return true;
@@ -404,7 +404,7 @@ contract SyscoinClaimManager is Initializable, SyscoinDepositsManager, SyscoinEr
             claim.decided = true;
             uint err = trustedSuperblocks.invalidate(superblockHash, claim.submitter);
             require(err == ERR_SUPERBLOCK_OK);
-            emit SuperblockClaimFailed(superblockHash, claim.submitter);
+            emit SuperblockClaimFailed(superblockHash, claim.challenger);
             doPayChallenger(superblockHash, claim);
             return false;
         }
