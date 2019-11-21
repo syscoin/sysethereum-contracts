@@ -31,6 +31,7 @@ contract SyscoinClaimManager is Initializable, SyscoinDepositsManager, SyscoinEr
 
         bool decided;                               // If the claim was decided
         bool invalid;                               // If superblock is invalid
+        bool challengeDefended;
     }
 
     // Active superblock claims
@@ -69,7 +70,7 @@ contract SyscoinClaimManager is Initializable, SyscoinDepositsManager, SyscoinEr
         require(msg.sender == address(trustedSyscoinBattleManager) || msg.sender == address(this));
         _;
     }
-    bool private challengeDefended;
+    
     // @dev – Sets up the contract managing superblock challenges
     // @param _superblocks Contract that manages superblocks
     // @param _battleManager Contract that manages battles
@@ -88,7 +89,6 @@ contract SyscoinClaimManager is Initializable, SyscoinDepositsManager, SyscoinEr
         superblockDelay = _superblockDelay;
         superblockTimeout = _superblockTimeout;
         superblockConfirmations = _superblockConfirmations;
-        challengeDefended = false;
     }
 
     // @dev – locks up part of a user's deposit into a claim.
@@ -206,7 +206,7 @@ contract SyscoinClaimManager is Initializable, SyscoinDepositsManager, SyscoinEr
         claim.verificationOngoing = false;
         claim.createdAt = block.timestamp;
         claim.challengeTimeout = block.timestamp + superblockTimeout;
-        challengeDefended = false;
+        claim.challengeDefended = false;
         err = this.bondDeposit(superblockHash, msg.sender, minProposalDeposit);
         require(err == ERR_SUPERBLOCK_OK);
 
@@ -223,13 +223,13 @@ contract SyscoinClaimManager is Initializable, SyscoinDepositsManager, SyscoinEr
 
         SuperblockClaim storage claim = claims[superblockHash];
 
-        if(challengeDefended == true){
-            emit ErrorClaim(superblockHash, ERR_SUPERBLOCK_CLAIM_ALREADY_DEFENDED);
-            return (ERR_SUPERBLOCK_CLAIM_ALREADY_DEFENDED, superblockHash);           
-        }
         if (!claimExists(claim)) {
             emit ErrorClaim(superblockHash, ERR_SUPERBLOCK_BAD_CLAIM);
             return (ERR_SUPERBLOCK_BAD_CLAIM, superblockHash);
+        }
+        if(claim.challengeDefended == true){
+            emit ErrorClaim(superblockHash, ERR_SUPERBLOCK_CLAIM_ALREADY_DEFENDED);
+            return (ERR_SUPERBLOCK_CLAIM_ALREADY_DEFENDED, superblockHash);           
         }
         if (claim.decided || claim.invalid) {
             emit ErrorClaim(superblockHash, ERR_SUPERBLOCK_CLAIM_DECIDED);
@@ -458,7 +458,7 @@ contract SyscoinClaimManager is Initializable, SyscoinDepositsManager, SyscoinEr
         if (submitter == loser) {
             claim.invalid = true;
         } else if (submitter == winner) {
-            challengeDefended = true;
+            claim.challengeDefended = true;
         }
         else{
             revert();
