@@ -20,7 +20,7 @@ contract('SyscoinClaimManager', (accounts) => {
       from: owner,
     }));
     await claimManager.methods.makeDeposit().send({ value: utils.DEPOSITS.MIN_REWARD, from: submitter, gas: 300000 });
-    await claimManager.methods.makeDeposit().send({ value: utils.DEPOSITS.MIN_REWARD, from: challenger, gas: 300000 });
+    await claimManager.methods.makeDeposit().send({ value: utils.DEPOSITS.MIN_REWARD*2, from: challenger, gas: 300000 });
   }
 
   const initParentId = '0x0000000000000000000000000000000000000000000000000000000000000000';
@@ -122,6 +122,13 @@ contract('SyscoinClaimManager', (accounts) => {
       result = await battleManager.methods.respondBlockHeaders(proposedSuperblockHash, Buffer.from(headers.slice(0, 2).join(""), 'hex'), headers.slice(0, 2).length).send({ from: submitter, gas: 5000000 });
       assert.ok(result.events.ChallengerConvicted, 'Challenger failed');
     });
+
+    it('Re-Challenge', async () => {
+      // try to re-challenge same superblock after 
+      result = await claimManager.methods.challengeSuperblock(proposedSuperblockHash).send({ from: challenger, gas: 2100000 });
+      assert.ok(result.events.ErrorClaim, 'Challenge failed');
+      assert.equal(result.events.ErrorClaim.returnValues.err, '50200'); // ERR_SUPERBLOCK_CLAIM_ALREADY_DEFENDED
+    });
     
     it('Confirm', async () => {
       await utils.blockchainTimeoutSeconds(2*utils.SUPERBLOCK_OPTIONS_LOCAL.TIMEOUT);
@@ -129,6 +136,7 @@ contract('SyscoinClaimManager', (accounts) => {
       assert.ok(result.events.SuperblockClaimPending, 'Superblock challenged');
     });
   });
+
 
   describe('Challenge superblock', () => {
     let genesisSuperblockHash;

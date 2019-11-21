@@ -1,5 +1,4 @@
 var HDWalletProvider = require("@truffle/hdwallet-provider");
-const mainnet_mnemonic = process.env.MNEMONIC;
 const etherscanAPIKEY = process.env.ETHERSCAN;
 var mnenomic = "cup aisle bright dice when flame left assume laptop lock cry brown";
 module.exports = {
@@ -12,11 +11,12 @@ module.exports = {
       gasPrice: 1
     },
     mainnet: {
-      provider:   function () {
-         return new HDWalletProvider(mainnet_mnemonic, "https://mainnet.infura.io/v3/d178aecf49154b12be98e68e998cfb8d");
-      },
+      host: "localhost",
+      port: 8645,
+      from: "0x8d827Cf5515718a79Be1DC38152873bC0C1cA263",
+      skipDryRun: true,
       network_id: "1",
-      gasPrice: "6000000000"
+      gasPrice: "10000000000" // 10 gWei
     },
     ropsten: {
       host: "localhost",
