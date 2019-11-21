@@ -223,14 +223,14 @@
     "absolutePath": "/Users/jsidhu/Documents/GitHub/sysethereum-contracts1/contracts/interfaces/SyscoinERC20I.sol",
     "exportedSymbols": {
       "SyscoinERC20I": [
-        8778
+        8779
       ]
     },
-    "id": 8779,
+    "id": 8780,
     "nodeType": "SourceUnit",
     "nodes": [
       {
-        "id": 8769,
+        "id": 8770,
         "literals": [
           "solidity",
           "^",
@@ -243,10 +243,10 @@
       {
         "absolutePath": "openzeppelin-solidity/contracts/token/ERC20/IERC20.sol",
         "file": "openzeppelin-solidity/contracts/token/ERC20/IERC20.sol",
-        "id": 8770,
+        "id": 8771,
         "nodeType": "ImportDirective",
-        "scope": 8779,
-        "sourceUnit": 10273,
+        "scope": 8780,
+        "sourceUnit": 10274,
         "src": "26:64:11",
         "symbolAliases": [],
         "unitAlias": ""
@@ -257,31 +257,31 @@
             "arguments": null,
             "baseName": {
               "contractScope": null,
-              "id": 8771,
+              "id": 8772,
               "name": "IERC20",
               "nodeType": "UserDefinedTypeName",
-              "referencedDeclaration": 10272,
+              "referencedDeclaration": 10273,
               "src": "118:6:11",
               "typeDescriptions": {
-                "typeIdentifier": "t_contract$_IERC20_$10272",
+                "typeIdentifier": "t_contract$_IERC20_$10273",
                 "typeString": "contract IERC20"
               }
             },
-            "id": 8772,
+            "id": 8773,
             "nodeType": "InheritanceSpecifier",
             "src": "118:6:11"
           }
         ],
         "contractDependencies": [
-          10272
+          10273
         ],
         "contractKind": "contract",
         "documentation": null,
         "fullyImplemented": false,
-        "id": 8778,
+        "id": 8779,
         "linearizedBaseContracts": [
-          8778,
-          10272
+          8779,
+          10273
         ],
         "name": "SyscoinERC20I",
         "nodeType": "ContractDefinition",
@@ -289,28 +289,28 @@
           {
             "body": null,
             "documentation": null,
-            "id": 8777,
+            "id": 8778,
             "implemented": false,
             "kind": "function",
             "modifiers": [],
             "name": "decimals",
             "nodeType": "FunctionDefinition",
             "parameters": {
-              "id": 8773,
+              "id": 8774,
               "nodeType": "ParameterList",
               "parameters": [],
               "src": "148:2:11"
             },
             "returnParameters": {
-              "id": 8776,
+              "id": 8777,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 8775,
+                  "id": 8776,
                   "name": "",
                   "nodeType": "VariableDeclaration",
-                  "scope": 8777,
+                  "scope": 8778,
                   "src": "174:5:11",
                   "stateVariable": false,
                   "storageLocation": "default",
@@ -319,7 +319,7 @@
                     "typeString": "uint8"
                   },
                   "typeName": {
-                    "id": 8774,
+                    "id": 8775,
                     "name": "uint8",
                     "nodeType": "ElementaryTypeName",
                     "src": "174:5:11",
@@ -334,14 +334,14 @@
               ],
               "src": "173:7:11"
             },
-            "scope": 8778,
+            "scope": 8779,
             "src": "131:50:11",
             "stateMutability": "view",
             "superFunction": null,
             "visibility": "external"
           }
         ],
-        "scope": 8779,
+        "scope": 8780,
         "src": "92:91:11"
       }
     ],
@@ -351,14 +351,14 @@
     "absolutePath": "/Users/jsidhu/Documents/GitHub/sysethereum-contracts1/contracts/interfaces/SyscoinERC20I.sol",
     "exportedSymbols": {
       "SyscoinERC20I": [
-        8778
+        8779
       ]
     },
-    "id": 8779,
+    "id": 8780,
     "nodeType": "SourceUnit",
     "nodes": [
       {
-        "id": 8769,
+        "id": 8770,
         "literals": [
           "solidity",
           "^",
@@ -371,10 +371,10 @@
       {
         "absolutePath": "openzeppelin-solidity/contracts/token/ERC20/IERC20.sol",
         "file": "openzeppelin-solidity/contracts/token/ERC20/IERC20.sol",
-        "id": 8770,
+        "id": 8771,
         "nodeType": "ImportDirective",
-        "scope": 8779,
-        "sourceUnit": 10273,
+        "scope": 8780,
+        "sourceUnit": 10274,
         "src": "26:64:11",
         "symbolAliases": [],
         "unitAlias": ""
@@ -385,31 +385,31 @@
             "arguments": null,
             "baseName": {
               "contractScope": null,
-              "id": 8771,
+              "id": 8772,
               "name": "IERC20",
               "nodeType": "UserDefinedTypeName",
-              "referencedDeclaration": 10272,
+              "referencedDeclaration": 10273,
               "src": "118:6:11",
               "typeDescriptions": {
-                "typeIdentifier": "t_contract$_IERC20_$10272",
+                "typeIdentifier": "t_contract$_IERC20_$10273",
                 "typeString": "contract IERC20"
               }
             },
-            "id": 8772,
+            "id": 8773,
             "nodeType": "InheritanceSpecifier",
             "src": "118:6:11"
           }
         ],
         "contractDependencies": [
-          10272
+          10273
         ],
         "contractKind": "contract",
         "documentation": null,
         "fullyImplemented": false,
-        "id": 8778,
+        "id": 8779,
         "linearizedBaseContracts": [
-          8778,
-          10272
+          8779,
+          10273
         ],
         "name": "SyscoinERC20I",
         "nodeType": "ContractDefinition",
@@ -417,28 +417,28 @@
           {
             "body": null,
             "documentation": null,
-            "id": 8777,
+            "id": 8778,
             "implemented": false,
             "kind": "function",
             "modifiers": [],
             "name": "decimals",
             "nodeType": "FunctionDefinition",
             "parameters": {
-              "id": 8773,
+              "id": 8774,
               "nodeType": "ParameterList",
               "parameters": [],
               "src": "148:2:11"
             },
             "returnParameters": {
-              "id": 8776,
+              "id": 8777,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 8775,
+                  "id": 8776,
                   "name": "",
                   "nodeType": "VariableDeclaration",
-                  "scope": 8777,
+                  "scope": 8778,
                   "src": "174:5:11",
                   "stateVariable": false,
                   "storageLocation": "default",
@@ -447,7 +447,7 @@
                     "typeString": "uint8"
                   },
                   "typeName": {
-                    "id": 8774,
+                    "id": 8775,
                     "name": "uint8",
                     "nodeType": "ElementaryTypeName",
                     "src": "174:5:11",
@@ -462,14 +462,14 @@
               ],
               "src": "173:7:11"
             },
-            "scope": 8778,
+            "scope": 8779,
             "src": "131:50:11",
             "stateMutability": "view",
             "superFunction": null,
             "visibility": "external"
           }
         ],
-        "scope": 8779,
+        "scope": 8780,
         "src": "92:91:11"
       }
     ],
@@ -481,7 +481,7 @@
   },
   "networks": {},
   "schemaVersion": "3.0.19",
-  "updatedAt": "2019-11-21T18:17:53.976Z",
+  "updatedAt": "2019-11-21T20:04:42.904Z",
   "devdoc": {
     "methods": {
       "allowance(address,address)": {
