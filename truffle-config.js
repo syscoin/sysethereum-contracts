@@ -16,7 +16,7 @@ module.exports = {
       from: "0x8d827Cf5515718a79Be1DC38152873bC0C1cA263",
       skipDryRun: true,
       network_id: "1",
-      gasPrice: "3000000000"
+      gasPrice: "10000000000" // 10 gWei
     },
     ropsten: {
       host: "localhost",

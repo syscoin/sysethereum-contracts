@@ -17,7 +17,6 @@ contract SyscoinClaimManager is Initializable, SyscoinDepositsManager, SyscoinEr
 
     uint constant MAX_FUTURE_BLOCK_TIME_SYSCOIN = 7200;
     uint constant MAX_FUTURE_BLOCK_TIME_ETHEREUM = 15;
-    bool private challengeDefended;
     struct SuperblockClaim {
         bytes32 superblockHash;                       // Superblock Id
         address submitter;                           // Superblock submitter
@@ -70,7 +69,7 @@ contract SyscoinClaimManager is Initializable, SyscoinDepositsManager, SyscoinEr
         require(msg.sender == address(trustedSyscoinBattleManager) || msg.sender == address(this));
         _;
     }
-
+    bool private challengeDefended;
     // @dev – Sets up the contract managing superblock challenges
     // @param _superblocks Contract that manages superblocks
     // @param _battleManager Contract that manages battles
@@ -224,13 +223,13 @@ contract SyscoinClaimManager is Initializable, SyscoinDepositsManager, SyscoinEr
 
         SuperblockClaim storage claim = claims[superblockHash];
 
-        if (!claimExists(claim)) {
-            emit ErrorClaim(superblockHash, ERR_SUPERBLOCK_BAD_CLAIM);
-            return (ERR_SUPERBLOCK_BAD_CLAIM, superblockHash);
-        }
         if(challengeDefended == true){
             emit ErrorClaim(superblockHash, ERR_SUPERBLOCK_CLAIM_ALREADY_DEFENDED);
             return (ERR_SUPERBLOCK_CLAIM_ALREADY_DEFENDED, superblockHash);           
+        }
+        if (!claimExists(claim)) {
+            emit ErrorClaim(superblockHash, ERR_SUPERBLOCK_BAD_CLAIM);
+            return (ERR_SUPERBLOCK_BAD_CLAIM, superblockHash);
         }
         if (claim.decided || claim.invalid) {
             emit ErrorClaim(superblockHash, ERR_SUPERBLOCK_CLAIM_DECIDED);
