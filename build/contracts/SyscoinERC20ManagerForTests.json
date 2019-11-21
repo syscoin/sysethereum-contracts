@@ -258,14 +258,14 @@
     "absolutePath": "/Users/jsidhu/Documents/GitHub/sysethereum-contracts1/contracts/token/SyscoinERC20ManagerForTests.sol",
     "exportedSymbols": {
       "SyscoinERC20ManagerForTests": [
-        9463
+        9464
       ]
     },
-    "id": 9464,
+    "id": 9465,
     "nodeType": "SourceUnit",
     "nodes": [
       {
-        "id": 9394,
+        "id": 9395,
         "literals": [
           "solidity",
           "^",
@@ -278,10 +278,10 @@
       {
         "absolutePath": "/Users/jsidhu/Documents/GitHub/sysethereum-contracts1/contracts/token/SyscoinERC20Manager.sol",
         "file": "./SyscoinERC20Manager.sol",
-        "id": 9395,
+        "id": 9396,
         "nodeType": "ImportDirective",
-        "scope": 9464,
-        "sourceUnit": 9393,
+        "scope": 9465,
+        "sourceUnit": 9394,
         "src": "26:35:15",
         "symbolAliases": [],
         "unitAlias": ""
@@ -292,47 +292,47 @@
             "arguments": null,
             "baseName": {
               "contractScope": null,
-              "id": 9396,
+              "id": 9397,
               "name": "SyscoinERC20Manager",
               "nodeType": "UserDefinedTypeName",
-              "referencedDeclaration": 9392,
+              "referencedDeclaration": 9393,
               "src": "130:19:15",
               "typeDescriptions": {
-                "typeIdentifier": "t_contract$_SyscoinERC20Manager_$9392",
+                "typeIdentifier": "t_contract$_SyscoinERC20Manager_$9393",
                 "typeString": "contract SyscoinERC20Manager"
               }
             },
-            "id": 9397,
+            "id": 9398,
             "nodeType": "InheritanceSpecifier",
             "src": "130:19:15"
           }
         ],
         "contractDependencies": [
-          9392,
-          9526
+          9393,
+          9527
         ],
         "contractKind": "contract",
         "documentation": null,
         "fullyImplemented": true,
-        "id": 9463,
+        "id": 9464,
         "linearizedBaseContracts": [
-          9463,
-          9392,
-          9526
+          9464,
+          9393,
+          9527
         ],
         "name": "SyscoinERC20ManagerForTests",
         "nodeType": "ContractDefinition",
         "nodes": [
           {
             "body": {
-              "id": 9461,
+              "id": 9462,
               "nodeType": "Block",
               "src": "465:602:15",
               "statements": [
                 {
                   "expression": {
                     "argumentTypes": null,
-                    "id": 9425,
+                    "id": 9426,
                     "isConstant": false,
                     "isLValue": false,
                     "isPure": false,
@@ -341,25 +341,25 @@
                       "argumentTypes": null,
                       "baseExpression": {
                         "argumentTypes": null,
-                        "id": 9416,
+                        "id": 9417,
                         "name": "assetBalances",
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
-                        "referencedDeclaration": 9023,
+                        "referencedDeclaration": 9024,
                         "src": "700:13:15",
                         "typeDescriptions": {
                           "typeIdentifier": "t_mapping$_t_uint32_$_t_uint256_$",
                           "typeString": "mapping(uint32 => uint256)"
                         }
                       },
-                      "id": 9418,
+                      "id": 9419,
                       "indexExpression": {
                         "argumentTypes": null,
-                        "id": 9417,
+                        "id": 9418,
                         "name": "assetGUID",
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
-                        "referencedDeclaration": 9401,
+                        "referencedDeclaration": 9402,
                         "src": "714:9:15",
                         "typeDescriptions": {
                           "typeIdentifier": "t_uint32",
@@ -384,11 +384,11 @@
                       "arguments": [
                         {
                           "argumentTypes": null,
-                          "id": 9423,
+                          "id": 9424,
                           "name": "value",
                           "nodeType": "Identifier",
                           "overloadedDeclarations": [],
-                          "referencedDeclaration": 9399,
+                          "referencedDeclaration": 9400,
                           "src": "756:5:15",
                           "typeDescriptions": {
                             "typeIdentifier": "t_uint256",
@@ -407,25 +407,25 @@
                           "argumentTypes": null,
                           "baseExpression": {
                             "argumentTypes": null,
-                            "id": 9419,
+                            "id": 9420,
                             "name": "assetBalances",
                             "nodeType": "Identifier",
                             "overloadedDeclarations": [],
-                            "referencedDeclaration": 9023,
+                            "referencedDeclaration": 9024,
                             "src": "727:13:15",
                             "typeDescriptions": {
                               "typeIdentifier": "t_mapping$_t_uint32_$_t_uint256_$",
                               "typeString": "mapping(uint32 => uint256)"
                             }
                           },
-                          "id": 9421,
+                          "id": 9422,
                           "indexExpression": {
                             "argumentTypes": null,
-                            "id": 9420,
+                            "id": 9421,
                             "name": "assetGUID",
                             "nodeType": "Identifier",
                             "overloadedDeclarations": [],
-                            "referencedDeclaration": 9401,
+                            "referencedDeclaration": 9402,
                             "src": "741:9:15",
                             "typeDescriptions": {
                               "typeIdentifier": "t_uint32",
@@ -443,21 +443,21 @@
                             "typeString": "uint256"
                           }
                         },
-                        "id": 9422,
+                        "id": 9423,
                         "isConstant": false,
                         "isLValue": false,
                         "isPure": false,
                         "lValueRequested": false,
                         "memberName": "add",
                         "nodeType": "MemberAccess",
-                        "referencedDeclaration": 9580,
+                        "referencedDeclaration": 9581,
                         "src": "727:28:15",
                         "typeDescriptions": {
                           "typeIdentifier": "t_function_internal_pure$_t_uint256_$_t_uint256_$returns$_t_uint256_$bound_to$_t_uint256_$",
                           "typeString": "function (uint256,uint256) pure returns (uint256)"
                         }
                       },
-                      "id": 9424,
+                      "id": 9425,
                       "isConstant": false,
                       "isLValue": false,
                       "isPure": false,
@@ -477,37 +477,37 @@
                       "typeString": "uint256"
                     }
                   },
-                  "id": 9426,
+                  "id": 9427,
                   "nodeType": "ExpressionStatement",
                   "src": "700:62:15"
                 },
                 {
                   "assignments": [
-                    9428
+                    9429
                   ],
                   "declarations": [
                     {
                       "constant": false,
-                      "id": 9428,
+                      "id": 9429,
                       "name": "erc20",
                       "nodeType": "VariableDeclaration",
-                      "scope": 9461,
+                      "scope": 9462,
                       "src": "773:19:15",
                       "stateVariable": false,
                       "storageLocation": "default",
                       "typeDescriptions": {
-                        "typeIdentifier": "t_contract$_SyscoinERC20I_$8778",
+                        "typeIdentifier": "t_contract$_SyscoinERC20I_$8779",
                         "typeString": "contract SyscoinERC20I"
                       },
                       "typeName": {
                         "contractScope": null,
-                        "id": 9427,
+                        "id": 9428,
                         "name": "SyscoinERC20I",
                         "nodeType": "UserDefinedTypeName",
-                        "referencedDeclaration": 8778,
+                        "referencedDeclaration": 8779,
                         "src": "773:13:15",
                         "typeDescriptions": {
-                          "typeIdentifier": "t_contract$_SyscoinERC20I_$8778",
+                          "typeIdentifier": "t_contract$_SyscoinERC20I_$8779",
                           "typeString": "contract SyscoinERC20I"
                         }
                       },
@@ -515,17 +515,17 @@
                       "visibility": "internal"
                     }
                   ],
-                  "id": 9432,
+                  "id": 9433,
                   "initialValue": {
                     "argumentTypes": null,
                     "arguments": [
                       {
                         "argumentTypes": null,
-                        "id": 9430,
+                        "id": 9431,
                         "name": "erc20ContractAddress",
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
-                        "referencedDeclaration": 9403,
+                        "referencedDeclaration": 9404,
                         "src": "809:20:15",
                         "typeDescriptions": {
                           "typeIdentifier": "t_address",
@@ -540,18 +540,18 @@
                           "typeString": "address"
                         }
                       ],
-                      "id": 9429,
+                      "id": 9430,
                       "name": "SyscoinERC20I",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [],
-                      "referencedDeclaration": 8778,
+                      "referencedDeclaration": 8779,
                       "src": "795:13:15",
                       "typeDescriptions": {
-                        "typeIdentifier": "t_type$_t_contract$_SyscoinERC20I_$8778_$",
+                        "typeIdentifier": "t_type$_t_contract$_SyscoinERC20I_$8779_$",
                         "typeString": "type(contract SyscoinERC20I)"
                       }
                     },
-                    "id": 9431,
+                    "id": 9432,
                     "isConstant": false,
                     "isLValue": false,
                     "isPure": false,
@@ -561,7 +561,7 @@
                     "nodeType": "FunctionCall",
                     "src": "795:35:15",
                     "typeDescriptions": {
-                      "typeIdentifier": "t_contract$_SyscoinERC20I_$8778",
+                      "typeIdentifier": "t_contract$_SyscoinERC20I_$8779",
                       "typeString": "contract SyscoinERC20I"
                     }
                   },
@@ -578,18 +578,18 @@
                           "typeIdentifier": "t_uint8",
                           "typeString": "uint8"
                         },
-                        "id": 9438,
+                        "id": 9439,
                         "isConstant": false,
                         "isLValue": false,
                         "isPure": false,
                         "lValueRequested": false,
                         "leftExpression": {
                           "argumentTypes": null,
-                          "id": 9434,
+                          "id": 9435,
                           "name": "precision",
                           "nodeType": "Identifier",
                           "overloadedDeclarations": [],
-                          "referencedDeclaration": 9405,
+                          "referencedDeclaration": 9406,
                           "src": "848:9:15",
                           "typeDescriptions": {
                             "typeIdentifier": "t_uint8",
@@ -605,32 +605,32 @@
                             "argumentTypes": [],
                             "expression": {
                               "argumentTypes": null,
-                              "id": 9435,
+                              "id": 9436,
                               "name": "erc20",
                               "nodeType": "Identifier",
                               "overloadedDeclarations": [],
-                              "referencedDeclaration": 9428,
+                              "referencedDeclaration": 9429,
                               "src": "861:5:15",
                               "typeDescriptions": {
-                                "typeIdentifier": "t_contract$_SyscoinERC20I_$8778",
+                                "typeIdentifier": "t_contract$_SyscoinERC20I_$8779",
                                 "typeString": "contract SyscoinERC20I"
                               }
                             },
-                            "id": 9436,
+                            "id": 9437,
                             "isConstant": false,
                             "isLValue": false,
                             "isPure": false,
                             "lValueRequested": false,
                             "memberName": "decimals",
                             "nodeType": "MemberAccess",
-                            "referencedDeclaration": 8777,
+                            "referencedDeclaration": 8778,
                             "src": "861:14:15",
                             "typeDescriptions": {
                               "typeIdentifier": "t_function_external_view$__$returns$_t_uint8_$",
                               "typeString": "function () view external returns (uint8)"
                             }
                           },
-                          "id": 9437,
+                          "id": 9438,
                           "isConstant": false,
                           "isLValue": false,
                           "isPure": false,
@@ -653,7 +653,7 @@
                       {
                         "argumentTypes": null,
                         "hexValue": "446563696d616c732077657265206e6f742070726f766964656420776974682074686520636f72726563742076616c7565",
-                        "id": 9439,
+                        "id": 9440,
                         "isConstant": false,
                         "isLValue": false,
                         "isPure": true,
@@ -680,21 +680,21 @@
                           "typeString": "literal_string \"Decimals were not provided with the correct value\""
                         }
                       ],
-                      "id": 9433,
+                      "id": 9434,
                       "name": "require",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [
-                        10290,
-                        10291
+                        10291,
+                        10292
                       ],
-                      "referencedDeclaration": 10291,
+                      "referencedDeclaration": 10292,
                       "src": "840:7:15",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_require_pure$_t_bool_$_t_string_memory_ptr_$returns$__$",
                         "typeString": "function (bool,string memory) pure"
                       }
                     },
-                    "id": 9440,
+                    "id": 9441,
                     "isConstant": false,
                     "isLValue": false,
                     "isPure": false,
@@ -708,7 +708,7 @@
                       "typeString": "tuple()"
                     }
                   },
-                  "id": 9441,
+                  "id": 9442,
                   "nodeType": "ExpressionStatement",
                   "src": "840:91:15"
                 },
@@ -720,18 +720,18 @@
                         "argumentTypes": null,
                         "expression": {
                           "argumentTypes": null,
-                          "id": 9445,
+                          "id": 9446,
                           "name": "msg",
                           "nodeType": "Identifier",
                           "overloadedDeclarations": [],
-                          "referencedDeclaration": 10287,
+                          "referencedDeclaration": 10288,
                           "src": "960:3:15",
                           "typeDescriptions": {
                             "typeIdentifier": "t_magic_message",
                             "typeString": "msg"
                           }
                         },
-                        "id": 9446,
+                        "id": 9447,
                         "isConstant": false,
                         "isLValue": false,
                         "isPure": false,
@@ -750,14 +750,14 @@
                         "arguments": [
                           {
                             "argumentTypes": null,
-                            "id": 9448,
+                            "id": 9449,
                             "name": "this",
                             "nodeType": "Identifier",
                             "overloadedDeclarations": [],
-                            "referencedDeclaration": 10343,
+                            "referencedDeclaration": 10344,
                             "src": "980:4:15",
                             "typeDescriptions": {
-                              "typeIdentifier": "t_contract$_SyscoinERC20ManagerForTests_$9463",
+                              "typeIdentifier": "t_contract$_SyscoinERC20ManagerForTests_$9464",
                               "typeString": "contract SyscoinERC20ManagerForTests"
                             }
                           }
@@ -765,11 +765,11 @@
                         "expression": {
                           "argumentTypes": [
                             {
-                              "typeIdentifier": "t_contract$_SyscoinERC20ManagerForTests_$9463",
+                              "typeIdentifier": "t_contract$_SyscoinERC20ManagerForTests_$9464",
                               "typeString": "contract SyscoinERC20ManagerForTests"
                             }
                           ],
-                          "id": 9447,
+                          "id": 9448,
                           "isConstant": false,
                           "isLValue": false,
                           "isPure": true,
@@ -782,7 +782,7 @@
                           },
                           "typeName": "address"
                         },
-                        "id": 9449,
+                        "id": 9450,
                         "isConstant": false,
                         "isLValue": false,
                         "isPure": false,
@@ -798,11 +798,11 @@
                       },
                       {
                         "argumentTypes": null,
-                        "id": 9450,
+                        "id": 9451,
                         "name": "value",
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
-                        "referencedDeclaration": 9399,
+                        "referencedDeclaration": 9400,
                         "src": "987:5:15",
                         "typeDescriptions": {
                           "typeIdentifier": "t_uint256",
@@ -827,32 +827,32 @@
                       ],
                       "expression": {
                         "argumentTypes": null,
-                        "id": 9442,
+                        "id": 9443,
                         "name": "erc20",
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
-                        "referencedDeclaration": 9428,
+                        "referencedDeclaration": 9429,
                         "src": "941:5:15",
                         "typeDescriptions": {
-                          "typeIdentifier": "t_contract$_SyscoinERC20I_$8778",
+                          "typeIdentifier": "t_contract$_SyscoinERC20I_$8779",
                           "typeString": "contract SyscoinERC20I"
                         }
                       },
-                      "id": 9444,
+                      "id": 9445,
                       "isConstant": false,
                       "isLValue": false,
                       "isPure": false,
                       "lValueRequested": false,
                       "memberName": "transferFrom",
                       "nodeType": "MemberAccess",
-                      "referencedDeclaration": 10255,
+                      "referencedDeclaration": 10256,
                       "src": "941:18:15",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_external_nonpayable$_t_address_$_t_address_$_t_uint256_$returns$_t_bool_$",
                         "typeString": "function (address,address,uint256) external returns (bool)"
                       }
                     },
-                    "id": 9451,
+                    "id": 9452,
                     "isConstant": false,
                     "isLValue": false,
                     "isPure": false,
@@ -866,7 +866,7 @@
                       "typeString": "bool"
                     }
                   },
-                  "id": 9452,
+                  "id": 9453,
                   "nodeType": "ExpressionStatement",
                   "src": "941:52:15"
                 },
@@ -878,18 +878,18 @@
                         "argumentTypes": null,
                         "expression": {
                           "argumentTypes": null,
-                          "id": 9454,
+                          "id": 9455,
                           "name": "msg",
                           "nodeType": "Identifier",
                           "overloadedDeclarations": [],
-                          "referencedDeclaration": 10287,
+                          "referencedDeclaration": 10288,
                           "src": "1020:3:15",
                           "typeDescriptions": {
                             "typeIdentifier": "t_magic_message",
                             "typeString": "msg"
                           }
                         },
-                        "id": 9455,
+                        "id": 9456,
                         "isConstant": false,
                         "isLValue": false,
                         "isPure": false,
@@ -905,11 +905,11 @@
                       },
                       {
                         "argumentTypes": null,
-                        "id": 9456,
+                        "id": 9457,
                         "name": "value",
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
-                        "referencedDeclaration": 9399,
+                        "referencedDeclaration": 9400,
                         "src": "1032:5:15",
                         "typeDescriptions": {
                           "typeIdentifier": "t_uint256",
@@ -928,18 +928,18 @@
                           "typeString": "uint256"
                         }
                       ],
-                      "id": 9453,
+                      "id": 9454,
                       "name": "TokenFreeze",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [],
-                      "referencedDeclaration": 9045,
+                      "referencedDeclaration": 9046,
                       "src": "1008:11:15",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_event_nonpayable$_t_address_$_t_uint256_$returns$__$",
                         "typeString": "function (address,uint256)"
                       }
                     },
-                    "id": 9457,
+                    "id": 9458,
                     "isConstant": false,
                     "isLValue": false,
                     "isPure": false,
@@ -953,7 +953,7 @@
                       "typeString": "tuple()"
                     }
                   },
-                  "id": 9458,
+                  "id": 9459,
                   "nodeType": "EmitStatement",
                   "src": "1003:35:15"
                 },
@@ -961,7 +961,7 @@
                   "expression": {
                     "argumentTypes": null,
                     "hexValue": "74727565",
-                    "id": 9459,
+                    "id": 9460,
                     "isConstant": false,
                     "isLValue": false,
                     "isPure": true,
@@ -976,15 +976,15 @@
                     },
                     "value": "true"
                   },
-                  "functionReturnParameters": 9415,
-                  "id": 9460,
+                  "functionReturnParameters": 9416,
+                  "id": 9461,
                   "nodeType": "Return",
                   "src": "1049:11:15"
                 }
               ]
             },
             "documentation": null,
-            "id": 9462,
+            "id": 9463,
             "implemented": true,
             "kind": "function",
             "modifiers": [
@@ -992,11 +992,11 @@
                 "arguments": [
                   {
                     "argumentTypes": null,
-                    "id": 9410,
+                    "id": 9411,
                     "name": "erc20ContractAddress",
                     "nodeType": "Identifier",
                     "overloadedDeclarations": [],
-                    "referencedDeclaration": 9403,
+                    "referencedDeclaration": 9404,
                     "src": "409:20:15",
                     "typeDescriptions": {
                       "typeIdentifier": "t_address",
@@ -1005,11 +1005,11 @@
                   },
                   {
                     "argumentTypes": null,
-                    "id": 9411,
+                    "id": 9412,
                     "name": "value",
                     "nodeType": "Identifier",
                     "overloadedDeclarations": [],
-                    "referencedDeclaration": 9399,
+                    "referencedDeclaration": 9400,
                     "src": "431:5:15",
                     "typeDescriptions": {
                       "typeIdentifier": "t_uint256",
@@ -1017,14 +1017,14 @@
                     }
                   }
                 ],
-                "id": 9412,
+                "id": 9413,
                 "modifierName": {
                   "argumentTypes": null,
-                  "id": 9409,
+                  "id": 9410,
                   "name": "minimumValue",
                   "nodeType": "Identifier",
                   "overloadedDeclarations": [],
-                  "referencedDeclaration": 9134,
+                  "referencedDeclaration": 9135,
                   "src": "396:12:15",
                   "typeDescriptions": {
                     "typeIdentifier": "t_modifier$_t_address_$_t_uint256_$",
@@ -1038,15 +1038,15 @@
             "name": "freezeBurnERC20",
             "nodeType": "FunctionDefinition",
             "parameters": {
-              "id": 9408,
+              "id": 9409,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 9399,
+                  "id": 9400,
                   "name": "value",
                   "nodeType": "VariableDeclaration",
-                  "scope": 9462,
+                  "scope": 9463,
                   "src": "245:10:15",
                   "stateVariable": false,
                   "storageLocation": "default",
@@ -1055,7 +1055,7 @@
                     "typeString": "uint256"
                   },
                   "typeName": {
-                    "id": 9398,
+                    "id": 9399,
                     "name": "uint",
                     "nodeType": "ElementaryTypeName",
                     "src": "245:4:15",
@@ -1069,10 +1069,10 @@
                 },
                 {
                   "constant": false,
-                  "id": 9401,
+                  "id": 9402,
                   "name": "assetGUID",
                   "nodeType": "VariableDeclaration",
-                  "scope": 9462,
+                  "scope": 9463,
                   "src": "265:16:15",
                   "stateVariable": false,
                   "storageLocation": "default",
@@ -1081,7 +1081,7 @@
                     "typeString": "uint32"
                   },
                   "typeName": {
-                    "id": 9400,
+                    "id": 9401,
                     "name": "uint32",
                     "nodeType": "ElementaryTypeName",
                     "src": "265:6:15",
@@ -1095,10 +1095,10 @@
                 },
                 {
                   "constant": false,
-                  "id": 9403,
+                  "id": 9404,
                   "name": "erc20ContractAddress",
                   "nodeType": "VariableDeclaration",
-                  "scope": 9462,
+                  "scope": 9463,
                   "src": "291:28:15",
                   "stateVariable": false,
                   "storageLocation": "default",
@@ -1107,7 +1107,7 @@
                     "typeString": "address"
                   },
                   "typeName": {
-                    "id": 9402,
+                    "id": 9403,
                     "name": "address",
                     "nodeType": "ElementaryTypeName",
                     "src": "291:7:15",
@@ -1122,10 +1122,10 @@
                 },
                 {
                   "constant": false,
-                  "id": 9405,
+                  "id": 9406,
                   "name": "precision",
                   "nodeType": "VariableDeclaration",
-                  "scope": 9462,
+                  "scope": 9463,
                   "src": "329:15:15",
                   "stateVariable": false,
                   "storageLocation": "default",
@@ -1134,7 +1134,7 @@
                     "typeString": "uint8"
                   },
                   "typeName": {
-                    "id": 9404,
+                    "id": 9405,
                     "name": "uint8",
                     "nodeType": "ElementaryTypeName",
                     "src": "329:5:15",
@@ -1148,10 +1148,10 @@
                 },
                 {
                   "constant": false,
-                  "id": 9407,
+                  "id": 9408,
                   "name": "",
                   "nodeType": "VariableDeclaration",
-                  "scope": 9462,
+                  "scope": 9463,
                   "src": "354:12:15",
                   "stateVariable": false,
                   "storageLocation": "memory",
@@ -1160,7 +1160,7 @@
                     "typeString": "bytes"
                   },
                   "typeName": {
-                    "id": 9406,
+                    "id": 9407,
                     "name": "bytes",
                     "nodeType": "ElementaryTypeName",
                     "src": "354:5:15",
@@ -1176,15 +1176,15 @@
               "src": "235:137:15"
             },
             "returnParameters": {
-              "id": 9415,
+              "id": 9416,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 9414,
+                  "id": 9415,
                   "name": "",
                   "nodeType": "VariableDeclaration",
-                  "scope": 9462,
+                  "scope": 9463,
                   "src": "455:4:15",
                   "stateVariable": false,
                   "storageLocation": "default",
@@ -1193,7 +1193,7 @@
                     "typeString": "bool"
                   },
                   "typeName": {
-                    "id": 9413,
+                    "id": 9414,
                     "name": "bool",
                     "nodeType": "ElementaryTypeName",
                     "src": "455:4:15",
@@ -1208,14 +1208,14 @@
               ],
               "src": "454:6:15"
             },
-            "scope": 9463,
+            "scope": 9464,
             "src": "211:856:15",
             "stateMutability": "nonpayable",
-            "superFunction": 9391,
+            "superFunction": 9392,
             "visibility": "public"
           }
         ],
-        "scope": 9464,
+        "scope": 9465,
         "src": "90:979:15"
       }
     ],
@@ -1225,14 +1225,14 @@
     "absolutePath": "/Users/jsidhu/Documents/GitHub/sysethereum-contracts1/contracts/token/SyscoinERC20ManagerForTests.sol",
     "exportedSymbols": {
       "SyscoinERC20ManagerForTests": [
-        9463
+        9464
       ]
     },
-    "id": 9464,
+    "id": 9465,
     "nodeType": "SourceUnit",
     "nodes": [
       {
-        "id": 9394,
+        "id": 9395,
         "literals": [
           "solidity",
           "^",
@@ -1245,10 +1245,10 @@
       {
         "absolutePath": "/Users/jsidhu/Documents/GitHub/sysethereum-contracts1/contracts/token/SyscoinERC20Manager.sol",
         "file": "./SyscoinERC20Manager.sol",
-        "id": 9395,
+        "id": 9396,
         "nodeType": "ImportDirective",
-        "scope": 9464,
-        "sourceUnit": 9393,
+        "scope": 9465,
+        "sourceUnit": 9394,
         "src": "26:35:15",
         "symbolAliases": [],
         "unitAlias": ""
@@ -1259,47 +1259,47 @@
             "arguments": null,
             "baseName": {
               "contractScope": null,
-              "id": 9396,
+              "id": 9397,
               "name": "SyscoinERC20Manager",
               "nodeType": "UserDefinedTypeName",
-              "referencedDeclaration": 9392,
+              "referencedDeclaration": 9393,
               "src": "130:19:15",
               "typeDescriptions": {
-                "typeIdentifier": "t_contract$_SyscoinERC20Manager_$9392",
+                "typeIdentifier": "t_contract$_SyscoinERC20Manager_$9393",
                 "typeString": "contract SyscoinERC20Manager"
               }
             },
-            "id": 9397,
+            "id": 9398,
             "nodeType": "InheritanceSpecifier",
             "src": "130:19:15"
           }
         ],
         "contractDependencies": [
-          9392,
-          9526
+          9393,
+          9527
         ],
         "contractKind": "contract",
         "documentation": null,
         "fullyImplemented": true,
-        "id": 9463,
+        "id": 9464,
         "linearizedBaseContracts": [
-          9463,
-          9392,
-          9526
+          9464,
+          9393,
+          9527
         ],
         "name": "SyscoinERC20ManagerForTests",
         "nodeType": "ContractDefinition",
         "nodes": [
           {
             "body": {
-              "id": 9461,
+              "id": 9462,
               "nodeType": "Block",
               "src": "465:602:15",
               "statements": [
                 {
                   "expression": {
                     "argumentTypes": null,
-                    "id": 9425,
+                    "id": 9426,
                     "isConstant": false,
                     "isLValue": false,
                     "isPure": false,
@@ -1308,25 +1308,25 @@
                       "argumentTypes": null,
                       "baseExpression": {
                         "argumentTypes": null,
-                        "id": 9416,
+                        "id": 9417,
                         "name": "assetBalances",
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
-                        "referencedDeclaration": 9023,
+                        "referencedDeclaration": 9024,
                         "src": "700:13:15",
                         "typeDescriptions": {
                           "typeIdentifier": "t_mapping$_t_uint32_$_t_uint256_$",
                           "typeString": "mapping(uint32 => uint256)"
                         }
                       },
-                      "id": 9418,
+                      "id": 9419,
                       "indexExpression": {
                         "argumentTypes": null,
-                        "id": 9417,
+                        "id": 9418,
                         "name": "assetGUID",
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
-                        "referencedDeclaration": 9401,
+                        "referencedDeclaration": 9402,
                         "src": "714:9:15",
                         "typeDescriptions": {
                           "typeIdentifier": "t_uint32",
@@ -1351,11 +1351,11 @@
                       "arguments": [
                         {
                           "argumentTypes": null,
-                          "id": 9423,
+                          "id": 9424,
                           "name": "value",
                           "nodeType": "Identifier",
                           "overloadedDeclarations": [],
-                          "referencedDeclaration": 9399,
+                          "referencedDeclaration": 9400,
                           "src": "756:5:15",
                           "typeDescriptions": {
                             "typeIdentifier": "t_uint256",
@@ -1374,25 +1374,25 @@
                           "argumentTypes": null,
                           "baseExpression": {
                             "argumentTypes": null,
-                            "id": 9419,
+                            "id": 9420,
                             "name": "assetBalances",
                             "nodeType": "Identifier",
                             "overloadedDeclarations": [],
-                            "referencedDeclaration": 9023,
+                            "referencedDeclaration": 9024,
                             "src": "727:13:15",
                             "typeDescriptions": {
                               "typeIdentifier": "t_mapping$_t_uint32_$_t_uint256_$",
                               "typeString": "mapping(uint32 => uint256)"
                             }
                           },
-                          "id": 9421,
+                          "id": 9422,
                           "indexExpression": {
                             "argumentTypes": null,
-                            "id": 9420,
+                            "id": 9421,
                             "name": "assetGUID",
                             "nodeType": "Identifier",
                             "overloadedDeclarations": [],
-                            "referencedDeclaration": 9401,
+                            "referencedDeclaration": 9402,
                             "src": "741:9:15",
                             "typeDescriptions": {
                               "typeIdentifier": "t_uint32",
@@ -1410,21 +1410,21 @@
                             "typeString": "uint256"
                           }
                         },
-                        "id": 9422,
+                        "id": 9423,
                         "isConstant": false,
                         "isLValue": false,
                         "isPure": false,
                         "lValueRequested": false,
                         "memberName": "add",
                         "nodeType": "MemberAccess",
-                        "referencedDeclaration": 9580,
+                        "referencedDeclaration": 9581,
                         "src": "727:28:15",
                         "typeDescriptions": {
                           "typeIdentifier": "t_function_internal_pure$_t_uint256_$_t_uint256_$returns$_t_uint256_$bound_to$_t_uint256_$",
                           "typeString": "function (uint256,uint256) pure returns (uint256)"
                         }
                       },
-                      "id": 9424,
+                      "id": 9425,
                       "isConstant": false,
                       "isLValue": false,
                       "isPure": false,
@@ -1444,37 +1444,37 @@
                       "typeString": "uint256"
                     }
                   },
-                  "id": 9426,
+                  "id": 9427,
                   "nodeType": "ExpressionStatement",
                   "src": "700:62:15"
                 },
                 {
                   "assignments": [
-                    9428
+                    9429
                   ],
                   "declarations": [
                     {
                       "constant": false,
-                      "id": 9428,
+                      "id": 9429,
                       "name": "erc20",
                       "nodeType": "VariableDeclaration",
-                      "scope": 9461,
+                      "scope": 9462,
                       "src": "773:19:15",
                       "stateVariable": false,
                       "storageLocation": "default",
                       "typeDescriptions": {
-                        "typeIdentifier": "t_contract$_SyscoinERC20I_$8778",
+                        "typeIdentifier": "t_contract$_SyscoinERC20I_$8779",
                         "typeString": "contract SyscoinERC20I"
                       },
                       "typeName": {
                         "contractScope": null,
-                        "id": 9427,
+                        "id": 9428,
                         "name": "SyscoinERC20I",
                         "nodeType": "UserDefinedTypeName",
-                        "referencedDeclaration": 8778,
+                        "referencedDeclaration": 8779,
                         "src": "773:13:15",
                         "typeDescriptions": {
-                          "typeIdentifier": "t_contract$_SyscoinERC20I_$8778",
+                          "typeIdentifier": "t_contract$_SyscoinERC20I_$8779",
                           "typeString": "contract SyscoinERC20I"
                         }
                       },
@@ -1482,17 +1482,17 @@
                       "visibility": "internal"
                     }
                   ],
-                  "id": 9432,
+                  "id": 9433,
                   "initialValue": {
                     "argumentTypes": null,
                     "arguments": [
                       {
                         "argumentTypes": null,
-                        "id": 9430,
+                        "id": 9431,
                         "name": "erc20ContractAddress",
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
-                        "referencedDeclaration": 9403,
+                        "referencedDeclaration": 9404,
                         "src": "809:20:15",
                         "typeDescriptions": {
                           "typeIdentifier": "t_address",
@@ -1507,18 +1507,18 @@
                           "typeString": "address"
                         }
                       ],
-                      "id": 9429,
+                      "id": 9430,
                       "name": "SyscoinERC20I",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [],
-                      "referencedDeclaration": 8778,
+                      "referencedDeclaration": 8779,
                       "src": "795:13:15",
                       "typeDescriptions": {
-                        "typeIdentifier": "t_type$_t_contract$_SyscoinERC20I_$8778_$",
+                        "typeIdentifier": "t_type$_t_contract$_SyscoinERC20I_$8779_$",
                         "typeString": "type(contract SyscoinERC20I)"
                       }
                     },
-                    "id": 9431,
+                    "id": 9432,
                     "isConstant": false,
                     "isLValue": false,
                     "isPure": false,
@@ -1528,7 +1528,7 @@
                     "nodeType": "FunctionCall",
                     "src": "795:35:15",
                     "typeDescriptions": {
-                      "typeIdentifier": "t_contract$_SyscoinERC20I_$8778",
+                      "typeIdentifier": "t_contract$_SyscoinERC20I_$8779",
                       "typeString": "contract SyscoinERC20I"
                     }
                   },
@@ -1545,18 +1545,18 @@
                           "typeIdentifier": "t_uint8",
                           "typeString": "uint8"
                         },
-                        "id": 9438,
+                        "id": 9439,
                         "isConstant": false,
                         "isLValue": false,
                         "isPure": false,
                         "lValueRequested": false,
                         "leftExpression": {
                           "argumentTypes": null,
-                          "id": 9434,
+                          "id": 9435,
                           "name": "precision",
                           "nodeType": "Identifier",
                           "overloadedDeclarations": [],
-                          "referencedDeclaration": 9405,
+                          "referencedDeclaration": 9406,
                           "src": "848:9:15",
                           "typeDescriptions": {
                             "typeIdentifier": "t_uint8",
@@ -1572,32 +1572,32 @@
                             "argumentTypes": [],
                             "expression": {
                               "argumentTypes": null,
-                              "id": 9435,
+                              "id": 9436,
                               "name": "erc20",
                               "nodeType": "Identifier",
                               "overloadedDeclarations": [],
-                              "referencedDeclaration": 9428,
+                              "referencedDeclaration": 9429,
                               "src": "861:5:15",
                               "typeDescriptions": {
-                                "typeIdentifier": "t_contract$_SyscoinERC20I_$8778",
+                                "typeIdentifier": "t_contract$_SyscoinERC20I_$8779",
                                 "typeString": "contract SyscoinERC20I"
                               }
                             },
-                            "id": 9436,
+                            "id": 9437,
                             "isConstant": false,
                             "isLValue": false,
                             "isPure": false,
                             "lValueRequested": false,
                             "memberName": "decimals",
                             "nodeType": "MemberAccess",
-                            "referencedDeclaration": 8777,
+                            "referencedDeclaration": 8778,
                             "src": "861:14:15",
                             "typeDescriptions": {
                               "typeIdentifier": "t_function_external_view$__$returns$_t_uint8_$",
                               "typeString": "function () view external returns (uint8)"
                             }
                           },
-                          "id": 9437,
+                          "id": 9438,
                           "isConstant": false,
                           "isLValue": false,
                           "isPure": false,
@@ -1620,7 +1620,7 @@
                       {
                         "argumentTypes": null,
                         "hexValue": "446563696d616c732077657265206e6f742070726f766964656420776974682074686520636f72726563742076616c7565",
-                        "id": 9439,
+                        "id": 9440,
                         "isConstant": false,
                         "isLValue": false,
                         "isPure": true,
@@ -1647,21 +1647,21 @@
                           "typeString": "literal_string \"Decimals were not provided with the correct value\""
                         }
                       ],
-                      "id": 9433,
+                      "id": 9434,
                       "name": "require",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [
-                        10290,
-                        10291
+                        10291,
+                        10292
                       ],
-                      "referencedDeclaration": 10291,
+                      "referencedDeclaration": 10292,
                       "src": "840:7:15",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_require_pure$_t_bool_$_t_string_memory_ptr_$returns$__$",
                         "typeString": "function (bool,string memory) pure"
                       }
                     },
-                    "id": 9440,
+                    "id": 9441,
                     "isConstant": false,
                     "isLValue": false,
                     "isPure": false,
@@ -1675,7 +1675,7 @@
                       "typeString": "tuple()"
                     }
                   },
-                  "id": 9441,
+                  "id": 9442,
                   "nodeType": "ExpressionStatement",
                   "src": "840:91:15"
                 },
@@ -1687,18 +1687,18 @@
                         "argumentTypes": null,
                         "expression": {
                           "argumentTypes": null,
-                          "id": 9445,
+                          "id": 9446,
                           "name": "msg",
                           "nodeType": "Identifier",
                           "overloadedDeclarations": [],
-                          "referencedDeclaration": 10287,
+                          "referencedDeclaration": 10288,
                           "src": "960:3:15",
                           "typeDescriptions": {
                             "typeIdentifier": "t_magic_message",
                             "typeString": "msg"
                           }
                         },
-                        "id": 9446,
+                        "id": 9447,
                         "isConstant": false,
                         "isLValue": false,
                         "isPure": false,
@@ -1717,14 +1717,14 @@
                         "arguments": [
                           {
                             "argumentTypes": null,
-                            "id": 9448,
+                            "id": 9449,
                             "name": "this",
                             "nodeType": "Identifier",
                             "overloadedDeclarations": [],
-                            "referencedDeclaration": 10343,
+                            "referencedDeclaration": 10344,
                             "src": "980:4:15",
                             "typeDescriptions": {
-                              "typeIdentifier": "t_contract$_SyscoinERC20ManagerForTests_$9463",
+                              "typeIdentifier": "t_contract$_SyscoinERC20ManagerForTests_$9464",
                               "typeString": "contract SyscoinERC20ManagerForTests"
                             }
                           }
@@ -1732,11 +1732,11 @@
                         "expression": {
                           "argumentTypes": [
                             {
-                              "typeIdentifier": "t_contract$_SyscoinERC20ManagerForTests_$9463",
+                              "typeIdentifier": "t_contract$_SyscoinERC20ManagerForTests_$9464",
                               "typeString": "contract SyscoinERC20ManagerForTests"
                             }
                           ],
-                          "id": 9447,
+                          "id": 9448,
                           "isConstant": false,
                           "isLValue": false,
                           "isPure": true,
@@ -1749,7 +1749,7 @@
                           },
                           "typeName": "address"
                         },
-                        "id": 9449,
+                        "id": 9450,
                         "isConstant": false,
                         "isLValue": false,
                         "isPure": false,
@@ -1765,11 +1765,11 @@
                       },
                       {
                         "argumentTypes": null,
-                        "id": 9450,
+                        "id": 9451,
                         "name": "value",
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
-                        "referencedDeclaration": 9399,
+                        "referencedDeclaration": 9400,
                         "src": "987:5:15",
                         "typeDescriptions": {
                           "typeIdentifier": "t_uint256",
@@ -1794,32 +1794,32 @@
                       ],
                       "expression": {
                         "argumentTypes": null,
-                        "id": 9442,
+                        "id": 9443,
                         "name": "erc20",
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
-                        "referencedDeclaration": 9428,
+                        "referencedDeclaration": 9429,
                         "src": "941:5:15",
                         "typeDescriptions": {
-                          "typeIdentifier": "t_contract$_SyscoinERC20I_$8778",
+                          "typeIdentifier": "t_contract$_SyscoinERC20I_$8779",
                           "typeString": "contract SyscoinERC20I"
                         }
                       },
-                      "id": 9444,
+                      "id": 9445,
                       "isConstant": false,
                       "isLValue": false,
                       "isPure": false,
                       "lValueRequested": false,
                       "memberName": "transferFrom",
                       "nodeType": "MemberAccess",
-                      "referencedDeclaration": 10255,
+                      "referencedDeclaration": 10256,
                       "src": "941:18:15",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_external_nonpayable$_t_address_$_t_address_$_t_uint256_$returns$_t_bool_$",
                         "typeString": "function (address,address,uint256) external returns (bool)"
                       }
                     },
-                    "id": 9451,
+                    "id": 9452,
                     "isConstant": false,
                     "isLValue": false,
                     "isPure": false,
@@ -1833,7 +1833,7 @@
                       "typeString": "bool"
                     }
                   },
-                  "id": 9452,
+                  "id": 9453,
                   "nodeType": "ExpressionStatement",
                   "src": "941:52:15"
                 },
@@ -1845,18 +1845,18 @@
                         "argumentTypes": null,
                         "expression": {
                           "argumentTypes": null,
-                          "id": 9454,
+                          "id": 9455,
                           "name": "msg",
                           "nodeType": "Identifier",
                           "overloadedDeclarations": [],
-                          "referencedDeclaration": 10287,
+                          "referencedDeclaration": 10288,
                           "src": "1020:3:15",
                           "typeDescriptions": {
                             "typeIdentifier": "t_magic_message",
                             "typeString": "msg"
                           }
                         },
-                        "id": 9455,
+                        "id": 9456,
                         "isConstant": false,
                         "isLValue": false,
                         "isPure": false,
@@ -1872,11 +1872,11 @@
                       },
                       {
                         "argumentTypes": null,
-                        "id": 9456,
+                        "id": 9457,
                         "name": "value",
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
-                        "referencedDeclaration": 9399,
+                        "referencedDeclaration": 9400,
                         "src": "1032:5:15",
                         "typeDescriptions": {
                           "typeIdentifier": "t_uint256",
@@ -1895,18 +1895,18 @@
                           "typeString": "uint256"
                         }
                       ],
-                      "id": 9453,
+                      "id": 9454,
                       "name": "TokenFreeze",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [],
-                      "referencedDeclaration": 9045,
+                      "referencedDeclaration": 9046,
                       "src": "1008:11:15",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_event_nonpayable$_t_address_$_t_uint256_$returns$__$",
                         "typeString": "function (address,uint256)"
                       }
                     },
-                    "id": 9457,
+                    "id": 9458,
                     "isConstant": false,
                     "isLValue": false,
                     "isPure": false,
@@ -1920,7 +1920,7 @@
                       "typeString": "tuple()"
                     }
                   },
-                  "id": 9458,
+                  "id": 9459,
                   "nodeType": "EmitStatement",
                   "src": "1003:35:15"
                 },
@@ -1928,7 +1928,7 @@
                   "expression": {
                     "argumentTypes": null,
                     "hexValue": "74727565",
-                    "id": 9459,
+                    "id": 9460,
                     "isConstant": false,
                     "isLValue": false,
                     "isPure": true,
@@ -1943,15 +1943,15 @@
                     },
                     "value": "true"
                   },
-                  "functionReturnParameters": 9415,
-                  "id": 9460,
+                  "functionReturnParameters": 9416,
+                  "id": 9461,
                   "nodeType": "Return",
                   "src": "1049:11:15"
                 }
               ]
             },
             "documentation": null,
-            "id": 9462,
+            "id": 9463,
             "implemented": true,
             "kind": "function",
             "modifiers": [
@@ -1959,11 +1959,11 @@
                 "arguments": [
                   {
                     "argumentTypes": null,
-                    "id": 9410,
+                    "id": 9411,
                     "name": "erc20ContractAddress",
                     "nodeType": "Identifier",
                     "overloadedDeclarations": [],
-                    "referencedDeclaration": 9403,
+                    "referencedDeclaration": 9404,
                     "src": "409:20:15",
                     "typeDescriptions": {
                       "typeIdentifier": "t_address",
@@ -1972,11 +1972,11 @@
                   },
                   {
                     "argumentTypes": null,
-                    "id": 9411,
+                    "id": 9412,
                     "name": "value",
                     "nodeType": "Identifier",
                     "overloadedDeclarations": [],
-                    "referencedDeclaration": 9399,
+                    "referencedDeclaration": 9400,
                     "src": "431:5:15",
                     "typeDescriptions": {
                       "typeIdentifier": "t_uint256",
@@ -1984,14 +1984,14 @@
                     }
                   }
                 ],
-                "id": 9412,
+                "id": 9413,
                 "modifierName": {
                   "argumentTypes": null,
-                  "id": 9409,
+                  "id": 9410,
                   "name": "minimumValue",
                   "nodeType": "Identifier",
                   "overloadedDeclarations": [],
-                  "referencedDeclaration": 9134,
+                  "referencedDeclaration": 9135,
                   "src": "396:12:15",
                   "typeDescriptions": {
                     "typeIdentifier": "t_modifier$_t_address_$_t_uint256_$",
@@ -2005,15 +2005,15 @@
             "name": "freezeBurnERC20",
             "nodeType": "FunctionDefinition",
             "parameters": {
-              "id": 9408,
+              "id": 9409,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 9399,
+                  "id": 9400,
                   "name": "value",
                   "nodeType": "VariableDeclaration",
-                  "scope": 9462,
+                  "scope": 9463,
                   "src": "245:10:15",
                   "stateVariable": false,
                   "storageLocation": "default",
@@ -2022,7 +2022,7 @@
                     "typeString": "uint256"
                   },
                   "typeName": {
-                    "id": 9398,
+                    "id": 9399,
                     "name": "uint",
                     "nodeType": "ElementaryTypeName",
                     "src": "245:4:15",
@@ -2036,10 +2036,10 @@
                 },
                 {
                   "constant": false,
-                  "id": 9401,
+                  "id": 9402,
                   "name": "assetGUID",
                   "nodeType": "VariableDeclaration",
-                  "scope": 9462,
+                  "scope": 9463,
                   "src": "265:16:15",
                   "stateVariable": false,
                   "storageLocation": "default",
@@ -2048,7 +2048,7 @@
                     "typeString": "uint32"
                   },
                   "typeName": {
-                    "id": 9400,
+                    "id": 9401,
                     "name": "uint32",
                     "nodeType": "ElementaryTypeName",
                     "src": "265:6:15",
@@ -2062,10 +2062,10 @@
                 },
                 {
                   "constant": false,
-                  "id": 9403,
+                  "id": 9404,
                   "name": "erc20ContractAddress",
                   "nodeType": "VariableDeclaration",
-                  "scope": 9462,
+                  "scope": 9463,
                   "src": "291:28:15",
                   "stateVariable": false,
                   "storageLocation": "default",
@@ -2074,7 +2074,7 @@
                     "typeString": "address"
                   },
                   "typeName": {
-                    "id": 9402,
+                    "id": 9403,
                     "name": "address",
                     "nodeType": "ElementaryTypeName",
                     "src": "291:7:15",
@@ -2089,10 +2089,10 @@
                 },
                 {
                   "constant": false,
-                  "id": 9405,
+                  "id": 9406,
                   "name": "precision",
                   "nodeType": "VariableDeclaration",
-                  "scope": 9462,
+                  "scope": 9463,
                   "src": "329:15:15",
                   "stateVariable": false,
                   "storageLocation": "default",
@@ -2101,7 +2101,7 @@
                     "typeString": "uint8"
                   },
                   "typeName": {
-                    "id": 9404,
+                    "id": 9405,
                     "name": "uint8",
                     "nodeType": "ElementaryTypeName",
                     "src": "329:5:15",
@@ -2115,10 +2115,10 @@
                 },
                 {
                   "constant": false,
-                  "id": 9407,
+                  "id": 9408,
                   "name": "",
                   "nodeType": "VariableDeclaration",
-                  "scope": 9462,
+                  "scope": 9463,
                   "src": "354:12:15",
                   "stateVariable": false,
                   "storageLocation": "memory",
@@ -2127,7 +2127,7 @@
                     "typeString": "bytes"
                   },
                   "typeName": {
-                    "id": 9406,
+                    "id": 9407,
                     "name": "bytes",
                     "nodeType": "ElementaryTypeName",
                     "src": "354:5:15",
@@ -2143,15 +2143,15 @@
               "src": "235:137:15"
             },
             "returnParameters": {
-              "id": 9415,
+              "id": 9416,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 9414,
+                  "id": 9415,
                   "name": "",
                   "nodeType": "VariableDeclaration",
-                  "scope": 9462,
+                  "scope": 9463,
                   "src": "455:4:15",
                   "stateVariable": false,
                   "storageLocation": "default",
@@ -2160,7 +2160,7 @@
                     "typeString": "bool"
                   },
                   "typeName": {
-                    "id": 9413,
+                    "id": 9414,
                     "name": "bool",
                     "nodeType": "ElementaryTypeName",
                     "src": "455:4:15",
@@ -2175,14 +2175,14 @@
               ],
               "src": "454:6:15"
             },
-            "scope": 9463,
+            "scope": 9464,
             "src": "211:856:15",
             "stateMutability": "nonpayable",
-            "superFunction": 9391,
+            "superFunction": 9392,
             "visibility": "public"
           }
         ],
-        "scope": 9464,
+        "scope": 9465,
         "src": "90:979:15"
       }
     ],
@@ -2194,7 +2194,7 @@
   },
   "networks": {},
   "schemaVersion": "3.0.19",
-  "updatedAt": "2019-11-21T18:23:31.695Z",
+  "updatedAt": "2019-11-21T20:10:06.947Z",
   "devdoc": {
     "methods": {}
   },
