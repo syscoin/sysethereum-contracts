@@ -17,7 +17,7 @@ contract SyscoinClaimManager is Initializable, SyscoinDepositsManager, SyscoinEr
 
     uint constant MAX_FUTURE_BLOCK_TIME_SYSCOIN = 7200;
     uint constant MAX_FUTURE_BLOCK_TIME_ETHEREUM = 15;
-
+    bool private challengeDefended;
     struct SuperblockClaim {
         bytes32 superblockHash;                       // Superblock Id
         address submitter;                           // Superblock submitter
@@ -89,6 +89,7 @@ contract SyscoinClaimManager is Initializable, SyscoinDepositsManager, SyscoinEr
         superblockDelay = _superblockDelay;
         superblockTimeout = _superblockTimeout;
         superblockConfirmations = _superblockConfirmations;
+        challengeDefended = false;
     }
 
     // @dev – locks up part of a user's deposit into a claim.
@@ -206,7 +207,7 @@ contract SyscoinClaimManager is Initializable, SyscoinDepositsManager, SyscoinEr
         claim.verificationOngoing = false;
         claim.createdAt = block.timestamp;
         claim.challengeTimeout = block.timestamp + superblockTimeout;
-
+        challengeDefended = false;
         err = this.bondDeposit(superblockHash, msg.sender, minProposalDeposit);
         require(err == ERR_SUPERBLOCK_OK);
 
@@ -226,6 +227,10 @@ contract SyscoinClaimManager is Initializable, SyscoinDepositsManager, SyscoinEr
         if (!claimExists(claim)) {
             emit ErrorClaim(superblockHash, ERR_SUPERBLOCK_BAD_CLAIM);
             return (ERR_SUPERBLOCK_BAD_CLAIM, superblockHash);
+        }
+        if(challengeDefended == true){
+            emit ErrorClaim(superblockHash, ERR_SUPERBLOCK_CLAIM_ALREADY_DEFENDED);
+            return (ERR_SUPERBLOCK_CLAIM_ALREADY_DEFENDED, superblockHash);           
         }
         if (claim.decided || claim.invalid) {
             emit ErrorClaim(superblockHash, ERR_SUPERBLOCK_CLAIM_DECIDED);
@@ -453,7 +458,10 @@ contract SyscoinClaimManager is Initializable, SyscoinDepositsManager, SyscoinEr
 
         if (submitter == loser) {
             claim.invalid = true;
-        } else if (submitter != winner) {
+        } else if (submitter == winner) {
+            challengeDefended = true;
+        }
+        else{
             revert();
         }
         emit SuperblockBattleDecided(superblockHash, winner, loser);
