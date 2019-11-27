@@ -31,7 +31,7 @@ contract SyscoinClaimManager is Initializable, SyscoinDepositsManager, SyscoinEr
 
         bool decided;                               // If the claim was decided
         bool invalid;                               // If superblock is invalid
-        bool challengeDefended;
+        bool challengeDefended;                     // has this challenge been defended already, not allowed to re-defend
     }
 
     // Active superblock claims
@@ -48,7 +48,7 @@ contract SyscoinClaimManager is Initializable, SyscoinDepositsManager, SyscoinEr
 
     uint public superblockDelay;    // Delay required to submit superblocks (in seconds)
     uint public superblockTimeout;  // Timeout for action (in seconds)
-
+    uint inProcessCounter;          // how many in progress superblocks do we have? should be below 10 for 10 max commitments of deposits
     event DepositBonded(bytes32 superblockHash, address account, uint amount);
     event DepositUnbonded(bytes32 superblockHash, address account, uint amount);
     event SuperblockClaimCreated(bytes32 superblockHash, address submitter);
@@ -89,6 +89,7 @@ contract SyscoinClaimManager is Initializable, SyscoinDepositsManager, SyscoinEr
         superblockDelay = _superblockDelay;
         superblockTimeout = _superblockTimeout;
         superblockConfirmations = _superblockConfirmations;
+        inProcessCounter = 0;
     }
 
     // @dev – locks up part of a user's deposit into a claim.
@@ -165,7 +166,11 @@ contract SyscoinClaimManager is Initializable, SyscoinDepositsManager, SyscoinEr
         bytes32 _parentHash
     ) external returns (uint, bytes32) {
         require(address(trustedSuperblocks) != address(0));
-
+        inProcessCounter++;
+        if (inProcessCounter >= 10){
+            emit ErrorClaim(0, ERR_SUPERBLOCK_MAX_INPROGRESS);
+            return (ERR_SUPERBLOCK_MAX_INPROGRESS, 0);            
+        }
         if (deposits[msg.sender] < minProposalDeposit) {
             emit ErrorClaim(0, ERR_SUPERBLOCK_MIN_DEPOSIT);
             return (ERR_SUPERBLOCK_MIN_DEPOSIT, 0);
@@ -211,7 +216,6 @@ contract SyscoinClaimManager is Initializable, SyscoinDepositsManager, SyscoinEr
         require(err == ERR_SUPERBLOCK_OK);
 
         emit SuperblockClaimCreated(superblockHash, msg.sender);
-
         return (ERR_SUPERBLOCK_OK, superblockHash);
     }
 
@@ -333,7 +337,10 @@ contract SyscoinClaimManager is Initializable, SyscoinDepositsManager, SyscoinEr
                 doPaySubmitter(id, claim);
             }
         }
-
+        inProcessCounter--;
+        if(inProcessCounter < 0){
+            inProcessCounter = 0;
+        }
         return true;
     }
 
@@ -374,6 +381,10 @@ contract SyscoinClaimManager is Initializable, SyscoinDepositsManager, SyscoinEr
         emit SuperblockClaimFailed(superblockHash, claim.challenger);
         doPayChallenger(superblockHash, claim);
         claim.invalid = true;
+        inProcessCounter--;
+        if(inProcessCounter < 0){
+            inProcessCounter = 0;
+        }
         return true;
     }
 
@@ -437,6 +448,10 @@ contract SyscoinClaimManager is Initializable, SyscoinDepositsManager, SyscoinEr
             uint err = trustedSuperblocks.semiApprove(superblockHash, msg.sender);
             require(err == ERR_SUPERBLOCK_OK);
             emit SuperblockClaimPending(superblockHash, claim.submitter);
+        }
+        inProcessCounter--;
+        if(inProcessCounter < 0){
+            inProcessCounter = 0;
         }
         return true;
     }
