@@ -187,11 +187,11 @@
       }
     },
     "SyscoinClaimManager": {
-      "address": "0xcFDD8E7326f5cfF378556baAF4A4bCD194babC25",
-      "constructorCode": "608060405234801561001057600080fd5b5061284a806100206000396000f3fe",
-      "bodyBytecodeHash": "fc876cf547fc9520baa6179e41034cdeff961f982583222f7a37c9f2cf076f3a",
-      "localBytecodeHash": "68fa97088425bf4dd35ca382498b211ab9ae0abe42ebf997e776d4be79df250f",
-      "deployedBytecodeHash": "68fa97088425bf4dd35ca382498b211ab9ae0abe42ebf997e776d4be79df250f",
+      "address": "0x17Bd67D293d4Bdb0de909c61f91cBbc79Df2169f",
+      "constructorCode": "608060405234801561001057600080fd5b506128b6806100206000396000f3fe",
+      "bodyBytecodeHash": "4b341c8609cd8138ca046faac999892ddae29e2b8f18bf40ecae6e498328b421",
+      "localBytecodeHash": "7a8a1b12aa39f2707cbd7f2f5ea8edb9352d9aca2948de749fba3fac0775373c",
+      "deployedBytecodeHash": "7a8a1b12aa39f2707cbd7f2f5ea8edb9352d9aca2948de749fba3fac0775373c",
       "types": {
         "t_bool": {
           "id": "t_bool",
@@ -305,7 +305,7 @@
           "contract": "Initializable",
           "path": "@openzeppelin/upgrades/contracts/Initializable.sol",
           "label": "initialized",
-          "astId": 9468,
+          "astId": 9530,
           "type": "t_bool",
           "src": "757:24:16"
         },
@@ -313,7 +313,7 @@
           "contract": "Initializable",
           "path": "@openzeppelin/upgrades/contracts/Initializable.sol",
           "label": "initializing",
-          "astId": 9470,
+          "astId": 9532,
           "type": "t_bool",
           "src": "876:25:16"
         },
@@ -321,7 +321,7 @@
           "contract": "Initializable",
           "path": "@openzeppelin/upgrades/contracts/Initializable.sol",
           "label": "______gap",
-          "astId": 9526,
+          "astId": 9588,
           "type": "t_array:50<t_uint256>",
           "src": "1951:29:16"
         },
@@ -329,7 +329,7 @@
           "contract": "SyscoinDepositsManager",
           "path": "contracts/SyscoinDepositsManager.sol",
           "label": "deposits",
-          "astId": 4553,
+          "astId": 4612,
           "type": "t_mapping<t_uint256>",
           "src": "156:40:3"
         },
@@ -339,7 +339,7 @@
           "label": "claims",
           "astId": 2907,
           "type": "t_mapping<t_struct<SyscoinClaimManager.SuperblockClaim>>",
-          "src": "1512:50:2"
+          "src": "1602:50:2"
         },
         {
           "contract": "SyscoinClaimManager",
@@ -347,7 +347,7 @@
           "label": "trustedSuperblocks",
           "astId": 2909,
           "type": "t_address",
-          "src": "1597:45:2"
+          "src": "1687:45:2"
         },
         {
           "contract": "SyscoinClaimManager",
@@ -355,7 +355,7 @@
           "label": "trustedSyscoinBattleManager",
           "astId": 2911,
           "type": "t_address",
-          "src": "1680:56:2"
+          "src": "1770:56:2"
         },
         {
           "contract": "SyscoinClaimManager",
@@ -363,7 +363,7 @@
           "label": "superblockConfirmations",
           "astId": 2913,
           "type": "t_uint256",
-          "src": "1810:35:2"
+          "src": "1900:35:2"
         },
         {
           "contract": "SyscoinClaimManager",
@@ -371,7 +371,7 @@
           "label": "superblockDelay",
           "astId": 2915,
           "type": "t_uint256",
-          "src": "1852:27:2"
+          "src": "1942:27:2"
         },
         {
           "contract": "SyscoinClaimManager",
@@ -379,7 +379,15 @@
           "label": "superblockTimeout",
           "astId": 2917,
           "type": "t_uint256",
-          "src": "1941:29:2"
+          "src": "2031:29:2"
+        },
+        {
+          "contract": "SyscoinClaimManager",
+          "path": "contracts/SyscoinClaimManager.sol",
+          "label": "inProcessCounter",
+          "astId": 2919,
+          "type": "t_uint256",
+          "src": "2102:21:2"
         }
       ],
       "warnings": {
@@ -395,20 +403,20 @@
             "label": "claims",
             "astId": 2907,
             "type": "t_mapping<t_struct<SyscoinClaimManager.SuperblockClaim>>",
-            "src": "1512:50:2"
+            "src": "1602:50:2"
           }
         ],
         "storageDiff": [
           {
-            "action": "pop",
-            "original": {
+            "action": "append",
+            "updated": {
               "index": 10,
               "contract": "SyscoinClaimManager",
               "path": "contracts/SyscoinClaimManager.sol",
-              "label": "challengeDefended",
-              "astId": 3018,
-              "type": "t_bool",
-              "src": "3056:30:2"
+              "label": "inProcessCounter",
+              "astId": 2919,
+              "type": "t_uint256",
+              "src": "2102:21:2"
             }
           }
         ]
@@ -744,7 +752,7 @@
       {
         "address": "0x2590095e7f9e654098FE4fbB1bA883915Bab0e4B",
         "version": "1.0.0",
-        "implementation": "0xcFDD8E7326f5cfF378556baAF4A4bCD194babC25",
+        "implementation": "0x17Bd67D293d4Bdb0de909c61f91cBbc79Df2169f",
         "admin": "0x571A585CC910bc02947ddf16967Bc732Fadb83dC",
         "kind": "Upgradeable"
       }
