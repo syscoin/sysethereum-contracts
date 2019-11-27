@@ -1,8 +1,5 @@
 const { TestHelper } = require('@openzeppelin/cli');
-const { Contracts, ZWeb3 } = require('@openzeppelin/upgrades');
-
-/* Initialize OpenZeppelin's Web3 provider. */
-ZWeb3.initialize(web3.currentProvider);
+const { Contracts } = require('@openzeppelin/upgrades');
 
 const fs = require('fs');
 const readline = require('readline');
@@ -15,11 +12,11 @@ const bitcoin = require('bitcoinjs-lib');
 const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000'
 const ZERO_BYTES32 = '0x00000000000000000000000000000000000000000000000000000000000000'
 
-const OPTIONS_SYSCOIN_REGTEST = {
-  DURATION: 600,           // 10 minute
-  DELAY: 60,               // 1 minute
-  TIMEOUT: 15,             // 15 seconds
-  CONFIRMATIONS: 1,        // Superblocks required to confirm semi approved superblock
+const SUPERBLOCK_OPTIONS_LOCAL = {
+  DURATION: 60,     // 60 blocks per superblock
+  DELAY: 60,        // 1 minute
+  TIMEOUT: 15,      // 15 seconds
+  CONFIRMATIONS: 1 // Superblocks required to confirm semi approved superblock
 };
 
 
@@ -93,7 +90,29 @@ function getBlockTimestamp(blockHeader) {
   const timestamp = headerBin[68] + 256 * headerBin[69] + 256 * 256 * headerBin[70] + 256 * 256 * 256 * headerBin[71];
   return timestamp;
 }
+function sort_array(arr) {
+  for(var i = 0; i < 11; i++) {
+    for(var j = i+1; j < 11 ;j++) {
+        if(arr[i] > arr[j]) {
+            let temp = arr[i];
+            arr[i] = arr[j];
+            arr[j] = temp;
+        }
+    }
+  }
+  return arr;
+}
 
+// Gets the median timestamp of the last 11 blocks
+function getBlockMedianTimestamp(headers){
+  var timestamps = [];
+  // timestamps 0->10 = headers 49->59
+  for(var i=0;i<11;i++){
+      timestamps[10 - i] = getBlockTimestamp(headers[headers.length - i - 1]);
+  }
+  timestamps = sort_array(timestamps);
+  return timestamps[5];
+}  
 // Get difficulty bits from block header
 function getBlockDifficultyBits(blockHeader) {
   const headerBin = module.exports.fromHex(blockHeader).slice(0, 80);
@@ -132,6 +151,8 @@ const mineBlocks = async (web3, n) => {
       method: 'evm_mine',
       params: [],
       id: 0,
+    }, (err, result) => {
+      // adding callback to fix "callback is not a function" in web3 1.0 implementation
     });
     await timeout(100);
   }
@@ -199,12 +220,12 @@ function makeMerkleProofMap (blockHashes) {
   }
   
 // Calculate a superblock id
-function calcSuperblockHash(merkleRoot, accumulatedWork, timestamp, lastHash, lastBits, parentId) {
+function calcSuperblockHash(merkleRoot, timestamp, mtpTimestamp, lastHash, lastBits, parentId) {
   return `0x${Buffer.from(keccak256.arrayBuffer(
     Buffer.concat([
       module.exports.fromHex(merkleRoot),
-      module.exports.fromHex(toUint256(accumulatedWork)),
       module.exports.fromHex(toUint256(timestamp)),
+      module.exports.fromHex(toUint256(mtpTimestamp)),
       module.exports.fromHex(lastHash),
       module.exports.fromHex(toUint32(lastBits)),
       module.exports.fromHex(parentId)
@@ -213,28 +234,31 @@ function calcSuperblockHash(merkleRoot, accumulatedWork, timestamp, lastHash, la
 }
 
 // Construct a superblock from an array of block headers
-function makeSuperblock(headers, parentId, parentAccumulatedWork) {
+function makeSuperblock(headers, parentId) {
   if (headers.length < 1) {
     throw new Error('Requires at least one header to build a superblock');
   }
   const blockHashes = headers.map(header => calcBlockSha256Hash(header));
   const strippedHashes =  blockHashes.map(x => x.slice(2)); // <- remove prefix '0x'
-  const accumulatedWork = headers.reduce((work, header) => work.add(getBlockDifficulty(header)), web3.utils.toBN(parentAccumulatedWork));
   const merkleRoot = makeMerkle(blockHashes);
   const timestamp = getBlockTimestamp(headers[headers.length - 1]);
+  let mtpTimestamp = timestamp;
+  if(headers.length >= 11){
+    mtpTimestamp = getBlockMedianTimestamp(headers);
+  }
   const lastHash = calcBlockSha256Hash(headers[headers.length - 1]);
   const lastBits = getBlockDifficultyBits(headers[headers.length - 1]);
   return {
     merkleRoot,
-    accumulatedWork,
     timestamp,
+    mtpTimestamp,
     lastHash,
     lastBits,
     parentId,
     superblockHash: calcSuperblockHash(
       merkleRoot,
-      accumulatedWork,
       timestamp,
+      mtpTimestamp,
       lastHash,
       lastBits,
       parentId
@@ -245,24 +269,24 @@ function makeSuperblock(headers, parentId, parentAccumulatedWork) {
 }
 
 // use only for gas profiling. This function is faking a lot of data. Don't use for other testing
-function makeSuperblockFromHashes(blockHashes, parentId, parentAccumulatedWork) {
+function makeSuperblockFromHashes(blockHashes, parentId) {
   const strippedHashes =  blockHashes.map(x => x.slice(2)); // <- remove prefix '0x'
-  const accumulatedWork = 0;
   const merkleRoot = makeMerkle(blockHashes);
   const timestamp = 1563155885;
+  const mtptimestamp = timestamp;
   const lastHash = blockHashes[blockHashes.length - 1];
   const lastBits = 108428188075
   return {
     merkleRoot,
-    accumulatedWork,
     timestamp,
+    mtptimestamp,
     lastHash,
     lastBits,
     parentId,
     superblockHash: calcSuperblockHash(
-      merkleRoot,
-      accumulatedWork,
+      merkleRoot,  
       timestamp,
+      mtptimestamp,
       lastHash,
       lastBits,
       parentId
@@ -298,6 +322,13 @@ function findEvent(logs, name) {
 }
 
 async function initSuperblockChain(options) {
+  // fix for magically failing tests
+  Contracts.artifactDefaults = {
+    data: undefined,
+    from: undefined,
+    gasPrice: undefined,
+    gas: undefined 
+  };
   const SyscoinClaimManager = Contracts.getFromLocal('SyscoinClaimManager');
   const SyscoinBattleManager = Contracts.getFromLocal('SyscoinBattleManager');
   const SyscoinSuperblocks = Contracts.getFromLocal('SyscoinSuperblocks');
@@ -333,8 +364,8 @@ async function initSuperblockChain(options) {
 
   await superblocks.methods.initialize(
     options.genesisSuperblock.merkleRoot,
-    options.genesisSuperblock.accumulatedWork.toString(),
     options.genesisSuperblock.timestamp,
+    options.genesisSuperblock.mtpTimestamp,
     options.genesisSuperblock.lastHash,
     options.genesisSuperblock.lastBits,
     options.genesisSuperblock.parentId
@@ -417,7 +448,7 @@ function printGas(txReceipt, msg, margin = 8) {
 
 
 module.exports = {
-  OPTIONS_SYSCOIN_REGTEST,
+  SUPERBLOCK_OPTIONS_LOCAL,
   SYSCOIN_MAINNET,
   SYSCOIN_TESTNET,
   SYSCOIN_REGTEST,
@@ -447,8 +478,8 @@ module.exports = {
 
     await superblocks.initialize(
       genesisSuperblock.merkleRoot,
-      genesisSuperblock.accumulatedWork,
       genesisSuperblock.timestamp,
+      genesisSuperblock.mtpTimestamp,
       genesisSuperblock.lastHash,
       genesisSuperblock.lastBits,
       genesisSuperblock.parentId,
@@ -458,7 +489,6 @@ module.exports = {
     const proposedSuperblock = makeSuperblock(
       headers.slice(1),
       genesisSuperblock.superblockHash,
-      genesisSuperblock.accumulatedWork,
       130
     );
 
@@ -468,8 +498,8 @@ module.exports = {
 
     result = await claimManager.proposeSuperblock(
       proposedSuperblock.merkleRoot,
-      proposedSuperblock.accumulatedWork,
       proposedSuperblock.timestamp,
+      proposedSuperblock.mtpTimestamp,
       proposedSuperblock.lastHash,
       proposedSuperblock.lastBits,
       proposedSuperblock.parentId,
@@ -479,7 +509,7 @@ module.exports = {
     assert.equal(result.logs[1].event, 'SuperblockClaimCreated', 'New superblock proposed');
     const superblockHash = result.logs[1].args.superblockHash;
 
-    await blockchainTimeoutSeconds(3*OPTIONS_SYSCOIN_REGTEST.TIMEOUT);
+    await blockchainTimeoutSeconds(3*SUPERBLOCK_OPTIONS_LOCAL.TIMEOUT);
 
     result = await claimManager.checkClaimFinished(superblockHash, { from: sender });
     assert.equal(result.logs[1].event, 'SuperblockClaimSuccessful', 'Superblock challenged');
@@ -558,6 +588,7 @@ module.exports = {
   headerToData,
   calcBlockSha256Hash,
   getBlockTimestamp,
+  getBlockMedianTimestamp,
   getBlockDifficultyBits,
   getBlockDifficulty,
   timeout,

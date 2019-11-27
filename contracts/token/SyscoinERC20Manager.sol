@@ -1,20 +1,18 @@
-pragma solidity ^0.5.10;
+pragma solidity ^0.5.13;
 
-import "./Set.sol";
 import "../SyscoinTransactionProcessor.sol";
 import "openzeppelin-solidity/contracts/math/SafeMath.sol";
-import "../interfaces/SyscoinERC20AssetI.sol";
+import "../interfaces/SyscoinERC20I.sol";
 import "@openzeppelin/upgrades/contracts/Initializable.sol";
 
 contract SyscoinERC20Manager is Initializable {
 
     using SafeMath for uint256;
     using SafeMath for uint8;
-    using Set for Set.Data;
 
     // Lock constants
     uint public constant MIN_LOCK_VALUE = 10; // 0.1 token
-    uint public constant SUPERBLOCK_SUBMITTER_LOCK_FEE = 1; // 1 = 0.1%
+    uint public constant SUPERBLOCK_SUBMITTER_LOCK_FEE = 10000; // 10000 = 0.01%
 
     // Variables set by constructor
 
@@ -22,16 +20,27 @@ contract SyscoinERC20Manager is Initializable {
     // Only syscoin txs relayed from trustedRelayerContract will be accepted.
     address public trustedRelayerContract;
 
-    // Syscoin transactions that were already processed by processTransaction()
-    Set.Data syscoinTxHashesAlreadyProcessed;
 
     mapping(uint32 => uint256) public assetBalances;
+    // Syscoin transactions that were already processed by processTransaction()
+    mapping(uint => bool) private syscoinTxHashesAlreadyProcessed;
+
 
     event TokenUnfreeze(address receipient, uint value);
     event TokenUnfreezeFee(address receipient, uint value);
     event TokenFreeze(address freezer, uint value);
 
+    function contains(uint value) private view returns (bool) {
+        return syscoinTxHashesAlreadyProcessed[value];
+    }
 
+    function insert(uint value) private returns (bool) {
+        if (contains(value))
+            return false; // already there
+        syscoinTxHashesAlreadyProcessed[value] = true;
+        return true;
+    }
+    
     function init(address _trustedRelayerContract) public initializer {
         trustedRelayerContract = _trustedRelayerContract;
     }
@@ -42,7 +51,7 @@ contract SyscoinERC20Manager is Initializable {
     }
 
     modifier minimumValue(address erc20ContractAddress, uint value) {
-        uint256 decimals = SyscoinERC20AssetI(erc20ContractAddress).decimals();
+        uint256 decimals = SyscoinERC20I(erc20ContractAddress).decimals();
         require(
             value >= (uint256(10) ** decimals).div(MIN_LOCK_VALUE),
             "Value must be bigger or equal MIN_LOCK_VALUE"
@@ -52,14 +61,16 @@ contract SyscoinERC20Manager is Initializable {
 
     function requireMinimumValue(uint8 decimalsIn, uint value) private pure {
         uint256 decimals = uint256(decimalsIn);
+        require(value > 0, "Value must be positive");
         require(
             value >= (uint256(10) ** decimals).div(MIN_LOCK_VALUE),
             "Value must be bigger or equal MIN_LOCK_VALUE"
         );
+        
     }
 
     function wasSyscoinTxProcessed(uint txHash) public view returns (bool) {
-        return syscoinTxHashesAlreadyProcessed.contains(txHash);
+        return contains(txHash);
     }
 
     function processTransaction(
@@ -71,7 +82,7 @@ contract SyscoinERC20Manager is Initializable {
         uint32 assetGUID,
         uint8 precision
     ) public onlyTrustedRelayer {
-        SyscoinERC20AssetI erc20 = SyscoinERC20AssetI(erc20ContractAddress);
+        SyscoinERC20I erc20 = SyscoinERC20I(erc20ContractAddress);
         uint8 nLocalPrecision = erc20.decimals();
         // see issue #372 on syscoin
         if(nLocalPrecision > precision){
@@ -81,20 +92,12 @@ contract SyscoinERC20Manager is Initializable {
         }
         requireMinimumValue(nLocalPrecision, value);
         // Add tx to the syscoinTxHashesAlreadyProcessed and Check tx was not already processed
-        require(syscoinTxHashesAlreadyProcessed.insert(txHash), "TX already processed");
+        require(insert(txHash), "TX already processed");
 
-        // make sure we have enough balance for transfer
-        if (erc20.balanceOf(address(this)) < value) {
-            // if not, try to mint token
-            erc20.mint(
-                address(this),
-                erc20.balanceOf(address(this)).sub(value)
-            );
-        }
 
         assetBalances[assetGUID] = assetBalances[assetGUID].sub(value);
 
-        uint superblockSubmitterFee = value.mul(SUPERBLOCK_SUBMITTER_LOCK_FEE).div(10000);
+        uint superblockSubmitterFee = value.div(SUPERBLOCK_SUBMITTER_LOCK_FEE);
         uint userValue = value.sub(superblockSubmitterFee);
 
         // pay the fee
@@ -121,41 +124,13 @@ contract SyscoinERC20Manager is Initializable {
         require(syscoinAddress.length > 0, "syscoinAddress cannot be zero");
         require(assetGUID > 0, "Asset GUID must not be 0");
         
-        assetBalances[assetGUID] = assetBalances[assetGUID].add(value);
 
-        SyscoinERC20AssetI erc20 = SyscoinERC20AssetI(erc20ContractAddress);
+        SyscoinERC20I erc20 = SyscoinERC20I(erc20ContractAddress);
         require(precision == erc20.decimals(), "Decimals were not provided with the correct value");
-        // is this a Syscoin asset and we are allowed to mint?
-        if (isMinterOf(erc20ContractAddress)) {
-            erc20.burnFrom(msg.sender, value);
-        } else { // no, it's original ERC20
-            erc20.transferFrom(msg.sender, address(this), value);
-        }
+        erc20.transferFrom(msg.sender, address(this), value);
+        assetBalances[assetGUID] = assetBalances[assetGUID].add(value);
         emit TokenFreeze(msg.sender, value);
 
         return true;
-    }
-
-    function isMinterOf(address erc20ContractAddress) internal returns (bool) {
-        // call isMinter(address) and get result
-        bytes4 sig = bytes4(keccak256("isMinter(address)"));
-        address me = address(this);
-        bool isMinterInterfaceSupport;
-        bool isMinter;
-        assembly {
-            let x := mload(0x40)    //Find empty storage location using "free memory pointer"
-            mstore(x,sig)           //Place signature at begining of empty storage 
-            mstore(add(x,0x04),me)  //Place first argument directly next to signature
-            isMinterInterfaceSupport := call(
-                5000,                   //5k gas
-                erc20ContractAddress,   //To addr
-                0,                      //No value
-                x,                      //Inputs are stored at location x
-                0x24,                   //Inputs are 36 bytes long
-                x,                      //Store output over input (saves space)
-                0x20)                   //Outputs are 32 bytes long
-            isMinter := mload(x)
-        }
-        return isMinterInterfaceSupport && isMinter;
     }
 }

@@ -4,11 +4,11 @@
 
 First compile contracts
 
-    $ truffle compile --all
+    $ npx truffle compile --all
 
 Run migration scripts to deploy contracts
 
-    $ truffle migrate --network NETWORK --reset
+    $ npx truffle migrate --network NETWORK --reset
 
 Where NETWORK can be
 
@@ -22,19 +22,13 @@ deployed with the gas limit of 4.7M gas.
 
 ## Initialize contracts
 
-This steps depends on the NETWORK for integrationSyscoinRegtest
+Deploys to network:
 
-    $ truffle exec --network integrationSyscoinRegtest scripts\init_contracts_local.js
-
-## Superblocks info
-
-Display information for the last approved superblocks
-
-    $ truffle exec --network NETWORK scripts\debug.js
+    $ ./scripts/exportAndInits.sh
 
 ## Send command to contracts
 
-    $ truffle exec --network NETWORK scripts\superblock-cli.js COMMAND [OPTIONS]
+    $ npx truffle exec --network NETWORK scripts\superblock-cli.js COMMAND [OPTIONS]
 
 Where COMMAND
 

@@ -1,19 +1,22 @@
 {
   "manifestVersion": "2.2",
   "contracts": {
-    "SyscoinERC20Manager": "SyscoinERC20Manager",
-    "SyscoinERC20ManagerForTests": "SyscoinERC20ManagerForTests",
     "SyscoinSuperblocks": "SyscoinSuperblocks",
+    "SyscoinERC20Manager": "SyscoinERC20Manager",
     "SyscoinBattleManager": "SyscoinBattleManager",
     "SyscoinClaimManager": "SyscoinClaimManager"
   },
   "dependencies": {},
   "name": "sysethereum-contracts",
   "version": "1.0.0",
+  "telemetryOptIn": false,
   "compiler": {
     "manager": "truffle",
     "compilerSettings": {
-      "optimizer": {}
+      "optimizer": {
+        "enabled": false,
+        "runs": "200"
+      }
     }
   }
 }
