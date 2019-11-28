@@ -48,15 +48,15 @@ contract SyscoinClaimManager is Initializable, SyscoinDepositsManager, SyscoinEr
 
     uint public superblockDelay;    // Delay required to submit superblocks (in seconds)
     uint public superblockTimeout;  // Timeout for action (in seconds)
-    uint inProcessCounter;          // how many in progress superblocks do we have? should be below 10 for 10 max commitments of deposits
+    uint public inProcessCounter;   // how many in progress superblocks do we have? should be below 10 for 10 max commitments of deposits
     event DepositBonded(bytes32 superblockHash, address account, uint amount);
     event DepositUnbonded(bytes32 superblockHash, address account, uint amount);
     event SuperblockClaimCreated(bytes32 superblockHash, address submitter, uint processCounter);
     event SuperblockClaimChallenged(bytes32 superblockHash, address challenger);
     event SuperblockBattleDecided(bytes32 superblockHash, address winner, address loser);
-    event SuperblockClaimSuccessful(bytes32 superblockHash, address submitter);
+    event SuperblockClaimSuccessful(bytes32 superblockHash, address submitter, uint processCounter);
     event SuperblockClaimPending(bytes32 superblockHash, address submitter);
-    event SuperblockClaimFailed(bytes32 superblockHash, address challenger);
+    event SuperblockClaimFailed(bytes32 superblockHash, address challenger, uint processCounter);
     event VerificationGameStarted(bytes32 superblockHash, address submitter, address challenger);
 
     event ErrorClaim(bytes32 superblockHash, uint err);
@@ -315,7 +315,7 @@ contract SyscoinClaimManager is Initializable, SyscoinDepositsManager, SyscoinEr
             emit ErrorClaim(superblockHash, err);
             return false;
         }
-        emit SuperblockClaimSuccessful(superblockHash, claim.submitter);
+        emit SuperblockClaimSuccessful(superblockHash, claim.submitter, inProcessCounter-1);
         doPaySubmitter(superblockHash, claim);
 
         if (confirmDescendants) {
@@ -333,7 +333,7 @@ contract SyscoinClaimManager is Initializable, SyscoinDepositsManager, SyscoinEr
                 claim = claims[id];
                 err = trustedSuperblocks.confirm(id, msg.sender);
                 require(err == ERR_SUPERBLOCK_OK);
-                emit SuperblockClaimSuccessful(id, claim.submitter);
+                emit SuperblockClaimSuccessful(id, claim.submitter, inProcessCounter-1);
                 doPaySubmitter(id, claim);
                 inProcessCounter--;
             }
@@ -376,7 +376,7 @@ contract SyscoinClaimManager is Initializable, SyscoinDepositsManager, SyscoinEr
 
         uint err = trustedSuperblocks.invalidate(superblockHash, claim.submitter);
         require(err == ERR_SUPERBLOCK_OK);
-        emit SuperblockClaimFailed(superblockHash, claim.challenger);
+        emit SuperblockClaimFailed(superblockHash, claim.challenger, inProcessCounter-1);
         doPayChallenger(superblockHash, claim);
         claim.invalid = true;
         inProcessCounter--;
@@ -410,7 +410,7 @@ contract SyscoinClaimManager is Initializable, SyscoinDepositsManager, SyscoinEr
             claim.decided = true;
             uint err = trustedSuperblocks.invalidate(superblockHash, claim.submitter);
             require(err == ERR_SUPERBLOCK_OK);
-            emit SuperblockClaimFailed(superblockHash, claim.challenger);
+            emit SuperblockClaimFailed(superblockHash, claim.challenger, inProcessCounter-1);
             doPayChallenger(superblockHash, claim);
             inProcessCounter--;
             return false;
@@ -440,7 +440,7 @@ contract SyscoinClaimManager is Initializable, SyscoinDepositsManager, SyscoinEr
             address submitter = claim.submitter;
             unbondDeposit(superblockHash, submitter);
             inProcessCounter--;
-            emit SuperblockClaimSuccessful(superblockHash, submitter);
+            emit SuperblockClaimSuccessful(superblockHash, submitter, inProcessCounter);
         } else {
             uint err = trustedSuperblocks.semiApprove(superblockHash, msg.sender);
             require(err == ERR_SUPERBLOCK_OK);
