@@ -28,14 +28,14 @@
     "absolutePath": "/Users/jsidhu/Documents/GitHub/sysethereum-contracts1/contracts/SyscoinErrorCodes.sol",
     "exportedSymbols": {
       "SyscoinErrorCodes": [
-        4935
+        4990
       ]
     },
-    "id": 4936,
+    "id": 4991,
     "nodeType": "SourceUnit",
     "nodes": [
       {
-        "id": 4736,
+        "id": 4791,
         "literals": [
           "solidity",
           "^",
@@ -51,19 +51,19 @@
         "contractKind": "contract",
         "documentation": null,
         "fullyImplemented": true,
-        "id": 4935,
+        "id": 4990,
         "linearizedBaseContracts": [
-          4935
+          4990
         ],
         "name": "SyscoinErrorCodes",
         "nodeType": "ContractDefinition",
         "nodes": [
           {
             "constant": true,
-            "id": 4739,
+            "id": 4794,
             "name": "ERR_INVALID_HEADER",
             "nodeType": "VariableDeclaration",
-            "scope": 4935,
+            "scope": 4990,
             "src": "119:40:4",
             "stateVariable": true,
             "storageLocation": "default",
@@ -72,7 +72,7 @@
               "typeString": "uint256"
             },
             "typeName": {
-              "id": 4737,
+              "id": 4792,
               "name": "uint",
               "nodeType": "ElementaryTypeName",
               "src": "119:4:4",
@@ -84,7 +84,7 @@
             "value": {
               "argumentTypes": null,
               "hexValue": "3130303530",
-              "id": 4738,
+              "id": 4793,
               "isConstant": false,
               "isLValue": false,
               "isPure": true,
@@ -103,10 +103,10 @@
           },
           {
             "constant": true,
-            "id": 4742,
+            "id": 4797,
             "name": "ERR_COINBASE_INDEX",
             "nodeType": "VariableDeclaration",
-            "scope": 4935,
+            "scope": 4990,
             "src": "165:40:4",
             "stateVariable": true,
             "storageLocation": "default",
@@ -115,7 +115,7 @@
               "typeString": "uint256"
             },
             "typeName": {
-              "id": 4740,
+              "id": 4795,
               "name": "uint",
               "nodeType": "ElementaryTypeName",
               "src": "165:4:4",
@@ -127,7 +127,7 @@
             "value": {
               "argumentTypes": null,
               "hexValue": "3130303630",
-              "id": 4741,
+              "id": 4796,
               "isConstant": false,
               "isLValue": false,
               "isPure": true,
@@ -146,10 +146,10 @@
           },
           {
             "constant": true,
-            "id": 4745,
+            "id": 4800,
             "name": "ERR_NOT_MERGE_MINED",
             "nodeType": "VariableDeclaration",
-            "scope": 4935,
+            "scope": 4990,
             "src": "262:41:4",
             "stateVariable": true,
             "storageLocation": "default",
@@ -158,7 +158,7 @@
               "typeString": "uint256"
             },
             "typeName": {
-              "id": 4743,
+              "id": 4798,
               "name": "uint",
               "nodeType": "ElementaryTypeName",
               "src": "262:4:4",
@@ -170,7 +170,7 @@
             "value": {
               "argumentTypes": null,
               "hexValue": "3130303730",
-              "id": 4744,
+              "id": 4799,
               "isConstant": false,
               "isLValue": false,
               "isPure": true,
@@ -189,10 +189,10 @@
           },
           {
             "constant": true,
-            "id": 4748,
+            "id": 4803,
             "name": "ERR_FOUND_TWICE",
             "nodeType": "VariableDeclaration",
-            "scope": 4935,
+            "scope": 4990,
             "src": "370:37:4",
             "stateVariable": true,
             "storageLocation": "default",
@@ -201,7 +201,7 @@
               "typeString": "uint256"
             },
             "typeName": {
-              "id": 4746,
+              "id": 4801,
               "name": "uint",
               "nodeType": "ElementaryTypeName",
               "src": "370:4:4",
@@ -213,7 +213,7 @@
             "value": {
               "argumentTypes": null,
               "hexValue": "3130303830",
-              "id": 4747,
+              "id": 4802,
               "isConstant": false,
               "isLValue": false,
               "isPure": true,
@@ -232,10 +232,10 @@
           },
           {
             "constant": true,
-            "id": 4751,
+            "id": 4806,
             "name": "ERR_NO_MERGE_HEADER",
             "nodeType": "VariableDeclaration",
-            "scope": 4935,
+            "scope": 4990,
             "src": "439:41:4",
             "stateVariable": true,
             "storageLocation": "default",
@@ -244,7 +244,7 @@
               "typeString": "uint256"
             },
             "typeName": {
-              "id": 4749,
+              "id": 4804,
               "name": "uint",
               "nodeType": "ElementaryTypeName",
               "src": "439:4:4",
@@ -256,7 +256,7 @@
             "value": {
               "argumentTypes": null,
               "hexValue": "3130303930",
-              "id": 4750,
+              "id": 4805,
               "isConstant": false,
               "isLValue": false,
               "isPure": true,
@@ -275,10 +275,10 @@
           },
           {
             "constant": true,
-            "id": 4754,
+            "id": 4809,
             "name": "ERR_CHAIN_MERKLE",
             "nodeType": "VariableDeclaration",
-            "scope": 4935,
+            "scope": 4990,
             "src": "510:38:4",
             "stateVariable": true,
             "storageLocation": "default",
@@ -287,7 +287,7 @@
               "typeString": "uint256"
             },
             "typeName": {
-              "id": 4752,
+              "id": 4807,
               "name": "uint",
               "nodeType": "ElementaryTypeName",
               "src": "510:4:4",
@@ -299,7 +299,7 @@
             "value": {
               "argumentTypes": null,
               "hexValue": "3130313130",
-              "id": 4753,
+              "id": 4808,
               "isConstant": false,
               "isLValue": false,
               "isPure": true,
@@ -318,10 +318,10 @@
           },
           {
             "constant": true,
-            "id": 4757,
+            "id": 4812,
             "name": "ERR_PARENT_MERKLE",
             "nodeType": "VariableDeclaration",
-            "scope": 4935,
+            "scope": 4990,
             "src": "554:39:4",
             "stateVariable": true,
             "storageLocation": "default",
@@ -330,7 +330,7 @@
               "typeString": "uint256"
             },
             "typeName": {
-              "id": 4755,
+              "id": 4810,
               "name": "uint",
               "nodeType": "ElementaryTypeName",
               "src": "554:4:4",
@@ -342,7 +342,7 @@
             "value": {
               "argumentTypes": null,
               "hexValue": "3130313230",
-              "id": 4756,
+              "id": 4811,
               "isConstant": false,
               "isLValue": false,
               "isPure": true,
@@ -361,10 +361,10 @@
           },
           {
             "constant": true,
-            "id": 4760,
+            "id": 4815,
             "name": "ERR_PROOF_OF_WORK",
             "nodeType": "VariableDeclaration",
-            "scope": 4935,
+            "scope": 4990,
             "src": "599:39:4",
             "stateVariable": true,
             "storageLocation": "default",
@@ -373,7 +373,7 @@
               "typeString": "uint256"
             },
             "typeName": {
-              "id": 4758,
+              "id": 4813,
               "name": "uint",
               "nodeType": "ElementaryTypeName",
               "src": "599:4:4",
@@ -385,7 +385,7 @@
             "value": {
               "argumentTypes": null,
               "hexValue": "3130313330",
-              "id": 4759,
+              "id": 4814,
               "isConstant": false,
               "isLValue": false,
               "isPure": true,
@@ -404,10 +404,10 @@
           },
           {
             "constant": true,
-            "id": 4763,
+            "id": 4818,
             "name": "ERR_INVALID_HEADER_HASH",
             "nodeType": "VariableDeclaration",
-            "scope": 4935,
+            "scope": 4990,
             "src": "644:45:4",
             "stateVariable": true,
             "storageLocation": "default",
@@ -416,7 +416,7 @@
               "typeString": "uint256"
             },
             "typeName": {
-              "id": 4761,
+              "id": 4816,
               "name": "uint",
               "nodeType": "ElementaryTypeName",
               "src": "644:4:4",
@@ -428,7 +428,7 @@
             "value": {
               "argumentTypes": null,
               "hexValue": "3130313430",
-              "id": 4762,
+              "id": 4817,
               "isConstant": false,
               "isLValue": false,
               "isPure": true,
@@ -447,10 +447,10 @@
           },
           {
             "constant": true,
-            "id": 4766,
+            "id": 4821,
             "name": "ERR_PROOF_OF_WORK_AUXPOW",
             "nodeType": "VariableDeclaration",
-            "scope": 4935,
+            "scope": 4990,
             "src": "695:46:4",
             "stateVariable": true,
             "storageLocation": "default",
@@ -459,7 +459,7 @@
               "typeString": "uint256"
             },
             "typeName": {
-              "id": 4764,
+              "id": 4819,
               "name": "uint",
               "nodeType": "ElementaryTypeName",
               "src": "695:4:4",
@@ -471,7 +471,7 @@
             "value": {
               "argumentTypes": null,
               "hexValue": "3130313530",
-              "id": 4765,
+              "id": 4820,
               "isConstant": false,
               "isLValue": false,
               "isPure": true,
@@ -490,10 +490,10 @@
           },
           {
             "constant": true,
-            "id": 4769,
+            "id": 4824,
             "name": "ERR_PARSE_TX_OUTPUT_LENGTH",
             "nodeType": "VariableDeclaration",
-            "scope": 4935,
+            "scope": 4990,
             "src": "747:48:4",
             "stateVariable": true,
             "storageLocation": "default",
@@ -502,7 +502,7 @@
               "typeString": "uint256"
             },
             "typeName": {
-              "id": 4767,
+              "id": 4822,
               "name": "uint",
               "nodeType": "ElementaryTypeName",
               "src": "747:4:4",
@@ -514,7 +514,7 @@
             "value": {
               "argumentTypes": null,
               "hexValue": "3130313630",
-              "id": 4768,
+              "id": 4823,
               "isConstant": false,
               "isLValue": false,
               "isPure": true,
@@ -533,10 +533,10 @@
           },
           {
             "constant": true,
-            "id": 4772,
+            "id": 4827,
             "name": "ERR_SUPERBLOCK_OK",
             "nodeType": "VariableDeclaration",
-            "scope": 4935,
+            "scope": 4990,
             "src": "803:35:4",
             "stateVariable": true,
             "storageLocation": "default",
@@ -545,7 +545,7 @@
               "typeString": "uint256"
             },
             "typeName": {
-              "id": 4770,
+              "id": 4825,
               "name": "uint",
               "nodeType": "ElementaryTypeName",
               "src": "803:4:4",
@@ -557,7 +557,7 @@
             "value": {
               "argumentTypes": null,
               "hexValue": "30",
-              "id": 4771,
+              "id": 4826,
               "isConstant": false,
               "isLValue": false,
               "isPure": true,
@@ -576,10 +576,10 @@
           },
           {
             "constant": true,
-            "id": 4775,
+            "id": 4830,
             "name": "ERR_SUPERBLOCK_MISSING_BLOCKS",
             "nodeType": "VariableDeclaration",
-            "scope": 4935,
+            "scope": 4990,
             "src": "844:47:4",
             "stateVariable": true,
             "storageLocation": "default",
@@ -588,7 +588,7 @@
               "typeString": "uint256"
             },
             "typeName": {
-              "id": 4773,
+              "id": 4828,
               "name": "uint",
               "nodeType": "ElementaryTypeName",
               "src": "844:4:4",
@@ -600,7 +600,7 @@
             "value": {
               "argumentTypes": null,
               "hexValue": "31",
-              "id": 4774,
+              "id": 4829,
               "isConstant": false,
               "isLValue": false,
               "isPure": true,
@@ -619,10 +619,10 @@
           },
           {
             "constant": true,
-            "id": 4778,
+            "id": 4833,
             "name": "ERR_SUPERBLOCK_BAD_STATUS",
             "nodeType": "VariableDeclaration",
-            "scope": 4935,
+            "scope": 4990,
             "src": "897:47:4",
             "stateVariable": true,
             "storageLocation": "default",
@@ -631,7 +631,7 @@
               "typeString": "uint256"
             },
             "typeName": {
-              "id": 4776,
+              "id": 4831,
               "name": "uint",
               "nodeType": "ElementaryTypeName",
               "src": "897:4:4",
@@ -643,7 +643,7 @@
             "value": {
               "argumentTypes": null,
               "hexValue": "3530303230",
-              "id": 4777,
+              "id": 4832,
               "isConstant": false,
               "isLValue": false,
               "isPure": true,
@@ -662,10 +662,10 @@
           },
           {
             "constant": true,
-            "id": 4781,
+            "id": 4836,
             "name": "ERR_SUPERBLOCK_BAD_SYSCOIN_STATUS",
             "nodeType": "VariableDeclaration",
-            "scope": 4935,
+            "scope": 4990,
             "src": "950:55:4",
             "stateVariable": true,
             "storageLocation": "default",
@@ -674,7 +674,7 @@
               "typeString": "uint256"
             },
             "typeName": {
-              "id": 4779,
+              "id": 4834,
               "name": "uint",
               "nodeType": "ElementaryTypeName",
               "src": "950:4:4",
@@ -686,7 +686,7 @@
             "value": {
               "argumentTypes": null,
               "hexValue": "3530303235",
-              "id": 4780,
+              "id": 4835,
               "isConstant": false,
               "isLValue": false,
               "isPure": true,
@@ -705,10 +705,10 @@
           },
           {
             "constant": true,
-            "id": 4784,
+            "id": 4839,
             "name": "ERR_SUPERBLOCK_TIMEOUT",
             "nodeType": "VariableDeclaration",
-            "scope": 4935,
+            "scope": 4990,
             "src": "1011:44:4",
             "stateVariable": true,
             "storageLocation": "default",
@@ -717,7 +717,7 @@
               "typeString": "uint256"
             },
             "typeName": {
-              "id": 4782,
+              "id": 4837,
               "name": "uint",
               "nodeType": "ElementaryTypeName",
               "src": "1011:4:4",
@@ -729,7 +729,7 @@
             "value": {
               "argumentTypes": null,
               "hexValue": "3530303236",
-              "id": 4783,
+              "id": 4838,
               "isConstant": false,
               "isLValue": false,
               "isPure": true,
@@ -748,10 +748,10 @@
           },
           {
             "constant": true,
-            "id": 4787,
+            "id": 4842,
             "name": "ERR_SUPERBLOCK_NO_TIMEOUT",
             "nodeType": "VariableDeclaration",
-            "scope": 4935,
+            "scope": 4990,
             "src": "1061:47:4",
             "stateVariable": true,
             "storageLocation": "default",
@@ -760,7 +760,7 @@
               "typeString": "uint256"
             },
             "typeName": {
-              "id": 4785,
+              "id": 4840,
               "name": "uint",
               "nodeType": "ElementaryTypeName",
               "src": "1061:4:4",
@@ -772,7 +772,7 @@
             "value": {
               "argumentTypes": null,
               "hexValue": "3530303330",
-              "id": 4786,
+              "id": 4841,
               "isConstant": false,
               "isLValue": false,
               "isPure": true,
@@ -791,10 +791,10 @@
           },
           {
             "constant": true,
-            "id": 4790,
+            "id": 4845,
             "name": "ERR_SUPERBLOCK_BAD_TIMESTAMP",
             "nodeType": "VariableDeclaration",
-            "scope": 4935,
+            "scope": 4990,
             "src": "1114:50:4",
             "stateVariable": true,
             "storageLocation": "default",
@@ -803,7 +803,7 @@
               "typeString": "uint256"
             },
             "typeName": {
-              "id": 4788,
+              "id": 4843,
               "name": "uint",
               "nodeType": "ElementaryTypeName",
               "src": "1114:4:4",
@@ -815,7 +815,7 @@
             "value": {
               "argumentTypes": null,
               "hexValue": "3530303335",
-              "id": 4789,
+              "id": 4844,
               "isConstant": false,
               "isLValue": false,
               "isPure": true,
@@ -834,10 +834,10 @@
           },
           {
             "constant": true,
-            "id": 4793,
+            "id": 4848,
             "name": "ERR_SUPERBLOCK_INVALID_TIMESTAMP",
             "nodeType": "VariableDeclaration",
-            "scope": 4935,
+            "scope": 4990,
             "src": "1170:54:4",
             "stateVariable": true,
             "storageLocation": "default",
@@ -846,7 +846,7 @@
               "typeString": "uint256"
             },
             "typeName": {
-              "id": 4791,
+              "id": 4846,
               "name": "uint",
               "nodeType": "ElementaryTypeName",
               "src": "1170:4:4",
@@ -858,7 +858,7 @@
             "value": {
               "argumentTypes": null,
               "hexValue": "3530303336",
-              "id": 4792,
+              "id": 4847,
               "isConstant": false,
               "isLValue": false,
               "isPure": true,
@@ -877,10 +877,10 @@
           },
           {
             "constant": true,
-            "id": 4796,
+            "id": 4851,
             "name": "ERR_SUPERBLOCK_INVALID_MERKLE",
             "nodeType": "VariableDeclaration",
-            "scope": 4935,
+            "scope": 4990,
             "src": "1230:51:4",
             "stateVariable": true,
             "storageLocation": "default",
@@ -889,7 +889,7 @@
               "typeString": "uint256"
             },
             "typeName": {
-              "id": 4794,
+              "id": 4849,
               "name": "uint",
               "nodeType": "ElementaryTypeName",
               "src": "1230:4:4",
@@ -901,7 +901,7 @@
             "value": {
               "argumentTypes": null,
               "hexValue": "3530303338",
-              "id": 4795,
+              "id": 4850,
               "isConstant": false,
               "isLValue": false,
               "isPure": true,
@@ -920,10 +920,10 @@
           },
           {
             "constant": true,
-            "id": 4799,
+            "id": 4854,
             "name": "ERR_SUPERBLOCK_BAD_PARENT",
             "nodeType": "VariableDeclaration",
-            "scope": 4935,
+            "scope": 4990,
             "src": "1402:47:4",
             "stateVariable": true,
             "storageLocation": "default",
@@ -932,7 +932,7 @@
               "typeString": "uint256"
             },
             "typeName": {
-              "id": 4797,
+              "id": 4852,
               "name": "uint",
               "nodeType": "ElementaryTypeName",
               "src": "1402:4:4",
@@ -944,7 +944,7 @@
             "value": {
               "argumentTypes": null,
               "hexValue": "3530303430",
-              "id": 4798,
+              "id": 4853,
               "isConstant": false,
               "isLValue": false,
               "isPure": true,
@@ -963,10 +963,10 @@
           },
           {
             "constant": true,
-            "id": 4802,
+            "id": 4857,
             "name": "ERR_SUPERBLOCK_BAD_PARENT_UNINITIALIZED",
             "nodeType": "VariableDeclaration",
-            "scope": 4935,
+            "scope": 4990,
             "src": "1455:61:4",
             "stateVariable": true,
             "storageLocation": "default",
@@ -975,7 +975,7 @@
               "typeString": "uint256"
             },
             "typeName": {
-              "id": 4800,
+              "id": 4855,
               "name": "uint",
               "nodeType": "ElementaryTypeName",
               "src": "1455:4:4",
@@ -987,7 +987,7 @@
             "value": {
               "argumentTypes": null,
               "hexValue": "3530303430",
-              "id": 4801,
+              "id": 4856,
               "isConstant": false,
               "isLValue": false,
               "isPure": true,
@@ -1006,10 +1006,10 @@
           },
           {
             "constant": true,
-            "id": 4805,
+            "id": 4860,
             "name": "ERR_SUPERBLOCK_BAD_PARENT_NEW",
             "nodeType": "VariableDeclaration",
-            "scope": 4935,
+            "scope": 4990,
             "src": "1522:51:4",
             "stateVariable": true,
             "storageLocation": "default",
@@ -1018,7 +1018,7 @@
               "typeString": "uint256"
             },
             "typeName": {
-              "id": 4803,
+              "id": 4858,
               "name": "uint",
               "nodeType": "ElementaryTypeName",
               "src": "1522:4:4",
@@ -1030,7 +1030,7 @@
             "value": {
               "argumentTypes": null,
               "hexValue": "3530303431",
-              "id": 4804,
+              "id": 4859,
               "isConstant": false,
               "isLValue": false,
               "isPure": true,
@@ -1049,10 +1049,10 @@
           },
           {
             "constant": true,
-            "id": 4808,
+            "id": 4863,
             "name": "ERR_SUPERBLOCK_BAD_PARENT_INBATTLE",
             "nodeType": "VariableDeclaration",
-            "scope": 4935,
+            "scope": 4990,
             "src": "1579:56:4",
             "stateVariable": true,
             "storageLocation": "default",
@@ -1061,7 +1061,7 @@
               "typeString": "uint256"
             },
             "typeName": {
-              "id": 4806,
+              "id": 4861,
               "name": "uint",
               "nodeType": "ElementaryTypeName",
               "src": "1579:4:4",
@@ -1073,7 +1073,7 @@
             "value": {
               "argumentTypes": null,
               "hexValue": "3530303432",
-              "id": 4807,
+              "id": 4862,
               "isConstant": false,
               "isLValue": false,
               "isPure": true,
@@ -1092,10 +1092,10 @@
           },
           {
             "constant": true,
-            "id": 4811,
+            "id": 4866,
             "name": "ERR_SUPERBLOCK_BAD_PARENT_INVALID",
             "nodeType": "VariableDeclaration",
-            "scope": 4935,
+            "scope": 4990,
             "src": "1641:55:4",
             "stateVariable": true,
             "storageLocation": "default",
@@ -1104,7 +1104,7 @@
               "typeString": "uint256"
             },
             "typeName": {
-              "id": 4809,
+              "id": 4864,
               "name": "uint",
               "nodeType": "ElementaryTypeName",
               "src": "1641:4:4",
@@ -1116,7 +1116,7 @@
             "value": {
               "argumentTypes": null,
               "hexValue": "3530303435",
-              "id": 4810,
+              "id": 4865,
               "isConstant": false,
               "isLValue": false,
               "isPure": true,
@@ -1135,10 +1135,10 @@
           },
           {
             "constant": true,
-            "id": 4814,
+            "id": 4869,
             "name": "ERR_SUPERBLOCK_OWN_CHALLENGE",
             "nodeType": "VariableDeclaration",
-            "scope": 4935,
+            "scope": 4990,
             "src": "1703:50:4",
             "stateVariable": true,
             "storageLocation": "default",
@@ -1147,7 +1147,7 @@
               "typeString": "uint256"
             },
             "typeName": {
-              "id": 4812,
+              "id": 4867,
               "name": "uint",
               "nodeType": "ElementaryTypeName",
               "src": "1703:4:4",
@@ -1159,7 +1159,7 @@
             "value": {
               "argumentTypes": null,
               "hexValue": "3530303535",
-              "id": 4813,
+              "id": 4868,
               "isConstant": false,
               "isLValue": false,
               "isPure": true,
@@ -1178,10 +1178,10 @@
           },
           {
             "constant": true,
-            "id": 4817,
+            "id": 4872,
             "name": "ERR_SUPERBLOCK_BAD_PREV_TIMESTAMP",
             "nodeType": "VariableDeclaration",
-            "scope": 4935,
+            "scope": 4990,
             "src": "1759:55:4",
             "stateVariable": true,
             "storageLocation": "default",
@@ -1190,7 +1190,7 @@
               "typeString": "uint256"
             },
             "typeName": {
-              "id": 4815,
+              "id": 4870,
               "name": "uint",
               "nodeType": "ElementaryTypeName",
               "src": "1759:4:4",
@@ -1202,7 +1202,7 @@
             "value": {
               "argumentTypes": null,
               "hexValue": "3530303536",
-              "id": 4816,
+              "id": 4871,
               "isConstant": false,
               "isLValue": false,
               "isPure": true,
@@ -1221,10 +1221,10 @@
           },
           {
             "constant": true,
-            "id": 4820,
+            "id": 4875,
             "name": "ERR_SUPERBLOCK_BITS_SUPERBLOCK",
             "nodeType": "VariableDeclaration",
-            "scope": 4935,
+            "scope": 4990,
             "src": "1820:52:4",
             "stateVariable": true,
             "storageLocation": "default",
@@ -1233,7 +1233,7 @@
               "typeString": "uint256"
             },
             "typeName": {
-              "id": 4818,
+              "id": 4873,
               "name": "uint",
               "nodeType": "ElementaryTypeName",
               "src": "1820:4:4",
@@ -1245,7 +1245,7 @@
             "value": {
               "argumentTypes": null,
               "hexValue": "3530303537",
-              "id": 4819,
+              "id": 4874,
               "isConstant": false,
               "isLValue": false,
               "isPure": true,
@@ -1264,10 +1264,10 @@
           },
           {
             "constant": true,
-            "id": 4823,
+            "id": 4878,
             "name": "ERR_SUPERBLOCK_BITS_PREVBLOCK",
             "nodeType": "VariableDeclaration",
-            "scope": 4935,
+            "scope": 4990,
             "src": "1878:51:4",
             "stateVariable": true,
             "storageLocation": "default",
@@ -1276,7 +1276,7 @@
               "typeString": "uint256"
             },
             "typeName": {
-              "id": 4821,
+              "id": 4876,
               "name": "uint",
               "nodeType": "ElementaryTypeName",
               "src": "1878:4:4",
@@ -1288,7 +1288,7 @@
             "value": {
               "argumentTypes": null,
               "hexValue": "3530303538",
-              "id": 4822,
+              "id": 4877,
               "isConstant": false,
               "isLValue": false,
               "isPure": true,
@@ -1307,10 +1307,10 @@
           },
           {
             "constant": true,
-            "id": 4826,
+            "id": 4881,
             "name": "ERR_SUPERBLOCK_HASH_SUPERBLOCK",
             "nodeType": "VariableDeclaration",
-            "scope": 4935,
+            "scope": 4990,
             "src": "1935:52:4",
             "stateVariable": true,
             "storageLocation": "default",
@@ -1319,7 +1319,7 @@
               "typeString": "uint256"
             },
             "typeName": {
-              "id": 4824,
+              "id": 4879,
               "name": "uint",
               "nodeType": "ElementaryTypeName",
               "src": "1935:4:4",
@@ -1331,7 +1331,7 @@
             "value": {
               "argumentTypes": null,
               "hexValue": "3530303539",
-              "id": 4825,
+              "id": 4880,
               "isConstant": false,
               "isLValue": false,
               "isPure": true,
@@ -1350,10 +1350,10 @@
           },
           {
             "constant": true,
-            "id": 4829,
+            "id": 4884,
             "name": "ERR_SUPERBLOCK_HASH_PREVBLOCK",
             "nodeType": "VariableDeclaration",
-            "scope": 4935,
+            "scope": 4990,
             "src": "1993:51:4",
             "stateVariable": true,
             "storageLocation": "default",
@@ -1362,7 +1362,7 @@
               "typeString": "uint256"
             },
             "typeName": {
-              "id": 4827,
+              "id": 4882,
               "name": "uint",
               "nodeType": "ElementaryTypeName",
               "src": "1993:4:4",
@@ -1374,7 +1374,7 @@
             "value": {
               "argumentTypes": null,
               "hexValue": "3530303630",
-              "id": 4828,
+              "id": 4883,
               "isConstant": false,
               "isLValue": false,
               "isPure": true,
@@ -1393,10 +1393,10 @@
           },
           {
             "constant": true,
-            "id": 4832,
+            "id": 4887,
             "name": "ERR_SUPERBLOCK_HASH_PREVSUPERBLOCK",
             "nodeType": "VariableDeclaration",
-            "scope": 4935,
+            "scope": 4990,
             "src": "2050:56:4",
             "stateVariable": true,
             "storageLocation": "default",
@@ -1405,7 +1405,7 @@
               "typeString": "uint256"
             },
             "typeName": {
-              "id": 4830,
+              "id": 4885,
               "name": "uint",
               "nodeType": "ElementaryTypeName",
               "src": "2050:4:4",
@@ -1417,7 +1417,7 @@
             "value": {
               "argumentTypes": null,
               "hexValue": "3530303631",
-              "id": 4831,
+              "id": 4886,
               "isConstant": false,
               "isLValue": false,
               "isPure": true,
@@ -1436,10 +1436,10 @@
           },
           {
             "constant": true,
-            "id": 4835,
+            "id": 4890,
             "name": "ERR_SUPERBLOCK_MAX_INPROGRESS",
             "nodeType": "VariableDeclaration",
-            "scope": 4935,
+            "scope": 4990,
             "src": "2112:51:4",
             "stateVariable": true,
             "storageLocation": "default",
@@ -1448,7 +1448,7 @@
               "typeString": "uint256"
             },
             "typeName": {
-              "id": 4833,
+              "id": 4888,
               "name": "uint",
               "nodeType": "ElementaryTypeName",
               "src": "2112:4:4",
@@ -1460,7 +1460,7 @@
             "value": {
               "argumentTypes": null,
               "hexValue": "3530303632",
-              "id": 4834,
+              "id": 4889,
               "isConstant": false,
               "isLValue": false,
               "isPure": true,
@@ -1479,10 +1479,10 @@
           },
           {
             "constant": true,
-            "id": 4838,
+            "id": 4893,
             "name": "ERR_SUPERBLOCK_BITS_LASTBLOCK",
             "nodeType": "VariableDeclaration",
-            "scope": 4935,
+            "scope": 4990,
             "src": "2169:51:4",
             "stateVariable": true,
             "storageLocation": "default",
@@ -1491,7 +1491,7 @@
               "typeString": "uint256"
             },
             "typeName": {
-              "id": 4836,
+              "id": 4891,
               "name": "uint",
               "nodeType": "ElementaryTypeName",
               "src": "2169:4:4",
@@ -1503,7 +1503,7 @@
             "value": {
               "argumentTypes": null,
               "hexValue": "3530303634",
-              "id": 4837,
+              "id": 4892,
               "isConstant": false,
               "isLValue": false,
               "isPure": true,
@@ -1522,10 +1522,10 @@
           },
           {
             "constant": true,
-            "id": 4841,
+            "id": 4896,
             "name": "ERR_SUPERBLOCK_MIN_DEPOSIT",
             "nodeType": "VariableDeclaration",
-            "scope": 4935,
+            "scope": 4990,
             "src": "2226:48:4",
             "stateVariable": true,
             "storageLocation": "default",
@@ -1534,7 +1534,7 @@
               "typeString": "uint256"
             },
             "typeName": {
-              "id": 4839,
+              "id": 4894,
               "name": "uint",
               "nodeType": "ElementaryTypeName",
               "src": "2226:4:4",
@@ -1546,7 +1546,7 @@
             "value": {
               "argumentTypes": null,
               "hexValue": "3530303635",
-              "id": 4840,
+              "id": 4895,
               "isConstant": false,
               "isLValue": false,
               "isPure": true,
@@ -1565,10 +1565,10 @@
           },
           {
             "constant": true,
-            "id": 4844,
+            "id": 4899,
             "name": "ERR_SUPERBLOCK_BITS_INTERIM_PREVBLOCK",
             "nodeType": "VariableDeclaration",
-            "scope": 4935,
+            "scope": 4990,
             "src": "2280:59:4",
             "stateVariable": true,
             "storageLocation": "default",
@@ -1577,7 +1577,7 @@
               "typeString": "uint256"
             },
             "typeName": {
-              "id": 4842,
+              "id": 4897,
               "name": "uint",
               "nodeType": "ElementaryTypeName",
               "src": "2280:4:4",
@@ -1589,7 +1589,7 @@
             "value": {
               "argumentTypes": null,
               "hexValue": "3530303636",
-              "id": 4843,
+              "id": 4898,
               "isConstant": false,
               "isLValue": false,
               "isPure": true,
@@ -1608,10 +1608,10 @@
           },
           {
             "constant": true,
-            "id": 4847,
+            "id": 4902,
             "name": "ERR_SUPERBLOCK_HASH_INTERIM_PREVBLOCK",
             "nodeType": "VariableDeclaration",
-            "scope": 4935,
+            "scope": 4990,
             "src": "2345:59:4",
             "stateVariable": true,
             "storageLocation": "default",
@@ -1620,7 +1620,7 @@
               "typeString": "uint256"
             },
             "typeName": {
-              "id": 4845,
+              "id": 4900,
               "name": "uint",
               "nodeType": "ElementaryTypeName",
               "src": "2345:4:4",
@@ -1632,7 +1632,7 @@
             "value": {
               "argumentTypes": null,
               "hexValue": "3530303637",
-              "id": 4846,
+              "id": 4901,
               "isConstant": false,
               "isLValue": false,
               "isPure": true,
@@ -1651,10 +1651,10 @@
           },
           {
             "constant": true,
-            "id": 4850,
+            "id": 4905,
             "name": "ERR_SUPERBLOCK_BAD_TIMESTAMP_AVERAGE",
             "nodeType": "VariableDeclaration",
-            "scope": 4935,
+            "scope": 4990,
             "src": "2410:58:4",
             "stateVariable": true,
             "storageLocation": "default",
@@ -1663,7 +1663,7 @@
               "typeString": "uint256"
             },
             "typeName": {
-              "id": 4848,
+              "id": 4903,
               "name": "uint",
               "nodeType": "ElementaryTypeName",
               "src": "2410:4:4",
@@ -1675,7 +1675,7 @@
             "value": {
               "argumentTypes": null,
               "hexValue": "3530303638",
-              "id": 4849,
+              "id": 4904,
               "isConstant": false,
               "isLValue": false,
               "isPure": true,
@@ -1694,10 +1694,10 @@
           },
           {
             "constant": true,
-            "id": 4853,
+            "id": 4908,
             "name": "ERR_SUPERBLOCK_BAD_TIMESTAMP_MTP",
             "nodeType": "VariableDeclaration",
-            "scope": 4935,
+            "scope": 4990,
             "src": "2474:54:4",
             "stateVariable": true,
             "storageLocation": "default",
@@ -1706,7 +1706,7 @@
               "typeString": "uint256"
             },
             "typeName": {
-              "id": 4851,
+              "id": 4906,
               "name": "uint",
               "nodeType": "ElementaryTypeName",
               "src": "2474:4:4",
@@ -1718,7 +1718,7 @@
             "value": {
               "argumentTypes": null,
               "hexValue": "3530303639",
-              "id": 4852,
+              "id": 4907,
               "isConstant": false,
               "isLValue": false,
               "isPure": true,
@@ -1737,10 +1737,10 @@
           },
           {
             "constant": true,
-            "id": 4856,
+            "id": 4911,
             "name": "ERR_SUPERBLOCK_NOT_CLAIMMANAGER",
             "nodeType": "VariableDeclaration",
-            "scope": 4935,
+            "scope": 4990,
             "src": "2535:53:4",
             "stateVariable": true,
             "storageLocation": "default",
@@ -1749,7 +1749,7 @@
               "typeString": "uint256"
             },
             "typeName": {
-              "id": 4854,
+              "id": 4909,
               "name": "uint",
               "nodeType": "ElementaryTypeName",
               "src": "2535:4:4",
@@ -1761,7 +1761,7 @@
             "value": {
               "argumentTypes": null,
               "hexValue": "3530303730",
-              "id": 4855,
+              "id": 4910,
               "isConstant": false,
               "isLValue": false,
               "isPure": true,
@@ -1780,10 +1780,10 @@
           },
           {
             "constant": true,
-            "id": 4859,
+            "id": 4914,
             "name": "ERR_SUPERBLOCK_MISMATCH_TIMESTAMP_MTP",
             "nodeType": "VariableDeclaration",
-            "scope": 4935,
+            "scope": 4990,
             "src": "2594:59:4",
             "stateVariable": true,
             "storageLocation": "default",
@@ -1792,7 +1792,7 @@
               "typeString": "uint256"
             },
             "typeName": {
-              "id": 4857,
+              "id": 4912,
               "name": "uint",
               "nodeType": "ElementaryTypeName",
               "src": "2594:4:4",
@@ -1804,7 +1804,7 @@
             "value": {
               "argumentTypes": null,
               "hexValue": "3530303731",
-              "id": 4858,
+              "id": 4913,
               "isConstant": false,
               "isLValue": false,
               "isPure": true,
@@ -1823,10 +1823,10 @@
           },
           {
             "constant": true,
-            "id": 4862,
+            "id": 4917,
             "name": "ERR_SUPERBLOCK_TOOSMALL_TIMESTAMP_MTP",
             "nodeType": "VariableDeclaration",
-            "scope": 4935,
+            "scope": 4990,
             "src": "2659:59:4",
             "stateVariable": true,
             "storageLocation": "default",
@@ -1835,7 +1835,7 @@
               "typeString": "uint256"
             },
             "typeName": {
-              "id": 4860,
+              "id": 4915,
               "name": "uint",
               "nodeType": "ElementaryTypeName",
               "src": "2659:4:4",
@@ -1847,7 +1847,7 @@
             "value": {
               "argumentTypes": null,
               "hexValue": "3530303732",
-              "id": 4861,
+              "id": 4916,
               "isConstant": false,
               "isLValue": false,
               "isPure": true,
@@ -1866,10 +1866,10 @@
           },
           {
             "constant": true,
-            "id": 4865,
+            "id": 4920,
             "name": "ERR_SUPERBLOCK_BAD_CLAIM",
             "nodeType": "VariableDeclaration",
-            "scope": 4935,
+            "scope": 4990,
             "src": "2725:46:4",
             "stateVariable": true,
             "storageLocation": "default",
@@ -1878,7 +1878,7 @@
               "typeString": "uint256"
             },
             "typeName": {
-              "id": 4863,
+              "id": 4918,
               "name": "uint",
               "nodeType": "ElementaryTypeName",
               "src": "2725:4:4",
@@ -1890,7 +1890,7 @@
             "value": {
               "argumentTypes": null,
               "hexValue": "3530303830",
-              "id": 4864,
+              "id": 4919,
               "isConstant": false,
               "isLValue": false,
               "isPure": true,
@@ -1909,10 +1909,10 @@
           },
           {
             "constant": true,
-            "id": 4868,
+            "id": 4923,
             "name": "ERR_SUPERBLOCK_VERIFICATION_PENDING",
             "nodeType": "VariableDeclaration",
-            "scope": 4935,
+            "scope": 4990,
             "src": "2777:57:4",
             "stateVariable": true,
             "storageLocation": "default",
@@ -1921,7 +1921,7 @@
               "typeString": "uint256"
             },
             "typeName": {
-              "id": 4866,
+              "id": 4921,
               "name": "uint",
               "nodeType": "ElementaryTypeName",
               "src": "2777:4:4",
@@ -1933,7 +1933,7 @@
             "value": {
               "argumentTypes": null,
               "hexValue": "3530303930",
-              "id": 4867,
+              "id": 4922,
               "isConstant": false,
               "isLValue": false,
               "isPure": true,
@@ -1952,10 +1952,10 @@
           },
           {
             "constant": true,
-            "id": 4871,
+            "id": 4926,
             "name": "ERR_SUPERBLOCK_CLAIM_DECIDED",
             "nodeType": "VariableDeclaration",
-            "scope": 4935,
+            "scope": 4990,
             "src": "2840:50:4",
             "stateVariable": true,
             "storageLocation": "default",
@@ -1964,7 +1964,7 @@
               "typeString": "uint256"
             },
             "typeName": {
-              "id": 4869,
+              "id": 4924,
               "name": "uint",
               "nodeType": "ElementaryTypeName",
               "src": "2840:4:4",
@@ -1976,7 +1976,7 @@
             "value": {
               "argumentTypes": null,
               "hexValue": "3530313030",
-              "id": 4870,
+              "id": 4925,
               "isConstant": false,
               "isLValue": false,
               "isPure": true,
@@ -1995,10 +1995,10 @@
           },
           {
             "constant": true,
-            "id": 4874,
+            "id": 4929,
             "name": "ERR_SUPERBLOCK_CHALLENGE_EXISTS",
             "nodeType": "VariableDeclaration",
-            "scope": 4935,
+            "scope": 4990,
             "src": "2896:53:4",
             "stateVariable": true,
             "storageLocation": "default",
@@ -2007,7 +2007,7 @@
               "typeString": "uint256"
             },
             "typeName": {
-              "id": 4872,
+              "id": 4927,
               "name": "uint",
               "nodeType": "ElementaryTypeName",
               "src": "2896:4:4",
@@ -2019,7 +2019,7 @@
             "value": {
               "argumentTypes": null,
               "hexValue": "3530313130",
-              "id": 4873,
+              "id": 4928,
               "isConstant": false,
               "isLValue": false,
               "isPure": true,
@@ -2038,10 +2038,10 @@
           },
           {
             "constant": true,
-            "id": 4877,
+            "id": 4932,
             "name": "ERR_SUPERBLOCK_BAD_ACCUMULATED_WORK",
             "nodeType": "VariableDeclaration",
-            "scope": 4935,
+            "scope": 4990,
             "src": "2956:57:4",
             "stateVariable": true,
             "storageLocation": "default",
@@ -2050,7 +2050,7 @@
               "typeString": "uint256"
             },
             "typeName": {
-              "id": 4875,
+              "id": 4930,
               "name": "uint",
               "nodeType": "ElementaryTypeName",
               "src": "2956:4:4",
@@ -2062,7 +2062,7 @@
             "value": {
               "argumentTypes": null,
               "hexValue": "3530313230",
-              "id": 4876,
+              "id": 4931,
               "isConstant": false,
               "isLValue": false,
               "isPure": true,
@@ -2081,10 +2081,10 @@
           },
           {
             "constant": true,
-            "id": 4880,
+            "id": 4935,
             "name": "ERR_SUPERBLOCK_BAD_BITS",
             "nodeType": "VariableDeclaration",
-            "scope": 4935,
+            "scope": 4990,
             "src": "3019:45:4",
             "stateVariable": true,
             "storageLocation": "default",
@@ -2093,7 +2093,7 @@
               "typeString": "uint256"
             },
             "typeName": {
-              "id": 4878,
+              "id": 4933,
               "name": "uint",
               "nodeType": "ElementaryTypeName",
               "src": "3019:4:4",
@@ -2105,7 +2105,7 @@
             "value": {
               "argumentTypes": null,
               "hexValue": "3530313330",
-              "id": 4879,
+              "id": 4934,
               "isConstant": false,
               "isLValue": false,
               "isPure": true,
@@ -2124,10 +2124,10 @@
           },
           {
             "constant": true,
-            "id": 4883,
+            "id": 4938,
             "name": "ERR_SUPERBLOCK_MISSING_CONFIRMATIONS",
             "nodeType": "VariableDeclaration",
-            "scope": 4935,
+            "scope": 4990,
             "src": "3070:58:4",
             "stateVariable": true,
             "storageLocation": "default",
@@ -2136,7 +2136,7 @@
               "typeString": "uint256"
             },
             "typeName": {
-              "id": 4881,
+              "id": 4936,
               "name": "uint",
               "nodeType": "ElementaryTypeName",
               "src": "3070:4:4",
@@ -2148,7 +2148,7 @@
             "value": {
               "argumentTypes": null,
               "hexValue": "3530313430",
-              "id": 4882,
+              "id": 4937,
               "isConstant": false,
               "isLValue": false,
               "isPure": true,
@@ -2167,10 +2167,10 @@
           },
           {
             "constant": true,
-            "id": 4886,
+            "id": 4941,
             "name": "ERR_SUPERBLOCK_BAD_LASTBLOCK",
             "nodeType": "VariableDeclaration",
-            "scope": 4935,
+            "scope": 4990,
             "src": "3134:50:4",
             "stateVariable": true,
             "storageLocation": "default",
@@ -2179,7 +2179,7 @@
               "typeString": "uint256"
             },
             "typeName": {
-              "id": 4884,
+              "id": 4939,
               "name": "uint",
               "nodeType": "ElementaryTypeName",
               "src": "3134:4:4",
@@ -2191,7 +2191,7 @@
             "value": {
               "argumentTypes": null,
               "hexValue": "3530313530",
-              "id": 4885,
+              "id": 4940,
               "isConstant": false,
               "isLValue": false,
               "isPure": true,
@@ -2210,10 +2210,10 @@
           },
           {
             "constant": true,
-            "id": 4889,
+            "id": 4944,
             "name": "ERR_SUPERBLOCK_BAD_LASTBLOCK_STATUS",
             "nodeType": "VariableDeclaration",
-            "scope": 4935,
+            "scope": 4990,
             "src": "3190:57:4",
             "stateVariable": true,
             "storageLocation": "default",
@@ -2222,7 +2222,7 @@
               "typeString": "uint256"
             },
             "typeName": {
-              "id": 4887,
+              "id": 4942,
               "name": "uint",
               "nodeType": "ElementaryTypeName",
               "src": "3190:4:4",
@@ -2234,7 +2234,7 @@
             "value": {
               "argumentTypes": null,
               "hexValue": "3530313630",
-              "id": 4888,
+              "id": 4943,
               "isConstant": false,
               "isLValue": false,
               "isPure": true,
@@ -2253,10 +2253,10 @@
           },
           {
             "constant": true,
-            "id": 4892,
+            "id": 4947,
             "name": "ERR_SUPERBLOCK_BAD_BLOCKHEIGHT",
             "nodeType": "VariableDeclaration",
-            "scope": 4935,
+            "scope": 4990,
             "src": "3253:52:4",
             "stateVariable": true,
             "storageLocation": "default",
@@ -2265,7 +2265,7 @@
               "typeString": "uint256"
             },
             "typeName": {
-              "id": 4890,
+              "id": 4945,
               "name": "uint",
               "nodeType": "ElementaryTypeName",
               "src": "3253:4:4",
@@ -2277,7 +2277,7 @@
             "value": {
               "argumentTypes": null,
               "hexValue": "3530313730",
-              "id": 4891,
+              "id": 4946,
               "isConstant": false,
               "isLValue": false,
               "isPure": true,
@@ -2296,10 +2296,10 @@
           },
           {
             "constant": true,
-            "id": 4895,
+            "id": 4950,
             "name": "ERR_SUPERBLOCK_BAD_PREVBLOCK",
             "nodeType": "VariableDeclaration",
-            "scope": 4935,
+            "scope": 4990,
             "src": "3311:50:4",
             "stateVariable": true,
             "storageLocation": "default",
@@ -2308,7 +2308,7 @@
               "typeString": "uint256"
             },
             "typeName": {
-              "id": 4893,
+              "id": 4948,
               "name": "uint",
               "nodeType": "ElementaryTypeName",
               "src": "3311:4:4",
@@ -2320,7 +2320,7 @@
             "value": {
               "argumentTypes": null,
               "hexValue": "3530313930",
-              "id": 4894,
+              "id": 4949,
               "isConstant": false,
               "isLValue": false,
               "isPure": true,
@@ -2339,10 +2339,10 @@
           },
           {
             "constant": true,
-            "id": 4898,
+            "id": 4953,
             "name": "ERR_SUPERBLOCK_CLAIM_ALREADY_DEFENDED",
             "nodeType": "VariableDeclaration",
-            "scope": 4935,
+            "scope": 4990,
             "src": "3367:59:4",
             "stateVariable": true,
             "storageLocation": "default",
@@ -2351,7 +2351,7 @@
               "typeString": "uint256"
             },
             "typeName": {
-              "id": 4896,
+              "id": 4951,
               "name": "uint",
               "nodeType": "ElementaryTypeName",
               "src": "3367:4:4",
@@ -2363,7 +2363,7 @@
             "value": {
               "argumentTypes": null,
               "hexValue": "3530323030",
-              "id": 4897,
+              "id": 4952,
               "isConstant": false,
               "isLValue": false,
               "isPure": true,
@@ -2382,10 +2382,10 @@
           },
           {
             "constant": true,
-            "id": 4901,
+            "id": 4956,
             "name": "ERR_SUPERBLOCK_BAD_MISMATCH",
             "nodeType": "VariableDeclaration",
-            "scope": 4935,
+            "scope": 4990,
             "src": "3432:49:4",
             "stateVariable": true,
             "storageLocation": "default",
@@ -2394,7 +2394,7 @@
               "typeString": "uint256"
             },
             "typeName": {
-              "id": 4899,
+              "id": 4954,
               "name": "uint",
               "nodeType": "ElementaryTypeName",
               "src": "3432:4:4",
@@ -2406,7 +2406,7 @@
             "value": {
               "argumentTypes": null,
               "hexValue": "3530323130",
-              "id": 4900,
+              "id": 4955,
               "isConstant": false,
               "isLValue": false,
               "isPure": true,
@@ -2425,10 +2425,10 @@
           },
           {
             "constant": true,
-            "id": 4904,
+            "id": 4959,
             "name": "ERR_SUPERBLOCK_INTERIMBLOCK_MISSING",
             "nodeType": "VariableDeclaration",
-            "scope": 4935,
+            "scope": 4990,
             "src": "3487:57:4",
             "stateVariable": true,
             "storageLocation": "default",
@@ -2437,7 +2437,7 @@
               "typeString": "uint256"
             },
             "typeName": {
-              "id": 4902,
+              "id": 4957,
               "name": "uint",
               "nodeType": "ElementaryTypeName",
               "src": "3487:4:4",
@@ -2449,7 +2449,7 @@
             "value": {
               "argumentTypes": null,
               "hexValue": "3530323230",
-              "id": 4903,
+              "id": 4958,
               "isConstant": false,
               "isLValue": false,
               "isPure": true,
@@ -2468,10 +2468,10 @@
           },
           {
             "constant": true,
-            "id": 4907,
+            "id": 4962,
             "name": "ERR_SUPERBLOCK_BAD_INTERIM_PREVHASH",
             "nodeType": "VariableDeclaration",
-            "scope": 4935,
+            "scope": 4990,
             "src": "3550:57:4",
             "stateVariable": true,
             "storageLocation": "default",
@@ -2480,7 +2480,7 @@
               "typeString": "uint256"
             },
             "typeName": {
-              "id": 4905,
+              "id": 4960,
               "name": "uint",
               "nodeType": "ElementaryTypeName",
               "src": "3550:4:4",
@@ -2492,7 +2492,7 @@
             "value": {
               "argumentTypes": null,
               "hexValue": "3530323330",
-              "id": 4906,
+              "id": 4961,
               "isConstant": false,
               "isLValue": false,
               "isPure": true,
@@ -2511,10 +2511,10 @@
           },
           {
             "constant": true,
-            "id": 4910,
+            "id": 4965,
             "name": "ERR_SUPERBLOCK_BAD_INTERIM_BLOCKINDEX",
             "nodeType": "VariableDeclaration",
-            "scope": 4935,
+            "scope": 4990,
             "src": "3613:59:4",
             "stateVariable": true,
             "storageLocation": "default",
@@ -2523,7 +2523,7 @@
               "typeString": "uint256"
             },
             "typeName": {
-              "id": 4908,
+              "id": 4963,
               "name": "uint",
               "nodeType": "ElementaryTypeName",
               "src": "3613:4:4",
@@ -2535,7 +2535,7 @@
             "value": {
               "argumentTypes": null,
               "hexValue": "3530323430",
-              "id": 4909,
+              "id": 4964,
               "isConstant": false,
               "isLValue": false,
               "isPure": true,
@@ -2554,10 +2554,10 @@
           },
           {
             "constant": true,
-            "id": 4913,
+            "id": 4968,
             "name": "ERR_BAD_FEE",
             "nodeType": "VariableDeclaration",
-            "scope": 4935,
+            "scope": 4990,
             "src": "3712:33:4",
             "stateVariable": true,
             "storageLocation": "default",
@@ -2566,7 +2566,7 @@
               "typeString": "uint256"
             },
             "typeName": {
-              "id": 4911,
+              "id": 4966,
               "name": "uint",
               "nodeType": "ElementaryTypeName",
               "src": "3712:4:4",
@@ -2578,7 +2578,7 @@
             "value": {
               "argumentTypes": null,
               "hexValue": "3230303130",
-              "id": 4912,
+              "id": 4967,
               "isConstant": false,
               "isLValue": false,
               "isPure": true,
@@ -2597,10 +2597,10 @@
           },
           {
             "constant": true,
-            "id": 4916,
+            "id": 4971,
             "name": "ERR_CONFIRMATIONS",
             "nodeType": "VariableDeclaration",
-            "scope": 4935,
+            "scope": 4990,
             "src": "3751:39:4",
             "stateVariable": true,
             "storageLocation": "default",
@@ -2609,7 +2609,7 @@
               "typeString": "uint256"
             },
             "typeName": {
-              "id": 4914,
+              "id": 4969,
               "name": "uint",
               "nodeType": "ElementaryTypeName",
               "src": "3751:4:4",
@@ -2621,7 +2621,7 @@
             "value": {
               "argumentTypes": null,
               "hexValue": "3230303230",
-              "id": 4915,
+              "id": 4970,
               "isConstant": false,
               "isLValue": false,
               "isPure": true,
@@ -2640,10 +2640,10 @@
           },
           {
             "constant": true,
-            "id": 4919,
+            "id": 4974,
             "name": "ERR_CHAIN",
             "nodeType": "VariableDeclaration",
-            "scope": 4935,
+            "scope": 4990,
             "src": "3796:31:4",
             "stateVariable": true,
             "storageLocation": "default",
@@ -2652,7 +2652,7 @@
               "typeString": "uint256"
             },
             "typeName": {
-              "id": 4917,
+              "id": 4972,
               "name": "uint",
               "nodeType": "ElementaryTypeName",
               "src": "3796:4:4",
@@ -2664,7 +2664,7 @@
             "value": {
               "argumentTypes": null,
               "hexValue": "3230303330",
-              "id": 4918,
+              "id": 4973,
               "isConstant": false,
               "isLValue": false,
               "isPure": true,
@@ -2683,10 +2683,10 @@
           },
           {
             "constant": true,
-            "id": 4922,
+            "id": 4977,
             "name": "ERR_SUPERBLOCK",
             "nodeType": "VariableDeclaration",
-            "scope": 4935,
+            "scope": 4990,
             "src": "3833:36:4",
             "stateVariable": true,
             "storageLocation": "default",
@@ -2695,7 +2695,7 @@
               "typeString": "uint256"
             },
             "typeName": {
-              "id": 4920,
+              "id": 4975,
               "name": "uint",
               "nodeType": "ElementaryTypeName",
               "src": "3833:4:4",
@@ -2707,7 +2707,7 @@
             "value": {
               "argumentTypes": null,
               "hexValue": "3230303430",
-              "id": 4921,
+              "id": 4976,
               "isConstant": false,
               "isLValue": false,
               "isPure": true,
@@ -2726,10 +2726,10 @@
           },
           {
             "constant": true,
-            "id": 4925,
+            "id": 4980,
             "name": "ERR_MERKLE_ROOT",
             "nodeType": "VariableDeclaration",
-            "scope": 4935,
+            "scope": 4990,
             "src": "3875:37:4",
             "stateVariable": true,
             "storageLocation": "default",
@@ -2738,7 +2738,7 @@
               "typeString": "uint256"
             },
             "typeName": {
-              "id": 4923,
+              "id": 4978,
               "name": "uint",
               "nodeType": "ElementaryTypeName",
               "src": "3875:4:4",
@@ -2750,7 +2750,7 @@
             "value": {
               "argumentTypes": null,
               "hexValue": "3230303530",
-              "id": 4924,
+              "id": 4979,
               "isConstant": false,
               "isLValue": false,
               "isPure": true,
@@ -2769,10 +2769,10 @@
           },
           {
             "constant": true,
-            "id": 4928,
+            "id": 4983,
             "name": "ERR_TX_64BYTE",
             "nodeType": "VariableDeclaration",
-            "scope": 4935,
+            "scope": 4990,
             "src": "3918:35:4",
             "stateVariable": true,
             "storageLocation": "default",
@@ -2781,7 +2781,7 @@
               "typeString": "uint256"
             },
             "typeName": {
-              "id": 4926,
+              "id": 4981,
               "name": "uint",
               "nodeType": "ElementaryTypeName",
               "src": "3918:4:4",
@@ -2793,7 +2793,7 @@
             "value": {
               "argumentTypes": null,
               "hexValue": "3230303630",
-              "id": 4927,
+              "id": 4982,
               "isConstant": false,
               "isLValue": false,
               "isPure": true,
@@ -2812,10 +2812,10 @@
           },
           {
             "constant": true,
-            "id": 4931,
+            "id": 4986,
             "name": "ERR_RELAY_VERIFY",
             "nodeType": "VariableDeclaration",
-            "scope": 4935,
+            "scope": 4990,
             "src": "3990:38:4",
             "stateVariable": true,
             "storageLocation": "default",
@@ -2824,7 +2824,7 @@
               "typeString": "uint256"
             },
             "typeName": {
-              "id": 4929,
+              "id": 4984,
               "name": "uint",
               "nodeType": "ElementaryTypeName",
               "src": "3990:4:4",
@@ -2836,7 +2836,7 @@
             "value": {
               "argumentTypes": null,
               "hexValue": "3330303130",
-              "id": 4930,
+              "id": 4985,
               "isConstant": false,
               "isLValue": false,
               "isPure": true,
@@ -2855,10 +2855,10 @@
           },
           {
             "constant": true,
-            "id": 4934,
+            "id": 4989,
             "name": "minProposalDeposit",
             "nodeType": "VariableDeclaration",
-            "scope": 4935,
+            "scope": 4990,
             "src": "4034:61:4",
             "stateVariable": true,
             "storageLocation": "default",
@@ -2867,7 +2867,7 @@
               "typeString": "uint256"
             },
             "typeName": {
-              "id": 4932,
+              "id": 4987,
               "name": "uint",
               "nodeType": "ElementaryTypeName",
               "src": "4034:4:4",
@@ -2879,7 +2879,7 @@
             "value": {
               "argumentTypes": null,
               "hexValue": "33303030303030303030303030303030303030",
-              "id": 4933,
+              "id": 4988,
               "isConstant": false,
               "isLValue": false,
               "isPure": true,
@@ -2897,7 +2897,7 @@
             "visibility": "public"
           }
         ],
-        "scope": 4936,
+        "scope": 4991,
         "src": "67:4031:4"
       }
     ],
@@ -2907,14 +2907,14 @@
     "absolutePath": "/Users/jsidhu/Documents/GitHub/sysethereum-contracts1/contracts/SyscoinErrorCodes.sol",
     "exportedSymbols": {
       "SyscoinErrorCodes": [
-        4935
+        4990
       ]
     },
-    "id": 4936,
+    "id": 4991,
     "nodeType": "SourceUnit",
     "nodes": [
       {
-        "id": 4736,
+        "id": 4791,
         "literals": [
           "solidity",
           "^",
@@ -2930,19 +2930,19 @@
         "contractKind": "contract",
         "documentation": null,
         "fullyImplemented": true,
-        "id": 4935,
+        "id": 4990,
         "linearizedBaseContracts": [
-          4935
+          4990
         ],
         "name": "SyscoinErrorCodes",
         "nodeType": "ContractDefinition",
         "nodes": [
           {
             "constant": true,
-            "id": 4739,
+            "id": 4794,
             "name": "ERR_INVALID_HEADER",
             "nodeType": "VariableDeclaration",
-            "scope": 4935,
+            "scope": 4990,
             "src": "119:40:4",
             "stateVariable": true,
             "storageLocation": "default",
@@ -2951,7 +2951,7 @@
               "typeString": "uint256"
             },
             "typeName": {
-              "id": 4737,
+              "id": 4792,
               "name": "uint",
               "nodeType": "ElementaryTypeName",
               "src": "119:4:4",
@@ -2963,7 +2963,7 @@
             "value": {
               "argumentTypes": null,
               "hexValue": "3130303530",
-              "id": 4738,
+              "id": 4793,
               "isConstant": false,
               "isLValue": false,
               "isPure": true,
@@ -2982,10 +2982,10 @@
           },
           {
             "constant": true,
-            "id": 4742,
+            "id": 4797,
             "name": "ERR_COINBASE_INDEX",
             "nodeType": "VariableDeclaration",
-            "scope": 4935,
+            "scope": 4990,
             "src": "165:40:4",
             "stateVariable": true,
             "storageLocation": "default",
@@ -2994,7 +2994,7 @@
               "typeString": "uint256"
             },
             "typeName": {
-              "id": 4740,
+              "id": 4795,
               "name": "uint",
               "nodeType": "ElementaryTypeName",
               "src": "165:4:4",
@@ -3006,7 +3006,7 @@
             "value": {
               "argumentTypes": null,
               "hexValue": "3130303630",
-              "id": 4741,
+              "id": 4796,
               "isConstant": false,
               "isLValue": false,
               "isPure": true,
@@ -3025,10 +3025,10 @@
           },
           {
             "constant": true,
-            "id": 4745,
+            "id": 4800,
             "name": "ERR_NOT_MERGE_MINED",
             "nodeType": "VariableDeclaration",
-            "scope": 4935,
+            "scope": 4990,
             "src": "262:41:4",
             "stateVariable": true,
             "storageLocation": "default",
@@ -3037,7 +3037,7 @@
               "typeString": "uint256"
             },
             "typeName": {
-              "id": 4743,
+              "id": 4798,
               "name": "uint",
               "nodeType": "ElementaryTypeName",
               "src": "262:4:4",
@@ -3049,7 +3049,7 @@
             "value": {
               "argumentTypes": null,
               "hexValue": "3130303730",
-              "id": 4744,
+              "id": 4799,
               "isConstant": false,
               "isLValue": false,
               "isPure": true,
@@ -3068,10 +3068,10 @@
           },
           {
             "constant": true,
-            "id": 4748,
+            "id": 4803,
             "name": "ERR_FOUND_TWICE",
             "nodeType": "VariableDeclaration",
-            "scope": 4935,
+            "scope": 4990,
             "src": "370:37:4",
             "stateVariable": true,
             "storageLocation": "default",
@@ -3080,7 +3080,7 @@
               "typeString": "uint256"
             },
             "typeName": {
-              "id": 4746,
+              "id": 4801,
               "name": "uint",
               "nodeType": "ElementaryTypeName",
               "src": "370:4:4",
@@ -3092,7 +3092,7 @@
             "value": {
               "argumentTypes": null,
               "hexValue": "3130303830",
-              "id": 4747,
+              "id": 4802,
               "isConstant": false,
               "isLValue": false,
               "isPure": true,
@@ -3111,10 +3111,10 @@
           },
           {
             "constant": true,
-            "id": 4751,
+            "id": 4806,
             "name": "ERR_NO_MERGE_HEADER",
             "nodeType": "VariableDeclaration",
-            "scope": 4935,
+            "scope": 4990,
             "src": "439:41:4",
             "stateVariable": true,
             "storageLocation": "default",
@@ -3123,7 +3123,7 @@
               "typeString": "uint256"
             },
             "typeName": {
-              "id": 4749,
+              "id": 4804,
               "name": "uint",
               "nodeType": "ElementaryTypeName",
               "src": "439:4:4",
@@ -3135,7 +3135,7 @@
             "value": {
               "argumentTypes": null,
               "hexValue": "3130303930",
-              "id": 4750,
+              "id": 4805,
               "isConstant": false,
               "isLValue": false,
               "isPure": true,
@@ -3154,10 +3154,10 @@
           },
           {
             "constant": true,
-            "id": 4754,
+            "id": 4809,
             "name": "ERR_CHAIN_MERKLE",
             "nodeType": "VariableDeclaration",
-            "scope": 4935,
+            "scope": 4990,
             "src": "510:38:4",
             "stateVariable": true,
             "storageLocation": "default",
@@ -3166,7 +3166,7 @@
               "typeString": "uint256"
             },
             "typeName": {
-              "id": 4752,
+              "id": 4807,
               "name": "uint",
               "nodeType": "ElementaryTypeName",
               "src": "510:4:4",
@@ -3178,7 +3178,7 @@
             "value": {
               "argumentTypes": null,
               "hexValue": "3130313130",
-              "id": 4753,
+              "id": 4808,
               "isConstant": false,
               "isLValue": false,
               "isPure": true,
@@ -3197,10 +3197,10 @@
           },
           {
             "constant": true,
-            "id": 4757,
+            "id": 4812,
             "name": "ERR_PARENT_MERKLE",
             "nodeType": "VariableDeclaration",
-            "scope": 4935,
+            "scope": 4990,
             "src": "554:39:4",
             "stateVariable": true,
             "storageLocation": "default",
@@ -3209,7 +3209,7 @@
               "typeString": "uint256"
             },
             "typeName": {
-              "id": 4755,
+              "id": 4810,
               "name": "uint",
               "nodeType": "ElementaryTypeName",
               "src": "554:4:4",
@@ -3221,7 +3221,7 @@
             "value": {
               "argumentTypes": null,
               "hexValue": "3130313230",
-              "id": 4756,
+              "id": 4811,
               "isConstant": false,
               "isLValue": false,
               "isPure": true,
@@ -3240,10 +3240,10 @@
           },
           {
             "constant": true,
-            "id": 4760,
+            "id": 4815,
             "name": "ERR_PROOF_OF_WORK",
             "nodeType": "VariableDeclaration",
-            "scope": 4935,
+            "scope": 4990,
             "src": "599:39:4",
             "stateVariable": true,
             "storageLocation": "default",
@@ -3252,7 +3252,7 @@
               "typeString": "uint256"
             },
             "typeName": {
-              "id": 4758,
+              "id": 4813,
               "name": "uint",
               "nodeType": "ElementaryTypeName",
               "src": "599:4:4",
@@ -3264,7 +3264,7 @@
             "value": {
               "argumentTypes": null,
               "hexValue": "3130313330",
-              "id": 4759,
+              "id": 4814,
               "isConstant": false,
               "isLValue": false,
               "isPure": true,
@@ -3283,10 +3283,10 @@
           },
           {
             "constant": true,
-            "id": 4763,
+            "id": 4818,
             "name": "ERR_INVALID_HEADER_HASH",
             "nodeType": "VariableDeclaration",
-            "scope": 4935,
+            "scope": 4990,
             "src": "644:45:4",
             "stateVariable": true,
             "storageLocation": "default",
@@ -3295,7 +3295,7 @@
               "typeString": "uint256"
             },
             "typeName": {
-              "id": 4761,
+              "id": 4816,
               "name": "uint",
               "nodeType": "ElementaryTypeName",
               "src": "644:4:4",
@@ -3307,7 +3307,7 @@
             "value": {
               "argumentTypes": null,
               "hexValue": "3130313430",
-              "id": 4762,
+              "id": 4817,
               "isConstant": false,
               "isLValue": false,
               "isPure": true,
@@ -3326,10 +3326,10 @@
           },
           {
             "constant": true,
-            "id": 4766,
+            "id": 4821,
             "name": "ERR_PROOF_OF_WORK_AUXPOW",
             "nodeType": "VariableDeclaration",
-            "scope": 4935,
+            "scope": 4990,
             "src": "695:46:4",
             "stateVariable": true,
             "storageLocation": "default",
@@ -3338,7 +3338,7 @@
               "typeString": "uint256"
             },
             "typeName": {
-              "id": 4764,
+              "id": 4819,
               "name": "uint",
               "nodeType": "ElementaryTypeName",
               "src": "695:4:4",
@@ -3350,7 +3350,7 @@
             "value": {
               "argumentTypes": null,
               "hexValue": "3130313530",
-              "id": 4765,
+              "id": 4820,
               "isConstant": false,
               "isLValue": false,
               "isPure": true,
@@ -3369,10 +3369,10 @@
           },
           {
             "constant": true,
-            "id": 4769,
+            "id": 4824,
             "name": "ERR_PARSE_TX_OUTPUT_LENGTH",
             "nodeType": "VariableDeclaration",
-            "scope": 4935,
+            "scope": 4990,
             "src": "747:48:4",
             "stateVariable": true,
             "storageLocation": "default",
@@ -3381,7 +3381,7 @@
               "typeString": "uint256"
             },
             "typeName": {
-              "id": 4767,
+              "id": 4822,
               "name": "uint",
               "nodeType": "ElementaryTypeName",
               "src": "747:4:4",
@@ -3393,7 +3393,7 @@
             "value": {
               "argumentTypes": null,
               "hexValue": "3130313630",
-              "id": 4768,
+              "id": 4823,
               "isConstant": false,
               "isLValue": false,
               "isPure": true,
@@ -3412,10 +3412,10 @@
           },
           {
             "constant": true,
-            "id": 4772,
+            "id": 4827,
             "name": "ERR_SUPERBLOCK_OK",
             "nodeType": "VariableDeclaration",
-            "scope": 4935,
+            "scope": 4990,
             "src": "803:35:4",
             "stateVariable": true,
             "storageLocation": "default",
@@ -3424,7 +3424,7 @@
               "typeString": "uint256"
             },
             "typeName": {
-              "id": 4770,
+              "id": 4825,
               "name": "uint",
               "nodeType": "ElementaryTypeName",
               "src": "803:4:4",
@@ -3436,7 +3436,7 @@
             "value": {
               "argumentTypes": null,
               "hexValue": "30",
-              "id": 4771,
+              "id": 4826,
               "isConstant": false,
               "isLValue": false,
               "isPure": true,
@@ -3455,10 +3455,10 @@
           },
           {
             "constant": true,
-            "id": 4775,
+            "id": 4830,
             "name": "ERR_SUPERBLOCK_MISSING_BLOCKS",
             "nodeType": "VariableDeclaration",
-            "scope": 4935,
+            "scope": 4990,
             "src": "844:47:4",
             "stateVariable": true,
             "storageLocation": "default",
@@ -3467,7 +3467,7 @@
               "typeString": "uint256"
             },
             "typeName": {
-              "id": 4773,
+              "id": 4828,
               "name": "uint",
               "nodeType": "ElementaryTypeName",
               "src": "844:4:4",
@@ -3479,7 +3479,7 @@
             "value": {
               "argumentTypes": null,
               "hexValue": "31",
-              "id": 4774,
+              "id": 4829,
               "isConstant": false,
               "isLValue": false,
               "isPure": true,
@@ -3498,10 +3498,10 @@
           },
           {
             "constant": true,
-            "id": 4778,
+            "id": 4833,
             "name": "ERR_SUPERBLOCK_BAD_STATUS",
             "nodeType": "VariableDeclaration",
-            "scope": 4935,
+            "scope": 4990,
             "src": "897:47:4",
             "stateVariable": true,
             "storageLocation": "default",
@@ -3510,7 +3510,7 @@
               "typeString": "uint256"
             },
             "typeName": {
-              "id": 4776,
+              "id": 4831,
               "name": "uint",
               "nodeType": "ElementaryTypeName",
               "src": "897:4:4",
@@ -3522,7 +3522,7 @@
             "value": {
               "argumentTypes": null,
               "hexValue": "3530303230",
-              "id": 4777,
+              "id": 4832,
               "isConstant": false,
               "isLValue": false,
               "isPure": true,
@@ -3541,10 +3541,10 @@
           },
           {
             "constant": true,
-            "id": 4781,
+            "id": 4836,
             "name": "ERR_SUPERBLOCK_BAD_SYSCOIN_STATUS",
             "nodeType": "VariableDeclaration",
-            "scope": 4935,
+            "scope": 4990,
             "src": "950:55:4",
             "stateVariable": true,
             "storageLocation": "default",
@@ -3553,7 +3553,7 @@
               "typeString": "uint256"
             },
             "typeName": {
-              "id": 4779,
+              "id": 4834,
               "name": "uint",
               "nodeType": "ElementaryTypeName",
               "src": "950:4:4",
@@ -3565,7 +3565,7 @@
             "value": {
               "argumentTypes": null,
               "hexValue": "3530303235",
-              "id": 4780,
+              "id": 4835,
               "isConstant": false,
               "isLValue": false,
               "isPure": true,
@@ -3584,10 +3584,10 @@
           },
           {
             "constant": true,
-            "id": 4784,
+            "id": 4839,
             "name": "ERR_SUPERBLOCK_TIMEOUT",
             "nodeType": "VariableDeclaration",
-            "scope": 4935,
+            "scope": 4990,
             "src": "1011:44:4",
             "stateVariable": true,
             "storageLocation": "default",
@@ -3596,7 +3596,7 @@
               "typeString": "uint256"
             },
             "typeName": {
-              "id": 4782,
+              "id": 4837,
               "name": "uint",
               "nodeType": "ElementaryTypeName",
               "src": "1011:4:4",
@@ -3608,7 +3608,7 @@
             "value": {
               "argumentTypes": null,
               "hexValue": "3530303236",
-              "id": 4783,
+              "id": 4838,
               "isConstant": false,
               "isLValue": false,
               "isPure": true,
@@ -3627,10 +3627,10 @@
           },
           {
             "constant": true,
-            "id": 4787,
+            "id": 4842,
             "name": "ERR_SUPERBLOCK_NO_TIMEOUT",
             "nodeType": "VariableDeclaration",
-            "scope": 4935,
+            "scope": 4990,
             "src": "1061:47:4",
             "stateVariable": true,
             "storageLocation": "default",
@@ -3639,7 +3639,7 @@
               "typeString": "uint256"
             },
             "typeName": {
-              "id": 4785,
+              "id": 4840,
               "name": "uint",
               "nodeType": "ElementaryTypeName",
               "src": "1061:4:4",
@@ -3651,7 +3651,7 @@
             "value": {
               "argumentTypes": null,
               "hexValue": "3530303330",
-              "id": 4786,
+              "id": 4841,
               "isConstant": false,
               "isLValue": false,
               "isPure": true,
@@ -3670,10 +3670,10 @@
           },
           {
             "constant": true,
-            "id": 4790,
+            "id": 4845,
             "name": "ERR_SUPERBLOCK_BAD_TIMESTAMP",
             "nodeType": "VariableDeclaration",
-            "scope": 4935,
+            "scope": 4990,
             "src": "1114:50:4",
             "stateVariable": true,
             "storageLocation": "default",
@@ -3682,7 +3682,7 @@
               "typeString": "uint256"
             },
             "typeName": {
-              "id": 4788,
+              "id": 4843,
               "name": "uint",
               "nodeType": "ElementaryTypeName",
               "src": "1114:4:4",
@@ -3694,7 +3694,7 @@
             "value": {
               "argumentTypes": null,
               "hexValue": "3530303335",
-              "id": 4789,
+              "id": 4844,
               "isConstant": false,
               "isLValue": false,
               "isPure": true,
@@ -3713,10 +3713,10 @@
           },
           {
             "constant": true,
-            "id": 4793,
+            "id": 4848,
             "name": "ERR_SUPERBLOCK_INVALID_TIMESTAMP",
             "nodeType": "VariableDeclaration",
-            "scope": 4935,
+            "scope": 4990,
             "src": "1170:54:4",
             "stateVariable": true,
             "storageLocation": "default",
@@ -3725,7 +3725,7 @@
               "typeString": "uint256"
             },
             "typeName": {
-              "id": 4791,
+              "id": 4846,
               "name": "uint",
               "nodeType": "ElementaryTypeName",
               "src": "1170:4:4",
@@ -3737,7 +3737,7 @@
             "value": {
               "argumentTypes": null,
               "hexValue": "3530303336",
-              "id": 4792,
+              "id": 4847,
               "isConstant": false,
               "isLValue": false,
               "isPure": true,
@@ -3756,10 +3756,10 @@
           },
           {
             "constant": true,
-            "id": 4796,
+            "id": 4851,
             "name": "ERR_SUPERBLOCK_INVALID_MERKLE",
             "nodeType": "VariableDeclaration",
-            "scope": 4935,
+            "scope": 4990,
             "src": "1230:51:4",
             "stateVariable": true,
             "storageLocation": "default",
@@ -3768,7 +3768,7 @@
               "typeString": "uint256"
             },
             "typeName": {
-              "id": 4794,
+              "id": 4849,
               "name": "uint",
               "nodeType": "ElementaryTypeName",
               "src": "1230:4:4",
@@ -3780,7 +3780,7 @@
             "value": {
               "argumentTypes": null,
               "hexValue": "3530303338",
-              "id": 4795,
+              "id": 4850,
               "isConstant": false,
               "isLValue": false,
               "isPure": true,
@@ -3799,10 +3799,10 @@
           },
           {
             "constant": true,
-            "id": 4799,
+            "id": 4854,
             "name": "ERR_SUPERBLOCK_BAD_PARENT",
             "nodeType": "VariableDeclaration",
-            "scope": 4935,
+            "scope": 4990,
             "src": "1402:47:4",
             "stateVariable": true,
             "storageLocation": "default",
@@ -3811,7 +3811,7 @@
               "typeString": "uint256"
             },
             "typeName": {
-              "id": 4797,
+              "id": 4852,
               "name": "uint",
               "nodeType": "ElementaryTypeName",
               "src": "1402:4:4",
@@ -3823,7 +3823,7 @@
             "value": {
               "argumentTypes": null,
               "hexValue": "3530303430",
-              "id": 4798,
+              "id": 4853,
               "isConstant": false,
               "isLValue": false,
               "isPure": true,
@@ -3842,10 +3842,10 @@
           },
           {
             "constant": true,
-            "id": 4802,
+            "id": 4857,
             "name": "ERR_SUPERBLOCK_BAD_PARENT_UNINITIALIZED",
             "nodeType": "VariableDeclaration",
-            "scope": 4935,
+            "scope": 4990,
             "src": "1455:61:4",
             "stateVariable": true,
             "storageLocation": "default",
@@ -3854,7 +3854,7 @@
               "typeString": "uint256"
             },
             "typeName": {
-              "id": 4800,
+              "id": 4855,
               "name": "uint",
               "nodeType": "ElementaryTypeName",
               "src": "1455:4:4",
@@ -3866,7 +3866,7 @@
             "value": {
               "argumentTypes": null,
               "hexValue": "3530303430",
-              "id": 4801,
+              "id": 4856,
               "isConstant": false,
               "isLValue": false,
               "isPure": true,
@@ -3885,10 +3885,10 @@
           },
           {
             "constant": true,
-            "id": 4805,
+            "id": 4860,
             "name": "ERR_SUPERBLOCK_BAD_PARENT_NEW",
             "nodeType": "VariableDeclaration",
-            "scope": 4935,
+            "scope": 4990,
             "src": "1522:51:4",
             "stateVariable": true,
             "storageLocation": "default",
@@ -3897,7 +3897,7 @@
               "typeString": "uint256"
             },
             "typeName": {
-              "id": 4803,
+              "id": 4858,
               "name": "uint",
               "nodeType": "ElementaryTypeName",
               "src": "1522:4:4",
@@ -3909,7 +3909,7 @@
             "value": {
               "argumentTypes": null,
               "hexValue": "3530303431",
-              "id": 4804,
+              "id": 4859,
               "isConstant": false,
               "isLValue": false,
               "isPure": true,
@@ -3928,10 +3928,10 @@
           },
           {
             "constant": true,
-            "id": 4808,
+            "id": 4863,
             "name": "ERR_SUPERBLOCK_BAD_PARENT_INBATTLE",
             "nodeType": "VariableDeclaration",
-            "scope": 4935,
+            "scope": 4990,
             "src": "1579:56:4",
             "stateVariable": true,
             "storageLocation": "default",
@@ -3940,7 +3940,7 @@
               "typeString": "uint256"
             },
             "typeName": {
-              "id": 4806,
+              "id": 4861,
               "name": "uint",
               "nodeType": "ElementaryTypeName",
               "src": "1579:4:4",
@@ -3952,7 +3952,7 @@
             "value": {
               "argumentTypes": null,
               "hexValue": "3530303432",
-              "id": 4807,
+              "id": 4862,
               "isConstant": false,
               "isLValue": false,
               "isPure": true,
@@ -3971,10 +3971,10 @@
           },
           {
             "constant": true,
-            "id": 4811,
+            "id": 4866,
             "name": "ERR_SUPERBLOCK_BAD_PARENT_INVALID",
             "nodeType": "VariableDeclaration",
-            "scope": 4935,
+            "scope": 4990,
             "src": "1641:55:4",
             "stateVariable": true,
             "storageLocation": "default",
@@ -3983,7 +3983,7 @@
               "typeString": "uint256"
             },
             "typeName": {
-              "id": 4809,
+              "id": 4864,
               "name": "uint",
               "nodeType": "ElementaryTypeName",
               "src": "1641:4:4",
@@ -3995,7 +3995,7 @@
             "value": {
               "argumentTypes": null,
               "hexValue": "3530303435",
-              "id": 4810,
+              "id": 4865,
               "isConstant": false,
               "isLValue": false,
               "isPure": true,
@@ -4014,10 +4014,10 @@
           },
           {
             "constant": true,
-            "id": 4814,
+            "id": 4869,
             "name": "ERR_SUPERBLOCK_OWN_CHALLENGE",
             "nodeType": "VariableDeclaration",
-            "scope": 4935,
+            "scope": 4990,
             "src": "1703:50:4",
             "stateVariable": true,
             "storageLocation": "default",
@@ -4026,7 +4026,7 @@
               "typeString": "uint256"
             },
             "typeName": {
-              "id": 4812,
+              "id": 4867,
               "name": "uint",
               "nodeType": "ElementaryTypeName",
               "src": "1703:4:4",
@@ -4038,7 +4038,7 @@
             "value": {
               "argumentTypes": null,
               "hexValue": "3530303535",
-              "id": 4813,
+              "id": 4868,
               "isConstant": false,
               "isLValue": false,
               "isPure": true,
@@ -4057,10 +4057,10 @@
           },
           {
             "constant": true,
-            "id": 4817,
+            "id": 4872,
             "name": "ERR_SUPERBLOCK_BAD_PREV_TIMESTAMP",
             "nodeType": "VariableDeclaration",
-            "scope": 4935,
+            "scope": 4990,
             "src": "1759:55:4",
             "stateVariable": true,
             "storageLocation": "default",
@@ -4069,7 +4069,7 @@
               "typeString": "uint256"
             },
             "typeName": {
-              "id": 4815,
+              "id": 4870,
               "name": "uint",
               "nodeType": "ElementaryTypeName",
               "src": "1759:4:4",
@@ -4081,7 +4081,7 @@
             "value": {
               "argumentTypes": null,
               "hexValue": "3530303536",
-              "id": 4816,
+              "id": 4871,
               "isConstant": false,
               "isLValue": false,
               "isPure": true,
@@ -4100,10 +4100,10 @@
           },
           {
             "constant": true,
-            "id": 4820,
+            "id": 4875,
             "name": "ERR_SUPERBLOCK_BITS_SUPERBLOCK",
             "nodeType": "VariableDeclaration",
-            "scope": 4935,
+            "scope": 4990,
             "src": "1820:52:4",
             "stateVariable": true,
             "storageLocation": "default",
@@ -4112,7 +4112,7 @@
               "typeString": "uint256"
             },
             "typeName": {
-              "id": 4818,
+              "id": 4873,
               "name": "uint",
               "nodeType": "ElementaryTypeName",
               "src": "1820:4:4",
@@ -4124,7 +4124,7 @@
             "value": {
               "argumentTypes": null,
               "hexValue": "3530303537",
-              "id": 4819,
+              "id": 4874,
               "isConstant": false,
               "isLValue": false,
               "isPure": true,
@@ -4143,10 +4143,10 @@
           },
           {
             "constant": true,
-            "id": 4823,
+            "id": 4878,
             "name": "ERR_SUPERBLOCK_BITS_PREVBLOCK",
             "nodeType": "VariableDeclaration",
-            "scope": 4935,
+            "scope": 4990,
             "src": "1878:51:4",
             "stateVariable": true,
             "storageLocation": "default",
@@ -4155,7 +4155,7 @@
               "typeString": "uint256"
             },
             "typeName": {
-              "id": 4821,
+              "id": 4876,
               "name": "uint",
               "nodeType": "ElementaryTypeName",
               "src": "1878:4:4",
@@ -4167,7 +4167,7 @@
             "value": {
               "argumentTypes": null,
               "hexValue": "3530303538",
-              "id": 4822,
+              "id": 4877,
               "isConstant": false,
               "isLValue": false,
               "isPure": true,
@@ -4186,10 +4186,10 @@
           },
           {
             "constant": true,
-            "id": 4826,
+            "id": 4881,
             "name": "ERR_SUPERBLOCK_HASH_SUPERBLOCK",
             "nodeType": "VariableDeclaration",
-            "scope": 4935,
+            "scope": 4990,
             "src": "1935:52:4",
             "stateVariable": true,
             "storageLocation": "default",
@@ -4198,7 +4198,7 @@
               "typeString": "uint256"
             },
             "typeName": {
-              "id": 4824,
+              "id": 4879,
               "name": "uint",
               "nodeType": "ElementaryTypeName",
               "src": "1935:4:4",
@@ -4210,7 +4210,7 @@
             "value": {
               "argumentTypes": null,
               "hexValue": "3530303539",
-              "id": 4825,
+              "id": 4880,
               "isConstant": false,
               "isLValue": false,
               "isPure": true,
@@ -4229,10 +4229,10 @@
           },
           {
             "constant": true,
-            "id": 4829,
+            "id": 4884,
             "name": "ERR_SUPERBLOCK_HASH_PREVBLOCK",
             "nodeType": "VariableDeclaration",
-            "scope": 4935,
+            "scope": 4990,
             "src": "1993:51:4",
             "stateVariable": true,
             "storageLocation": "default",
@@ -4241,7 +4241,7 @@
               "typeString": "uint256"
             },
             "typeName": {
-              "id": 4827,
+              "id": 4882,
               "name": "uint",
               "nodeType": "ElementaryTypeName",
               "src": "1993:4:4",
@@ -4253,7 +4253,7 @@
             "value": {
               "argumentTypes": null,
               "hexValue": "3530303630",
-              "id": 4828,
+              "id": 4883,
               "isConstant": false,
               "isLValue": false,
               "isPure": true,
@@ -4272,10 +4272,10 @@
           },
           {
             "constant": true,
-            "id": 4832,
+            "id": 4887,
             "name": "ERR_SUPERBLOCK_HASH_PREVSUPERBLOCK",
             "nodeType": "VariableDeclaration",
-            "scope": 4935,
+            "scope": 4990,
             "src": "2050:56:4",
             "stateVariable": true,
             "storageLocation": "default",
@@ -4284,7 +4284,7 @@
               "typeString": "uint256"
             },
             "typeName": {
-              "id": 4830,
+              "id": 4885,
               "name": "uint",
               "nodeType": "ElementaryTypeName",
               "src": "2050:4:4",
@@ -4296,7 +4296,7 @@
             "value": {
               "argumentTypes": null,
               "hexValue": "3530303631",
-              "id": 4831,
+              "id": 4886,
               "isConstant": false,
               "isLValue": false,
               "isPure": true,
@@ -4315,10 +4315,10 @@
           },
           {
             "constant": true,
-            "id": 4835,
+            "id": 4890,
             "name": "ERR_SUPERBLOCK_MAX_INPROGRESS",
             "nodeType": "VariableDeclaration",
-            "scope": 4935,
+            "scope": 4990,
             "src": "2112:51:4",
             "stateVariable": true,
             "storageLocation": "default",
@@ -4327,7 +4327,7 @@
               "typeString": "uint256"
             },
             "typeName": {
-              "id": 4833,
+              "id": 4888,
               "name": "uint",
               "nodeType": "ElementaryTypeName",
               "src": "2112:4:4",
@@ -4339,7 +4339,7 @@
             "value": {
               "argumentTypes": null,
               "hexValue": "3530303632",
-              "id": 4834,
+              "id": 4889,
               "isConstant": false,
               "isLValue": false,
               "isPure": true,
@@ -4358,10 +4358,10 @@
           },
           {
             "constant": true,
-            "id": 4838,
+            "id": 4893,
             "name": "ERR_SUPERBLOCK_BITS_LASTBLOCK",
             "nodeType": "VariableDeclaration",
-            "scope": 4935,
+            "scope": 4990,
             "src": "2169:51:4",
             "stateVariable": true,
             "storageLocation": "default",
@@ -4370,7 +4370,7 @@
               "typeString": "uint256"
             },
             "typeName": {
-              "id": 4836,
+              "id": 4891,
               "name": "uint",
               "nodeType": "ElementaryTypeName",
               "src": "2169:4:4",
@@ -4382,7 +4382,7 @@
             "value": {
               "argumentTypes": null,
               "hexValue": "3530303634",
-              "id": 4837,
+              "id": 4892,
               "isConstant": false,
               "isLValue": false,
               "isPure": true,
@@ -4401,10 +4401,10 @@
           },
           {
             "constant": true,
-            "id": 4841,
+            "id": 4896,
             "name": "ERR_SUPERBLOCK_MIN_DEPOSIT",
             "nodeType": "VariableDeclaration",
-            "scope": 4935,
+            "scope": 4990,
             "src": "2226:48:4",
             "stateVariable": true,
             "storageLocation": "default",
@@ -4413,7 +4413,7 @@
               "typeString": "uint256"
             },
             "typeName": {
-              "id": 4839,
+              "id": 4894,
               "name": "uint",
               "nodeType": "ElementaryTypeName",
               "src": "2226:4:4",
@@ -4425,7 +4425,7 @@
             "value": {
               "argumentTypes": null,
               "hexValue": "3530303635",
-              "id": 4840,
+              "id": 4895,
               "isConstant": false,
               "isLValue": false,
               "isPure": true,
@@ -4444,10 +4444,10 @@
           },
           {
             "constant": true,
-            "id": 4844,
+            "id": 4899,
             "name": "ERR_SUPERBLOCK_BITS_INTERIM_PREVBLOCK",
             "nodeType": "VariableDeclaration",
-            "scope": 4935,
+            "scope": 4990,
             "src": "2280:59:4",
             "stateVariable": true,
             "storageLocation": "default",
@@ -4456,7 +4456,7 @@
               "typeString": "uint256"
             },
             "typeName": {
-              "id": 4842,
+              "id": 4897,
               "name": "uint",
               "nodeType": "ElementaryTypeName",
               "src": "2280:4:4",
@@ -4468,7 +4468,7 @@
             "value": {
               "argumentTypes": null,
               "hexValue": "3530303636",
-              "id": 4843,
+              "id": 4898,
               "isConstant": false,
               "isLValue": false,
               "isPure": true,
@@ -4487,10 +4487,10 @@
           },
           {
             "constant": true,
-            "id": 4847,
+            "id": 4902,
             "name": "ERR_SUPERBLOCK_HASH_INTERIM_PREVBLOCK",
             "nodeType": "VariableDeclaration",
-            "scope": 4935,
+            "scope": 4990,
             "src": "2345:59:4",
             "stateVariable": true,
             "storageLocation": "default",
@@ -4499,7 +4499,7 @@
               "typeString": "uint256"
             },
             "typeName": {
-              "id": 4845,
+              "id": 4900,
               "name": "uint",
               "nodeType": "ElementaryTypeName",
               "src": "2345:4:4",
@@ -4511,7 +4511,7 @@
             "value": {
               "argumentTypes": null,
               "hexValue": "3530303637",
-              "id": 4846,
+              "id": 4901,
               "isConstant": false,
               "isLValue": false,
               "isPure": true,
@@ -4530,10 +4530,10 @@
           },
           {
             "constant": true,
-            "id": 4850,
+            "id": 4905,
             "name": "ERR_SUPERBLOCK_BAD_TIMESTAMP_AVERAGE",
             "nodeType": "VariableDeclaration",
-            "scope": 4935,
+            "scope": 4990,
             "src": "2410:58:4",
             "stateVariable": true,
             "storageLocation": "default",
@@ -4542,7 +4542,7 @@
               "typeString": "uint256"
             },
             "typeName": {
-              "id": 4848,
+              "id": 4903,
               "name": "uint",
               "nodeType": "ElementaryTypeName",
               "src": "2410:4:4",
@@ -4554,7 +4554,7 @@
             "value": {
               "argumentTypes": null,
               "hexValue": "3530303638",
-              "id": 4849,
+              "id": 4904,
               "isConstant": false,
               "isLValue": false,
               "isPure": true,
@@ -4573,10 +4573,10 @@
           },
           {
             "constant": true,
-            "id": 4853,
+            "id": 4908,
             "name": "ERR_SUPERBLOCK_BAD_TIMESTAMP_MTP",
             "nodeType": "VariableDeclaration",
-            "scope": 4935,
+            "scope": 4990,
             "src": "2474:54:4",
             "stateVariable": true,
             "storageLocation": "default",
@@ -4585,7 +4585,7 @@
               "typeString": "uint256"
             },
             "typeName": {
-              "id": 4851,
+              "id": 4906,
               "name": "uint",
               "nodeType": "ElementaryTypeName",
               "src": "2474:4:4",
@@ -4597,7 +4597,7 @@
             "value": {
               "argumentTypes": null,
               "hexValue": "3530303639",
-              "id": 4852,
+              "id": 4907,
               "isConstant": false,
               "isLValue": false,
               "isPure": true,
@@ -4616,10 +4616,10 @@
           },
           {
             "constant": true,
-            "id": 4856,
+            "id": 4911,
             "name": "ERR_SUPERBLOCK_NOT_CLAIMMANAGER",
             "nodeType": "VariableDeclaration",
-            "scope": 4935,
+            "scope": 4990,
             "src": "2535:53:4",
             "stateVariable": true,
             "storageLocation": "default",
@@ -4628,7 +4628,7 @@
               "typeString": "uint256"
             },
             "typeName": {
-              "id": 4854,
+              "id": 4909,
               "name": "uint",
               "nodeType": "ElementaryTypeName",
               "src": "2535:4:4",
@@ -4640,7 +4640,7 @@
             "value": {
               "argumentTypes": null,
               "hexValue": "3530303730",
-              "id": 4855,
+              "id": 4910,
               "isConstant": false,
               "isLValue": false,
               "isPure": true,
@@ -4659,10 +4659,10 @@
           },
           {
             "constant": true,
-            "id": 4859,
+            "id": 4914,
             "name": "ERR_SUPERBLOCK_MISMATCH_TIMESTAMP_MTP",
             "nodeType": "VariableDeclaration",
-            "scope": 4935,
+            "scope": 4990,
             "src": "2594:59:4",
             "stateVariable": true,
             "storageLocation": "default",
@@ -4671,7 +4671,7 @@
               "typeString": "uint256"
             },
             "typeName": {
-              "id": 4857,
+              "id": 4912,
               "name": "uint",
               "nodeType": "ElementaryTypeName",
               "src": "2594:4:4",
@@ -4683,7 +4683,7 @@
             "value": {
               "argumentTypes": null,
               "hexValue": "3530303731",
-              "id": 4858,
+              "id": 4913,
               "isConstant": false,
               "isLValue": false,
               "isPure": true,
@@ -4702,10 +4702,10 @@
           },
           {
             "constant": true,
-            "id": 4862,
+            "id": 4917,
             "name": "ERR_SUPERBLOCK_TOOSMALL_TIMESTAMP_MTP",
             "nodeType": "VariableDeclaration",
-            "scope": 4935,
+            "scope": 4990,
             "src": "2659:59:4",
             "stateVariable": true,
             "storageLocation": "default",
@@ -4714,7 +4714,7 @@
               "typeString": "uint256"
             },
             "typeName": {
-              "id": 4860,
+              "id": 4915,
               "name": "uint",
               "nodeType": "ElementaryTypeName",
               "src": "2659:4:4",
@@ -4726,7 +4726,7 @@
             "value": {
               "argumentTypes": null,
               "hexValue": "3530303732",
-              "id": 4861,
+              "id": 4916,
               "isConstant": false,
               "isLValue": false,
               "isPure": true,
@@ -4745,10 +4745,10 @@
           },
           {
             "constant": true,
-            "id": 4865,
+            "id": 4920,
             "name": "ERR_SUPERBLOCK_BAD_CLAIM",
             "nodeType": "VariableDeclaration",
-            "scope": 4935,
+            "scope": 4990,
             "src": "2725:46:4",
             "stateVariable": true,
             "storageLocation": "default",
@@ -4757,7 +4757,7 @@
               "typeString": "uint256"
             },
             "typeName": {
-              "id": 4863,
+              "id": 4918,
               "name": "uint",
               "nodeType": "ElementaryTypeName",
               "src": "2725:4:4",
@@ -4769,7 +4769,7 @@
             "value": {
               "argumentTypes": null,
               "hexValue": "3530303830",
-              "id": 4864,
+              "id": 4919,
               "isConstant": false,
               "isLValue": false,
               "isPure": true,
@@ -4788,10 +4788,10 @@
           },
           {
             "constant": true,
-            "id": 4868,
+            "id": 4923,
             "name": "ERR_SUPERBLOCK_VERIFICATION_PENDING",
             "nodeType": "VariableDeclaration",
-            "scope": 4935,
+            "scope": 4990,
             "src": "2777:57:4",
             "stateVariable": true,
             "storageLocation": "default",
@@ -4800,7 +4800,7 @@
               "typeString": "uint256"
             },
             "typeName": {
-              "id": 4866,
+              "id": 4921,
               "name": "uint",
               "nodeType": "ElementaryTypeName",
               "src": "2777:4:4",
@@ -4812,7 +4812,7 @@
             "value": {
               "argumentTypes": null,
               "hexValue": "3530303930",
-              "id": 4867,
+              "id": 4922,
               "isConstant": false,
               "isLValue": false,
               "isPure": true,
@@ -4831,10 +4831,10 @@
           },
           {
             "constant": true,
-            "id": 4871,
+            "id": 4926,
             "name": "ERR_SUPERBLOCK_CLAIM_DECIDED",
             "nodeType": "VariableDeclaration",
-            "scope": 4935,
+            "scope": 4990,
             "src": "2840:50:4",
             "stateVariable": true,
             "storageLocation": "default",
@@ -4843,7 +4843,7 @@
               "typeString": "uint256"
             },
             "typeName": {
-              "id": 4869,
+              "id": 4924,
               "name": "uint",
               "nodeType": "ElementaryTypeName",
               "src": "2840:4:4",
@@ -4855,7 +4855,7 @@
             "value": {
               "argumentTypes": null,
               "hexValue": "3530313030",
-              "id": 4870,
+              "id": 4925,
               "isConstant": false,
               "isLValue": false,
               "isPure": true,
@@ -4874,10 +4874,10 @@
           },
           {
             "constant": true,
-            "id": 4874,
+            "id": 4929,
             "name": "ERR_SUPERBLOCK_CHALLENGE_EXISTS",
             "nodeType": "VariableDeclaration",
-            "scope": 4935,
+            "scope": 4990,
             "src": "2896:53:4",
             "stateVariable": true,
             "storageLocation": "default",
@@ -4886,7 +4886,7 @@
               "typeString": "uint256"
             },
             "typeName": {
-              "id": 4872,
+              "id": 4927,
               "name": "uint",
               "nodeType": "ElementaryTypeName",
               "src": "2896:4:4",
@@ -4898,7 +4898,7 @@
             "value": {
               "argumentTypes": null,
               "hexValue": "3530313130",
-              "id": 4873,
+              "id": 4928,
               "isConstant": false,
               "isLValue": false,
               "isPure": true,
@@ -4917,10 +4917,10 @@
           },
           {
             "constant": true,
-            "id": 4877,
+            "id": 4932,
             "name": "ERR_SUPERBLOCK_BAD_ACCUMULATED_WORK",
             "nodeType": "VariableDeclaration",
-            "scope": 4935,
+            "scope": 4990,
             "src": "2956:57:4",
             "stateVariable": true,
             "storageLocation": "default",
@@ -4929,7 +4929,7 @@
               "typeString": "uint256"
             },
             "typeName": {
-              "id": 4875,
+              "id": 4930,
               "name": "uint",
               "nodeType": "ElementaryTypeName",
               "src": "2956:4:4",
@@ -4941,7 +4941,7 @@
             "value": {
               "argumentTypes": null,
               "hexValue": "3530313230",
-              "id": 4876,
+              "id": 4931,
               "isConstant": false,
               "isLValue": false,
               "isPure": true,
@@ -4960,10 +4960,10 @@
           },
           {
             "constant": true,
-            "id": 4880,
+            "id": 4935,
             "name": "ERR_SUPERBLOCK_BAD_BITS",
             "nodeType": "VariableDeclaration",
-            "scope": 4935,
+            "scope": 4990,
             "src": "3019:45:4",
             "stateVariable": true,
             "storageLocation": "default",
@@ -4972,7 +4972,7 @@
               "typeString": "uint256"
             },
             "typeName": {
-              "id": 4878,
+              "id": 4933,
               "name": "uint",
               "nodeType": "ElementaryTypeName",
               "src": "3019:4:4",
@@ -4984,7 +4984,7 @@
             "value": {
               "argumentTypes": null,
               "hexValue": "3530313330",
-              "id": 4879,
+              "id": 4934,
               "isConstant": false,
               "isLValue": false,
               "isPure": true,
@@ -5003,10 +5003,10 @@
           },
           {
             "constant": true,
-            "id": 4883,
+            "id": 4938,
             "name": "ERR_SUPERBLOCK_MISSING_CONFIRMATIONS",
             "nodeType": "VariableDeclaration",
-            "scope": 4935,
+            "scope": 4990,
             "src": "3070:58:4",
             "stateVariable": true,
             "storageLocation": "default",
@@ -5015,7 +5015,7 @@
               "typeString": "uint256"
             },
             "typeName": {
-              "id": 4881,
+              "id": 4936,
               "name": "uint",
               "nodeType": "ElementaryTypeName",
               "src": "3070:4:4",
@@ -5027,7 +5027,7 @@
             "value": {
               "argumentTypes": null,
               "hexValue": "3530313430",
-              "id": 4882,
+              "id": 4937,
               "isConstant": false,
               "isLValue": false,
               "isPure": true,
@@ -5046,10 +5046,10 @@
           },
           {
             "constant": true,
-            "id": 4886,
+            "id": 4941,
             "name": "ERR_SUPERBLOCK_BAD_LASTBLOCK",
             "nodeType": "VariableDeclaration",
-            "scope": 4935,
+            "scope": 4990,
             "src": "3134:50:4",
             "stateVariable": true,
             "storageLocation": "default",
@@ -5058,7 +5058,7 @@
               "typeString": "uint256"
             },
             "typeName": {
-              "id": 4884,
+              "id": 4939,
               "name": "uint",
               "nodeType": "ElementaryTypeName",
               "src": "3134:4:4",
@@ -5070,7 +5070,7 @@
             "value": {
               "argumentTypes": null,
               "hexValue": "3530313530",
-              "id": 4885,
+              "id": 4940,
               "isConstant": false,
               "isLValue": false,
               "isPure": true,
@@ -5089,10 +5089,10 @@
           },
           {
             "constant": true,
-            "id": 4889,
+            "id": 4944,
             "name": "ERR_SUPERBLOCK_BAD_LASTBLOCK_STATUS",
             "nodeType": "VariableDeclaration",
-            "scope": 4935,
+            "scope": 4990,
             "src": "3190:57:4",
             "stateVariable": true,
             "storageLocation": "default",
@@ -5101,7 +5101,7 @@
               "typeString": "uint256"
             },
             "typeName": {
-              "id": 4887,
+              "id": 4942,
               "name": "uint",
               "nodeType": "ElementaryTypeName",
               "src": "3190:4:4",
@@ -5113,7 +5113,7 @@
             "value": {
               "argumentTypes": null,
               "hexValue": "3530313630",
-              "id": 4888,
+              "id": 4943,
               "isConstant": false,
               "isLValue": false,
               "isPure": true,
@@ -5132,10 +5132,10 @@
           },
           {
             "constant": true,
-            "id": 4892,
+            "id": 4947,
             "name": "ERR_SUPERBLOCK_BAD_BLOCKHEIGHT",
             "nodeType": "VariableDeclaration",
-            "scope": 4935,
+            "scope": 4990,
             "src": "3253:52:4",
             "stateVariable": true,
             "storageLocation": "default",
@@ -5144,7 +5144,7 @@
               "typeString": "uint256"
             },
             "typeName": {
-              "id": 4890,
+              "id": 4945,
               "name": "uint",
               "nodeType": "ElementaryTypeName",
               "src": "3253:4:4",
@@ -5156,7 +5156,7 @@
             "value": {
               "argumentTypes": null,
               "hexValue": "3530313730",
-              "id": 4891,
+              "id": 4946,
               "isConstant": false,
               "isLValue": false,
               "isPure": true,
@@ -5175,10 +5175,10 @@
           },
           {
             "constant": true,
-            "id": 4895,
+            "id": 4950,
             "name": "ERR_SUPERBLOCK_BAD_PREVBLOCK",
             "nodeType": "VariableDeclaration",
-            "scope": 4935,
+            "scope": 4990,
             "src": "3311:50:4",
             "stateVariable": true,
             "storageLocation": "default",
@@ -5187,7 +5187,7 @@
               "typeString": "uint256"
             },
             "typeName": {
-              "id": 4893,
+              "id": 4948,
               "name": "uint",
               "nodeType": "ElementaryTypeName",
               "src": "3311:4:4",
@@ -5199,7 +5199,7 @@
             "value": {
               "argumentTypes": null,
               "hexValue": "3530313930",
-              "id": 4894,
+              "id": 4949,
               "isConstant": false,
               "isLValue": false,
               "isPure": true,
@@ -5218,10 +5218,10 @@
           },
           {
             "constant": true,
-            "id": 4898,
+            "id": 4953,
             "name": "ERR_SUPERBLOCK_CLAIM_ALREADY_DEFENDED",
             "nodeType": "VariableDeclaration",
-            "scope": 4935,
+            "scope": 4990,
             "src": "3367:59:4",
             "stateVariable": true,
             "storageLocation": "default",
@@ -5230,7 +5230,7 @@
               "typeString": "uint256"
             },
             "typeName": {
-              "id": 4896,
+              "id": 4951,
               "name": "uint",
               "nodeType": "ElementaryTypeName",
               "src": "3367:4:4",
@@ -5242,7 +5242,7 @@
             "value": {
               "argumentTypes": null,
               "hexValue": "3530323030",
-              "id": 4897,
+              "id": 4952,
               "isConstant": false,
               "isLValue": false,
               "isPure": true,
@@ -5261,10 +5261,10 @@
           },
           {
             "constant": true,
-            "id": 4901,
+            "id": 4956,
             "name": "ERR_SUPERBLOCK_BAD_MISMATCH",
             "nodeType": "VariableDeclaration",
-            "scope": 4935,
+            "scope": 4990,
             "src": "3432:49:4",
             "stateVariable": true,
             "storageLocation": "default",
@@ -5273,7 +5273,7 @@
               "typeString": "uint256"
             },
             "typeName": {
-              "id": 4899,
+              "id": 4954,
               "name": "uint",
               "nodeType": "ElementaryTypeName",
               "src": "3432:4:4",
@@ -5285,7 +5285,7 @@
             "value": {
               "argumentTypes": null,
               "hexValue": "3530323130",
-              "id": 4900,
+              "id": 4955,
               "isConstant": false,
               "isLValue": false,
               "isPure": true,
@@ -5304,10 +5304,10 @@
           },
           {
             "constant": true,
-            "id": 4904,
+            "id": 4959,
             "name": "ERR_SUPERBLOCK_INTERIMBLOCK_MISSING",
             "nodeType": "VariableDeclaration",
-            "scope": 4935,
+            "scope": 4990,
             "src": "3487:57:4",
             "stateVariable": true,
             "storageLocation": "default",
@@ -5316,7 +5316,7 @@
               "typeString": "uint256"
             },
             "typeName": {
-              "id": 4902,
+              "id": 4957,
               "name": "uint",
               "nodeType": "ElementaryTypeName",
               "src": "3487:4:4",
@@ -5328,7 +5328,7 @@
             "value": {
               "argumentTypes": null,
               "hexValue": "3530323230",
-              "id": 4903,
+              "id": 4958,
               "isConstant": false,
               "isLValue": false,
               "isPure": true,
@@ -5347,10 +5347,10 @@
           },
           {
             "constant": true,
-            "id": 4907,
+            "id": 4962,
             "name": "ERR_SUPERBLOCK_BAD_INTERIM_PREVHASH",
             "nodeType": "VariableDeclaration",
-            "scope": 4935,
+            "scope": 4990,
             "src": "3550:57:4",
             "stateVariable": true,
             "storageLocation": "default",
@@ -5359,7 +5359,7 @@
               "typeString": "uint256"
             },
             "typeName": {
-              "id": 4905,
+              "id": 4960,
               "name": "uint",
               "nodeType": "ElementaryTypeName",
               "src": "3550:4:4",
@@ -5371,7 +5371,7 @@
             "value": {
               "argumentTypes": null,
               "hexValue": "3530323330",
-              "id": 4906,
+              "id": 4961,
               "isConstant": false,
               "isLValue": false,
               "isPure": true,
@@ -5390,10 +5390,10 @@
           },
           {
             "constant": true,
-            "id": 4910,
+            "id": 4965,
             "name": "ERR_SUPERBLOCK_BAD_INTERIM_BLOCKINDEX",
             "nodeType": "VariableDeclaration",
-            "scope": 4935,
+            "scope": 4990,
             "src": "3613:59:4",
             "stateVariable": true,
             "storageLocation": "default",
@@ -5402,7 +5402,7 @@
               "typeString": "uint256"
             },
             "typeName": {
-              "id": 4908,
+              "id": 4963,
               "name": "uint",
               "nodeType": "ElementaryTypeName",
               "src": "3613:4:4",
@@ -5414,7 +5414,7 @@
             "value": {
               "argumentTypes": null,
               "hexValue": "3530323430",
-              "id": 4909,
+              "id": 4964,
               "isConstant": false,
               "isLValue": false,
               "isPure": true,
@@ -5433,10 +5433,10 @@
           },
           {
             "constant": true,
-            "id": 4913,
+            "id": 4968,
             "name": "ERR_BAD_FEE",
             "nodeType": "VariableDeclaration",
-            "scope": 4935,
+            "scope": 4990,
             "src": "3712:33:4",
             "stateVariable": true,
             "storageLocation": "default",
@@ -5445,7 +5445,7 @@
               "typeString": "uint256"
             },
             "typeName": {
-              "id": 4911,
+              "id": 4966,
               "name": "uint",
               "nodeType": "ElementaryTypeName",
               "src": "3712:4:4",
@@ -5457,7 +5457,7 @@
             "value": {
               "argumentTypes": null,
               "hexValue": "3230303130",
-              "id": 4912,
+              "id": 4967,
               "isConstant": false,
               "isLValue": false,
               "isPure": true,
@@ -5476,10 +5476,10 @@
           },
           {
             "constant": true,
-            "id": 4916,
+            "id": 4971,
             "name": "ERR_CONFIRMATIONS",
             "nodeType": "VariableDeclaration",
-            "scope": 4935,
+            "scope": 4990,
             "src": "3751:39:4",
             "stateVariable": true,
             "storageLocation": "default",
@@ -5488,7 +5488,7 @@
               "typeString": "uint256"
             },
             "typeName": {
-              "id": 4914,
+              "id": 4969,
               "name": "uint",
               "nodeType": "ElementaryTypeName",
               "src": "3751:4:4",
@@ -5500,7 +5500,7 @@
             "value": {
               "argumentTypes": null,
               "hexValue": "3230303230",
-              "id": 4915,
+              "id": 4970,
               "isConstant": false,
               "isLValue": false,
               "isPure": true,
@@ -5519,10 +5519,10 @@
           },
           {
             "constant": true,
-            "id": 4919,
+            "id": 4974,
             "name": "ERR_CHAIN",
             "nodeType": "VariableDeclaration",
-            "scope": 4935,
+            "scope": 4990,
             "src": "3796:31:4",
             "stateVariable": true,
             "storageLocation": "default",
@@ -5531,7 +5531,7 @@
               "typeString": "uint256"
             },
             "typeName": {
-              "id": 4917,
+              "id": 4972,
               "name": "uint",
               "nodeType": "ElementaryTypeName",
               "src": "3796:4:4",
@@ -5543,7 +5543,7 @@
             "value": {
               "argumentTypes": null,
               "hexValue": "3230303330",
-              "id": 4918,
+              "id": 4973,
               "isConstant": false,
               "isLValue": false,
               "isPure": true,
@@ -5562,10 +5562,10 @@
           },
           {
             "constant": true,
-            "id": 4922,
+            "id": 4977,
             "name": "ERR_SUPERBLOCK",
             "nodeType": "VariableDeclaration",
-            "scope": 4935,
+            "scope": 4990,
             "src": "3833:36:4",
             "stateVariable": true,
             "storageLocation": "default",
@@ -5574,7 +5574,7 @@
               "typeString": "uint256"
             },
             "typeName": {
-              "id": 4920,
+              "id": 4975,
               "name": "uint",
               "nodeType": "ElementaryTypeName",
               "src": "3833:4:4",
@@ -5586,7 +5586,7 @@
             "value": {
               "argumentTypes": null,
               "hexValue": "3230303430",
-              "id": 4921,
+              "id": 4976,
               "isConstant": false,
               "isLValue": false,
               "isPure": true,
@@ -5605,10 +5605,10 @@
           },
           {
             "constant": true,
-            "id": 4925,
+            "id": 4980,
             "name": "ERR_MERKLE_ROOT",
             "nodeType": "VariableDeclaration",
-            "scope": 4935,
+            "scope": 4990,
             "src": "3875:37:4",
             "stateVariable": true,
             "storageLocation": "default",
@@ -5617,7 +5617,7 @@
               "typeString": "uint256"
             },
             "typeName": {
-              "id": 4923,
+              "id": 4978,
               "name": "uint",
               "nodeType": "ElementaryTypeName",
               "src": "3875:4:4",
@@ -5629,7 +5629,7 @@
             "value": {
               "argumentTypes": null,
               "hexValue": "3230303530",
-              "id": 4924,
+              "id": 4979,
               "isConstant": false,
               "isLValue": false,
               "isPure": true,
@@ -5648,10 +5648,10 @@
           },
           {
             "constant": true,
-            "id": 4928,
+            "id": 4983,
             "name": "ERR_TX_64BYTE",
             "nodeType": "VariableDeclaration",
-            "scope": 4935,
+            "scope": 4990,
             "src": "3918:35:4",
             "stateVariable": true,
             "storageLocation": "default",
@@ -5660,7 +5660,7 @@
               "typeString": "uint256"
             },
             "typeName": {
-              "id": 4926,
+              "id": 4981,
               "name": "uint",
               "nodeType": "ElementaryTypeName",
               "src": "3918:4:4",
@@ -5672,7 +5672,7 @@
             "value": {
               "argumentTypes": null,
               "hexValue": "3230303630",
-              "id": 4927,
+              "id": 4982,
               "isConstant": false,
               "isLValue": false,
               "isPure": true,
@@ -5691,10 +5691,10 @@
           },
           {
             "constant": true,
-            "id": 4931,
+            "id": 4986,
             "name": "ERR_RELAY_VERIFY",
             "nodeType": "VariableDeclaration",
-            "scope": 4935,
+            "scope": 4990,
             "src": "3990:38:4",
             "stateVariable": true,
             "storageLocation": "default",
@@ -5703,7 +5703,7 @@
               "typeString": "uint256"
             },
             "typeName": {
-              "id": 4929,
+              "id": 4984,
               "name": "uint",
               "nodeType": "ElementaryTypeName",
               "src": "3990:4:4",
@@ -5715,7 +5715,7 @@
             "value": {
               "argumentTypes": null,
               "hexValue": "3330303130",
-              "id": 4930,
+              "id": 4985,
               "isConstant": false,
               "isLValue": false,
               "isPure": true,
@@ -5734,10 +5734,10 @@
           },
           {
             "constant": true,
-            "id": 4934,
+            "id": 4989,
             "name": "minProposalDeposit",
             "nodeType": "VariableDeclaration",
-            "scope": 4935,
+            "scope": 4990,
             "src": "4034:61:4",
             "stateVariable": true,
             "storageLocation": "default",
@@ -5746,7 +5746,7 @@
               "typeString": "uint256"
             },
             "typeName": {
-              "id": 4932,
+              "id": 4987,
               "name": "uint",
               "nodeType": "ElementaryTypeName",
               "src": "4034:4:4",
@@ -5758,7 +5758,7 @@
             "value": {
               "argumentTypes": null,
               "hexValue": "33303030303030303030303030303030303030",
-              "id": 4933,
+              "id": 4988,
               "isConstant": false,
               "isLValue": false,
               "isPure": true,
@@ -5776,7 +5776,7 @@
             "visibility": "public"
           }
         ],
-        "scope": 4936,
+        "scope": 4991,
         "src": "67:4031:4"
       }
     ],
@@ -5788,7 +5788,7 @@
   },
   "networks": {},
   "schemaVersion": "3.0.19",
-  "updatedAt": "2019-11-28T18:32:20.425Z",
+  "updatedAt": "2019-11-29T19:46:00.488Z",
   "devdoc": {
     "methods": {}
   },

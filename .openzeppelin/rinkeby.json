@@ -187,11 +187,11 @@
       }
     },
     "SyscoinClaimManager": {
-      "address": "0xb02936750f6225D39E988F76Db4f0638FfFbc176",
-      "constructorCode": "608060405234801561001057600080fd5b5061293f806100206000396000f3fe",
-      "bodyBytecodeHash": "56a2067d20bc6d3559d9ddd43e717702c02fd98b971005aebb088d97654ba732",
-      "localBytecodeHash": "6aca2fa891ac22a21308813932d8a6621a4e0c759a582363a135f2aff17028a5",
-      "deployedBytecodeHash": "6aca2fa891ac22a21308813932d8a6621a4e0c759a582363a135f2aff17028a5",
+      "address": "0xda166f6E7Ec30b5c53a055cBA1D4aC971710f218",
+      "constructorCode": "608060405234801561001057600080fd5b50612a9c806100206000396000f3fe",
+      "bodyBytecodeHash": "ba028e4d67b8df4ff6fe5ec05c021abb22065be3a1705ffa917cddf59dc600af",
+      "localBytecodeHash": "499dae96358e5b2d8fc002ae80397d926a7ba326f68a1b30a6507c49e323ea08",
+      "deployedBytecodeHash": "499dae96358e5b2d8fc002ae80397d926a7ba326f68a1b30a6507c49e323ea08",
       "types": {
         "t_bool": {
           "id": "t_bool",
@@ -305,7 +305,7 @@
           "contract": "Initializable",
           "path": "@openzeppelin/upgrades/contracts/Initializable.sol",
           "label": "initialized",
-          "astId": 9529,
+          "astId": 9584,
           "type": "t_bool",
           "src": "757:24:16"
         },
@@ -313,7 +313,7 @@
           "contract": "Initializable",
           "path": "@openzeppelin/upgrades/contracts/Initializable.sol",
           "label": "initializing",
-          "astId": 9531,
+          "astId": 9586,
           "type": "t_bool",
           "src": "876:25:16"
         },
@@ -321,7 +321,7 @@
           "contract": "Initializable",
           "path": "@openzeppelin/upgrades/contracts/Initializable.sol",
           "label": "______gap",
-          "astId": 9587,
+          "astId": 9642,
           "type": "t_array:50<t_uint256>",
           "src": "1951:29:16"
         },
@@ -329,7 +329,7 @@
           "contract": "SyscoinDepositsManager",
           "path": "contracts/SyscoinDepositsManager.sol",
           "label": "deposits",
-          "astId": 4611,
+          "astId": 4666,
           "type": "t_mapping<t_uint256>",
           "src": "156:40:3"
         },
@@ -739,7 +739,7 @@
       {
         "address": "0x2590095e7f9e654098FE4fbB1bA883915Bab0e4B",
         "version": "1.0.0",
-        "implementation": "0xb02936750f6225D39E988F76Db4f0638FfFbc176",
+        "implementation": "0xda166f6E7Ec30b5c53a055cBA1D4aC971710f218",
         "admin": "0x571A585CC910bc02947ddf16967Bc732Fadb83dC",
         "kind": "Upgradeable"
       }
