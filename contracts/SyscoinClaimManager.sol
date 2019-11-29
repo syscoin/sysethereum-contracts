@@ -487,16 +487,29 @@ contract SyscoinClaimManager is Initializable, SyscoinDepositsManager, SyscoinEr
         delete claim.bondedDeposits[submitter];
     }
 
-    // @dev - Pay submitter with challenger deposit
+    // @dev - Pay submitter with some of challenger deposit and pay prev submitters
     function doPaySubmitter(bytes32 superblockHash, SuperblockClaim storage claim) private {
         address challenger = claim.challenger;
         address submitter = claim.submitter;
-
         if (challenger != address(0)) {
             uint reward = claim.bondedDeposits[challenger];
             claim.bondedDeposits[challenger] = 0;
+            reward -= 1000000000000000000; // 1 ether
             claim.bondedDeposits[submitter] = claim.bondedDeposits[submitter].add(reward);
-
+            // distribute 0.7 eth to last 7 approved superblock submitters (0.1 each)
+            uint numPaid = 0;
+            address prevSubmitter;
+            SyscoinSuperblocksI.Status status;
+            while (numPaid < 7) {
+                (,,,,,superblockHash,prevSubmitter,status,) = trustedSuperblocks.getSuperblock(superblockHash);
+                if(superblockHash == 0x0)
+                    break;
+                if (status != SyscoinSuperblocksI.Status.Approved) {
+                    continue;
+                }
+                deposits[prevSubmitter] = deposits[prevSubmitter].add(100000000000000000); // 0.1 ether
+                numPaid++;
+            }
             unbondDeposit(superblockHash, challenger);
         }
         unbondDeposit(superblockHash, submitter);
