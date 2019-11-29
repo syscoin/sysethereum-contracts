@@ -474,17 +474,32 @@ contract SyscoinClaimManager is Initializable, SyscoinDepositsManager, SyscoinEr
         emit SuperblockBattleDecided(superblockHash, winner, loser);
     }
 
-    // @dev - Pay challenger
+    // @dev - Pay challenger 2 eth and 0.7 to previous submitters, leave 0.3 effectively unspendable
     function doPayChallenger(bytes32 superblockHash, SuperblockClaim storage claim) private {
         address challenger = claim.challenger;
         address submitter = claim.submitter;
 
-        if (challenger != address(0)) {
+        if (challenger != address(0) && submitter != address(0)) {
             uint reward = claim.bondedDeposits[submitter];
+            reward -= 1000000000000000000; // 1 ether
             claim.bondedDeposits[challenger] = claim.bondedDeposits[challenger].add(reward);
             unbondDeposit(superblockHash, challenger);
+            delete claim.bondedDeposits[submitter];
+            // distribute 0.7 eth to last 7 approved superblock submitters (0.1 each)
+            uint numPaid = 0;
+            address prevSubmitter;
+            SyscoinSuperblocksI.Status status;
+            while (numPaid < 7) {
+                (,,,,,superblockHash,prevSubmitter,status,) = trustedSuperblocks.getSuperblock(superblockHash);
+                if(superblockHash == 0x0)
+                    break;
+                if (status != SyscoinSuperblocksI.Status.Approved) {
+                    continue;
+                }
+                deposits[prevSubmitter] = deposits[prevSubmitter].add(100000000000000000); // 0.1 ether
+                numPaid++;
+            } 
         }
-        delete claim.bondedDeposits[submitter];
     }
 
     // @dev - Pay submitter with challenger deposit
@@ -492,14 +507,12 @@ contract SyscoinClaimManager is Initializable, SyscoinDepositsManager, SyscoinEr
         address challenger = claim.challenger;
         address submitter = claim.submitter;
 
-        if (challenger != address(0)) {
+        if (challenger != address(0) && submitter != address(0)) {
             uint reward = claim.bondedDeposits[challenger];
-            claim.bondedDeposits[challenger] = 0;
             claim.bondedDeposits[submitter] = claim.bondedDeposits[submitter].add(reward);
-
-            unbondDeposit(superblockHash, challenger);
+            unbondDeposit(superblockHash, submitter);
+            delete claim.bondedDeposits[challenger];
         }
-        unbondDeposit(superblockHash, submitter);
     }
 
     // @dev - Check if a superblock can be semi approved by calling checkClaimFinished
