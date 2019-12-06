@@ -550,7 +550,6 @@ contract SyscoinClaimManager is Initializable, SyscoinDepositsManager, SyscoinEr
 
     // @dev - Check if a claim is invalid
     function getClaimInvalid(bytes32 superblockHash) external view returns (bool) {
-        // TODO: see if this is redundant with superblock status
         return claims[superblockHash].invalid;
     }
 
