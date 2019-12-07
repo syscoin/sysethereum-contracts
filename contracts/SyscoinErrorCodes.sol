@@ -40,6 +40,7 @@ contract SyscoinErrorCodes {
     uint constant ERR_SUPERBLOCK_HASH_SUPERBLOCK = 50059;
     uint constant ERR_SUPERBLOCK_HASH_PREVBLOCK = 50060;
     uint constant ERR_SUPERBLOCK_HASH_PREVSUPERBLOCK = 50061;
+    uint constant ERR_SUPERBLOCK_MAX_INPROGRESS = 50062;
     uint constant ERR_SUPERBLOCK_BITS_LASTBLOCK = 50064;
     uint constant ERR_SUPERBLOCK_MIN_DEPOSIT = 50065;
     uint constant ERR_SUPERBLOCK_BITS_INTERIM_PREVBLOCK = 50066;
@@ -79,5 +80,6 @@ contract SyscoinErrorCodes {
     uint constant ERR_TX_64BYTE = 20060;
     // error codes for relayTx
     uint constant ERR_RELAY_VERIFY = 30010;
+    uint constant ERR_CANCEL_TRANSFER_VERIFY = 30020;
     uint constant public minProposalDeposit = 3000000000000000000;
 }

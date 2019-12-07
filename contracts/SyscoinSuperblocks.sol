@@ -31,7 +31,7 @@ contract SyscoinSuperblocks is Initializable, SyscoinSuperblocksI, SyscoinErrorC
 
     event VerifyTransaction(bytes32 txHash, uint returnCode);
     event RelayTransaction(bytes32 txHash, uint returnCode);
-
+    event ChallengeCancelTransferRequest(uint returnCode);
     // SyscoinClaimManager
     address public trustedClaimManager;
 
@@ -581,6 +581,31 @@ contract SyscoinSuperblocks is Initializable, SyscoinSuperblocksI, SyscoinErrorC
         return ERR_SUPERBLOCK_OK;
     }
 
+    // @dev - Verify TX SPV to Block proof as well as Block SPV proof to Superblock
+    // @param _txBytes - transaction bytes
+    // @param _txIndex - transaction's index within the block
+    // @param _txSiblings - transaction's Merkle siblings
+    // @param _syscoinBlockHeader - block header containing transaction
+    // @param _syscoinBlockIndex - block's index within superblock
+    // @param _syscoinBlockSiblings - block's merkle siblings
+    // @param _superblockHash - superblock containing block header
+    function verifySPVProofs(
+        bytes memory _syscoinBlockHeader,
+        uint _syscoinBlockIndex,
+        uint[] memory _syscoinBlockSiblings,
+        bytes32 _superblockHash,
+        bytes memory _txBytes,
+        uint _txIndex,
+        uint[] memory _txSiblings
+    ) private returns (uint) {
+                // Check if Syscoin block belongs to given superblock
+        if (bytes32(computeMerkle(dblShaFlip(_syscoinBlockHeader), _syscoinBlockIndex, _syscoinBlockSiblings))
+            != superblocks[_superblockHash].blocksMerkleRoot) {
+            // Syscoin block is not in superblock
+            return 0;
+        }
+        return verifyTx(_txBytes, _txIndex, _txSiblings, _syscoinBlockHeader, _superblockHash);
+    }
     // @dev - relays transaction `_txBytes` to ERC20Manager's processTransaction() method.
     // Also logs the value of processTransaction.
     // Note: callers cannot be 100% certain when an ERR_RELAY_VERIFY occurs because
@@ -592,7 +617,7 @@ contract SyscoinSuperblocks is Initializable, SyscoinSuperblocksI, SyscoinErrorC
     // @param _txIndex - transaction's index within the block
     // @param _txSiblings - transaction's Merkle siblings
     // @param _syscoinBlockHeader - block header containing transaction
-    // @param _syscoinBlockIndex - block's index withing superblock
+    // @param _syscoinBlockIndex - block's index within superblock
     // @param _syscoinBlockSiblings - block's merkle siblings
     // @param _superblockHash - superblock containing block header
     function relayTx(
@@ -604,14 +629,7 @@ contract SyscoinSuperblocks is Initializable, SyscoinSuperblocksI, SyscoinErrorC
         uint[] memory _syscoinBlockSiblings,
         bytes32 _superblockHash
     ) public returns (uint) {
-        // Check if Syscoin block belongs to given superblock
-        if (bytes32(computeMerkle(dblShaFlip(_syscoinBlockHeader), _syscoinBlockIndex, _syscoinBlockSiblings))
-            != superblocks[_superblockHash].blocksMerkleRoot) {
-            // Syscoin block is not in superblock
-            emit RelayTransaction(bytes32(0), ERR_SUPERBLOCK);
-            return ERR_SUPERBLOCK;
-        }
-        uint txHash = verifyTx(_txBytes, _txIndex, _txSiblings, _syscoinBlockHeader, _superblockHash);
+        uint txHash = verifySPVProofs(_syscoinBlockHeader, _syscoinBlockIndex, _syscoinBlockSiblings, _superblockHash, _txBytes, _txIndex, _txSiblings);
         if (txHash != 0) {
             uint value;
             address destinationAddress;
@@ -630,7 +648,42 @@ contract SyscoinSuperblocks is Initializable, SyscoinSuperblocksI, SyscoinErrorC
         emit RelayTransaction(bytes32(0), ERR_RELAY_VERIFY);
         return(ERR_RELAY_VERIFY);
     }
-
+    // Challenges a bridge cancellation request with SPV proofs linking tx to superblock and showing that a valid
+    // cancellation request exists. If challenge fails, the cancellation request continues until timeout at which point erc20 is refunded
+    //
+    // @param _txBytes - transaction bytes
+    // @param _txIndex - transaction's index within the block
+    // @param _txSiblings - transaction's Merkle siblings
+    // @param _syscoinBlockHeader - block header containing transaction
+    // @param _syscoinBlockIndex - block's index within superblock
+    // @param _syscoinBlockSiblings - block's merkle siblings
+    // @param _superblockHash - superblock containing block header
+    function challengeCancelTransfer(
+        bytes memory _txBytes,
+        uint _txIndex,
+        uint[] memory _txSiblings,
+        bytes memory _syscoinBlockHeader,
+        uint _syscoinBlockIndex,
+        uint[] memory _syscoinBlockSiblings,
+        bytes32 _superblockHash
+    ) public returns (uint) {
+        uint txHash = verifySPVProofs(_syscoinBlockHeader, _syscoinBlockIndex, _syscoinBlockSiblings, _superblockHash, _txBytes, _txIndex, _txSiblings);
+        if (txHash != 0) {
+            uint32 bridgeTransferId;
+            uint ret;
+           //(ret, bridgeTransferId) = parseMintTransaction(_txBytes);
+            if(ret != 0){
+                emit RelayTransaction(bytes32(txHash), ret);
+                return ret;
+            }
+            // check if cancellation request exists in valid state
+            // cancel cancellation request if challenger wins, challenger gets paid cancellors deposit
+            syscoinERC20Manager.processCancelTransferFail(bridgeTransferId, msg.sender);
+            return 0;
+        }
+        emit ChallengeCancelTransferRequest(ERR_CANCEL_TRANSFER_VERIFY);
+        return(ERR_CANCEL_TRANSFER_VERIFY);
+    }
     // @dev - Checks whether the transaction given by `_txBytes` is in the block identified by `_txBlockHeaderBytes`.
     // First it guards against a Merkle tree collision attack by raising an error if the transaction is exactly 64 bytes long,
     // then it calls helperVerifyHash to do the actual check.
@@ -685,7 +738,6 @@ contract SyscoinSuperblocks is Initializable, SyscoinSuperblocksI, SyscoinErrorC
         bytes32 _txsuperblockHash
     ) private returns (uint) {
 
-        //TODO: Verify superblock is in superblock's main chain
         if (!isApproved(_txsuperblockHash)) {
             emit VerifyTransaction(bytes32(_txHash), ERR_CHAIN);
             return (ERR_CHAIN);
