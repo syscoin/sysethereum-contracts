@@ -249,8 +249,11 @@ contract SyscoinSuperblocks is Initializable, SyscoinSuperblocksI, SyscoinErrorC
     function bytesToUint64(bytes memory input, uint pos) private pure returns (uint64 result) {
         result = uint64(uint8(input[pos+7])) + uint64(uint8(input[pos + 6]))*(2**8) + uint64(uint8(input[pos + 5]))*(2**16) + uint64(uint8(input[pos + 4]))*(2**24) + uint64(uint8(input[pos + 3]))*(2**32) + uint64(uint8(input[pos + 2]))*(2**40) + uint64(uint8(input[pos + 1]))*(2**48) + uint64(uint8(input[pos]))*(2**56);
     }
-     function bytesToUint32(bytes memory input, uint pos) private pure returns (uint32 result) {
+    function bytesToUint32(bytes memory input, uint pos) private pure returns (uint32 result) {
         result = uint32(uint8(input[pos+3])) + uint32(uint8(input[pos + 2]))*(2**8) + uint32(uint8(input[pos + 1]))*(2**16) + uint32(uint8(input[pos]))*(2**24);
+    }
+    function bytesToUint16(bytes memory input, uint pos) private pure returns (uint16 result) {
+        result = uint16(uint8(input[pos+1])) + uint16(uint8(input[pos]))*(2**8);
     }
     // @dev - convert an unsigned integer from little-endian to big-endian representation
     //
@@ -678,7 +681,6 @@ contract SyscoinSuperblocks is Initializable, SyscoinSuperblocksI, SyscoinErrorC
         internal
         returns (uint errorCode, uint32 bridgeTransferId)
     {
-        uint output_value;
         uint32 version;
         uint pos = 0;
         version = bytesToUint32Flipped(txBytes, pos);
@@ -686,9 +688,27 @@ contract SyscoinSuperblocks is Initializable, SyscoinSuperblocksI, SyscoinErrorC
             return (ERR_PARSE_TX_SYS, bridgeTransferId);
         }
         pos = getOpReturnPos(txBytes, 4);
+        pos += 3; // skip pushdata2 + 2 bytes for opreturn varint
         bridgeTransferId = getBridgeTransferId(getLogsBloom(getEthReceipt(txBytes, pos)));
     }
-
+    // @dev returns a portion of a given byte array specified by its starting and ending points
+    // Breaks underscore naming convention for parameters because it raises a compiler error
+    // if `offset` is changed to `_offset`.
+    //
+    // @param _rawBytes - array to be sliced
+    // @param offset - first byte of sliced array
+    // @param _endIndex - last byte of sliced array
+    function sliceArray(bytes memory _rawBytes, uint offset, uint _endIndex) private view returns (bytes memory) {
+        uint len = _endIndex - offset;
+        bytes memory result = new bytes(len);
+        assembly {
+            // Call precompiled contract to copy data
+            if iszero(staticcall(gas, 0x04, add(add(_rawBytes, 0x20), offset), len, add(result, 0x20), len)) {
+                revert(0, 0)
+            }
+        }
+        return result;
+    }
     /**
      * Parse txBytes and returns ethereum tx receipt
      * @param txBytes syscoin raw transaction
@@ -700,6 +720,34 @@ contract SyscoinSuperblocks is Initializable, SyscoinSuperblocksI, SyscoinErrorC
         returns (bytes memory)
     {
         bytes memory ethTxReceipt = new bytes(0);
+        uint bytesToRead;
+        // skip vchTxValue
+        (bytesToRead, pos) = parseVarInt(txBytes, pos);
+        pos += bytesToRead;
+        // skip vchTxParentNodes
+        (bytesToRead, pos) = parseVarInt(txBytes, pos);
+        pos += bytesToRead;
+        // skip vchTxRoot
+        (bytesToRead, pos) = parseVarInt(txBytes, pos);
+        pos += bytesToRead;
+        // skip vchTxPath
+        (bytesToRead, pos) = parseVarInt(txBytes, pos);
+        pos += bytesToRead;
+        // get vchReceiptValue
+        (bytesToRead, pos) = parseVarInt(txBytes, pos);
+        // if position is encoded in receipt value, decode position and read the value from next field (parent nodes)
+        if(bytesToRead == 2){
+            uint16 positionOfValue = bytesToUint16(txBytes, pos);
+            pos += bytesToRead;
+            // get vchReceiptParentNodes
+            (bytesToRead, pos) = parseVarInt(txBytes, pos);
+            pos += positionOfValue;
+            ethTxReceipt = sliceArray(txBytes, pos, pos+(bytesToRead-positionOfValue));
+        }
+        // size > 2 means receipt value is fully serialized in this field and no need to get parent nodes field
+        else{
+            ethTxReceipt = sliceArray(txBytes, pos, pos+bytesToRead);      
+        }
         return ethTxReceipt;
     }
 
