@@ -81,12 +81,11 @@ contract SyscoinSuperblocks is Initializable, SyscoinSuperblocksI, SyscoinErrorC
     // Outputs
     // @return output_value - amount sent to the lock address in satoshis
     // @return destinationAddress - ethereum destination address
-
-
-    function parseTransaction(bytes memory txBytes) private pure
-             returns (uint, uint, address, uint32, uint8, address)
+    function parseBurnTx(bytes memory txBytes)
+        private
+        pure
+        returns (uint, uint, address, uint32, uint8, address)
     {
-
         uint output_value;
         uint32 assetGUID;
         address destinationAddress;
@@ -98,49 +97,35 @@ contract SyscoinSuperblocks is Initializable, SyscoinSuperblocksI, SyscoinErrorC
         if(version != SYSCOIN_TX_VERSION_ASSET_ALLOCATION_BURN){
             return (ERR_PARSE_TX_SYS, output_value, destinationAddress, assetGUID, precision, erc20Address);
         }
-        pos = skipInputs(txBytes, 4);
-
-        (output_value, destinationAddress, assetGUID, precision, erc20Address) = scanBurns(txBytes, pos);
+        pos = getOpReturnPos(txBytes, 4);
+        (output_value, destinationAddress, assetGUID, precision, erc20Address) = scanAssetDetails(txBytes, pos);
         return (0, output_value, destinationAddress, assetGUID, precision, erc20Address);
     }
 
-
-    function skipInputs(bytes memory txBytes, uint pos) private pure
-             returns (uint)
-    {
+    function getOpReturnPos(bytes memory txBytes, uint pos) internal pure returns (uint) {
         uint n_inputs;
         uint script_len;
+        uint output_value;
+        uint n_outputs;
+
         (n_inputs, pos) = parseVarInt(txBytes, pos);
         // if dummy 0x00 is present this is a witness transaction
         if(n_inputs == 0x00){
             (n_inputs, pos) = parseVarInt(txBytes, pos); // flag
-            require(n_inputs != 0x00);
+            require(n_inputs != 0x00, "#SyscoinSuperblocks getOpReturnPos(): Unexpected dummy/flag");
             // after dummy/flag the real var int comes for txins
             (n_inputs, pos) = parseVarInt(txBytes, pos);
         }
-        require(n_inputs < 100);
+        require(n_inputs < 100, "#SyscoinSuperblocks getOpReturnPos(): Incorrect size of n_inputs");
 
         for (uint i = 0; i < n_inputs; i++) {
             pos += 36;  // skip outpoint
             (script_len, pos) = parseVarInt(txBytes, pos);
             pos += script_len + 4;  // skip sig_script, seq
         }
-
-        return pos;
-    }
-    // scan the burn outputs and return the value and script data of first burned output.
-    function scanBurns(bytes memory txBytes, uint pos) private pure
-             returns (uint, address, uint32, uint8, address)
-    {
-        uint script_len;
-        uint output_value;
-        uint32 assetGUID = 0;
-        address destinationAddress;
-        address erc20Address;
-        uint8 precision;
-        uint n_outputs;
+        
         (n_outputs, pos) = parseVarInt(txBytes, pos);
-        require(n_outputs < 10);
+        require(n_outputs < 10, "#SyscoinSuperblocks getOpReturnPos(): Incorrect size of n_outputs");
         for (uint i = 0; i < n_outputs; i++) {
             pos += 8;
             // varint
@@ -153,27 +138,23 @@ contract SyscoinSuperblocks is Initializable, SyscoinSuperblocksI, SyscoinErrorC
             }
             // skip opreturn marker
             pos += 1;
-            (output_value, destinationAddress, assetGUID, precision, erc20Address) = scanAssetDetails(txBytes, pos);
-            // only one opreturn data allowed per transaction
-            break;
+            return pos;
         }
-
-        return (output_value, destinationAddress, assetGUID, precision, erc20Address);
+        revert("#SyscoinSuperblocks getOpReturnPos(): No OpReturn found");
     }
-
 
     // Returns true if the tx output is an OP_RETURN output
-    function isOpReturn(bytes memory txBytes, uint pos) private pure
-             returns (bool) {
+    function isOpReturn(bytes memory txBytes, uint pos) private pure returns (bool) {
         // scriptPub format is
         // 0x6a OP_RETURN
-        return
-            txBytes[pos] == byte(0x6a);
+        return txBytes[pos] == byte(0x6a);
     }
     // Returns asset data parsed from the op_return data output from syscoin asset burn transaction
-    function scanAssetDetails(bytes memory txBytes, uint pos) private pure
-             returns (uint, address, uint32, uint8, address) {
-
+    function scanAssetDetails(bytes memory txBytes, uint pos)
+        private
+        pure
+        returns (uint, address, uint32, uint8, address)
+    {
         uint32 assetGUID;
         address destinationAddress;
         address erc20Address;
@@ -208,6 +189,7 @@ contract SyscoinSuperblocks is Initializable, SyscoinSuperblocksI, SyscoinErrorC
         erc20Address = readEthereumAddress(txBytes, pos);
         return (output_value, destinationAddress, assetGUID, precision, erc20Address);
     }
+
     // Read the ethereum address embedded in the tx output
     function readEthereumAddress(bytes memory txBytes, uint pos) private pure
              returns (address) {
@@ -606,6 +588,7 @@ contract SyscoinSuperblocks is Initializable, SyscoinSuperblocksI, SyscoinErrorC
         }
         return verifyTx(_txBytes, _txIndex, _txSiblings, _syscoinBlockHeader, _superblockHash);
     }
+
     // @dev - relays transaction `_txBytes` to ERC20Manager's processTransaction() method.
     // Also logs the value of processTransaction.
     // Note: callers cannot be 100% certain when an ERR_RELAY_VERIFY occurs because
@@ -637,7 +620,7 @@ contract SyscoinSuperblocks is Initializable, SyscoinSuperblocksI, SyscoinErrorC
             uint32 assetGUID;
             address erc20ContractAddress;
             uint8 precision;
-            (ret, value, destinationAddress, assetGUID, precision, erc20ContractAddress) = parseTransaction(_txBytes);
+            (ret, value, destinationAddress, assetGUID, precision, erc20ContractAddress) = parseBurnTx(_txBytes);
             if(ret != 0){
                 emit RelayTransaction(bytes32(txHash), ret);
                 return ret;
@@ -648,6 +631,7 @@ contract SyscoinSuperblocks is Initializable, SyscoinSuperblocksI, SyscoinErrorC
         emit RelayTransaction(bytes32(0), ERR_RELAY_VERIFY);
         return(ERR_RELAY_VERIFY);
     }
+
     // Challenges a bridge cancellation request with SPV proofs linking tx to superblock and showing that a valid
     // cancellation request exists. If challenge fails, the cancellation request continues until timeout at which point erc20 is refunded
     //
@@ -671,7 +655,7 @@ contract SyscoinSuperblocks is Initializable, SyscoinSuperblocksI, SyscoinErrorC
         if (txHash != 0) {
             uint32 bridgeTransferId;
             uint ret;
-           //(ret, bridgeTransferId) = parseMintTransaction(_txBytes);
+            (ret, bridgeTransferId) = parseMintTx(_txBytes);
             if(ret != 0){
                 emit RelayTransaction(bytes32(txHash), ret);
                 return ret;
@@ -684,6 +668,60 @@ contract SyscoinSuperblocks is Initializable, SyscoinSuperblocksI, SyscoinErrorC
         emit ChallengeCancelTransferRequest(ERR_CANCEL_TRANSFER_VERIFY);
         return(ERR_CANCEL_TRANSFER_VERIFY);
     }
+
+    /**
+     * @dev Parse syscoin mint transaction to recover bridgeTransferId
+     * @param txBytes syscoin raw transaction
+     * @return errorCode, bridgeTransferId
+     */
+    function parseMintTx(bytes memory txBytes)
+        internal
+        returns (uint errorCode, uint32 bridgeTransferId)
+    {
+        uint output_value;
+        uint32 version;
+        uint pos = 0;
+        version = bytesToUint32Flipped(txBytes, pos);
+        if(version != SYSCOIN_TX_VERSION_ASSET_ALLOCATION_BURN){
+            return (ERR_PARSE_TX_SYS, bridgeTransferId);
+        }
+        pos = getOpReturnPos(txBytes, 4);
+        bridgeTransferId = getBridgeTransferId(getLogsBloom(getEthReceipt(txBytes, pos)));
+    }
+
+    /**
+     * Parse txBytes and returns ethereum tx receipt
+     * @param txBytes syscoin raw transaction
+     * @param pos position at where to start parsing
+     * @return ethTxReceipt ethereum tx receipt
+     */
+    function getEthReceipt(bytes memory txBytes, uint pos)
+        internal
+        returns (bytes memory)
+    {
+        bytes memory ethTxReceipt = new bytes(0);
+        return ethTxReceipt;
+    }
+
+    /**
+     * Return logs bloom for given ethereum transaction receipt
+     * @param  ethTxReceipt ethereum transaction receipt
+     * @return logs bloom
+     */
+    function getLogsBloom(bytes memory ethTxReceipt) internal pure returns (bytes memory) {
+        bytes memory logsBloom = new bytes(0);
+        return logsBloom;
+    }
+
+    /**
+     * Get bridgeTransactionId from logs bloom
+     * @param logsBloom logs bloom
+     * @return bridgeTransactionId
+     */
+    function getBridgeTransferId(bytes memory logsBloom) internal pure returns (uint32) {
+        return 1;
+    }
+
     // @dev - Checks whether the transaction given by `_txBytes` is in the block identified by `_txBlockHeaderBytes`.
     // First it guards against a Merkle tree collision attack by raising an error if the transaction is exactly 64 bytes long,
     // then it calls helperVerifyHash to do the actual check.

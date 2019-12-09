@@ -25,8 +25,11 @@ contract SyscoinERC20Manager is Initializable {
     mapping(uint32 => uint256) public assetBalances;
     // Syscoin transactions that were already processed by processTransaction()
     mapping(uint => bool) private syscoinTxHashesAlreadyProcessed;
+
     uint32 bridgeTransferIdCount;
+    
     enum BridgeTransferStatus { Uninitialized, Ok, CancelRequested, CancelChallenged, CancelOk }
+    
     struct BridgeTransfer {
         uint height;
         uint cancelTimestamp;
@@ -42,7 +45,7 @@ contract SyscoinERC20Manager is Initializable {
 
     event TokenUnfreeze(address receipient, uint value);
     event TokenUnfreezeFee(address receipient, uint value);
-    event TokenFreeze(address freezer, uint value, uint bridgetransferid);
+    event TokenFreeze(address freezer, uint value, uint indexed bridgetransferid);
     event CancelTransferRequest(address canceller, uint bridgetransferid);
     event CancelTransferSucceeded(address canceller, uint bridgetransferid);
     event CancelTransferFailed(address canceller, uint bridgetransferid);
@@ -125,20 +128,23 @@ contract SyscoinERC20Manager is Initializable {
         erc20.transfer(destinationAddress, userValue);
         emit TokenUnfreeze(destinationAddress, userValue);
     }
-    function cancelTransferRequest(
-        uint32 bridgeTransferId
-        ) public payable {
+    
+    function cancelTransferRequest(uint32 bridgeTransferId) public payable {
         // lookup state by bridgeTransferId
         BridgeTransfer memory bridgeTransfer = bridgeTransfers[bridgeTransferId];
         // ensure state is Ok
-        require(bridgeTransfer.status == BridgeTransferStatus.Ok);
+        require(bridgeTransfer.status == BridgeTransferStatus.Ok,
+            "#SyscoinERC20Manager cancelTransferSuccess(): Status of bridge transfer must be Ok");
         // ensure msg.sender is same as tokenFreezerAddress
         // we don't have to do this but we do it anyway so someone can't accidentily cancel a transfer they did not make
-        require(msg.sender == bridgeTransfer.tokenFreezerAddress);
+        require(msg.sender == bridgeTransfer.tokenFreezerAddress,
+            "#SyscoinERC20Manager cancelTransferSuccess(): Only msg.sender is allowed to cancel");
         // if freezeBurnERC20 was called less than 45000 blocks ago then return error
-        require((block.number - bridgeTransfer.height) >= 45000);
+        require((block.number - bridgeTransfer.height) >= 45000,
+            "#SyscoinERC20Manager cancelTransferSuccess(): Transfer must be at least 45000 blocks old");
         // ensure min deposit paid
-        require(msg.value >= MIN_CANCEL_DEPOSIT);
+        require(msg.value >= MIN_CANCEL_DEPOSIT,
+            "#SyscoinERC20Manager cancelTransferSuccess(): Cancel deposit incorrect");
         deposits[bridgeTransferId] = msg.value;
         // set height for cancel time begin to enforce a delay to wait for challengers
         bridgeTransfer.cancelTimestamp = block.timestamp;
@@ -146,14 +152,17 @@ contract SyscoinERC20Manager is Initializable {
         bridgeTransfer.status = BridgeTransferStatus.CancelRequested;
         emit CancelTransferRequest(msg.sender, bridgeTransferId);
     }
+
     function cancelTransferSuccess(uint32 bridgeTransferId) public {
         // lookup state by bridgeTransferId
         BridgeTransfer storage bridgeTransfer = bridgeTransfers[bridgeTransferId];
         // ensure state is CancelRequested to avoid people trying to claim multiple times 
         // and that it has to be on an active cancel request
-        require(bridgeTransfer.status == BridgeTransferStatus.CancelRequested);
+        require(bridgeTransfer.status == BridgeTransferStatus.CancelRequested,
+            "#SyscoinERC20Manager cancelTransferSuccess(): Status must be CancelRequested");
         // check if timeout period passed (atleast 1 hour of blocks have to have passed)
-        require(bridgeTransfer.cancelTimestamp > 0 && ((block.timestamp - bridgeTransfer.cancelTimestamp) > CANCEL_TRANSFER_TIMEOUT));
+        require(bridgeTransfer.cancelTimestamp > 0 && ((block.timestamp - bridgeTransfer.cancelTimestamp) > CANCEL_TRANSFER_TIMEOUT),
+            "#SyscoinERC20Manager cancelTransferSuccess(): 1 hours timeout is required");
         // refund erc20 to the tokenFreezerAddress
         SyscoinERC20I erc20 = SyscoinERC20I(bridgeTransfer.erc20ContractAddress);
         assetBalances[bridgeTransfer.assetGUID] = assetBalances[bridgeTransfer.assetGUID].sub(bridgeTransfer.value);
@@ -166,19 +175,24 @@ contract SyscoinERC20Manager is Initializable {
         bridgeTransfer.status = BridgeTransferStatus.CancelOk;
         emit CancelTransferSucceeded(bridgeTransfer.tokenFreezerAddress, bridgeTransferId);
     }
-    function processCancelTransferFail(uint32 bridgeTransferId, address payable challengerAddress) public onlyTrustedRelayer {
+
+    function processCancelTransferFail(uint32 bridgeTransferId, address payable challengerAddress)
+        public
+        onlyTrustedRelayer
+    {
         // lookup state by bridgeTransferId
         BridgeTransfer storage bridgeTransfer = bridgeTransfers[bridgeTransferId];
         // ensure state is CancelRequested
-        require(bridgeTransfer.status == BridgeTransferStatus.CancelRequested);
+        require(bridgeTransfer.status == BridgeTransferStatus.CancelRequested,
+            "#SyscoinERC20Manager cancelTransferSuccess(): Status must be CancelRequested to Fail the transfer");
         // pay deposit to challenger
-        //address payable challengerAddressPayable = address(uint160(challengerAddress));
         challengerAddress.transfer(deposits[bridgeTransferId]);
         delete deposits[bridgeTransferId];
         // set state of bridge transfer to CancelChallenged
         bridgeTransfer.status = BridgeTransferStatus.CancelChallenged;
         emit CancelTransferFailed(bridgeTransfer.tokenFreezerAddress, bridgeTransferId);
     }
+
     // keyhash or scripthash for syscoinWitnessProgram
     function freezeBurnERC20(
         uint value,
@@ -203,14 +217,16 @@ contract SyscoinERC20Manager is Initializable {
         // store some state needed for potential bridge transfer cancellation
         // create bridgeTransferId mapping structure with status + height + value + erc20ContractAddress + assetGUID + tokenFreezerAddress
         bridgeTransferIdCount++;
-        BridgeTransfer storage bridgeTransfer = bridgeTransfers[bridgeTransferIdCount];
-        bridgeTransfer.status = BridgeTransferStatus.Ok;
-        bridgeTransfer.value = value;
-        bridgeTransfer.erc20ContractAddress = erc20ContractAddress;
-        bridgeTransfer.assetGUID = assetGUID;
-        bridgeTransfer.height = block.number;
-        bridgeTransfer.cancelTimestamp = 0;
-        bridgeTransfer.tokenFreezerAddress = msg.sender;
+        bridgeTransfers[bridgeTransferIdCount] = BridgeTransfer({
+            status: BridgeTransferStatus.Ok,
+            value: value,
+            erc20ContractAddress: erc20ContractAddress,
+            assetGUID: assetGUID,
+            height: block.number,
+            cancelTimestamp: 0,
+            tokenFreezerAddress: msg.sender
+        });
+
         emit TokenFreeze(msg.sender, value, bridgeTransferIdCount);
         return true;
     }
