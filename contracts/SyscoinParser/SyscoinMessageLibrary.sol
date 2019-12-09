@@ -9,7 +9,7 @@ library SyscoinMessageLibrary {
 
     // Convert a variable integer into something useful and return it and
     // the index to after it.
-    function parseVarInt(bytes memory txBytes, uint pos) private pure returns (uint, uint) {
+    function parseVarInt(bytes memory txBytes, uint pos) internal pure returns (uint, uint) {
         // the first byte tells us how big the integer is
         uint8 ibit = uint8(txBytes[pos]);
         pos += 1;  // skip ibit
