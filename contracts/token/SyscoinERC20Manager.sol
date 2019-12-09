@@ -11,10 +11,11 @@ contract SyscoinERC20Manager is Initializable {
     using SafeMath for uint8;
 
     // Lock constants
-    uint public constant MIN_LOCK_VALUE = 10; // 0.1 token
-    uint public constant SUPERBLOCK_SUBMITTER_LOCK_FEE = 10000; // 10000 = 0.01%
-    uint public constant MIN_CANCEL_DEPOSIT = 3000000000000000000; // 3 eth
-    uint public constant CANCEL_TRANSFER_TIMEOUT = 3600; // 1 hour in seconds
+    uint private constant MIN_LOCK_VALUE = 10; // 0.1 token
+    uint private constant SUPERBLOCK_SUBMITTER_LOCK_FEE = 10000; // 10000 = 0.01%
+    uint private constant MIN_CANCEL_DEPOSIT = 3000000000000000000; // 3 eth
+    uint private constant CANCEL_TRANSFER_TIMEOUT = 3600; // 1 hour in seconds
+    uint private constant CANCEL_MINT_TIMEOUT = 907200; // 1.5 weeks in seconds
     // Variables set by constructor
 
     // Contract to trust for tx included in a syscoin block verification.
@@ -31,8 +32,7 @@ contract SyscoinERC20Manager is Initializable {
     enum BridgeTransferStatus { Uninitialized, Ok, CancelRequested, CancelChallenged, CancelOk }
     
     struct BridgeTransfer {
-        uint height;
-        uint cancelTimestamp;
+        uint timestamp;
         uint value;
         address erc20ContractAddress;
         address tokenFreezerAddress;
@@ -134,20 +134,19 @@ contract SyscoinERC20Manager is Initializable {
         BridgeTransfer memory bridgeTransfer = bridgeTransfers[bridgeTransferId];
         // ensure state is Ok
         require(bridgeTransfer.status == BridgeTransferStatus.Ok,
-            "#SyscoinERC20Manager cancelTransferSuccess(): Status of bridge transfer must be Ok");
+            "#SyscoinERC20Manager cancelTransferRequest(): Status of bridge transfer must be Ok");
         // ensure msg.sender is same as tokenFreezerAddress
         // we don't have to do this but we do it anyway so someone can't accidentily cancel a transfer they did not make
-        require(msg.sender == bridgeTransfer.tokenFreezerAddress,
-            "#SyscoinERC20Manager cancelTransferSuccess(): Only msg.sender is allowed to cancel");
-        // if freezeBurnERC20 was called less than 45000 blocks ago then return error
-        require((block.number - bridgeTransfer.height) >= 45000,
-            "#SyscoinERC20Manager cancelTransferSuccess(): Transfer must be at least 45000 blocks old");
+        require(msg.sender == bridgeTransfer.tokenFreezerAddress, "#SyscoinERC20Manager cancelTransferRequest(): Only msg.sender is allowed to cancel");
+        // if freezeBurnERC20 was called less than 1.5 weeks ago then return error
+        // 0.5 week buffer since only 1 week of blocks are allowed to pass before cannot mint on sys
+        require((block.timestamp - bridgeTransfer.timestamp) > CANCEL_MINT_TIMEOUT, "#SyscoinERC20Manager cancelTransferRequest(): Transfer must be at least 1.5 week old");
         // ensure min deposit paid
         require(msg.value >= MIN_CANCEL_DEPOSIT,
             "#SyscoinERC20Manager cancelTransferSuccess(): Cancel deposit incorrect");
         deposits[bridgeTransferId] = msg.value;
         // set height for cancel time begin to enforce a delay to wait for challengers
-        bridgeTransfer.cancelTimestamp = block.timestamp;
+        bridgeTransfer.timestamp = block.timestamp;
         // set state of bridge transfer to CancelRequested
         bridgeTransfer.status = BridgeTransferStatus.CancelRequested;
         emit CancelTransferRequest(msg.sender, bridgeTransferId);
@@ -161,8 +160,7 @@ contract SyscoinERC20Manager is Initializable {
         require(bridgeTransfer.status == BridgeTransferStatus.CancelRequested,
             "#SyscoinERC20Manager cancelTransferSuccess(): Status must be CancelRequested");
         // check if timeout period passed (atleast 1 hour of blocks have to have passed)
-        require(bridgeTransfer.cancelTimestamp > 0 && ((block.timestamp - bridgeTransfer.cancelTimestamp) > CANCEL_TRANSFER_TIMEOUT),
-            "#SyscoinERC20Manager cancelTransferSuccess(): 1 hours timeout is required");
+        require((block.timestamp - bridgeTransfer.timestamp) > CANCEL_TRANSFER_TIMEOUT, "#SyscoinERC20Manager cancelTransferSuccess(): 1 hours timeout is required");
         // refund erc20 to the tokenFreezerAddress
         SyscoinERC20I erc20 = SyscoinERC20I(bridgeTransfer.erc20ContractAddress);
         assetBalances[bridgeTransfer.assetGUID] = assetBalances[bridgeTransfer.assetGUID].sub(bridgeTransfer.value);
@@ -222,11 +220,9 @@ contract SyscoinERC20Manager is Initializable {
             value: value,
             erc20ContractAddress: erc20ContractAddress,
             assetGUID: assetGUID,
-            height: block.number,
-            cancelTimestamp: 0,
+            timestamp: block.timestamp,
             tokenFreezerAddress: msg.sender
         });
-
         emit TokenFreeze(msg.sender, value, bridgeTransferIdCount);
         return true;
     }
