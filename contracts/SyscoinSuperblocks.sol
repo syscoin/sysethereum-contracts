@@ -12,8 +12,10 @@ contract SyscoinSuperblocks is Initializable, SyscoinSuperblocksI, SyscoinErrorC
 
     uint constant ERR_PARSE_TX_SYS = 10170;
     enum Network { MAINNET, TESTNET, REGTEST }
-    uint32 constant SYSCOIN_TX_VERSION_ASSET_ALLOCATION_BURN = 0x7407;
 
+    uint32 constant SYSCOIN_TX_VERSION_ALLOCATION_BURN_TO_ETHEREUM = 0x7407;
+    uint32 constant SYSCOIN_TX_VERSION_ALLOCATION_MINT = 0x7406;
+    
     // Mapping superblock id => superblock data
     mapping (bytes32 => SuperblockInfo) private superblocks;
 
@@ -94,7 +96,7 @@ contract SyscoinSuperblocks is Initializable, SyscoinSuperblocksI, SyscoinErrorC
         uint8 precision;
         uint pos = 0;
         version = bytesToUint32Flipped(txBytes, pos);
-        if(version != SYSCOIN_TX_VERSION_ASSET_ALLOCATION_BURN){
+        if(version != SYSCOIN_TX_VERSION_ALLOCATION_BURN_TO_ETHEREUM){
             return (ERR_PARSE_TX_SYS, output_value, destinationAddress, assetGUID, precision, erc20Address);
         }
         pos = getOpReturnPos(txBytes, 4);
@@ -684,7 +686,7 @@ contract SyscoinSuperblocks is Initializable, SyscoinSuperblocksI, SyscoinErrorC
         uint32 version;
         uint pos = 0;
         version = bytesToUint32Flipped(txBytes, pos);
-        if(version != SYSCOIN_TX_VERSION_ASSET_ALLOCATION_BURN){
+        if(version != SYSCOIN_TX_VERSION_ALLOCATION_MINT){
             return (ERR_PARSE_TX_SYS, bridgeTransferId);
         }
         pos = getOpReturnPos(txBytes, 4);

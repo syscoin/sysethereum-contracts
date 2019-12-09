@@ -5,8 +5,7 @@ library SyscoinMessageLibrary {
 
     uint constant ERR_PARSE_TX_SYS = 10170;
     enum Network { MAINNET, TESTNET, REGTEST }
-    uint32 constant SYSCOIN_TX_VERSION_ASSET_ALLOCATION_BURN = 0x7407;
- 
+    uint32 constant SYSCOIN_TX_VERSION_ALLOCATION_BURN_TO_ETHEREUM = 0x7407;
 
     // Convert a variable integer into something useful and return it and
     // the index to after it.
@@ -53,7 +52,7 @@ library SyscoinMessageLibrary {
         uint8 precision;
         uint pos = 0;
         version = bytesToUint32Flipped(txBytes, pos);
-        if(version != SYSCOIN_TX_VERSION_ASSET_ALLOCATION_BURN){
+        if(version != SYSCOIN_TX_VERSION_ALLOCATION_BURN_TO_ETHEREUM){
             return (ERR_PARSE_TX_SYS, output_value, destinationAddress, assetGUID, precision, erc20Address);
         }
         pos = skipInputs(txBytes, 4);
