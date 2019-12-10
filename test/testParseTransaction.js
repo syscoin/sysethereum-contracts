@@ -20,7 +20,7 @@ contract('testParseTransaction', (accounts) => {
     });
     tx.version = 0x01;
     const txData = `0x${tx.toHex()}`;
-    const [ ret, amount, inputEthAddress, precision, assetGUID ] = Object.values(await syscoinMessageLibraryForTests.parseTransaction(txData));
+    const [ ret, amount, inputEthAddress, precision, assetGUID ] = Object.values(await syscoinMessageLibraryForTests.parseBurnTx(txData));
     assert.equal(ret, 10170, 'Error Parsing, wrong version');
     assert.equal(amount.toNumber(), 0, 'Amount burned');
     
@@ -35,7 +35,7 @@ contract('testParseTransaction', (accounts) => {
     });
     tx.version = 0x7407;
     const txData = `0x${tx.toHex()}`;
-    await truffleAssert.reverts(syscoinMessageLibraryForTests.parseTransaction(txData));
+    await truffleAssert.reverts(syscoinMessageLibraryForTests.parseBurnTx(txData));
 
   });
   
@@ -50,10 +50,7 @@ contract('testParseTransaction', (accounts) => {
     });
     tx.version = 0x7407;
     const txData = `0x${tx.toHex()}`;
-    const [ ret, amount, inputEthAddress, precision, assetGUID ] =  Object.values(await syscoinMessageLibraryForTests.parseTransaction(txData));
-    assert.equal(ret, 0, 'Parsing succeeded');
-    assert.equal(amount.toNumber(), 0, 'Amount burned');
-
+    await truffleAssert.reverts(syscoinMessageLibraryForTests.parseBurnTx(txData));
   });  
   it('Parse transaction with OP_RETURN in vout 1', async () => {
     const tx = utils.buildSyscoinTransaction({
@@ -66,7 +63,7 @@ contract('testParseTransaction', (accounts) => {
     });
     tx.version = 0x7407;
     const txData = `0x${tx.toHex()}`;
-    await truffleAssert.reverts(syscoinMessageLibraryForTests.parseTransaction(txData));
+    await truffleAssert.reverts(syscoinMessageLibraryForTests.parseBurnTx(txData));
     
   });
   it('Parse transaction with OP_RETURN', async () => {
@@ -81,6 +78,6 @@ contract('testParseTransaction', (accounts) => {
     tx.version = 0x7407;
     const txData = `0x${tx.toHex()}`;
     
-    await truffleAssert.reverts(syscoinMessageLibraryForTests.parseTransaction(txData));
+    await truffleAssert.reverts(syscoinMessageLibraryForTests.parseBurnTx(txData));
   });
 });

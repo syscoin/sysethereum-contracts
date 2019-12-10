@@ -45,7 +45,7 @@ contract SyscoinERC20Manager is Initializable {
 
     event TokenUnfreeze(address receipient, uint value);
     event TokenUnfreezeFee(address receipient, uint value);
-    event TokenFreeze(address freezer, uint value, uint indexed bridgetransferid);
+    event TokenFreeze(address freezer, uint value, uint32 bridgetransferid);
     event CancelTransferRequest(address canceller, uint bridgetransferid);
     event CancelTransferSucceeded(address canceller, uint bridgetransferid);
     event CancelTransferFailed(address canceller, uint bridgetransferid);

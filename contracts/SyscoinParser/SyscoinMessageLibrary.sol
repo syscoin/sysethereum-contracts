@@ -1,7 +1,12 @@
 pragma solidity ^0.5.13;
 
+import "solidity-rlp/contracts/RLPReader.sol";
+
 // parse a raw Syscoin transaction byte array
-library SyscoinMessageLibrary {
+contract SyscoinMessageLibrary {
+
+    using RLPReader for RLPReader.RLPItem;
+    using RLPReader for bytes;
 
     uint constant ERR_PARSE_TX_SYS = 10170;
     enum Network { MAINNET, TESTNET, REGTEST }
@@ -9,7 +14,7 @@ library SyscoinMessageLibrary {
 
     // Convert a variable integer into something useful and return it and
     // the index to after it.
-    function parseVarInt(bytes memory txBytes, uint pos) internal pure returns (uint, uint) {
+    function parseVarInt(bytes memory txBytes, uint pos) public pure returns (uint, uint) {
         // the first byte tells us how big the integer is
         uint8 ibit = uint8(txBytes[pos]);
         pos += 1;  // skip ibit
@@ -25,12 +30,15 @@ library SyscoinMessageLibrary {
         }
     }
     // convert little endian bytes to uint
-    function getBytesLE(bytes memory data, uint pos, uint bits) internal pure returns (uint256 result) {
+    function getBytesLE(bytes memory data, uint pos, uint bits)
+        public
+        pure
+        returns (uint256 result)
+    {
         for (uint256 i = 0; i < bits / 8; i++) {
             result += uint256(uint8(data[pos + i])) * 2 ** (i * 8);
         }
     }
-    
 
     // @dev - Parses a syscoin tx
     //
@@ -38,12 +46,11 @@ library SyscoinMessageLibrary {
     // Outputs
     // @return output_value - amount sent to the lock address in satoshis
     // @return destinationAddress - ethereum destination address
-
-
-    function parseTransaction(bytes memory txBytes) internal pure
-             returns (uint, uint, address, uint32, uint8, address)
+    function parseBurnTx(bytes memory txBytes)
+        public
+        pure
+        returns (uint, uint, address, uint32, uint8, address)
     {
-        
         uint output_value;
         uint32 assetGUID;
         address destinationAddress;
@@ -55,15 +62,15 @@ library SyscoinMessageLibrary {
         if(version != SYSCOIN_TX_VERSION_ALLOCATION_BURN_TO_ETHEREUM){
             return (ERR_PARSE_TX_SYS, output_value, destinationAddress, assetGUID, precision, erc20Address);
         }
-        pos = skipInputs(txBytes, 4);
-            
-        (output_value, destinationAddress, assetGUID, precision, erc20Address) = scanBurns(txBytes, pos);
+        pos = getOpReturnPos(txBytes, 4);
+        (output_value, destinationAddress, assetGUID, precision, erc20Address) = scanAssetDetails(txBytes, pos);
         return (0, output_value, destinationAddress, assetGUID, precision, erc20Address);
     }
-  
 
-    function skipInputs(bytes memory txBytes, uint pos) private pure
-             returns (uint)
+    function skipInputs(bytes memory txBytes, uint pos)
+        private
+        pure
+        returns (uint)
     {
         uint n_inputs;
         uint script_len;
@@ -86,8 +93,10 @@ library SyscoinMessageLibrary {
         return pos;
     }           
     // scan the burn outputs and return the value and script data of first burned output.
-    function scanBurns(bytes memory txBytes, uint pos) private pure
-             returns (uint, address, uint32, uint8, address)
+    function scanBurns(bytes memory txBytes, uint pos)
+        private
+        pure
+        returns (uint, address, uint32, uint8, address)
     {
         uint script_len;
         uint output_value;
@@ -118,19 +127,20 @@ library SyscoinMessageLibrary {
         return (output_value, destinationAddress, assetGUID, precision, erc20Address);
     }
     
-    
     // Returns true if the tx output is an OP_RETURN output
-    function isOpReturn(bytes memory txBytes, uint pos) private pure
-             returns (bool) {
+    function isOpReturn(bytes memory txBytes, uint pos) private pure returns (bool) {
         // scriptPub format is
         // 0x6a OP_RETURN
         return 
             txBytes[pos] == byte(0x6a);
-    }  
+    }
+
     // Returns asset data parsed from the op_return data output from syscoin asset burn transaction
-    function scanAssetDetails(bytes memory txBytes, uint pos) private pure
-             returns (uint, address, uint32, uint8, address) {
-                 
+    function scanAssetDetails(bytes memory txBytes, uint pos)
+        private
+        pure
+        returns (uint, address, uint32, uint8, address)
+    {
         uint32 assetGUID;
         address destinationAddress;
         address erc20Address;
@@ -164,10 +174,93 @@ library SyscoinMessageLibrary {
         require(op == 0x14);
         erc20Address = readEthereumAddress(txBytes, pos);
         return (output_value, destinationAddress, assetGUID, precision, erc20Address);
-    }         
+    }
+
+    /**
+     * Parse txBytes and returns ethereum tx receipt
+     * @param txBytes syscoin raw transaction
+     * @param pos position at where to start parsing
+     * @return ethTxReceipt ethereum tx receipt
+     */
+    function getEthReceipt(bytes memory txBytes, uint pos)
+        public
+        view
+        returns (bytes memory)
+    {
+        bytes memory ethTxReceipt = new bytes(0);
+        uint bytesToRead;
+        // skip vchTxValue
+        (bytesToRead, pos) = parseVarInt(txBytes, pos);
+        pos += bytesToRead;
+        // skip vchTxParentNodes
+        (bytesToRead, pos) = parseVarInt(txBytes, pos);
+        pos += bytesToRead;
+        // skip vchTxRoot
+        (bytesToRead, pos) = parseVarInt(txBytes, pos);
+        pos += bytesToRead;
+        // skip vchTxPath
+        (bytesToRead, pos) = parseVarInt(txBytes, pos);
+        pos += bytesToRead;
+        // get vchReceiptValue
+        (bytesToRead, pos) = parseVarInt(txBytes, pos);
+        // if position is encoded in receipt value, decode position and read the value from next field (parent nodes)
+        if(bytesToRead == 2){
+            uint16 positionOfValue = bytesToUint16(txBytes, pos);
+            pos += bytesToRead;
+            // get vchReceiptParentNodes
+            (bytesToRead, pos) = parseVarInt(txBytes, pos);
+            pos += positionOfValue;
+            ethTxReceipt = sliceArray(txBytes, pos, pos+(bytesToRead-positionOfValue));
+        }
+        // size > 2 means receipt value is fully serialized in this field and no need to get parent nodes field
+        else{
+            ethTxReceipt = sliceArray(txBytes, pos, pos+bytesToRead);      
+        }
+        return ethTxReceipt;
+    }
+
+    /**
+     * Return logs for given ethereum transaction receipt
+     * @param  ethTxReceipt ethereum transaction receipt
+     * @return logs bloom
+     */
+    function getLogValuesForTopic(bytes memory ethTxReceipt, bytes32 expectedTopic)
+        public
+        pure
+        returns (bytes memory)
+    {
+        RLPReader.RLPItem[] memory ethTxReceiptList = ethTxReceipt.toRlpItem().toList();
+        RLPReader.RLPItem[] memory logsList = ethTxReceiptList[3].toList();
+        for (uint256 i = 0; i < logsList.length; i++) {
+            RLPReader.RLPItem[] memory log = logsList[i].toList();
+            bytes memory rawTopic = log[1].toBytes();
+            bytes32 topic = bytesToBytes32(rawTopic, 1); // need to remove first byte "a0"
+            if (topic == expectedTopic) {
+                // data for given log
+                return log[2].toBytes();
+            }
+        }
+        revert("Topic not found");
+    }
+
+    /**
+     * Get bridgeTransactionId from logs bloom
+     * @param logValues log values
+     * @return bridgeTransactionId
+     */
+    function getBridgeTransactionId(bytes memory logValues) public pure returns (uint256 value) {
+        uint8 index = 3; // log's third value
+        assembly {
+            value := mload(add(logValues, mul(32, index)))
+        }
+    }
+
     // Read the ethereum address embedded in the tx output
-    function readEthereumAddress(bytes memory txBytes, uint pos) private pure
-             returns (address) {
+    function readEthereumAddress(bytes memory txBytes, uint pos)
+        private
+        pure
+        returns (address)
+    {
         uint256 data;
         assembly {
             data := mload(add(add(txBytes, 20), pos))
@@ -176,18 +269,22 @@ library SyscoinMessageLibrary {
     }
 
     // Read next opcode from script
-    function getOpcode(bytes memory txBytes, uint pos) private pure
-             returns (uint8, uint)
+    function getOpcode(bytes memory txBytes, uint pos)
+        private
+        pure
+        returns (uint8, uint)
     {
         require(pos < txBytes.length);
         return (uint8(txBytes[pos]), pos + 1);
     }
 
-
-
     // @dev - Converts a bytes of size 4 to uint32,
     // e.g. for input [0x01, 0x02, 0x03 0x04] returns 0x01020304
-    function bytesToUint32Flipped(bytes memory input, uint pos) internal pure returns (uint32 result) {
+    function bytesToUint32Flipped(bytes memory input, uint pos)
+        public
+        pure
+        returns (uint32 result)
+    {
         assembly {
             let data := mload(add(add(input, 0x20), pos))
             let flip := mload(0x40)
@@ -198,13 +295,19 @@ library SyscoinMessageLibrary {
             result := shr(mul(8, 28), mload(flip))
         }
     }
+
     // @dev - Bitcoin-way of hashing
     // @param _dataBytes - raw data to be hashed
     // @return - result of applying SHA-256 twice to raw data and then flipping the bytes
-    function dblShaFlip(bytes memory _dataBytes) internal pure returns (uint) {
+    function dblShaFlip(bytes memory _dataBytes) public pure returns (uint) {
         return flip32Bytes(uint(sha256(abi.encodePacked(sha256(abi.encodePacked(_dataBytes))))));
     }
-    function sha256mem(bytes memory _rawBytes, uint offset, uint len) internal view returns (bytes32 result) {
+
+    function sha256mem(bytes memory _rawBytes, uint offset, uint len)
+        public
+        view
+        returns (bytes32 result)
+    {
         assembly {
             // Call sha256 precompiled contract (located in address 0x02) to copy data.
             // Assign to ptr the next available memory position (stored in memory position 0x40).
@@ -215,23 +318,31 @@ library SyscoinMessageLibrary {
             result := mload(ptr)
         }
     }
+
     // @dev - Bitcoin-way of hashing
     // @param _dataBytes - raw data to be hashed
     // @return - result of applying SHA-256 twice to raw data and then flipping the bytes
-    function dblShaFlipMem(bytes memory _rawBytes, uint offset, uint len) internal view returns (uint) {
+    function dblShaFlipMem(bytes memory _rawBytes, uint offset, uint len)
+        public
+        view
+        returns (uint)
+    {
         return flip32Bytes(uint(sha256(abi.encodePacked(sha256mem(_rawBytes, offset, len)))));
     }
-    function bytesToUint64(bytes memory input, uint pos) internal pure returns (uint64 result) {
+
+    function bytesToUint64(bytes memory input, uint pos) public pure returns (uint64 result) {
         result = uint64(uint8(input[pos+7])) + uint64(uint8(input[pos + 6]))*(2**8) + uint64(uint8(input[pos + 5]))*(2**16) + uint64(uint8(input[pos + 4]))*(2**24) + uint64(uint8(input[pos + 3]))*(2**32) + uint64(uint8(input[pos + 2]))*(2**40) + uint64(uint8(input[pos + 1]))*(2**48) + uint64(uint8(input[pos]))*(2**56);
     }
-     function bytesToUint32(bytes memory input, uint pos) internal pure returns (uint32 result) {
+
+    function bytesToUint32(bytes memory input, uint pos) public pure returns (uint32 result) {
         result = uint32(uint8(input[pos+3])) + uint32(uint8(input[pos + 2]))*(2**8) + uint32(uint8(input[pos + 1]))*(2**16) + uint32(uint8(input[pos]))*(2**24);
-    }  
+    }
+
     // @dev - convert an unsigned integer from little-endian to big-endian representation
     //
     // @param _input - little-endian value
     // @return - input value in big-endian format
-    function flip32Bytes(uint _input) internal pure returns (uint result) {
+    function flip32Bytes(uint _input) public pure returns (uint result) {
         assembly {
             let pos := mload(0x40)
             mstore8(add(pos, 0), byte(31, _input))
@@ -276,7 +387,7 @@ library SyscoinMessageLibrary {
     // root of the merkle tree.
     //
     // @return root of merkle tree
-    function makeMerkle(bytes32[] memory hashes) internal pure returns (bytes32) {
+    function makeMerkle(bytes32[] memory hashes) public pure returns (bytes32) {
         uint length = hashes.length;
 
         if (length == 1) return hashes[0];
@@ -309,8 +420,11 @@ library SyscoinMessageLibrary {
     // @param _siblings - transaction's Merkle siblings
     // @return - Merkle tree root of the block the transaction belongs to if the proof is valid,
     // garbage if it's invalid
-    function computeMerkle(uint _txHash, uint _txIndex, uint[] memory _siblings) internal pure returns (uint) {
-        
+    function computeMerkle(uint _txHash, uint _txIndex, uint[] memory _siblings)
+        public
+        pure
+        returns (uint)
+    {
         uint length = _siblings.length;
         uint i;
         for (i = 0; i < length; i++) {
@@ -352,5 +466,95 @@ library SyscoinMessageLibrary {
             merkle := mload(add(add(_blockHeader, 32), 0x24))
         }
         return flip32Bytes(merkle);
+    }
+
+    // @dev - Bitcoin-way of computing the target from the 'bits' field of a block header
+    // based on http://www.righto.com/2014/02/bitcoin-mining-hard-way-algorithms.html//ref3
+    //
+    // @param _bits - difficulty in bits format
+    // @return - difficulty in target format
+    function targetFromBits(uint32 _bits) public pure returns (uint) {
+        uint exp = _bits / 0x1000000;  // 2**24
+        uint mant = _bits & 0xffffff;
+        return mant * 256**(exp - 3);
+    }
+
+    // @dev converts bytes of any length to bytes32.
+    // If `_rawBytes` is longer than 32 bytes, it truncates to the 32 leftmost bytes.
+    // If it is shorter, it pads with 0s on the left.
+    // Should be private, made internal for testing
+    //
+    // @param _rawBytes - arbitrary length bytes
+    // @return - leftmost 32 or less bytes of input value; padded if less than 32
+    function bytesToBytes32(bytes memory _rawBytes, uint pos) public pure returns (bytes32) {
+        bytes32 out;
+        assembly {
+            out := mload(add(add(_rawBytes, 0x20), pos))
+        }
+        return out;
+    }
+
+    function bytesToUint16(bytes memory input, uint pos) public pure returns (uint16 result) {
+        result = uint16(uint8(input[pos+1])) + uint16(uint8(input[pos]))*(2**8);
+    }
+
+    function getOpReturnPos(bytes memory txBytes, uint pos) public pure returns (uint) {
+        uint n_inputs;
+        uint script_len;
+        uint output_value;
+        uint n_outputs;
+
+        (n_inputs, pos) = parseVarInt(txBytes, pos);
+        // if dummy 0x00 is present this is a witness transaction
+        if(n_inputs == 0x00){
+            (n_inputs, pos) = parseVarInt(txBytes, pos); // flag
+            require(n_inputs != 0x00, "#SyscoinMessageLibrary getOpReturnPos(): Unexpected dummy/flag");
+            // after dummy/flag the real var int comes for txins
+            (n_inputs, pos) = parseVarInt(txBytes, pos);
+        }
+        require(n_inputs < 100, "#SyscoinMessageLibrary getOpReturnPos(): Incorrect size of n_inputs");
+
+        for (uint i = 0; i < n_inputs; i++) {
+            pos += 36;  // skip outpoint
+            (script_len, pos) = parseVarInt(txBytes, pos);
+            pos += script_len + 4;  // skip sig_script, seq
+        }
+        
+        (n_outputs, pos) = parseVarInt(txBytes, pos);
+        require(n_outputs < 10, "#SyscoinMessageLibrary getOpReturnPos(): Incorrect size of n_outputs");
+        for (uint i = 0; i < n_outputs; i++) {
+            pos += 8;
+            // varint
+            (script_len, pos) = parseVarInt(txBytes, pos);
+            if(!isOpReturn(txBytes, pos)){
+                // output script
+                pos += script_len;
+                output_value = 0;
+                continue;
+            }
+            // skip opreturn marker
+            pos += 1;
+            return pos;
+        }
+        revert("#SyscoinMessageLibrary getOpReturnPos(): No OpReturn found");
+    }
+
+    // @dev returns a portion of a given byte array specified by its starting and ending points
+    // Breaks underscore naming convention for parameters because it raises a compiler error
+    // if `offset` is changed to `_offset`.
+    //
+    // @param _rawBytes - array to be sliced
+    // @param offset - first byte of sliced array
+    // @param _endIndex - last byte of sliced array
+    function sliceArray(bytes memory _rawBytes, uint offset, uint _endIndex) public view returns (bytes memory) {
+        uint len = _endIndex - offset;
+        bytes memory result = new bytes(len);
+        assembly {
+            // Call precompiled contract to copy data
+            if iszero(staticcall(gas, 0x04, add(add(_rawBytes, 0x20), offset), len, add(result, 0x20), len)) {
+                revert(0, 0)
+            }
+        }
+        return result;
     }
 }
