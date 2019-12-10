@@ -136,8 +136,8 @@ contract SyscoinSuperblocks is Initializable, SyscoinSuperblocksI, SyscoinErrorC
         pos = getOpReturnPos(txBytes, 4);
         pos += 3; // skip pushdata2 + 2 bytes for opreturn varint
 
-        // SHA3 of TokenFreeze(address,uint)
-        bytes32 tokenFreezeTopic = 0x7def9f73ac6a7ac8fe4dc55f5257d48aed7e3f9d5247b0020598b87a5c369d82;
+        // SHA3 of TokenFreeze(address,uint256,uin32)
+        bytes32 tokenFreezeTopic = 0xaabab1db49e504b5156edf3f99042aeecb9607a08f392589571cd49743aaba8d;
         bridgeTransferId = uint32(
             getBridgeTransactionId(
                 getLogValuesForTopic(
