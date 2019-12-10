@@ -42,7 +42,7 @@ contract('testRelayToSyscoinAssetToken', function(accounts) {
     assert.equal(await erc20Token.balanceOf(erc20Manager.options.address), value - burnVal, "erc20Manager balance is not correct");
     assert.equal(await erc20Token.balanceOf(owner), burnVal, `erc20Token's user balance after burn is not the expected one`);
     assert.equal(await erc20Manager.methods.assetBalances(assetGUID).call(), burnVal, `assetBalances for ${assetGUID} GUID is not correct`);
-    [ ret, amount, inputEthAddress, assetGUIDParsed, precision, erc20Address ]  = Object.values(await syscoinMessageLibraryForTests.parseTransaction(txData));
+    [ ret, amount, inputEthAddress, assetGUIDParsed, precision, erc20Address ]  = Object.values(await syscoinMessageLibraryForTests.parseBurnTx(txData));
     
   });
 

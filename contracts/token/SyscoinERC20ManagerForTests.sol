@@ -27,7 +27,7 @@ contract SyscoinERC20ManagerForTests is SyscoinERC20Manager {
         SyscoinERC20I erc20 = SyscoinERC20I(erc20ContractAddress);
         require(precision == erc20.decimals(), "Decimals were not provided with the correct value");
         erc20.transferFrom(msg.sender, address(this), value);
-        emit TokenFreeze(msg.sender, value);
+        emit TokenFreeze(msg.sender, value, 0);
 
         return true;
     }
