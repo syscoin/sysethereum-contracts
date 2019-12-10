@@ -249,7 +249,7 @@ contract SyscoinMessageLibrary {
      * @return bridgeTransactionId
      */
     function getBridgeTransactionId(bytes memory logValues) public pure returns (uint256 value) {
-        uint8 index = 2; // log's second value
+        uint8 index = 3; // log's third value
         assembly {
             value := mload(add(logValues, mul(32, index)))
         }
