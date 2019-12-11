@@ -9,7 +9,7 @@ const ERC20Asset = artifacts.require('./token/SyscoinERC20.sol');
 const SYSCOIN_MAINNET = 0;
 const SYSCOIN_TESTNET = 1;
 const SYSCOIN_REGTEST = 2;
-const SYSX_ASSET_GUID = 1045909988; // mainnet sysx
+const SYSX_ASSET_GUID = 1965866356; // testnet sysx
 const SUPERBLOCK_OPTIONS_PRODUCTION = {
   DURATION: 60,   // 60 blocks per superblock
   DELAY: 3 * 3600,  // 3 hours
@@ -54,14 +54,14 @@ async function deploy(networkName, options, accounts, networkId, superblockOptio
   let tx = await SyscoinSuperblocks.methods.init(SyscoinERC20Manager.address, SyscoinClaimManager.address).send({ from: accounts[0], gas: 300000 });
   console.log('TX hash: ', tx.transactionHash, '\n');
 
-  var blocksMerkleRoot = "0x4327748479357319819e98b88df8a80535bff01b4b23ec3213f166b0a673f0c5";
-  var timestamp = 1574263489;
-  var mtptimestamp = 1574263208;
-  var lastHash = "0x4327748479357319819e98b88df8a80535bff01b4b23ec3213f166b0a673f0c5"; // 249480
+  var superblocksMerkleRoot = "0x00000a52cb9c7e2a8adf64421eadba8a90b895a0f7aa20e1695b0491040b6e3c";
+  var timestamp = 1576019883;
+  var mtptimestamp = 1576019875;
+  var lastHash = "0x00000a52cb9c7e2a8adf64421eadba8a90b895a0f7aa20e1695b0491040b6e3c"; // 360
   var parentId = "0x0";
-  var lastBits = 403553112; // 180dbb58
+  var lastBits = 504281460; // 1e0eb974
 
-  let tx2 = await SyscoinSuperblocks.methods.initialize(blocksMerkleRoot, timestamp, mtptimestamp, lastHash, lastBits, parentId).send({ from: accounts[0], gas: 300000 });
+  let tx2 = await SyscoinSuperblocks.methods.initialize(superblocksMerkleRoot, timestamp, mtptimestamp, lastHash, lastBits, parentId).send({ from: accounts[0], gas: 300000 });
   console.log('TX2 hash: ', tx2.transactionHash, '\n');
 
   console.log('Initializing SyscoinBattleManager...');
@@ -103,7 +103,7 @@ module.exports = function(deployer, networkName, accounts) {
         SyscoinERC20Manager = await deploy(networkName, { network, txParams }, accounts, SYSCOIN_REGTEST, SUPERBLOCK_OPTIONS_PRODUCTION);
       }
     }
-    let burnVal = web3.utils.toWei("88.8", "finney"); // total supply 888m COIN on Syscoin mainnet
+    let burnVal = web3.utils.toWei("88.8", "finney"); // total supply 888m COIN on Syscoin
     erc20Asset = await deployer.deploy(ERC20Asset,
       "SyscoinToken", "SYSX", 8,
       {from: accounts[0], gas: 2000000 }

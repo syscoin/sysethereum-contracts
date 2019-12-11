@@ -1,11 +1,11 @@
 {
   "contracts": {
-    "SyscoinSuperblocks": {
-      "address": "0x75abF69b0DEE2aa5c3003f5084cF3E3D204Fd243",
-      "constructorCode": "608060405234801561001057600080fd5b506123c4806100206000396000f3fe",
-      "bodyBytecodeHash": "5b22f00e00a740ff827d59baefd2a4c42df8a6aa6013cd2b6bce58dc874082f8",
-      "localBytecodeHash": "bc1b3caf18a66e513915943a55a135119786a3edf11131f999e45e313dc7d96d",
-      "deployedBytecodeHash": "bc1b3caf18a66e513915943a55a135119786a3edf11131f999e45e313dc7d96d",
+    "SyscoinBattleManager": {
+      "address": "0xf4ECD2b30202544940f8e71A79c57f9CA5A19F34",
+      "constructorCode": "608060405234801561001057600080fd5b506124c8806100206000396000f3fe",
+      "bodyBytecodeHash": "754bb95d3ae1120ad24ad449016eab711b4bb71452a02ad5cbbf1569b886e64c",
+      "localBytecodeHash": "8c599fd9dde04f2b20b4d82781d6751ccb26c08ee4ac58b4b63d44294492109d",
+      "deployedBytecodeHash": "8c599fd9dde04f2b20b4d82781d6751ccb26c08ee4ac58b4b63d44294492109d",
       "types": {
         "t_bool": {
           "id": "t_bool",
@@ -24,100 +24,75 @@
           "kind": "array",
           "label": "uint256[50]"
         },
-        "t_struct<SyscoinSuperblocksI.SuperblockInfo>": {
-          "id": "t_struct<SyscoinSuperblocksI.SuperblockInfo>",
+        "t_struct<SyscoinBattleManager.BattleSession>": {
+          "id": "t_struct<SyscoinBattleManager.BattleSession>",
           "kind": "struct",
-          "label": "SyscoinSuperblocksI.SuperblockInfo",
+          "label": "SyscoinBattleManager.BattleSession",
           "members": [
             {
-              "label": "blocksMerkleRoot",
-              "astId": 8760,
-              "type": "t_bytes32",
-              "src": "209:24:12"
-            },
-            {
-              "label": "timestamp",
-              "astId": 8762,
-              "type": "t_uint256",
-              "src": "243:14:12"
-            },
-            {
-              "label": "mtpTimestamp",
-              "astId": 8764,
-              "type": "t_uint256",
-              "src": "267:17:12"
-            },
-            {
-              "label": "lastHash",
-              "astId": 8766,
-              "type": "t_bytes32",
-              "src": "294:16:12"
-            },
-            {
-              "label": "parentId",
-              "astId": 8768,
-              "type": "t_bytes32",
-              "src": "320:16:12"
-            },
-            {
               "label": "submitter",
-              "astId": 8770,
+              "astId": 83,
               "type": "t_address",
-              "src": "346:17:12"
+              "src": "802:17:1"
             },
             {
-              "label": "lastBits",
-              "astId": 8772,
-              "type": "t_uint32",
-              "src": "373:15:12"
+              "label": "challenger",
+              "astId": 85,
+              "type": "t_address",
+              "src": "829:18:1"
             },
             {
-              "label": "height",
-              "astId": 8774,
-              "type": "t_uint32",
-              "src": "398:13:12"
+              "label": "lastActionTimestamp",
+              "astId": 87,
+              "type": "t_uint256",
+              "src": "857:24:1"
             },
             {
-              "label": "status",
-              "astId": 8776,
-              "type": "t_enum<SyscoinSuperblocksI.Status>",
-              "src": "421:13:12"
+              "label": "prevSubmitBlockhash",
+              "astId": 89,
+              "type": "t_bytes32",
+              "src": "924:27:1"
+            },
+            {
+              "label": "merkleRoots",
+              "astId": 92,
+              "type": "t_array:dyn<t_bytes32>",
+              "src": "961:21:1"
             }
           ]
-        },
-        "t_bytes32": {
-          "id": "t_bytes32",
-          "kind": "elementary",
-          "label": "bytes32"
         },
         "t_address": {
           "id": "t_address",
           "kind": "elementary",
           "label": "address"
         },
-        "t_uint32": {
-          "id": "t_uint32",
+        "t_bytes32": {
+          "id": "t_bytes32",
           "kind": "elementary",
-          "label": "uint32"
+          "label": "bytes32"
         },
-        "t_enum<SyscoinSuperblocksI.Status>": {
-          "id": "t_enum<SyscoinSuperblocksI.Status>",
-          "kind": "enum",
-          "label": "SyscoinSuperblocksI.Status",
-          "members": [
-            "Uninitialized",
-            "New",
-            "InBattle",
-            "SemiApproved",
-            "Approved",
-            "Invalid"
-          ]
+        "t_array:dyn<t_bytes32>": {
+          "id": "t_array:dyn<t_bytes32>",
+          "valueType": "t_bytes32",
+          "length": "dyn",
+          "kind": "array",
+          "label": "bytes32[]"
         },
-        "t_mapping<t_struct<SyscoinSuperblocksI.SuperblockInfo>>": {
-          "id": "t_mapping<t_struct<SyscoinSuperblocksI.SuperblockInfo>>",
-          "valueType": "t_struct<SyscoinSuperblocksI.SuperblockInfo>",
-          "label": "mapping(key => SyscoinSuperblocksI.SuperblockInfo)",
+        "t_mapping<t_struct<SyscoinBattleManager.BattleSession>>": {
+          "id": "t_mapping<t_struct<SyscoinBattleManager.BattleSession>>",
+          "valueType": "t_struct<SyscoinBattleManager.BattleSession>",
+          "label": "mapping(key => SyscoinBattleManager.BattleSession)",
           "kind": "mapping"
+        },
+        "t_enum<SyscoinBattleManager.Network>": {
+          "id": "t_enum<SyscoinBattleManager.Network>",
+          "kind": "enum",
+          "label": "SyscoinBattleManager.Network",
+          "members": [
+            "MAINNET",
+            "TESTNET",
+            "REGTEST"
+          ]
         }
       },
       "storage": [
@@ -125,7 +100,7 @@
           "contract": "Initializable",
           "path": "@openzeppelin/upgrades/contracts/Initializable.sol",
           "label": "initialized",
-          "astId": 9438,
+          "astId": 9507,
           "type": "t_bool",
           "src": "757:24:16"
         },
@@ -133,7 +108,7 @@
           "contract": "Initializable",
           "path": "@openzeppelin/upgrades/contracts/Initializable.sol",
           "label": "initializing",
-          "astId": 9440,
+          "astId": 9509,
           "type": "t_bool",
           "src": "876:25:16"
         },
@@ -141,41 +116,57 @@
           "contract": "Initializable",
           "path": "@openzeppelin/upgrades/contracts/Initializable.sol",
           "label": "______gap",
-          "astId": 9496,
+          "astId": 9565,
           "type": "t_array:50<t_uint256>",
           "src": "1951:29:16"
         },
         {
-          "contract": "SyscoinSuperblocks",
-          "path": "contracts/SyscoinSuperblocks.sol",
-          "label": "superblocks",
-          "astId": 6394,
-          "type": "t_mapping<t_struct<SyscoinSuperblocksI.SuperblockInfo>>",
-          "src": "601:55:7"
+          "contract": "SyscoinBattleManager",
+          "path": "contracts/SyscoinBattleManager.sol",
+          "label": "sessions",
+          "astId": 131,
+          "type": "t_mapping<t_struct<SyscoinBattleManager.BattleSession>>",
+          "src": "2225:43:1"
         },
         {
-          "contract": "SyscoinSuperblocks",
-          "path": "contracts/SyscoinSuperblocks.sol",
-          "label": "bestSuperblock",
-          "astId": 6396,
-          "type": "t_bytes32",
-          "src": "663:30:7"
+          "contract": "SyscoinBattleManager",
+          "path": "contracts/SyscoinBattleManager.sol",
+          "label": "superblockDuration",
+          "astId": 137,
+          "type": "t_uint256",
+          "src": "2323:30:1"
         },
         {
-          "contract": "SyscoinSuperblocks",
-          "path": "contracts/SyscoinSuperblocks.sol",
-          "label": "syscoinERC20Manager",
-          "astId": 6398,
+          "contract": "SyscoinBattleManager",
+          "path": "contracts/SyscoinBattleManager.sol",
+          "label": "superblockTimeout",
+          "astId": 139,
+          "type": "t_uint256",
+          "src": "2402:29:1"
+        },
+        {
+          "contract": "SyscoinBattleManager",
+          "path": "contracts/SyscoinBattleManager.sol",
+          "label": "net",
+          "astId": 141,
+          "type": "t_enum<SyscoinBattleManager.Network>",
+          "src": "2527:19:1"
+        },
+        {
+          "contract": "SyscoinBattleManager",
+          "path": "contracts/SyscoinBattleManager.sol",
+          "label": "trustedSyscoinClaimManager",
+          "astId": 143,
           "type": "t_address",
-          "src": "700:54:7"
+          "src": "2583:47:1"
         },
         {
-          "contract": "SyscoinSuperblocks",
-          "path": "contracts/SyscoinSuperblocks.sol",
-          "label": "trustedClaimManager",
-          "astId": 6448,
+          "contract": "SyscoinBattleManager",
+          "path": "contracts/SyscoinBattleManager.sol",
+          "label": "trustedSuperblocks",
+          "astId": 145,
           "type": "t_address",
-          "src": "1309:34:7"
+          "src": "2665:38:1"
         }
       ],
       "warnings": {
@@ -187,7 +178,7 @@
       }
     },
     "SyscoinClaimManager": {
-      "address": "0xda166f6E7Ec30b5c53a055cBA1D4aC971710f218",
+      "address": "0x7C50d8877328fea1BF29a4394D4CE0713a1eF41c",
       "constructorCode": "608060405234801561001057600080fd5b50612a9c806100206000396000f3fe",
       "bodyBytecodeHash": "ba028e4d67b8df4ff6fe5ec05c021abb22065be3a1705ffa917cddf59dc600af",
       "localBytecodeHash": "499dae96358e5b2d8fc002ae80397d926a7ba326f68a1b30a6507c49e323ea08",
@@ -305,7 +296,7 @@
           "contract": "Initializable",
           "path": "@openzeppelin/upgrades/contracts/Initializable.sol",
           "label": "initialized",
-          "astId": 9584,
+          "astId": 9507,
           "type": "t_bool",
           "src": "757:24:16"
         },
@@ -313,7 +304,7 @@
           "contract": "Initializable",
           "path": "@openzeppelin/upgrades/contracts/Initializable.sol",
           "label": "initializing",
-          "astId": 9586,
+          "astId": 9509,
           "type": "t_bool",
           "src": "876:25:16"
         },
@@ -321,7 +312,7 @@
           "contract": "Initializable",
           "path": "@openzeppelin/upgrades/contracts/Initializable.sol",
           "label": "______gap",
-          "astId": 9642,
+          "astId": 9565,
           "type": "t_array:50<t_uint256>",
           "src": "1951:29:16"
         },
@@ -395,26 +386,15 @@
         "hasSelfDestruct": false,
         "hasDelegateCall": false,
         "hasInitialValuesInDeclarations": false,
-        "uninitializedBaseContracts": [],
-        "storageUncheckedVars": [
-          {
-            "contract": "SyscoinClaimManager",
-            "path": "contracts/SyscoinClaimManager.sol",
-            "label": "claims",
-            "astId": 2907,
-            "type": "t_mapping<t_struct<SyscoinClaimManager.SuperblockClaim>>",
-            "src": "1602:50:2"
-          }
-        ],
-        "storageDiff": []
+        "uninitializedBaseContracts": []
       }
     },
     "SyscoinERC20Manager": {
-      "address": "0x8a1BFdfD9b5dB906F0Ea31A26D15978273dDfa90",
-      "constructorCode": "608060405234801561001057600080fd5b50610dbc806100206000396000f3fe",
-      "bodyBytecodeHash": "309159d9f3bdcb6ba19ba94b82a64ef4717eb9c60a9774bf67ab883a02066a93",
-      "localBytecodeHash": "b8bf5d28efcbb96fd19e34a57ffb99c0fad6997c4c95a66d7d175af123b4646f",
-      "deployedBytecodeHash": "b8bf5d28efcbb96fd19e34a57ffb99c0fad6997c4c95a66d7d175af123b4646f",
+      "address": "0xfB678d02ce476b1938Abd8d10732481bDaF67532",
+      "constructorCode": "608060405234801561001057600080fd5b50611816806100206000396000f3fe",
+      "bodyBytecodeHash": "a4d12898caa56de4f25358360a3d954a506da51e449225ee49d6b178c1d595f2",
+      "localBytecodeHash": "09dc45f5f417344cd1a6bf0ddc24b56400b1ecaaa9e068cb8955974018f57145",
+      "deployedBytecodeHash": "09dc45f5f417344cd1a6bf0ddc24b56400b1ecaaa9e068cb8955974018f57145",
       "types": {
         "t_bool": {
           "id": "t_bool",
@@ -449,6 +429,72 @@
           "valueType": "t_bool",
           "label": "mapping(key => bool)",
           "kind": "mapping"
+        },
+        "t_uint32": {
+          "id": "t_uint32",
+          "kind": "elementary",
+          "label": "uint32"
+        },
+        "t_struct<SyscoinERC20Manager.BridgeTransfer>": {
+          "id": "t_struct<SyscoinERC20Manager.BridgeTransfer>",
+          "kind": "struct",
+          "label": "SyscoinERC20Manager.BridgeTransfer",
+          "members": [
+            {
+              "label": "timestamp",
+              "astId": 8777,
+              "type": "t_uint256",
+              "src": "1356:14:14"
+            },
+            {
+              "label": "value",
+              "astId": 8779,
+              "type": "t_uint256",
+              "src": "1380:10:14"
+            },
+            {
+              "label": "erc20ContractAddress",
+              "astId": 8781,
+              "type": "t_address",
+              "src": "1400:28:14"
+            },
+            {
+              "label": "tokenFreezerAddress",
+              "astId": 8783,
+              "type": "t_address",
+              "src": "1438:27:14"
+            },
+            {
+              "label": "assetGUID",
+              "astId": 8785,
+              "type": "t_uint32",
+              "src": "1475:16:14"
+            },
+            {
+              "label": "status",
+              "astId": 8787,
+              "type": "t_enum<SyscoinERC20Manager.BridgeTransferStatus>",
+              "src": "1501:27:14"
+            }
+          ]
+        },
+        "t_enum<SyscoinERC20Manager.BridgeTransferStatus>": {
+          "id": "t_enum<SyscoinERC20Manager.BridgeTransferStatus>",
+          "kind": "enum",
+          "label": "SyscoinERC20Manager.BridgeTransferStatus",
+          "members": [
+            "Uninitialized",
+            "Ok",
+            "CancelRequested",
+            "CancelChallenged",
+            "CancelOk"
+          ]
+        },
+        "t_mapping<t_struct<SyscoinERC20Manager.BridgeTransfer>>": {
+          "id": "t_mapping<t_struct<SyscoinERC20Manager.BridgeTransfer>>",
+          "valueType": "t_struct<SyscoinERC20Manager.BridgeTransfer>",
+          "label": "mapping(key => SyscoinERC20Manager.BridgeTransfer)",
+          "kind": "mapping"
         }
       },
       "storage": [
@@ -456,7 +502,7 @@
           "contract": "Initializable",
           "path": "@openzeppelin/upgrades/contracts/Initializable.sol",
           "label": "initialized",
-          "astId": 9438,
+          "astId": 9507,
           "type": "t_bool",
           "src": "757:24:16"
         },
@@ -464,7 +510,7 @@
           "contract": "Initializable",
           "path": "@openzeppelin/upgrades/contracts/Initializable.sol",
           "label": "initializing",
-          "astId": 9440,
+          "astId": 9509,
           "type": "t_bool",
           "src": "876:25:16"
         },
@@ -472,7 +518,7 @@
           "contract": "Initializable",
           "path": "@openzeppelin/upgrades/contracts/Initializable.sol",
           "label": "______gap",
-          "astId": 9496,
+          "astId": 9565,
           "type": "t_array:50<t_uint256>",
           "src": "1951:29:16"
         },
@@ -480,25 +526,49 @@
           "contract": "SyscoinERC20Manager",
           "path": "contracts/token/SyscoinERC20Manager.sol",
           "label": "trustedRelayerContract",
-          "astId": 8990,
+          "astId": 8759,
           "type": "t_address",
-          "src": "703:37:14"
+          "src": "937:37:14"
         },
         {
           "contract": "SyscoinERC20Manager",
           "path": "contracts/token/SyscoinERC20Manager.sol",
           "label": "assetBalances",
-          "astId": 8994,
+          "astId": 8763,
           "type": "t_mapping<t_uint256>",
-          "src": "748:47:14"
+          "src": "982:47:14"
         },
         {
           "contract": "SyscoinERC20Manager",
           "path": "contracts/token/SyscoinERC20Manager.sol",
           "label": "syscoinTxHashesAlreadyProcessed",
-          "astId": 8998,
+          "astId": 8767,
           "type": "t_mapping<t_bool>",
-          "src": "881:61:14"
+          "src": "1115:61:14"
+        },
+        {
+          "contract": "SyscoinERC20Manager",
+          "path": "contracts/token/SyscoinERC20Manager.sol",
+          "label": "bridgeTransferIdCount",
+          "astId": 8769,
+          "type": "t_uint32",
+          "src": "1183:28:14"
+        },
+        {
+          "contract": "SyscoinERC20Manager",
+          "path": "contracts/token/SyscoinERC20Manager.sol",
+          "label": "bridgeTransfers",
+          "astId": 8792,
+          "type": "t_mapping<t_struct<SyscoinERC20Manager.BridgeTransfer>>",
+          "src": "1552:57:14"
+        },
+        {
+          "contract": "SyscoinERC20Manager",
+          "path": "contracts/token/SyscoinERC20Manager.sol",
+          "label": "deposits",
+          "astId": 8796,
+          "type": "t_mapping<t_uint256>",
+          "src": "1615:40:14"
         }
       ],
       "warnings": {
@@ -509,12 +579,12 @@
         "uninitializedBaseContracts": []
       }
     },
-    "SyscoinBattleManager": {
-      "address": "0x590510B9f4bA368637119f5eA5B19fBFF8476E99",
-      "constructorCode": "608060405234801561001057600080fd5b506124c8806100206000396000f3fe",
-      "bodyBytecodeHash": "754bb95d3ae1120ad24ad449016eab711b4bb71452a02ad5cbbf1569b886e64c",
-      "localBytecodeHash": "8c599fd9dde04f2b20b4d82781d6751ccb26c08ee4ac58b4b63d44294492109d",
-      "deployedBytecodeHash": "8c599fd9dde04f2b20b4d82781d6751ccb26c08ee4ac58b4b63d44294492109d",
+    "SyscoinSuperblocks": {
+      "address": "0xbD97B3542Af7D48D64Ce9F2C82E27e6951378CDb",
+      "constructorCode": "608060405234801561001057600080fd5b5061412f806100206000396000f3fe",
+      "bodyBytecodeHash": "8bfe004f4190aea260ee02a64d15e7ea45732e314b0b5685bd2744606e5f0448",
+      "localBytecodeHash": "b0d56927cc46d919540ab1ad9af237d711e7e4d03895e73e1a774537f5f3a8ab",
+      "deployedBytecodeHash": "b0d56927cc46d919540ab1ad9af237d711e7e4d03895e73e1a774537f5f3a8ab",
       "types": {
         "t_bool": {
           "id": "t_bool",
@@ -533,75 +603,100 @@
           "kind": "array",
           "label": "uint256[50]"
         },
-        "t_struct<SyscoinBattleManager.BattleSession>": {
-          "id": "t_struct<SyscoinBattleManager.BattleSession>",
+        "t_struct<SyscoinSuperblocksI.SuperblockInfo>": {
+          "id": "t_struct<SyscoinSuperblocksI.SuperblockInfo>",
           "kind": "struct",
-          "label": "SyscoinBattleManager.BattleSession",
+          "label": "SyscoinSuperblocksI.SuperblockInfo",
           "members": [
             {
-              "label": "submitter",
-              "astId": 83,
-              "type": "t_address",
-              "src": "802:17:1"
-            },
-            {
-              "label": "challenger",
-              "astId": 85,
-              "type": "t_address",
-              "src": "829:18:1"
-            },
-            {
-              "label": "lastActionTimestamp",
-              "astId": 87,
-              "type": "t_uint256",
-              "src": "857:24:1"
-            },
-            {
-              "label": "prevSubmitBlockhash",
-              "astId": 89,
+              "label": "blocksMerkleRoot",
+              "astId": 8520,
               "type": "t_bytes32",
-              "src": "924:27:1"
+              "src": "209:24:12"
             },
             {
-              "label": "merkleRoots",
-              "astId": 92,
-              "type": "t_array:dyn<t_bytes32>",
-              "src": "961:21:1"
+              "label": "timestamp",
+              "astId": 8522,
+              "type": "t_uint256",
+              "src": "243:14:12"
+            },
+            {
+              "label": "mtpTimestamp",
+              "astId": 8524,
+              "type": "t_uint256",
+              "src": "267:17:12"
+            },
+            {
+              "label": "lastHash",
+              "astId": 8526,
+              "type": "t_bytes32",
+              "src": "294:16:12"
+            },
+            {
+              "label": "parentId",
+              "astId": 8528,
+              "type": "t_bytes32",
+              "src": "320:16:12"
+            },
+            {
+              "label": "submitter",
+              "astId": 8530,
+              "type": "t_address",
+              "src": "346:17:12"
+            },
+            {
+              "label": "lastBits",
+              "astId": 8532,
+              "type": "t_uint32",
+              "src": "373:15:12"
+            },
+            {
+              "label": "height",
+              "astId": 8534,
+              "type": "t_uint32",
+              "src": "398:13:12"
+            },
+            {
+              "label": "status",
+              "astId": 8536,
+              "type": "t_enum<SyscoinSuperblocksI.Status>",
+              "src": "421:13:12"
             }
           ]
-        },
-        "t_address": {
-          "id": "t_address",
-          "kind": "elementary",
-          "label": "address"
         },
         "t_bytes32": {
           "id": "t_bytes32",
           "kind": "elementary",
           "label": "bytes32"
         },
-        "t_array:dyn<t_bytes32>": {
-          "id": "t_array:dyn<t_bytes32>",
-          "valueType": "t_bytes32",
-          "length": "dyn",
-          "kind": "array",
-          "label": "bytes32[]"
+        "t_address": {
+          "id": "t_address",
+          "kind": "elementary",
+          "label": "address"
         },
-        "t_mapping<t_struct<SyscoinBattleManager.BattleSession>>": {
-          "id": "t_mapping<t_struct<SyscoinBattleManager.BattleSession>>",
-          "valueType": "t_struct<SyscoinBattleManager.BattleSession>",
-          "label": "mapping(key => SyscoinBattleManager.BattleSession)",
-          "kind": "mapping"
+        "t_uint32": {
+          "id": "t_uint32",
+          "kind": "elementary",
+          "label": "uint32"
         },
-        "t_enum<SyscoinBattleManager.Network>": {
-          "id": "t_enum<SyscoinBattleManager.Network>",
+        "t_enum<SyscoinSuperblocksI.Status>": {
+          "id": "t_enum<SyscoinSuperblocksI.Status>",
           "kind": "enum",
-          "label": "SyscoinBattleManager.Network",
+          "label": "SyscoinSuperblocksI.Status",
           "members": [
-            "MAINNET",
-            "TESTNET",
-            "REGTEST"
+            "Uninitialized",
+            "New",
+            "InBattle",
+            "SemiApproved",
+            "Approved",
+            "Invalid"
           ]
+        },
+        "t_mapping<t_struct<SyscoinSuperblocksI.SuperblockInfo>>": {
+          "id": "t_mapping<t_struct<SyscoinSuperblocksI.SuperblockInfo>>",
+          "valueType": "t_struct<SyscoinSuperblocksI.SuperblockInfo>",
+          "label": "mapping(key => SyscoinSuperblocksI.SuperblockInfo)",
+          "kind": "mapping"
         }
       },
       "storage": [
@@ -609,7 +704,7 @@
           "contract": "Initializable",
           "path": "@openzeppelin/upgrades/contracts/Initializable.sol",
           "label": "initialized",
-          "astId": 9435,
+          "astId": 9507,
           "type": "t_bool",
           "src": "757:24:16"
         },
@@ -617,7 +712,7 @@
           "contract": "Initializable",
           "path": "@openzeppelin/upgrades/contracts/Initializable.sol",
           "label": "initializing",
-          "astId": 9437,
+          "astId": 9509,
           "type": "t_bool",
           "src": "876:25:16"
         },
@@ -625,57 +720,41 @@
           "contract": "Initializable",
           "path": "@openzeppelin/upgrades/contracts/Initializable.sol",
           "label": "______gap",
-          "astId": 9493,
+          "astId": 9565,
           "type": "t_array:50<t_uint256>",
           "src": "1951:29:16"
         },
         {
-          "contract": "SyscoinBattleManager",
-          "path": "contracts/SyscoinBattleManager.sol",
-          "label": "sessions",
-          "astId": 131,
-          "type": "t_mapping<t_struct<SyscoinBattleManager.BattleSession>>",
-          "src": "2225:43:1"
+          "contract": "SyscoinSuperblocks",
+          "path": "contracts/SyscoinSuperblocks.sol",
+          "label": "superblocks",
+          "astId": 6773,
+          "type": "t_mapping<t_struct<SyscoinSuperblocksI.SuperblockInfo>>",
+          "src": "705:55:7"
         },
         {
-          "contract": "SyscoinBattleManager",
-          "path": "contracts/SyscoinBattleManager.sol",
-          "label": "superblockDuration",
-          "astId": 137,
-          "type": "t_uint256",
-          "src": "2323:30:1"
+          "contract": "SyscoinSuperblocks",
+          "path": "contracts/SyscoinSuperblocks.sol",
+          "label": "bestSuperblock",
+          "astId": 6775,
+          "type": "t_bytes32",
+          "src": "767:30:7"
         },
         {
-          "contract": "SyscoinBattleManager",
-          "path": "contracts/SyscoinBattleManager.sol",
-          "label": "superblockTimeout",
-          "astId": 139,
-          "type": "t_uint256",
-          "src": "2402:29:1"
-        },
-        {
-          "contract": "SyscoinBattleManager",
-          "path": "contracts/SyscoinBattleManager.sol",
-          "label": "net",
-          "astId": 141,
-          "type": "t_enum<SyscoinBattleManager.Network>",
-          "src": "2527:19:1"
-        },
-        {
-          "contract": "SyscoinBattleManager",
-          "path": "contracts/SyscoinBattleManager.sol",
-          "label": "trustedSyscoinClaimManager",
-          "astId": 143,
+          "contract": "SyscoinSuperblocks",
+          "path": "contracts/SyscoinSuperblocks.sol",
+          "label": "syscoinERC20Manager",
+          "astId": 6777,
           "type": "t_address",
-          "src": "2583:47:1"
+          "src": "804:54:7"
         },
         {
-          "contract": "SyscoinBattleManager",
-          "path": "contracts/SyscoinBattleManager.sol",
-          "label": "trustedSuperblocks",
-          "astId": 145,
+          "contract": "SyscoinSuperblocks",
+          "path": "contracts/SyscoinSuperblocks.sol",
+          "label": "trustedClaimManager",
+          "astId": 6831,
           "type": "t_address",
-          "src": "2665:38:1"
+          "src": "1471:34:7"
         }
       ],
       "warnings": {
@@ -683,26 +762,7 @@
         "hasSelfDestruct": false,
         "hasDelegateCall": false,
         "hasInitialValuesInDeclarations": false,
-        "uninitializedBaseContracts": [],
-        "storageUncheckedVars": [
-          {
-            "contract": "SyscoinBattleManager",
-            "path": "contracts/SyscoinBattleManager.sol",
-            "label": "sessions",
-            "astId": 131,
-            "type": "t_mapping<t_struct<SyscoinBattleManager.BattleSession>>",
-            "src": "2225:43:1"
-          },
-          {
-            "contract": "SyscoinBattleManager",
-            "path": "contracts/SyscoinBattleManager.sol",
-            "label": "net",
-            "astId": 141,
-            "type": "t_enum<SyscoinBattleManager.Network>",
-            "src": "2527:19:1"
-          }
-        ],
-        "storageDiff": []
+        "uninitializedBaseContracts": []
       }
     }
   },
@@ -710,37 +770,37 @@
   "proxies": {
     "sysethereum-contracts/SyscoinSuperblocks": [
       {
-        "address": "0xd745BC855e72e8535a929B13Aaa630894d43A2bd",
+        "address": "0x5B35Ea4C7D66aea8C1dBe0579949e4a36B666E67",
         "version": "1.0.0",
-        "implementation": "0x75abF69b0DEE2aa5c3003f5084cF3E3D204Fd243",
-        "admin": "0x571A585CC910bc02947ddf16967Bc732Fadb83dC",
+        "implementation": "0xbD97B3542Af7D48D64Ce9F2C82E27e6951378CDb",
+        "admin": "0x73FC47941Ee4A38BAB7cDF1298aF3c3163893d06",
         "kind": "Upgradeable"
       }
     ],
     "sysethereum-contracts/SyscoinERC20Manager": [
       {
-        "address": "0x38945d8004cf4671c45686853452A6510812117c",
+        "address": "0xA650957D53093604A74E586399893e5Fb5FC33D3",
         "version": "1.0.0",
-        "implementation": "0x8a1BFdfD9b5dB906F0Ea31A26D15978273dDfa90",
-        "admin": "0x571A585CC910bc02947ddf16967Bc732Fadb83dC",
+        "implementation": "0xfB678d02ce476b1938Abd8d10732481bDaF67532",
+        "admin": "0x73FC47941Ee4A38BAB7cDF1298aF3c3163893d06",
         "kind": "Upgradeable"
       }
     ],
     "sysethereum-contracts/SyscoinBattleManager": [
       {
-        "address": "0x0ACc9716e5aaC465a4717D4c7Fd2502476488134",
+        "address": "0x2F0D37CebB0973048aD228dCcD55F7187A88309F",
         "version": "1.0.0",
-        "implementation": "0x590510B9f4bA368637119f5eA5B19fBFF8476E99",
-        "admin": "0x571A585CC910bc02947ddf16967Bc732Fadb83dC",
+        "implementation": "0xf4ECD2b30202544940f8e71A79c57f9CA5A19F34",
+        "admin": "0x73FC47941Ee4A38BAB7cDF1298aF3c3163893d06",
         "kind": "Upgradeable"
       }
     ],
     "sysethereum-contracts/SyscoinClaimManager": [
       {
-        "address": "0x2590095e7f9e654098FE4fbB1bA883915Bab0e4B",
+        "address": "0x8855025DEf300fF50147549b14C3bd3ea9B107EE",
         "version": "1.0.0",
-        "implementation": "0xda166f6E7Ec30b5c53a055cBA1D4aC971710f218",
-        "admin": "0x571A585CC910bc02947ddf16967Bc732Fadb83dC",
+        "implementation": "0x7C50d8877328fea1BF29a4394D4CE0713a1eF41c",
+        "admin": "0x73FC47941Ee4A38BAB7cDF1298aF3c3163893d06",
         "kind": "Upgradeable"
       }
     ]
@@ -748,6 +808,6 @@
   "manifestVersion": "2.2",
   "version": "1.0.0",
   "proxyAdmin": {
-    "address": "0x571A585CC910bc02947ddf16967Bc732Fadb83dC"
+    "address": "0x73FC47941Ee4A38BAB7cDF1298aF3c3163893d06"
   }
 }
