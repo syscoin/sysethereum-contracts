@@ -53,14 +53,23 @@ contract SyscoinSuperblocks is Initializable, SyscoinSuperblocksI, SyscoinErrorC
     }
 
     // Returns true if the tx output is an OP_RETURN output
-    function isOpReturn(bytes memory txBytes, uint pos) private pure returns (bool) {
+    function isOpReturn(bytes memory txBytes, uint pos) internal pure returns (bool) {
         // scriptPub format is
         // 0x6a OP_RETURN
         return txBytes[pos] == byte(0x6a);
     }
+
+    function bytesToUint64(bytes memory input, uint pos) public pure returns (uint64 result) {
+        result = uint64(uint8(input[pos+7])) + uint64(uint8(input[pos + 6]))*(2**8) + uint64(uint8(input[pos + 5]))*(2**16) + uint64(uint8(input[pos + 4]))*(2**24) + uint64(uint8(input[pos + 3]))*(2**32) + uint64(uint8(input[pos + 2]))*(2**40) + uint64(uint8(input[pos + 1]))*(2**48) + uint64(uint8(input[pos]))*(2**56);
+    }
+
+    function bytesToUint32(bytes memory input, uint pos) public pure returns (uint32 result) {
+        result = uint32(uint8(input[pos+3])) + uint32(uint8(input[pos + 2]))*(2**8) + uint32(uint8(input[pos + 1]))*(2**16) + uint32(uint8(input[pos]))*(2**24);
+    }
+
     // Returns asset data parsed from the op_return data output from syscoin asset burn transaction
     function scanAssetDetails(bytes memory txBytes, uint pos)
-        private
+        internal
         pure
         returns (uint, address, uint32, uint8, address)
     {
@@ -100,8 +109,7 @@ contract SyscoinSuperblocks is Initializable, SyscoinSuperblocksI, SyscoinErrorC
     }
 
     // Read the ethereum address embedded in the tx output
-    function readEthereumAddress(bytes memory txBytes, uint pos) private pure
-             returns (address) {
+    function readEthereumAddress(bytes memory txBytes, uint pos) internal pure returns (address) {
         uint256 data;
         assembly {
             data := mload(add(add(txBytes, 20), pos))
@@ -110,11 +118,50 @@ contract SyscoinSuperblocks is Initializable, SyscoinSuperblocksI, SyscoinErrorC
     }
 
     // Read next opcode from script
-    function getOpcode(bytes memory txBytes, uint pos) private pure
-             returns (uint8, uint)
-    {
+    function getOpcode(bytes memory txBytes, uint pos) private pure returns (uint8, uint) {
         require(pos < txBytes.length);
         return (uint8(txBytes[pos]), pos + 1);
+    }
+
+    function getOpReturnPos(bytes memory txBytes, uint pos) public pure returns (uint) {
+        uint n_inputs;
+        uint script_len;
+        uint output_value;
+        uint n_outputs;
+
+        (n_inputs, pos) = parseVarInt(txBytes, pos);
+        // if dummy 0x00 is present this is a witness transaction
+        if(n_inputs == 0x00){
+            (n_inputs, pos) = parseVarInt(txBytes, pos); // flag
+            require(n_inputs != 0x00, "#SyscoinSuperblocks getOpReturnPos(): Unexpected dummy/flag");
+            // after dummy/flag the real var int comes for txins
+            (n_inputs, pos) = parseVarInt(txBytes, pos);
+        }
+        require(n_inputs < 100, "#SyscoinSuperblocks getOpReturnPos(): Incorrect size of n_inputs");
+
+        for (uint i = 0; i < n_inputs; i++) {
+            pos += 36;  // skip outpoint
+            (script_len, pos) = parseVarInt(txBytes, pos);
+            pos += script_len + 4;  // skip sig_script, seq
+        }
+        
+        (n_outputs, pos) = parseVarInt(txBytes, pos);
+        require(n_outputs < 10, "#SyscoinSuperblocks getOpReturnPos(): Incorrect size of n_outputs");
+        for (uint i = 0; i < n_outputs; i++) {
+            pos += 8;
+            // varint
+            (script_len, pos) = parseVarInt(txBytes, pos);
+            if(!isOpReturn(txBytes, pos)){
+                // output script
+                pos += script_len;
+                output_value = 0;
+                continue;
+            }
+            // skip opreturn marker
+            pos += 1;
+            return pos;
+        }
+        revert("#SyscoinSuperblocks getOpReturnPos(): No OpReturn found");
     }
 
     /**
@@ -147,17 +194,102 @@ contract SyscoinSuperblocks is Initializable, SyscoinSuperblocksI, SyscoinErrorC
         );
     }
 
-    // @dev - extract Merkle root field from a raw Syscoin block header
-    //
-    // @param _blockHeader - Syscoin block header bytes
-    // @param pos - where to start reading root from
-    // @return - block's Merkle root in big endian format
-    function getHeaderMerkleRoot(bytes memory _blockHeader) public pure returns (uint) {
-        uint merkle;
-        assembly {
-            merkle := mload(add(add(_blockHeader, 32), 0x24))
+    function bytesToUint16(bytes memory input, uint pos) public pure returns (uint16 result) {
+        result = uint16(uint8(input[pos+1])) + uint16(uint8(input[pos]))*(2**8);
+    }
+
+    /**
+     * Parse txBytes and returns ethereum tx receipt
+     * @param txBytes syscoin raw transaction
+     * @param pos position at where to start parsing
+     * @return ethTxReceipt ethereum tx receipt
+     */
+    function getEthReceipt(bytes memory txBytes, uint pos)
+        public
+        view
+        returns (bytes memory)
+    {
+        bytes memory ethTxReceipt = new bytes(0);
+        uint bytesToRead;
+        // skip vchTxValue
+        (bytesToRead, pos) = parseVarInt(txBytes, pos);
+        pos += bytesToRead;
+        // skip vchTxParentNodes
+        (bytesToRead, pos) = parseVarInt(txBytes, pos);
+        pos += bytesToRead;
+        // skip vchTxRoot
+        (bytesToRead, pos) = parseVarInt(txBytes, pos);
+        pos += bytesToRead;
+        // skip vchTxPath
+        (bytesToRead, pos) = parseVarInt(txBytes, pos);
+        pos += bytesToRead;
+        // get vchReceiptValue
+        (bytesToRead, pos) = parseVarInt(txBytes, pos);
+        // if position is encoded in receipt value, decode position and read the value from next field (parent nodes)
+        if(bytesToRead == 2){
+            uint16 positionOfValue = bytesToUint16(txBytes, pos);
+            pos += bytesToRead;
+            // get vchReceiptParentNodes
+            (bytesToRead, pos) = parseVarInt(txBytes, pos);
+            pos += positionOfValue;
+            ethTxReceipt = sliceArray(txBytes, pos, pos+(bytesToRead-positionOfValue));
         }
-        return flip32Bytes(merkle);
+        // size > 2 means receipt value is fully serialized in this field and no need to get parent nodes field
+        else{
+            ethTxReceipt = sliceArray(txBytes, pos, pos+bytesToRead);      
+        }
+        return ethTxReceipt;
+    }
+
+    // @dev converts bytes of any length to bytes32.
+    // If `_rawBytes` is longer than 32 bytes, it truncates to the 32 leftmost bytes.
+    // If it is shorter, it pads with 0s on the left.
+    // Should be private, made internal for testing
+    //
+    // @param _rawBytes - arbitrary length bytes
+    // @return - leftmost 32 or less bytes of input value; padded if less than 32
+    function bytesToBytes32(bytes memory _rawBytes, uint pos) public pure returns (bytes32) {
+        bytes32 out;
+        assembly {
+            out := mload(add(add(_rawBytes, 0x20), pos))
+        }
+        return out;
+    }
+
+    /**
+     * Return logs for given ethereum transaction receipt
+     * @param  ethTxReceipt ethereum transaction receipt
+     * @return logs bloom
+     */
+    function getLogValuesForTopic(bytes memory ethTxReceipt, bytes32 expectedTopic)
+        public
+        pure
+        returns (bytes memory)
+    {
+        RLPReader.RLPItem[] memory ethTxReceiptList = ethTxReceipt.toRlpItem().toList();
+        RLPReader.RLPItem[] memory logsList = ethTxReceiptList[3].toList();
+        for (uint256 i = 0; i < logsList.length; i++) {
+            RLPReader.RLPItem[] memory log = logsList[i].toList();
+            bytes memory rawTopic = log[1].toBytes();
+            bytes32 topic = bytesToBytes32(rawTopic, 1); // need to remove first byte "a0"
+            if (topic == expectedTopic) {
+                // data for given log
+                return log[2].toBytes();
+            }
+        }
+        revert("Topic not found");
+    }
+
+    /**
+     * Get bridgeTransactionId from logs bloom
+     * @param logValues log values
+     * @return bridgeTransactionId
+     */
+    function getBridgeTransactionId(bytes memory logValues) public pure returns (uint256 value) {
+        uint8 index = 3; // log's third value
+        assembly {
+            value := mload(add(logValues, mul(32, index)))
+        }
     }
 
     // @dev - Initializes superblocks contract
@@ -482,6 +614,59 @@ contract SyscoinSuperblocks is Initializable, SyscoinSuperblocksI, SyscoinErrorC
         return(ERR_CANCEL_TRANSFER_VERIFY);
     }
 
+    // @dev - Parses a syscoin tx
+    //
+    // @param txBytes - tx byte array
+    // Outputs
+    // @return output_value - amount sent to the lock address in satoshis
+    // @return destinationAddress - ethereum destination address
+    function parseBurnTx(bytes memory txBytes)
+        public
+        pure
+        returns (uint, uint, address, uint32, uint8, address)
+    {
+        uint output_value;
+        uint32 assetGUID;
+        address destinationAddress;
+        uint32 version;
+        address erc20Address;
+        uint8 precision;
+        uint pos = 0;
+        version = bytesToUint32Flipped(txBytes, pos);
+        if(version != SYSCOIN_TX_VERSION_ALLOCATION_BURN_TO_ETHEREUM){
+            return (ERR_PARSE_TX_SYS, output_value, destinationAddress, assetGUID, precision, erc20Address);
+        }
+        pos = getOpReturnPos(txBytes, 4);
+        (output_value, destinationAddress, assetGUID, precision, erc20Address) = scanAssetDetails(txBytes, pos);
+        return (0, output_value, destinationAddress, assetGUID, precision, erc20Address);
+    }
+
+    function skipInputs(bytes memory txBytes, uint pos)
+        private
+        pure
+        returns (uint)
+    {
+        uint n_inputs;
+        uint script_len;
+        (n_inputs, pos) = parseVarInt(txBytes, pos);
+        // if dummy 0x00 is present this is a witness transaction
+        if(n_inputs == 0x00){
+            (n_inputs, pos) = parseVarInt(txBytes, pos); // flag
+            require(n_inputs != 0x00);
+            // after dummy/flag the real var int comes for txins
+            (n_inputs, pos) = parseVarInt(txBytes, pos);
+        }
+        require(n_inputs < 100);
+
+        for (uint i = 0; i < n_inputs; i++) {
+            pos += 36;  // skip outpoint
+            (script_len, pos) = parseVarInt(txBytes, pos);
+            pos += script_len + 4;  // skip sig_script, seq
+        }
+
+        return pos;
+    }
+
     // @dev - Checks whether the transaction given by `_txBytes` is in the block identified by `_txBlockHeaderBytes`.
     // First it guards against a Merkle tree collision attack by raising an error if the transaction is exactly 64 bytes long,
     // then it calls helperVerifyHash to do the actual check.
@@ -512,6 +697,26 @@ contract SyscoinSuperblocks is Initializable, SyscoinSuperblocksI, SyscoinErrorC
             // log is done via helperVerifyHash
             return 0;
         }
+    }
+
+    // @dev - Bitcoin-way of hashing
+    // @param _dataBytes - raw data to be hashed
+    // @return - result of applying SHA-256 twice to raw data and then flipping the bytes
+    function dblShaFlip(bytes memory _dataBytes) public pure returns (uint) {
+        return flip32Bytes(uint(sha256(abi.encodePacked(sha256(abi.encodePacked(_dataBytes))))));
+    }
+
+    // @dev - extract Merkle root field from a raw Syscoin block header
+    //
+    // @param _blockHeader - Syscoin block header bytes
+    // @param pos - where to start reading root from
+    // @return - block's Merkle root in big endian format
+    function getHeaderMerkleRoot(bytes memory _blockHeader) public pure returns (uint) {
+        uint merkle;
+        assembly {
+            merkle := mload(add(add(_blockHeader, 32), 0x24))
+        }
+        return flip32Bytes(merkle);
     }
 
     // @dev - Checks whether the transaction identified by `_txHash` is in the block identified by `_blockHeaderBytes`
