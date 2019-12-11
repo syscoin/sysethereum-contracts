@@ -136,7 +136,7 @@ contract SyscoinERC20Manager is Initializable {
     
     function cancelTransferRequest(uint32 bridgeTransferId) public payable {
         // lookup state by bridgeTransferId
-        BridgeTransfer memory bridgeTransfer = bridgeTransfers[bridgeTransferId];
+        BridgeTransfer storage bridgeTransfer = bridgeTransfers[bridgeTransferId];
         // ensure state is Ok
         require(bridgeTransfer.status == BridgeTransferStatus.Ok,
             "#SyscoinERC20Manager cancelTransferRequest(): Status of bridge transfer must be Ok");
@@ -230,5 +230,26 @@ contract SyscoinERC20Manager is Initializable {
         });
         emit TokenFreeze(msg.sender, value, bridgeTransferIdCount);
         return true;
+    }
+
+    // @dev - Returns the bridge transfer data for the supplied bridge transfer ID
+    //
+    function getBridgeTransfer(uint32 bridgeTransferId) external view returns (
+        uint _timestamp,
+        uint _value,
+        address _erc20ContractAddress,
+        address _tokenFreezerAddress,
+        uint32 _assetGUID,
+        BridgeTransferStatus _status
+    ) {
+        BridgeTransfer storage bridgeTransfer = bridgeTransfers[bridgeTransferId];
+        return (
+            bridgeTransfer.timestamp,
+            bridgeTransfer.value,
+            bridgeTransfer.erc20ContractAddress,
+            bridgeTransfer.tokenFreezerAddress,
+            bridgeTransfer.assetGUID,
+            bridgeTransfer.status
+        );
     }
 }
