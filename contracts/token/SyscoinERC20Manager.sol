@@ -148,7 +148,7 @@ contract SyscoinERC20Manager is Initializable {
         require((block.timestamp - bridgeTransfer.timestamp) > (net == Network.MAINNET? CANCEL_MINT_TIMEOUT: 10800), "#SyscoinERC20Manager cancelTransferRequest(): Transfer must be at least 1.5 week old");
         // ensure min deposit paid
         require(msg.value >= MIN_CANCEL_DEPOSIT,
-            "#SyscoinERC20Manager cancelTransferSuccess(): Cancel deposit incorrect");
+            "#SyscoinERC20Manager cancelTransferRequest(): Cancel deposit incorrect");
         deposits[bridgeTransferId] = msg.value;
         // set height for cancel time begin to enforce a delay to wait for challengers
         bridgeTransfer.timestamp = block.timestamp;
