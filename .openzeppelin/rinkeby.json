@@ -390,11 +390,11 @@
       }
     },
     "SyscoinERC20Manager": {
-      "address": "0xfB678d02ce476b1938Abd8d10732481bDaF67532",
+      "address": "0xFf8E14B0ed2286c3F8d0E77740C21E94fF3c19b5",
       "constructorCode": "608060405234801561001057600080fd5b50611816806100206000396000f3fe",
-      "bodyBytecodeHash": "a4d12898caa56de4f25358360a3d954a506da51e449225ee49d6b178c1d595f2",
-      "localBytecodeHash": "09dc45f5f417344cd1a6bf0ddc24b56400b1ecaaa9e068cb8955974018f57145",
-      "deployedBytecodeHash": "09dc45f5f417344cd1a6bf0ddc24b56400b1ecaaa9e068cb8955974018f57145",
+      "bodyBytecodeHash": "acaab45e07f8fb1150932a55f77592d8a4a2124466530a340faf44327d7c805e",
+      "localBytecodeHash": "bc0aeb4721fe41d9243ab97f7e7bbba2da520a181bfd19edf282de80b1afe0b6",
+      "deployedBytecodeHash": "bc0aeb4721fe41d9243ab97f7e7bbba2da520a181bfd19edf282de80b1afe0b6",
       "types": {
         "t_bool": {
           "id": "t_bool",
@@ -576,7 +576,18 @@
         "hasSelfDestruct": false,
         "hasDelegateCall": false,
         "hasInitialValuesInDeclarations": false,
-        "uninitializedBaseContracts": []
+        "uninitializedBaseContracts": [],
+        "storageUncheckedVars": [
+          {
+            "contract": "SyscoinERC20Manager",
+            "path": "contracts/token/SyscoinERC20Manager.sol",
+            "label": "bridgeTransfers",
+            "astId": 8792,
+            "type": "t_mapping<t_struct<SyscoinERC20Manager.BridgeTransfer>>",
+            "src": "1552:57:14"
+          }
+        ],
+        "storageDiff": []
       }
     },
     "SyscoinSuperblocks": {
@@ -781,7 +792,7 @@
       {
         "address": "0xA650957D53093604A74E586399893e5Fb5FC33D3",
         "version": "1.0.0",
-        "implementation": "0xfB678d02ce476b1938Abd8d10732481bDaF67532",
+        "implementation": "0xFf8E14B0ed2286c3F8d0E77740C21E94fF3c19b5",
         "admin": "0x73FC47941Ee4A38BAB7cDF1298aF3c3163893d06",
         "kind": "Upgradeable"
       }
