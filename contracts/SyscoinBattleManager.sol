@@ -4,9 +4,10 @@ import './interfaces/SyscoinClaimManagerI.sol';
 import './interfaces/SyscoinSuperblocksI.sol';
 import './SyscoinErrorCodes.sol';
 import "@openzeppelin/upgrades/contracts/Initializable.sol";
+import "./SyscoinParser/SyscoinMessageLibrary.sol";
 
 // @dev - Manages a battle session between superblock submitter and challenger
-contract SyscoinBattleManager is Initializable, SyscoinErrorCodes {
+contract SyscoinBattleManager is Initializable, SyscoinErrorCodes, SyscoinMessageLibrary {
 
     // For verifying Syscoin difficulty
     uint constant TARGET_TIMESPAN =  21600;
@@ -51,11 +52,8 @@ contract SyscoinBattleManager is Initializable, SyscoinErrorCodes {
     }
     mapping (bytes32 => BattleSession) sessions;
 
-    enum Network { MAINNET, TESTNET, REGTEST }
-
     uint public superblockDuration;         // Superblock duration (in blocks)
     uint public superblockTimeout;          // Timeout action (in seconds)
-
 
     // network that the stored blocks belong to
     Network private net;
@@ -117,6 +115,7 @@ contract SyscoinBattleManager is Initializable, SyscoinErrorCodes {
 
         emit NewBattle(superblockHash, submitter, challenger);
     }
+
     // 0x00 version
     // 0x04 prev block hash
     // 0x24 merkle root
@@ -156,6 +155,7 @@ contract SyscoinBattleManager is Initializable, SyscoinErrorCodes {
     function getBits(bytes memory _blockHeader, uint pos) private pure returns (uint32 bits) {
         return bytesToUint32Flipped(_blockHeader, 0x48+pos);
     }
+
     // @dev - converts raw bytes representation of a Syscoin block header to struct representation
     //
     // @param _rawBytes - first 80 bytes of a block header
@@ -166,31 +166,11 @@ contract SyscoinBattleManager is Initializable, SyscoinErrorCodes {
         bh.timestamp = getTimestamp(_rawBytes, pos);
         bh.prevBlock = bytes32(getHashPrevBlock(_rawBytes, pos));
     }
-    // Convert a variable integer into something useful and return it and
-    // the index to after it.
-    function parseVarInt(bytes memory txBytes, uint pos) private pure returns (uint, uint) {
-        // the first byte tells us how big the integer is
-        uint8 ibit = uint8(txBytes[pos]);
-        pos += 1;  // skip ibit
 
-        if (ibit < 0xfd) {
-            return (ibit, pos);
-        } else if (ibit == 0xfd) {
-            return (getBytesLE(txBytes, pos, 16), pos + 2);
-        } else if (ibit == 0xfe) {
-            return (getBytesLE(txBytes, pos, 32), pos + 4);
-        } else if (ibit == 0xff) {
-            return (getBytesLE(txBytes, pos, 64), pos + 8);
-        }
-    }
-    // convert little endian bytes to uint
-    function getBytesLE(bytes memory data, uint pos, uint bits) private pure returns (uint256 result) {
-        for (uint256 i = 0; i < bits / 8; i++) {
-            result += uint256(uint8(data[pos + i])) * 2 ** (i * 8);
-        }
-    }
-    function parseAuxPoW(bytes memory rawBytes, uint pos) private view
-             returns (AuxPoW memory auxpow)
+    function parseAuxPoW(bytes memory rawBytes, uint pos)
+        private
+        view
+        returns (AuxPoW memory auxpow)
     {
         bytes memory coinbaseScript;
         uint slicePos;
@@ -218,9 +198,35 @@ contract SyscoinBattleManager is Initializable, SyscoinErrorCodes {
         uint coinbaseMerkleRootPosition;
         (auxpow.coinbaseMerkleRoot, coinbaseMerkleRootPosition, auxpow.coinbaseMerkleRootCode) = findCoinbaseMerkleRoot(coinbaseScript);
     }
-   function skipOutputs(bytes memory txBytes, uint pos) private pure
-             returns (uint)
+
+    function sha256mem(bytes memory _rawBytes, uint offset, uint len)
+        public
+        view
+        returns (bytes32 result)
     {
+        assembly {
+            // Call sha256 precompiled contract (located in address 0x02) to copy data.
+            // Assign to ptr the next available memory position (stored in memory position 0x40).
+            let ptr := mload(0x40)
+            if iszero(staticcall(gas, 0x02, add(add(_rawBytes, 0x20), offset), len, ptr, 0x20)) {
+                revert(0, 0)
+            }
+            result := mload(ptr)
+        }
+    }
+
+    // @dev - Bitcoin-way of hashing
+    // @param _dataBytes - raw data to be hashed
+    // @return - result of applying SHA-256 twice to raw data and then flipping the bytes
+    function dblShaFlipMem(bytes memory _rawBytes, uint offset, uint len)
+        public
+        view
+        returns (uint)
+    {
+        return flip32Bytes(uint(sha256(abi.encodePacked(sha256mem(_rawBytes, offset, len)))));
+    }
+
+    function skipOutputs(bytes memory txBytes, uint pos) private pure returns (uint) {
         uint n_outputs;
         uint script_len;
 
@@ -236,22 +242,28 @@ contract SyscoinBattleManager is Initializable, SyscoinErrorCodes {
 
         return pos;
     }
+
     // get final position of inputs, outputs and lock time
     // this is a helper function to slice a byte array and hash the inputs, outputs and lock time
-    function getSlicePos(bytes memory txBytes, uint pos) private view
-             returns (uint slicePos, bytes memory coinbaseScript)
+    function getSlicePos(bytes memory txBytes, uint pos)
+        private
+        view
+        returns (uint slicePos, bytes memory coinbaseScript)
     {
 
         (slicePos, coinbaseScript) = skipInputsCoinbase(txBytes, pos + 4);
         slicePos = skipOutputs(txBytes, slicePos);
         slicePos += 4; // skip lock time
     }
+
     // scan a Merkle branch.
     // return array of values and the end position of the sibling hashes.
     // takes a 'stop' argument which sets the maximum number of
     // siblings to scan through. stop=0 => scan all.
-    function scanMerkleBranch(bytes memory txBytes, uint pos, uint stop) private pure
-             returns (uint[] memory, uint)
+    function scanMerkleBranch(bytes memory txBytes, uint pos, uint stop)
+        private
+        pure
+        returns (uint[] memory, uint)
     {
         uint n_siblings;
         uint halt;
@@ -281,26 +293,10 @@ contract SyscoinBattleManager is Initializable, SyscoinErrorCodes {
         }
     }
 
-    // @dev returns a portion of a given byte array specified by its starting and ending points
-    // Breaks underscore naming convention for parameters because it raises a compiler error
-    // if `offset` is changed to `_offset`.
-    //
-    // @param _rawBytes - array to be sliced
-    // @param offset - first byte of sliced array
-    // @param _endIndex - last byte of sliced array
-    function sliceArray(bytes memory _rawBytes, uint offset, uint _endIndex) private view returns (bytes memory) {
-        uint len = _endIndex - offset;
-        bytes memory result = new bytes(len);
-        assembly {
-            // Call precompiled contract to copy data
-            if iszero(staticcall(gas, 0x04, add(add(_rawBytes, 0x20), offset), len, add(result, 0x20), len)) {
-                revert(0, 0)
-            }
-        }
-        return result;
-    }
-    function skipInputsCoinbase(bytes memory txBytes, uint pos) private view
-             returns (uint, bytes memory)
+    function skipInputsCoinbase(bytes memory txBytes, uint pos)
+        private
+        view
+        returns (uint, bytes memory)
     {
         uint n_inputs;
         uint script_len;
@@ -322,12 +318,15 @@ contract SyscoinBattleManager is Initializable, SyscoinErrorCodes {
 
         return (pos, coinbaseScript);
     }
+
     // @dev - looks for {0xfa, 0xbe, 'm', 'm'} byte sequence
     // returns the following 32 bytes if it appears once and only once,
     // 0 otherwise
     // also returns the position where the bytes first appear
-    function findCoinbaseMerkleRoot(bytes memory rawBytes) private pure
-             returns (uint, uint, uint)
+    function findCoinbaseMerkleRoot(bytes memory rawBytes)
+        private
+        pure
+        returns (uint, uint, uint)
     {
         uint position;
         uint found = 0;
@@ -358,87 +357,6 @@ contract SyscoinBattleManager is Initializable, SyscoinErrorCodes {
         }
     }
 
-    // @dev - For a valid proof, returns the root of the Merkle tree.
-    //
-    // @param _txHash - transaction hash
-    // @param _txIndex - transaction's index within the block it's assumed to be in
-    // @param _siblings - transaction's Merkle siblings
-    // @return - Merkle tree root of the block the transaction belongs to if the proof is valid,
-    // garbage if it's invalid
-    function computeMerkle(uint _txHash, uint _txIndex, uint[] memory _siblings) private pure returns (uint) {
-        
-        uint length = _siblings.length;
-        uint i;
-        for (i = 0; i < length; i++) {
-            _siblings[i] = flip32Bytes(_siblings[i]);
-        }
-
-        i = 0;
-        uint resultHash = flip32Bytes(_txHash);        
-
-        while (i < length) {
-            uint proofHex = _siblings[i];
-
-            uint left;
-            uint right;
-            if (_txIndex % 2 == 1) { // 0 means _siblings is on the right; 1 means left
-                left = proofHex;
-                right = resultHash;
-            } else {
-                left = resultHash;
-                right = proofHex;
-            }
-            resultHash = uint(sha256(abi.encodePacked(sha256(abi.encodePacked(left, right)))));
-
-            _txIndex /= 2;
-            i += 1;
-        }
-
-        return flip32Bytes(resultHash);
-    }
-
-    // @dev - convert an unsigned integer from little-endian to big-endian representation
-    //
-    // @param _input - little-endian value
-    // @return - input value in big-endian format
-    function flip32Bytes(uint _input) private pure returns (uint result) {
-        assembly {
-            let pos := mload(0x40)
-            mstore8(add(pos, 0), byte(31, _input))
-            mstore8(add(pos, 1), byte(30, _input))
-            mstore8(add(pos, 2), byte(29, _input))
-            mstore8(add(pos, 3), byte(28, _input))
-            mstore8(add(pos, 4), byte(27, _input))
-            mstore8(add(pos, 5), byte(26, _input))
-            mstore8(add(pos, 6), byte(25, _input))
-            mstore8(add(pos, 7), byte(24, _input))
-            mstore8(add(pos, 8), byte(23, _input))
-            mstore8(add(pos, 9), byte(22, _input))
-            mstore8(add(pos, 10), byte(21, _input))
-            mstore8(add(pos, 11), byte(20, _input))
-            mstore8(add(pos, 12), byte(19, _input))
-            mstore8(add(pos, 13), byte(18, _input))
-            mstore8(add(pos, 14), byte(17, _input))
-            mstore8(add(pos, 15), byte(16, _input))
-            mstore8(add(pos, 16), byte(15, _input))
-            mstore8(add(pos, 17), byte(14, _input))
-            mstore8(add(pos, 18), byte(13, _input))
-            mstore8(add(pos, 19), byte(12, _input))
-            mstore8(add(pos, 20), byte(11, _input))
-            mstore8(add(pos, 21), byte(10, _input))
-            mstore8(add(pos, 22), byte(9, _input))
-            mstore8(add(pos, 23), byte(8, _input))
-            mstore8(add(pos, 24), byte(7, _input))
-            mstore8(add(pos, 25), byte(6, _input))
-            mstore8(add(pos, 26), byte(5, _input))
-            mstore8(add(pos, 27), byte(4, _input))
-            mstore8(add(pos, 28), byte(3, _input))
-            mstore8(add(pos, 29), byte(2, _input))
-            mstore8(add(pos, 30), byte(1, _input))
-            mstore8(add(pos, 31), byte(0, _input))
-            result := mload(pos)
-        }
-    }
     // @dev - calculates the Merkle root of a tree containing Bitcoin transactions
     // in order to prove that `ap`'s coinbase tx is in that Bitcoin block.
     //
@@ -494,38 +412,12 @@ contract SyscoinBattleManager is Initializable, SyscoinErrorCodes {
         return 1;
     }
 
-    function sha256mem(bytes memory _rawBytes, uint offset, uint len) private view returns (bytes32 result) {
-        assembly {
-            // Call sha256 precompiled contract (located in address 0x02) to copy data.
-            // Assign to ptr the next available memory position (stored in memory position 0x40).
-            let ptr := mload(0x40)
-            if iszero(staticcall(gas, 0x02, add(add(_rawBytes, 0x20), offset), len, ptr, 0x20)) {
-                revert(0, 0)
-            }
-            result := mload(ptr)
-        }
-    }
-
-    // @dev - Bitcoin-way of hashing
-    // @param _dataBytes - raw data to be hashed
-    // @return - result of applying SHA-256 twice to raw data and then flipping the bytes
-    function dblShaFlip(bytes memory _dataBytes) private pure returns (uint) {
-        return flip32Bytes(uint(sha256(abi.encodePacked(sha256(abi.encodePacked(_dataBytes))))));
-    }
-
-    // @dev - Bitcoin-way of hashing
-    // @param _dataBytes - raw data to be hashed
-    // @return - result of applying SHA-256 twice to raw data and then flipping the bytes
-    function dblShaFlipMem(bytes memory _rawBytes, uint offset, uint len) private view returns (uint) {
-        return flip32Bytes(uint(sha256(abi.encodePacked(sha256mem(_rawBytes, offset, len)))));
-    }
-
     // @dev - Bitcoin-way of computing the target from the 'bits' field of a block header
     // based on http://www.righto.com/2014/02/bitcoin-mining-hard-way-algorithms.html//ref3
     //
     // @param _bits - difficulty in bits format
     // @return - difficulty in target format
-    function targetFromBits(uint32 _bits) private pure returns (uint) {
+    function targetFromBits(uint32 _bits) public pure returns (uint) {
         uint exp = _bits / 0x1000000;  // 2**24
         uint mant = _bits & 0xffffff;
         return mant * 256**(exp - 3);
@@ -611,6 +503,39 @@ contract SyscoinBattleManager is Initializable, SyscoinErrorCodes {
 
         return compact | uint32(shiftLeft(nbytes, 24));
     }
+
+    // @dev - Evaluate the merkle root
+    //
+    // Given an array of hashes it calculates the
+    // root of the merkle tree.
+    //
+    // @return root of merkle tree
+    function makeMerkle(bytes32[] memory hashes) public pure returns (bytes32) {
+        uint length = hashes.length;
+
+        if (length == 1) return hashes[0];
+        require(length > 0, "Must provide hashes");
+
+        uint i;
+        for (i = 0; i < length; i++) {
+            hashes[i] = bytes32(flip32Bytes(uint(hashes[i])));
+        }
+
+        uint j;
+        uint k;
+
+        while (length > 1) {
+            k = 0;
+            for (i = 0; i < length; i += 2) {
+                j = (i + 1 < length) ? i + 1 : length - 1;
+                hashes[k] = sha256(abi.encodePacked(sha256(abi.encodePacked(hashes[i], hashes[j]))));
+                k += 1;
+            }
+            length = k;
+        }
+        return bytes32(flip32Bytes(uint(hashes[0])));
+    }
+
     // @dev - Verify block headers sent by challenger
     function doRespondBlockHeaders(
         BattleSession storage session,
@@ -731,55 +656,11 @@ contract SyscoinBattleManager is Initializable, SyscoinErrorCodes {
             emit RespondBlockHeaders(superblockHash, merkleRootsLen + 1, submitter);
         }
     }
-    // @dev - Converts a bytes of size 4 to uint32,
-    // e.g. for input [0x01, 0x02, 0x03 0x04] returns 0x01020304
-    function bytesToUint32Flipped(bytes memory input, uint pos) private pure returns (uint32 result) {
-        assembly {
-            let data := mload(add(add(input, 0x20), pos))
-            let flip := mload(0x40)
-            mstore8(add(flip, 0), byte(3, data))
-            mstore8(add(flip, 1), byte(2, data))
-            mstore8(add(flip, 2), byte(1, data))
-            mstore8(add(flip, 3), byte(0, data))
-            result := shr(mul(8, 28), mload(flip))
-        }
-    }
+
     uint32 constant VERSION_AUXPOW = (1 << 8);
     // @dev - checks version to determine if a block has merge mining information
     function isMergeMined(bytes memory _rawBytes, uint pos) private pure returns (bool) {
         return bytesToUint32Flipped(_rawBytes, pos) & VERSION_AUXPOW != 0;
-    }
-    
-    // @dev - Evaluate the merkle root
-    //
-    // Given an array of hashes it calculates the
-    // root of the merkle tree.
-    //
-    // @return root of merkle tree
-    function makeMerkle(bytes32[] memory hashes) private pure returns (bytes32) {
-        uint length = hashes.length;
-
-        if (length == 1) return hashes[0];
-        require(length > 0, "Must provide hashes");
-
-        uint i;
-        for (i = 0; i < length; i++) {
-            hashes[i] = bytes32(flip32Bytes(uint(hashes[i])));
-        }
-
-        uint j;
-        uint k;
-
-        while (length > 1) {
-            k = 0;
-            for (i = 0; i < length; i += 2) {
-                j = (i + 1 < length) ? i + 1 : length - 1;
-                hashes[k] = sha256(abi.encodePacked(sha256(abi.encodePacked(hashes[i], hashes[j]))));
-                k += 1;
-            }
-            length = k;
-        }
-        return bytes32(flip32Bytes(uint(hashes[0])));
     }
 
     // @dev - Validate prev bits, prev hash of block header
