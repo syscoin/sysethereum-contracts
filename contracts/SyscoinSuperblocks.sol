@@ -525,10 +525,11 @@ contract SyscoinSuperblocks is Initializable, SyscoinSuperblocksI, SyscoinErrorC
         uint _txIndex,
         uint[] memory _txSiblings
     ) private returns (uint) {
-                // Check if Syscoin block belongs to given superblock
+        // Check if Syscoin block belongs to given superblock
         if (bytes32(computeMerkle(dblShaFlip(_syscoinBlockHeader), _syscoinBlockIndex, _syscoinBlockSiblings))
             != superblocks[_superblockHash].blocksMerkleRoot) {
             // Syscoin block is not in superblock
+            emit VerifyTransaction(bytes32(0), ERR_SUPERBLOCK_MERKLE_ROOT);
             return 0;
         }
         return verifyTx(_txBytes, _txIndex, _txSiblings, _syscoinBlockHeader, _superblockHash);
