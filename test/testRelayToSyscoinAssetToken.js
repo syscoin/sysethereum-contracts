@@ -1,6 +1,6 @@
 const { TestHelper } = require('@openzeppelin/cli');
 const { Contracts, ZWeb3 } = require('@openzeppelin/upgrades');
-
+const utils = require('./utils');
 /* Initialize OpenZeppelin's Web3 provider. */
 ZWeb3.initialize(web3.currentProvider);
 
@@ -29,7 +29,7 @@ contract('testRelayToSyscoinAssetToken', function(accounts) {
     this.project = await TestHelper({from: proxyAdmin});
     erc20Manager = await this.project.createProxy(SyscoinERC20Manager, {
       initMethod: 'init',
-      initArgs: [trustedRelayerContract]
+      initArgs: [utils.SYSCOIN_REGTEST, trustedRelayerContract]
     });
 
     SyscoinSuperblocks = await SyscoinSuperblocksArtifact.new();
