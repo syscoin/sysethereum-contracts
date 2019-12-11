@@ -43,6 +43,10 @@ contract SyscoinERC20Manager is Initializable {
     mapping(uint32 => BridgeTransfer) private bridgeTransfers;
     mapping(uint32 => uint) private deposits;
 
+    // network that the stored blocks belong to
+    enum Network { MAINNET, TESTNET, REGTEST }
+    Network private net;
+
     event TokenUnfreeze(address receipient, uint value);
     event TokenUnfreezeFee(address receipient, uint value);
     event TokenFreeze(address freezer, uint value, uint32 bridgetransferid);
@@ -60,7 +64,8 @@ contract SyscoinERC20Manager is Initializable {
         return true;
     }
     
-    function init(address _trustedRelayerContract) public initializer {
+    function init(Network _network, address _trustedRelayerContract) public initializer {
+        net = _network;
         trustedRelayerContract = _trustedRelayerContract;
         bridgeTransferIdCount = 0;
     }
@@ -140,7 +145,7 @@ contract SyscoinERC20Manager is Initializable {
         require(msg.sender == bridgeTransfer.tokenFreezerAddress, "#SyscoinERC20Manager cancelTransferRequest(): Only msg.sender is allowed to cancel");
         // if freezeBurnERC20 was called less than 1.5 weeks ago then return error
         // 0.5 week buffer since only 1 week of blocks are allowed to pass before cannot mint on sys
-        require((block.timestamp - bridgeTransfer.timestamp) > CANCEL_MINT_TIMEOUT, "#SyscoinERC20Manager cancelTransferRequest(): Transfer must be at least 1.5 week old");
+        require((block.timestamp - bridgeTransfer.timestamp) > (net == Network.MAINNET? CANCEL_MINT_TIMEOUT: 10800), "#SyscoinERC20Manager cancelTransferRequest(): Transfer must be at least 1.5 week old");
         // ensure min deposit paid
         require(msg.value >= MIN_CANCEL_DEPOSIT,
             "#SyscoinERC20Manager cancelTransferSuccess(): Cancel deposit incorrect");

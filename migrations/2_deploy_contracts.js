@@ -42,7 +42,7 @@ async function deploy(networkName, options, accounts, networkId, superblockOptio
   let SyscoinSuperblocks = await create(Object.assign({ contractAlias: 'SyscoinSuperblocks' }, options));
 
   console.log('\nDeploying and Initializing SyscoinERC20Manager proxy instance at address ');
-  let SyscoinERC20Manager = await create(Object.assign({ contractAlias: 'SyscoinERC20Manager', methodName: 'init', methodArgs: [SyscoinSuperblocks.address] }, options));
+  let SyscoinERC20Manager = await create(Object.assign({ contractAlias: 'SyscoinERC20Manager', methodName: 'init', methodArgs: [networkId, SyscoinSuperblocks.address] }, options));
 
   console.log('\nDeploying and Initializing SyscoinBattleManager proxy instance at address ');
   let SyscoinBattleManager = await create(Object.assign({ contractAlias: 'SyscoinBattleManager', methodName: 'init', methodArgs: [networkId, SyscoinSuperblocks.address, superblockOptions.DURATION, superblockOptions.TIMEOUT] }, options));

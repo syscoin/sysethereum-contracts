@@ -38,14 +38,14 @@
     "absolutePath": "/Users/jsidhu/Documents/GitHub/sysethereum-contracts1/contracts/interfaces/SyscoinBattleManagerI.sol",
     "exportedSymbols": {
       "SyscoinBattleManagerI": [
-        8460
+        7549
       ]
     },
-    "id": 8461,
+    "id": 7550,
     "nodeType": "SourceUnit",
     "nodes": [
       {
-        "id": 8450,
+        "id": 7539,
         "literals": [
           "solidity",
           "^",
@@ -53,7 +53,7 @@
           ".13"
         ],
         "nodeType": "PragmaDirective",
-        "src": "0:24:9"
+        "src": "0:24:8"
       },
       {
         "baseContracts": [],
@@ -61,9 +61,9 @@
         "contractKind": "interface",
         "documentation": null,
         "fullyImplemented": false,
-        "id": 8460,
+        "id": 7549,
         "linearizedBaseContracts": [
-          8460
+          7549
         ],
         "name": "SyscoinBattleManagerI",
         "nodeType": "ContractDefinition",
@@ -71,23 +71,23 @@
           {
             "body": null,
             "documentation": null,
-            "id": 8459,
+            "id": 7548,
             "implemented": false,
             "kind": "function",
             "modifiers": [],
             "name": "beginBattleSession",
             "nodeType": "FunctionDefinition",
             "parameters": {
-              "id": 8457,
+              "id": 7546,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 8452,
+                  "id": 7541,
                   "name": "superblockHash",
                   "nodeType": "VariableDeclaration",
-                  "scope": 8459,
-                  "src": "208:22:9",
+                  "scope": 7548,
+                  "src": "208:22:8",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -95,10 +95,10 @@
                     "typeString": "bytes32"
                   },
                   "typeName": {
-                    "id": 8451,
+                    "id": 7540,
                     "name": "bytes32",
                     "nodeType": "ElementaryTypeName",
-                    "src": "208:7:9",
+                    "src": "208:7:8",
                     "typeDescriptions": {
                       "typeIdentifier": "t_bytes32",
                       "typeString": "bytes32"
@@ -109,11 +109,11 @@
                 },
                 {
                   "constant": false,
-                  "id": 8454,
+                  "id": 7543,
                   "name": "submitter",
                   "nodeType": "VariableDeclaration",
-                  "scope": 8459,
-                  "src": "232:17:9",
+                  "scope": 7548,
+                  "src": "232:17:8",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -121,10 +121,10 @@
                     "typeString": "address"
                   },
                   "typeName": {
-                    "id": 8453,
+                    "id": 7542,
                     "name": "address",
                     "nodeType": "ElementaryTypeName",
-                    "src": "232:7:9",
+                    "src": "232:7:8",
                     "stateMutability": "nonpayable",
                     "typeDescriptions": {
                       "typeIdentifier": "t_address",
@@ -136,11 +136,11 @@
                 },
                 {
                   "constant": false,
-                  "id": 8456,
+                  "id": 7545,
                   "name": "challenger",
                   "nodeType": "VariableDeclaration",
-                  "scope": 8459,
-                  "src": "251:18:9",
+                  "scope": 7548,
+                  "src": "251:18:8",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -148,10 +148,10 @@
                     "typeString": "address"
                   },
                   "typeName": {
-                    "id": 8455,
+                    "id": 7544,
                     "name": "address",
                     "nodeType": "ElementaryTypeName",
-                    "src": "251:7:9",
+                    "src": "251:7:8",
                     "stateMutability": "nonpayable",
                     "typeDescriptions": {
                       "typeIdentifier": "t_address",
@@ -162,39 +162,39 @@
                   "visibility": "internal"
                 }
               ],
-              "src": "207:63:9"
+              "src": "207:63:8"
             },
             "returnParameters": {
-              "id": 8458,
+              "id": 7547,
               "nodeType": "ParameterList",
               "parameters": [],
-              "src": "287:0:9"
+              "src": "287:0:8"
             },
-            "scope": 8460,
-            "src": "180:108:9",
+            "scope": 7549,
+            "src": "180:108:8",
             "stateMutability": "nonpayable",
             "superFunction": null,
             "visibility": "external"
           }
         ],
-        "scope": 8461,
-        "src": "105:185:9"
+        "scope": 7550,
+        "src": "105:185:8"
       }
     ],
-    "src": "0:291:9"
+    "src": "0:291:8"
   },
   "legacyAST": {
     "absolutePath": "/Users/jsidhu/Documents/GitHub/sysethereum-contracts1/contracts/interfaces/SyscoinBattleManagerI.sol",
     "exportedSymbols": {
       "SyscoinBattleManagerI": [
-        8460
+        7549
       ]
     },
-    "id": 8461,
+    "id": 7550,
     "nodeType": "SourceUnit",
     "nodes": [
       {
-        "id": 8450,
+        "id": 7539,
         "literals": [
           "solidity",
           "^",
@@ -202,7 +202,7 @@
           ".13"
         ],
         "nodeType": "PragmaDirective",
-        "src": "0:24:9"
+        "src": "0:24:8"
       },
       {
         "baseContracts": [],
@@ -210,9 +210,9 @@
         "contractKind": "interface",
         "documentation": null,
         "fullyImplemented": false,
-        "id": 8460,
+        "id": 7549,
         "linearizedBaseContracts": [
-          8460
+          7549
         ],
         "name": "SyscoinBattleManagerI",
         "nodeType": "ContractDefinition",
@@ -220,23 +220,23 @@
           {
             "body": null,
             "documentation": null,
-            "id": 8459,
+            "id": 7548,
             "implemented": false,
             "kind": "function",
             "modifiers": [],
             "name": "beginBattleSession",
             "nodeType": "FunctionDefinition",
             "parameters": {
-              "id": 8457,
+              "id": 7546,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 8452,
+                  "id": 7541,
                   "name": "superblockHash",
                   "nodeType": "VariableDeclaration",
-                  "scope": 8459,
-                  "src": "208:22:9",
+                  "scope": 7548,
+                  "src": "208:22:8",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -244,10 +244,10 @@
                     "typeString": "bytes32"
                   },
                   "typeName": {
-                    "id": 8451,
+                    "id": 7540,
                     "name": "bytes32",
                     "nodeType": "ElementaryTypeName",
-                    "src": "208:7:9",
+                    "src": "208:7:8",
                     "typeDescriptions": {
                       "typeIdentifier": "t_bytes32",
                       "typeString": "bytes32"
@@ -258,11 +258,11 @@
                 },
                 {
                   "constant": false,
-                  "id": 8454,
+                  "id": 7543,
                   "name": "submitter",
                   "nodeType": "VariableDeclaration",
-                  "scope": 8459,
-                  "src": "232:17:9",
+                  "scope": 7548,
+                  "src": "232:17:8",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -270,10 +270,10 @@
                     "typeString": "address"
                   },
                   "typeName": {
-                    "id": 8453,
+                    "id": 7542,
                     "name": "address",
                     "nodeType": "ElementaryTypeName",
-                    "src": "232:7:9",
+                    "src": "232:7:8",
                     "stateMutability": "nonpayable",
                     "typeDescriptions": {
                       "typeIdentifier": "t_address",
@@ -285,11 +285,11 @@
                 },
                 {
                   "constant": false,
-                  "id": 8456,
+                  "id": 7545,
                   "name": "challenger",
                   "nodeType": "VariableDeclaration",
-                  "scope": 8459,
-                  "src": "251:18:9",
+                  "scope": 7548,
+                  "src": "251:18:8",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -297,10 +297,10 @@
                     "typeString": "address"
                   },
                   "typeName": {
-                    "id": 8455,
+                    "id": 7544,
                     "name": "address",
                     "nodeType": "ElementaryTypeName",
-                    "src": "251:7:9",
+                    "src": "251:7:8",
                     "stateMutability": "nonpayable",
                     "typeDescriptions": {
                       "typeIdentifier": "t_address",
@@ -311,26 +311,26 @@
                   "visibility": "internal"
                 }
               ],
-              "src": "207:63:9"
+              "src": "207:63:8"
             },
             "returnParameters": {
-              "id": 8458,
+              "id": 7547,
               "nodeType": "ParameterList",
               "parameters": [],
-              "src": "287:0:9"
+              "src": "287:0:8"
             },
-            "scope": 8460,
-            "src": "180:108:9",
+            "scope": 7549,
+            "src": "180:108:8",
             "stateMutability": "nonpayable",
             "superFunction": null,
             "visibility": "external"
           }
         ],
-        "scope": 8461,
-        "src": "105:185:9"
+        "scope": 7550,
+        "src": "105:185:8"
       }
     ],
-    "src": "0:291:9"
+    "src": "0:291:8"
   },
   "compiler": {
     "name": "solc",
@@ -338,7 +338,7 @@
   },
   "networks": {},
   "schemaVersion": "3.0.19",
-  "updatedAt": "2019-12-11T00:04:06.617Z",
+  "updatedAt": "2019-12-11T04:43:29.350Z",
   "devdoc": {
     "methods": {}
   },
