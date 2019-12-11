@@ -105,7 +105,7 @@ async function cancelBridgeTransfer(from, bridgeTransferId) {
     } else {
       cancellor = web3.eth.accounts[0];
     }
-
+    console.log(`Account used: ${cancellor}`);
     console.log(`Cancelling Bridge Transfer ID: ${bridgeTransferId}`);
 
     const findEvent = (logs, eventName) => {
@@ -114,7 +114,7 @@ async function cancelBridgeTransfer(from, bridgeTransferId) {
       });
     };
 
-    const result = await erc20Manager.cancelTransferRequest(bridgeTransferId, { from: cancellor });
+    const result = await erc20Manager.cancelTransferRequest(bridgeTransferId, { value: web3.utils.toWei("3"), from: cancellor });
     const cancelEvent = findEvent(result.logs, 'CancelTransferRequest');
     if (!cancelEvent) {
       console.log('Failed to cancel Bridge Transfer');
@@ -160,7 +160,8 @@ async function challengeCommand(params) {
 async function cancelBridgeTransferCommand(params) {
   console.log("cancel bridge transfer");
   const id = findParam(params, '--bridgetransferid');
-  await cancelBridgeTransfer(id);
+  const from = findParam(params, '--from');
+  await cancelBridgeTransfer(from, parseInt(id));
   console.log("cancel of bridge transfer complete");
 }
 function statusToText(status) {
@@ -193,23 +194,15 @@ function bridgeTransferStatusToText(status) {
 async function displayBridgeTransferStatus( bridgeTransferId) {
   try {
     const erc20Manager = await SyscoinERC20Manager.deployed();
-    const [
-      timestamp,
-      value,
-      erc20ContractAddress,
-      tokenFreezerAddress,
-      assetGUID,
-      status
-    ] = await erc20Manager.getBridgeTransfer(bridgeTransferId);
+    const bridgeTransferDetails = await erc20Manager.getBridgeTransfer(bridgeTransferId);
     console.log(`Bridge Transfer ID: ${bridgeTransferId}`);
-    
-    // console.log(`Block: ${blockNumber}, hash ${blockHash}`);
-    console.log(`Last Timestamp: ${new Date(timestamp * 1000)}`);
-    console.log(`Value: ${value}`);
-    console.log(`ERC20: ${erc20ContractAddress}`);
-    console.log(`Token Freezer Account: ${tokenFreezerAddress}`);
-    console.log(`Syscoin SPT: ${assetGUID}`);
-    console.log(`Status: ${bridgeTransferStatusToText(status)}`);
+  
+    console.log(`Last Timestamp: ${new Date(bridgeTransferDetails[0] * 1000)}`);
+    console.log(`Value: ${bridgeTransferDetails[1]}`);
+    console.log(`ERC20: ${bridgeTransferDetails[2]}`);
+    console.log(`Token Freezer Account: ${bridgeTransferDetails[3]}`);
+    console.log(`Syscoin SPT: ${bridgeTransferDetails[4]}`);
+    console.log(`Status: ${bridgeTransferStatusToText(bridgeTransferDetails[5])}`);
   } catch (err) {
     console.log(err);
   }
@@ -365,7 +358,7 @@ async function bridgeTransferStatusCommand(params) {
   console.log("status of bridge transfer");
   console.log('----------');
   const id = findParam(params, '--bridgetransferid');
-  await displayBridgeTransferStatus({ id });
+  await displayBridgeTransferStatus(parseInt(id));
   console.log('----------');
 }
 module.exports = async function(callback) {
@@ -377,7 +370,7 @@ module.exports = async function(callback) {
       await statusCommand(params);
     } else if (command === 'bridgetransfer_status') {
       await bridgeTransferStatusCommand(params);
-    } else if(ommand === 'bridgetransfer_cancel'){
+    } else if(command === 'bridgetransfer_cancel'){
       await cancelBridgeTransferCommand(params);
     }
   } catch (err) {
