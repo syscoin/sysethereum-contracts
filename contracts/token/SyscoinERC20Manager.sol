@@ -165,7 +165,7 @@ contract SyscoinERC20Manager is Initializable {
         require(bridgeTransfer.status == BridgeTransferStatus.CancelRequested,
             "#SyscoinERC20Manager cancelTransferSuccess(): Status must be CancelRequested");
         // check if timeout period passed (atleast 1 hour of blocks have to have passed)
-        require((block.timestamp - bridgeTransfer.timestamp) > CANCEL_TRANSFER_TIMEOUT, "#SyscoinERC20Manager cancelTransferSuccess(): 1 hours timeout is required");
+        require((block.timestamp - bridgeTransfer.timestamp) > CANCEL_TRANSFER_TIMEOUT, "#SyscoinERC20Manager cancelTransferSuccess(): 1 hour timeout is required");
         // refund erc20 to the tokenFreezerAddress
         SyscoinERC20I erc20 = SyscoinERC20I(bridgeTransfer.erc20ContractAddress);
         assetBalances[bridgeTransfer.assetGUID] = assetBalances[bridgeTransfer.assetGUID].sub(bridgeTransfer.value);
