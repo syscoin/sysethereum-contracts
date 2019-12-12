@@ -1,11 +1,11 @@
 {
   "contracts": {
     "SyscoinERC20Manager": {
-      "address": "0xaBCa63D4e9a00673CcC5163AC7D5179640F5127f",
-      "constructorCode": "608060405234801561001057600080fd5b50611857806100206000396000f3fe",
-      "bodyBytecodeHash": "e10b7af41e9a4ed29a6ef303fd3eec7655a4799b49421eb3428b4fb13ef74f42",
-      "localBytecodeHash": "a63d19eeca60d188e07cf578a7eb029c96b37df7a02a7208864914594a80d9f0",
-      "deployedBytecodeHash": "a63d19eeca60d188e07cf578a7eb029c96b37df7a02a7208864914594a80d9f0",
+      "address": "0xe4B7A35b465c64E57F12DD8A14E9e893e7DBf3DD",
+      "constructorCode": "608060405234801561001057600080fd5b506118b4806100206000396000f3fe",
+      "bodyBytecodeHash": "38e90c99cff68917ce1e3f2b162328be3ac43d0ee61428411412cc8204e6a4a1",
+      "localBytecodeHash": "13d884659e41fbdbb14cb70972cca13289813bb11572d0b602f2b20d64ab88d1",
+      "deployedBytecodeHash": "13d884659e41fbdbb14cb70972cca13289813bb11572d0b602f2b20d64ab88d1",
       "types": {
         "t_bool": {
           "id": "t_bool",
@@ -53,37 +53,37 @@
           "members": [
             {
               "label": "timestamp",
-              "astId": 7866,
+              "astId": 7876,
               "type": "t_uint256",
               "src": "1356:14:13"
             },
             {
               "label": "value",
-              "astId": 7868,
+              "astId": 7878,
               "type": "t_uint256",
               "src": "1380:10:13"
             },
             {
               "label": "erc20ContractAddress",
-              "astId": 7870,
+              "astId": 7880,
               "type": "t_address",
               "src": "1400:28:13"
             },
             {
               "label": "tokenFreezerAddress",
-              "astId": 7872,
+              "astId": 7882,
               "type": "t_address",
               "src": "1438:27:13"
             },
             {
               "label": "assetGUID",
-              "astId": 7874,
+              "astId": 7884,
               "type": "t_uint32",
               "src": "1475:16:13"
             },
             {
               "label": "status",
-              "astId": 7876,
+              "astId": 7886,
               "type": "t_enum<SyscoinERC20Manager.BridgeTransferStatus>",
               "src": "1501:27:13"
             }
@@ -123,7 +123,7 @@
           "contract": "Initializable",
           "path": "@openzeppelin/upgrades/contracts/Initializable.sol",
           "label": "initialized",
-          "astId": 8615,
+          "astId": 8663,
           "type": "t_bool",
           "src": "757:24:15"
         },
@@ -131,7 +131,7 @@
           "contract": "Initializable",
           "path": "@openzeppelin/upgrades/contracts/Initializable.sol",
           "label": "initializing",
-          "astId": 8617,
+          "astId": 8665,
           "type": "t_bool",
           "src": "876:25:15"
         },
@@ -139,7 +139,7 @@
           "contract": "Initializable",
           "path": "@openzeppelin/upgrades/contracts/Initializable.sol",
           "label": "______gap",
-          "astId": 8673,
+          "astId": 8721,
           "type": "t_array:50<t_uint256>",
           "src": "1951:29:15"
         },
@@ -147,7 +147,7 @@
           "contract": "SyscoinERC20Manager",
           "path": "contracts/token/SyscoinERC20Manager.sol",
           "label": "trustedRelayerContract",
-          "astId": 7848,
+          "astId": 7858,
           "type": "t_address",
           "src": "937:37:13"
         },
@@ -155,7 +155,7 @@
           "contract": "SyscoinERC20Manager",
           "path": "contracts/token/SyscoinERC20Manager.sol",
           "label": "assetBalances",
-          "astId": 7852,
+          "astId": 7862,
           "type": "t_mapping<t_uint256>",
           "src": "982:47:13"
         },
@@ -163,7 +163,7 @@
           "contract": "SyscoinERC20Manager",
           "path": "contracts/token/SyscoinERC20Manager.sol",
           "label": "syscoinTxHashesAlreadyProcessed",
-          "astId": 7856,
+          "astId": 7866,
           "type": "t_mapping<t_bool>",
           "src": "1115:61:13"
         },
@@ -171,7 +171,7 @@
           "contract": "SyscoinERC20Manager",
           "path": "contracts/token/SyscoinERC20Manager.sol",
           "label": "bridgeTransferIdCount",
-          "astId": 7858,
+          "astId": 7868,
           "type": "t_uint32",
           "src": "1183:28:13"
         },
@@ -179,7 +179,7 @@
           "contract": "SyscoinERC20Manager",
           "path": "contracts/token/SyscoinERC20Manager.sol",
           "label": "bridgeTransfers",
-          "astId": 7881,
+          "astId": 7891,
           "type": "t_mapping<t_struct<SyscoinERC20Manager.BridgeTransfer>>",
           "src": "1552:57:13"
         },
@@ -187,7 +187,7 @@
           "contract": "SyscoinERC20Manager",
           "path": "contracts/token/SyscoinERC20Manager.sol",
           "label": "deposits",
-          "astId": 7885,
+          "astId": 7895,
           "type": "t_mapping<t_uint256>",
           "src": "1615:40:13"
         },
@@ -195,7 +195,7 @@
           "contract": "SyscoinERC20Manager",
           "path": "contracts/token/SyscoinERC20Manager.sol",
           "label": "net",
-          "astId": 7891,
+          "astId": 7901,
           "type": "t_enum<SyscoinERC20Manager.Network>",
           "src": "1757:19:13"
         }
@@ -205,7 +205,26 @@
         "hasSelfDestruct": false,
         "hasDelegateCall": false,
         "hasInitialValuesInDeclarations": false,
-        "uninitializedBaseContracts": []
+        "uninitializedBaseContracts": [],
+        "storageUncheckedVars": [
+          {
+            "contract": "SyscoinERC20Manager",
+            "path": "contracts/token/SyscoinERC20Manager.sol",
+            "label": "bridgeTransfers",
+            "astId": 7891,
+            "type": "t_mapping<t_struct<SyscoinERC20Manager.BridgeTransfer>>",
+            "src": "1552:57:13"
+          },
+          {
+            "contract": "SyscoinERC20Manager",
+            "path": "contracts/token/SyscoinERC20Manager.sol",
+            "label": "net",
+            "astId": 7901,
+            "type": "t_enum<SyscoinERC20Manager.Network>",
+            "src": "1757:19:13"
+          }
+        ],
+        "storageDiff": []
       }
     },
     "SyscoinBattleManager": {
@@ -598,11 +617,11 @@
       }
     },
     "SyscoinSuperblocks": {
-      "address": "0x9913e17D6AA0bf5f46dfFc4B0877A01E61a1638a",
-      "constructorCode": "608060405234801561001057600080fd5b50613b7a806100206000396000f3fe",
-      "bodyBytecodeHash": "7e4f15da713710d986160d262defbf098c42d14a723d3d137b789ffff08699e7",
-      "localBytecodeHash": "96b894d62833b89b99f0330ae70dac68206440ebf4a394fb18cc2e08b369bf2f",
-      "deployedBytecodeHash": "96b894d62833b89b99f0330ae70dac68206440ebf4a394fb18cc2e08b369bf2f",
+      "address": "0x4f64DDF9E435e427983E359C391b7D519917deAE",
+      "constructorCode": "608060405234801561001057600080fd5b50613b8f806100206000396000f3fe",
+      "bodyBytecodeHash": "c8ea5ebfe674e95a20d8e17e0346c09855706d9de49de72fb81f77dc8940bbbb",
+      "localBytecodeHash": "aed3f687b270d68efac744b5c8142bd4ed80a89049d42fd5aa82ccdec00404c2",
+      "deployedBytecodeHash": "aed3f687b270d68efac744b5c8142bd4ed80a89049d42fd5aa82ccdec00404c2",
       "types": {
         "t_bool": {
           "id": "t_bool",
@@ -628,55 +647,55 @@
           "members": [
             {
               "label": "blocksMerkleRoot",
-              "astId": 7609,
+              "astId": 7619,
               "type": "t_bytes32",
               "src": "209:24:11"
             },
             {
               "label": "timestamp",
-              "astId": 7611,
+              "astId": 7621,
               "type": "t_uint256",
               "src": "243:14:11"
             },
             {
               "label": "mtpTimestamp",
-              "astId": 7613,
+              "astId": 7623,
               "type": "t_uint256",
               "src": "267:17:11"
             },
             {
               "label": "lastHash",
-              "astId": 7615,
+              "astId": 7625,
               "type": "t_bytes32",
               "src": "294:16:11"
             },
             {
               "label": "parentId",
-              "astId": 7617,
+              "astId": 7627,
               "type": "t_bytes32",
               "src": "320:16:11"
             },
             {
               "label": "submitter",
-              "astId": 7619,
+              "astId": 7629,
               "type": "t_address",
               "src": "346:17:11"
             },
             {
               "label": "lastBits",
-              "astId": 7621,
+              "astId": 7631,
               "type": "t_uint32",
               "src": "373:15:11"
             },
             {
               "label": "height",
-              "astId": 7623,
+              "astId": 7633,
               "type": "t_uint32",
               "src": "398:13:11"
             },
             {
               "label": "status",
-              "astId": 7625,
+              "astId": 7635,
               "type": "t_enum<SyscoinSuperblocksI.Status>",
               "src": "421:13:11"
             }
@@ -722,7 +741,7 @@
           "contract": "Initializable",
           "path": "@openzeppelin/upgrades/contracts/Initializable.sol",
           "label": "initialized",
-          "astId": 8615,
+          "astId": 8663,
           "type": "t_bool",
           "src": "757:24:15"
         },
@@ -730,7 +749,7 @@
           "contract": "Initializable",
           "path": "@openzeppelin/upgrades/contracts/Initializable.sol",
           "label": "initializing",
-          "astId": 8617,
+          "astId": 8665,
           "type": "t_bool",
           "src": "876:25:15"
         },
@@ -738,7 +757,7 @@
           "contract": "Initializable",
           "path": "@openzeppelin/upgrades/contracts/Initializable.sol",
           "label": "______gap",
-          "astId": 8673,
+          "astId": 8721,
           "type": "t_array:50<t_uint256>",
           "src": "1951:29:15"
         },
@@ -746,7 +765,7 @@
           "contract": "SyscoinSuperblocks",
           "path": "contracts/SyscoinSuperblocks.sol",
           "label": "superblocks",
-          "astId": 5016,
+          "astId": 5019,
           "type": "t_mapping<t_struct<SyscoinSuperblocksI.SuperblockInfo>>",
           "src": "705:55:6"
         },
@@ -754,7 +773,7 @@
           "contract": "SyscoinSuperblocks",
           "path": "contracts/SyscoinSuperblocks.sol",
           "label": "bestSuperblock",
-          "astId": 5018,
+          "astId": 5021,
           "type": "t_bytes32",
           "src": "767:30:6"
         },
@@ -762,7 +781,7 @@
           "contract": "SyscoinSuperblocks",
           "path": "contracts/SyscoinSuperblocks.sol",
           "label": "syscoinERC20Manager",
-          "astId": 5020,
+          "astId": 5023,
           "type": "t_address",
           "src": "804:54:6"
         },
@@ -770,7 +789,7 @@
           "contract": "SyscoinSuperblocks",
           "path": "contracts/SyscoinSuperblocks.sol",
           "label": "trustedClaimManager",
-          "astId": 5074,
+          "astId": 5077,
           "type": "t_address",
           "src": "1471:34:6"
         }
@@ -780,7 +799,18 @@
         "hasSelfDestruct": false,
         "hasDelegateCall": false,
         "hasInitialValuesInDeclarations": false,
-        "uninitializedBaseContracts": []
+        "uninitializedBaseContracts": [],
+        "storageUncheckedVars": [
+          {
+            "contract": "SyscoinSuperblocks",
+            "path": "contracts/SyscoinSuperblocks.sol",
+            "label": "superblocks",
+            "astId": 5019,
+            "type": "t_mapping<t_struct<SyscoinSuperblocksI.SuperblockInfo>>",
+            "src": "705:55:6"
+          }
+        ],
+        "storageDiff": []
       }
     }
   },
@@ -790,7 +820,7 @@
       {
         "address": "0x0c206e62dB7478C7D55B5a8C39cACe72FCa29ef7",
         "version": "1.0.0",
-        "implementation": "0x9913e17D6AA0bf5f46dfFc4B0877A01E61a1638a",
+        "implementation": "0x4f64DDF9E435e427983E359C391b7D519917deAE",
         "admin": "0x64029603505438a85a819E6baA0251f698a2Aa88",
         "kind": "Upgradeable"
       }
@@ -799,7 +829,7 @@
       {
         "address": "0x443d9a14fb6ba2A45465bEC3767186f404Ccea25",
         "version": "1.0.0",
-        "implementation": "0xaBCa63D4e9a00673CcC5163AC7D5179640F5127f",
+        "implementation": "0xe4B7A35b465c64E57F12DD8A14E9e893e7DBf3DD",
         "admin": "0x64029603505438a85a819E6baA0251f698a2Aa88",
         "kind": "Upgradeable"
       }
