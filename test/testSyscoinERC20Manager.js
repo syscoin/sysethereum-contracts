@@ -74,8 +74,6 @@ contract('SyscoinERC20Manager', function(accounts) {
     assert.equal(await erc20Manager.methods.assetBalances(assetGUID).call(), burnVal + burnVal, `assetBalances for ${assetGUID} GUID is not correct`);
   });
 
-  
-
   it('should fail to freeze & burn token without approval', async () => {
     await expectRevert(
       erc20Manager.methods.freezeBurnERC20(value, assetGUID, erc20Asset.address, 8, syscoinAddress).send({from: owner}),
@@ -135,4 +133,38 @@ contract('SyscoinERC20Manager', function(accounts) {
 
     assert.equal(await erc20Manager.methods.assetBalances(0).call(), burnVal, `assetBalances for ${assetGUID} GUID is not correct`);
   });
+
+  describe("Bridge transfer cancellation", () => {
+    describe("cancelTransferRequest()", () => {
+      describe("should fail when", () => {
+        it("bridgeTransferId is incorrect");
+        it("BridgeTransferStatus is not Ok");
+        it("msg.sender is not bridgeTransfer.tokenFreezerAddress");
+        it("msg.sender is not bridgeTransfer.tokenFreezerAddress");
+        it("Freeze is not old enough");
+        it("Cancel deposit is not enough");
+      })
+
+      it("should process cancel request succesfully");
+    })
+
+    describe("cancelTransferSuccess()", () => {
+      describe("should fail when", () => {
+        it("bridgeTransferId is incorrect");
+        it("BridgeTransferStatus is not CancelRequested");
+      })
+
+      it("should process cancel transfer request succesfully");
+    })
+
+    describe("processCancelTransferFail()", () => {
+      describe("should fail when", () => {
+        it("caller is not onlyTrustedRelayer");
+        it("bridgeTransferId is incorrect");
+        it("BridgeTransferStatus is not CancelRequested");
+      })
+
+      it("should processCancelTransferFail succesfully");
+    })
+  })
 });
