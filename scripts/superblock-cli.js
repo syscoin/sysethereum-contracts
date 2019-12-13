@@ -1,7 +1,7 @@
 const SyscoinSuperblocks = artifacts.require("SyscoinSuperblocks");
 const SyscoinClaimManager = artifacts.require("SyscoinClaimManager");
 const SyscoinBattleManager = artifacts.require("SyscoinBattleManager");
-
+const SyscoinERC20Manager = artifacts.require("SyscoinERC20Manager");
 async function challengeNextSuperblock(from, toChallenge, deposit) {
   try {
     const sb = await SyscoinSuperblocks.deployed();
@@ -96,7 +96,68 @@ async function challengeNextSuperblock(from, toChallenge, deposit) {
     console.log(err);
   }
 }
+async function cancelBridgeTransfer(from, bridgeTransferId) {
+  try {
+    const erc20Manager = await SyscoinERC20Manager.deployed();
+    let cancellor;
+    if (typeof from === 'string' && from.startsWith('0x')) {
+      cancellor = from;
+    } else {
+      cancellor = web3.eth.accounts[0];
+    }
+    console.log(`Account used: ${cancellor}`);
+    console.log(`Cancelling Bridge Transfer ID: ${bridgeTransferId}`);
 
+    const findEvent = (logs, eventName) => {
+      return logs.find((log) => {
+        return log.event === eventName;
+      });
+    };
+
+    const result = await erc20Manager.cancelTransferRequest(bridgeTransferId, { value: web3.utils.toWei("3"), from: cancellor });
+    const cancelEvent = findEvent(result.logs, 'CancelTransferRequest');
+    if (!cancelEvent) {
+      console.log('Failed to cancel Bridge Transfer');
+    } else {
+      console.log(`New Bridge Transfer Status for Bridge Transfer ID: ${bridgeTransferId}`);
+      await displayBridgeTransferStatus(bridgeTransferId);
+    }
+    console.log('----------');
+  } catch (err) {
+    console.log(err);
+  }
+}
+async function timeoutBridgeTransfer(from, bridgeTransferId) {
+  try {
+    const erc20Manager = await SyscoinERC20Manager.deployed();
+    let cancellor;
+    if (typeof from === 'string' && from.startsWith('0x')) {
+      cancellor = from;
+    } else {
+      cancellor = web3.eth.accounts[0];
+    }
+    console.log(`Account used: ${cancellor}`);
+    console.log(`Timing out Bridge Transfer ID: ${bridgeTransferId}`);
+
+    const findEvent = (logs, eventName) => {
+      return logs.find((log) => {
+        return log.event === eventName;
+      });
+    };
+
+    const result = await erc20Manager.cancelTransferSuccess(bridgeTransferId, { from: cancellor });
+    const cancelEvent = findEvent(result.logs, 'CancelTransferSucceeded');
+    if (!cancelEvent) {
+      console.log('Failed to timeout Bridge Transfer');
+    } else {
+      console.log(`New Bridge Transfer Status for Bridge Transfer ID: ${bridgeTransferId}`);
+      await displayBridgeTransferStatus(bridgeTransferId);
+    }
+    console.log('----------');
+  } catch (err) {
+    console.log(err);
+  }
+}
 function findCommand(params) {
   const index = params.findIndex((param, idx) => {
     return param.indexOf('superblock-cli.js') >= 0;
@@ -126,7 +187,20 @@ async function challengeCommand(params) {
   await challengeNextSuperblock(challenger, superblock, amount);
   console.log("challenge the next superblock complete");
 }
-
+async function cancelBridgeTransferCommand(params) {
+  console.log("cancel bridge transfer");
+  const id = findParam(params, '--bridgetransferid');
+  const from = findParam(params, '--from');
+  await cancelBridgeTransfer(from, parseInt(id));
+  console.log("cancel of bridge transfer complete");
+}
+async function timeoutBridgeTransferCommand(params) {
+  console.log("timing out bridge transfer");
+  const id = findParam(params, '--bridgetransferid');
+  const from = findParam(params, '--from');
+  await timeoutBridgeTransfer(from, parseInt(id));
+  console.log("timeout of bridge transfer complete");
+}
 function statusToText(status) {
   const statuses = {
     0: 'Unitialized',
@@ -141,7 +215,35 @@ function statusToText(status) {
   }
   return '--Status error--';
 }
-
+function bridgeTransferStatusToText(status) {
+  const statuses = {
+    0: 'Unitialized',
+    1: 'Ok',
+    2: 'CancelRequested',
+    3: 'CancelChallenged',
+    4: 'CancelOk'
+  }
+  if (typeof statuses[status] !== 'undefined') {
+    return statuses[status];
+  }
+  return '--Status error--';
+}
+async function displayBridgeTransferStatus( bridgeTransferId) {
+  try {
+    const erc20Manager = await SyscoinERC20Manager.deployed();
+    const bridgeTransferDetails = await erc20Manager.getBridgeTransfer(bridgeTransferId);
+    console.log(`Bridge Transfer ID: ${bridgeTransferId}`);
+  
+    console.log(`Last Timestamp: ${new Date(bridgeTransferDetails[0] * 1000)}`);
+    console.log(`Value: ${bridgeTransferDetails[1]}`);
+    console.log(`ERC20: ${bridgeTransferDetails[2]}`);
+    console.log(`Token Freezer Account: ${bridgeTransferDetails[3]}`);
+    console.log(`Syscoin SPT: ${bridgeTransferDetails[4]}`);
+    console.log(`Status: ${bridgeTransferStatusToText(bridgeTransferDetails[5])}`);
+  } catch (err) {
+    console.log(err);
+  }
+}
 async function displaySuperblocksStatus({ superblockHash, fromBlock, toBlock }) {
   try {
     const sb = await SyscoinSuperblocks.deployed();
@@ -198,7 +300,6 @@ async function displaySuperblocksStatus({ superblockHash, fromBlock, toBlock }) 
     const displayBattle = (battle) => {
       console.log(`        Last action timestamp: ${new Date(battle.lastActionTimestamp * 1000)}`);      
     };
-
     const displaySuperblock = async (superblockHash) => {
       const [
         blocksMerkleRoot,
@@ -290,7 +391,13 @@ async function statusCommand(params) {
   console.log('----------');
   console.log("status superblocks complete");
 }
-
+async function bridgeTransferStatusCommand(params) {
+  console.log("status of bridge transfer");
+  console.log('----------');
+  const id = findParam(params, '--bridgetransferid');
+  await displayBridgeTransferStatus(parseInt(id));
+  console.log('----------');
+}
 module.exports = async function(callback) {
   try {
     const { command, params } = findCommand(process.argv);
@@ -298,6 +405,12 @@ module.exports = async function(callback) {
       await challengeCommand(params);
     } else if (command === 'status') {
       await statusCommand(params);
+    } else if (command === 'bridgetransfer_status') {
+      await bridgeTransferStatusCommand(params);
+    } else if(command === 'bridgetransfer_cancel'){
+      await cancelBridgeTransferCommand(params);
+    } else if(command === 'bridgetransfer_timeout'){
+      await timeoutBridgeTransferCommand(params);
     }
   } catch (err) {
     console.log(err);
