@@ -1,6 +1,5 @@
 pragma solidity ^0.5.13;
 
-import "../SyscoinTransactionProcessor.sol";
 import "openzeppelin-solidity/contracts/math/SafeMath.sol";
 import "../interfaces/SyscoinERC20I.sol";
 import "@openzeppelin/upgrades/contracts/Initializable.sol";
