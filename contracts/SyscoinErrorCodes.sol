@@ -78,7 +78,9 @@ contract SyscoinErrorCodes {
     uint constant ERR_SUPERBLOCK = 20040;
     uint constant ERR_MERKLE_ROOT = 20050;
     uint constant ERR_TX_64BYTE = 20060;
+    uint constant ERR_SUPERBLOCK_MERKLE_ROOT = 20070;
     // error codes for relayTx
     uint constant ERR_RELAY_VERIFY = 30010;
+    uint constant ERR_CANCEL_TRANSFER_VERIFY = 30020;
     uint constant public minProposalDeposit = 3000000000000000000;
 }

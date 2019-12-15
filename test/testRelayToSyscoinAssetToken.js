@@ -1,12 +1,12 @@
 const { TestHelper } = require('@openzeppelin/cli');
 const { Contracts, ZWeb3 } = require('@openzeppelin/upgrades');
-
+const utils = require('./utils');
 /* Initialize OpenZeppelin's Web3 provider. */
 ZWeb3.initialize(web3.currentProvider);
 
 const SyscoinERC20Manager = Contracts.getFromLocal('SyscoinERC20Manager');
 var ERC20 = artifacts.require("./token/SyscoinERC20.sol");
-const SyscoinMessageLibraryForTests = artifacts.require('SyscoinMessageLibraryForTests');
+const SyscoinSuperblocksArtifact = artifacts.require('SyscoinSuperblocks');
 const truffleAssert = require('truffle-assertions');
 
 contract('testRelayToSyscoinAssetToken', function(accounts) {
@@ -29,10 +29,10 @@ contract('testRelayToSyscoinAssetToken', function(accounts) {
     this.project = await TestHelper({from: proxyAdmin});
     erc20Manager = await this.project.createProxy(SyscoinERC20Manager, {
       initMethod: 'init',
-      initArgs: [trustedRelayerContract]
+      initArgs: [utils.SYSCOIN_REGTEST, trustedRelayerContract]
     });
 
-    syscoinMessageLibraryForTests = await SyscoinMessageLibraryForTests.new();
+    SyscoinSuperblocks = await SyscoinSuperblocksArtifact.new();
     
     erc20Token = await ERC20.new("LegacyToken", "LEGX", 18, {from: owner});
     await erc20Token.assign(owner, value);
@@ -42,8 +42,7 @@ contract('testRelayToSyscoinAssetToken', function(accounts) {
     assert.equal(await erc20Token.balanceOf(erc20Manager.options.address), value - burnVal, "erc20Manager balance is not correct");
     assert.equal(await erc20Token.balanceOf(owner), burnVal, `erc20Token's user balance after burn is not the expected one`);
     assert.equal(await erc20Manager.methods.assetBalances(assetGUID).call(), burnVal, `assetBalances for ${assetGUID} GUID is not correct`);
-    [ ret, amount, inputEthAddress, assetGUIDParsed, precision, erc20Address ]  = Object.values(await syscoinMessageLibraryForTests.parseTransaction(txData));
-    
+    [ ret, amount, inputEthAddress, assetGUIDParsed, precision, erc20Address ]  = Object.values(await SyscoinSuperblocks.parseBurnTx(txData));
   });
 
   const address = web3.utils.toChecksumAddress('0xb0ea8c9ee8aa87efd28a12de8c034f947c144053');

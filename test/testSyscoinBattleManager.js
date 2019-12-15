@@ -1,39 +1,23 @@
-const SyscoinMessageLibraryForTests = artifacts.require('SyscoinMessageLibraryForTests');
+const SyscoinBattleManagerArtifact = artifacts.require('SyscoinBattleManager');
 
 contract('SyscoinMessageLibrary', (accounts) => {
 
-  let syscoinMessageLibraryForTests;
+  let SyscoinBattleManager;
   before(async () => {
-    syscoinMessageLibraryForTests = await SyscoinMessageLibraryForTests.new();
-  });
-  it("flip32Bytes large number", async () => {
-    const flipped = await syscoinMessageLibraryForTests.flip32BytesPublic.call("0x0102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f20");
-    assert.equal(flipped.toString(16), "201f1e1d1c1b1a191817161514131211100f0e0d0c0b0a090807060504030201", "flip32Bytes not the expected one");
-  });
-  it("flip32Bytes short number", async () => {
-    const flipped = await syscoinMessageLibraryForTests.flip32BytesPublic.call("0x0000000000000000000000000000000000000000000000000000000000001234");
-    assert.equal(flipped.toString(16), "3412000000000000000000000000000000000000000000000000000000000000", "flip32Bytes is not the expected one");
+    SyscoinBattleManager = await SyscoinBattleManagerArtifact.new();
   });
   it("target from bits 1", async () => {
-    const target = await syscoinMessageLibraryForTests.targetFromBitsPublic.call("0x19015f53");
+    const target = await SyscoinBattleManager.targetFromBits.call("0x19015f53");
     assert.equal(target.toString(), "8614444778121073626993210829679478604092861119379437256704", "target is not the expected one");
   });
   it("target from bits 2", async () => {
-    const target = await syscoinMessageLibraryForTests.targetFromBitsPublic.call("453281356");
+    const target = await SyscoinBattleManager.targetFromBits.call("453281356");
     assert.equal(target.toString(16), "4864c000000000000000000000000000000000000000000000000", "target is not the expected one");
   });
   it("target from bits 3", async () => {
-    const target = await syscoinMessageLibraryForTests.targetFromBitsPublic.call("0x1d00ffff"); // EASIEST_DIFFICULTY_TARGET
+    const target = await SyscoinBattleManager.targetFromBits.call("0x1d00ffff"); // EASIEST_DIFFICULTY_TARGET
     maxTargetRounded = (Math.pow(2,16) - 1) * Math.pow(2,208);  // http://bitcoin.stackexchange.com/questions/8806/what-is-difficulty-and-how-it-relates-to-target
     assert.equal(target.toString(), maxTargetRounded, "target is not the expected one");
-  });
-  it("bytesToBytes32", async () => {
-    const result = await syscoinMessageLibraryForTests.bytesToBytes32Public.call("0x0102030405060708090a0b0c0d0e0f000102030405060708090a0b0c0d0e0f00");
-    assert.equal(result, "0x0102030405060708090a0b0c0d0e0f000102030405060708090a0b0c0d0e0f00", "converted bytes are not the expected ones");
-  });
-  it("bytesToUint32", async () => {
-    const result = await syscoinMessageLibraryForTests.bytesToUint32Public.call("0x01020304");
-    assert.equal(result.toNumber(), 16909060, "converted bytes are not the expected ones");
   });
   it('Merkle solidity', async () => {
 
@@ -68,13 +52,13 @@ contract('SyscoinMessageLibrary', (accounts) => {
     ]
 
     let hash;
-    hash = await syscoinMessageLibraryForTests.makeMerklePublic.call(oneHash);
+    hash = await SyscoinBattleManager.makeMerkle.call(oneHash);
     assert.equal(hash, "0x57a8a9a8de6131bf61f5d385318c10e29a5d826eed6adbdbeedc3a0539908ed4", 'One hash array');
-    hash = await syscoinMessageLibraryForTests.makeMerklePublic.call(twoHashes);
+    hash = await SyscoinBattleManager.makeMerkle.call(twoHashes);
     assert.equal(hash, "0xae1c24c61efe6b378017f6055b891dd62747deb23a7939cffe78002f1cfb79ab", 'Two hashes array');
-    hash = await syscoinMessageLibraryForTests.makeMerklePublic.call(threeHashes);
+    hash = await SyscoinBattleManager.makeMerkle.call(threeHashes);
     assert.equal(hash, "0xe1c52ec93d4f4f83783aeede9e6b84b5ded007ec9591b521d6e5e4b6d9512d43", 'Three hashes array');
-    hash = await syscoinMessageLibraryForTests.makeMerklePublic.call(manyHashes);
+    hash = await SyscoinBattleManager.makeMerkle.call(manyHashes);
     assert.equal(hash, "0xee712eefe9b4c9ecd39a71d45e975b83c9427070e54953559e78f45d2cbb03b3", 'Many hashes array');
   });
-});
+})

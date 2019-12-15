@@ -48,15 +48,15 @@ contract SyscoinClaimManager is Initializable, SyscoinDepositsManager, SyscoinEr
 
     uint public superblockDelay;    // Delay required to submit superblocks (in seconds)
     uint public superblockTimeout;  // Timeout for action (in seconds)
-    uint inProcessCounter;          // how many in progress superblocks do we have? should be below 10 for 10 max commitments of deposits
+    uint public inProcessCounter;   // how many in progress superblocks do we have? should be below 10 for 10 max commitments of deposits
     event DepositBonded(bytes32 superblockHash, address account, uint amount);
     event DepositUnbonded(bytes32 superblockHash, address account, uint amount);
-    event SuperblockClaimCreated(bytes32 superblockHash, address submitter);
+    event SuperblockClaimCreated(bytes32 superblockHash, address submitter, uint processCounter);
     event SuperblockClaimChallenged(bytes32 superblockHash, address challenger);
     event SuperblockBattleDecided(bytes32 superblockHash, address winner, address loser);
-    event SuperblockClaimSuccessful(bytes32 superblockHash, address submitter);
+    event SuperblockClaimSuccessful(bytes32 superblockHash, address submitter, uint processCounter);
     event SuperblockClaimPending(bytes32 superblockHash, address submitter);
-    event SuperblockClaimFailed(bytes32 superblockHash, address challenger);
+    event SuperblockClaimFailed(bytes32 superblockHash, address challenger, uint processCounter);
     event VerificationGameStarted(bytes32 superblockHash, address submitter, address challenger);
 
     event ErrorClaim(bytes32 superblockHash, uint err);
@@ -166,7 +166,7 @@ contract SyscoinClaimManager is Initializable, SyscoinDepositsManager, SyscoinEr
         bytes32 _parentHash
     ) external returns (uint, bytes32) {
         require(address(trustedSuperblocks) != address(0));
-        inProcessCounter++;
+        
         if (inProcessCounter >= 10){
             emit ErrorClaim(0, ERR_SUPERBLOCK_MAX_INPROGRESS);
             return (ERR_SUPERBLOCK_MAX_INPROGRESS, 0);            
@@ -214,8 +214,8 @@ contract SyscoinClaimManager is Initializable, SyscoinDepositsManager, SyscoinEr
         claim.challengeDefended = false;
         err = this.bondDeposit(superblockHash, msg.sender, minProposalDeposit);
         require(err == ERR_SUPERBLOCK_OK);
-
-        emit SuperblockClaimCreated(superblockHash, msg.sender);
+        inProcessCounter++;
+        emit SuperblockClaimCreated(superblockHash, msg.sender, inProcessCounter);
         return (ERR_SUPERBLOCK_OK, superblockHash);
     }
 
@@ -315,7 +315,6 @@ contract SyscoinClaimManager is Initializable, SyscoinDepositsManager, SyscoinEr
             emit ErrorClaim(superblockHash, err);
             return false;
         }
-        emit SuperblockClaimSuccessful(superblockHash, claim.submitter);
         doPaySubmitter(superblockHash, claim);
 
         if (confirmDescendants) {
@@ -333,14 +332,13 @@ contract SyscoinClaimManager is Initializable, SyscoinDepositsManager, SyscoinEr
                 claim = claims[id];
                 err = trustedSuperblocks.confirm(id, msg.sender);
                 require(err == ERR_SUPERBLOCK_OK);
-                emit SuperblockClaimSuccessful(id, claim.submitter);
                 doPaySubmitter(id, claim);
+                inProcessCounter--;
+                emit SuperblockClaimSuccessful(id, claim.submitter, inProcessCounter);
             }
         }
         inProcessCounter--;
-        if(inProcessCounter < 0){
-            inProcessCounter = 0;
-        }
+        emit SuperblockClaimSuccessful(superblockHash, claim.submitter, inProcessCounter);
         return true;
     }
 
@@ -378,13 +376,10 @@ contract SyscoinClaimManager is Initializable, SyscoinDepositsManager, SyscoinEr
 
         uint err = trustedSuperblocks.invalidate(superblockHash, claim.submitter);
         require(err == ERR_SUPERBLOCK_OK);
-        emit SuperblockClaimFailed(superblockHash, claim.challenger);
         doPayChallenger(superblockHash, claim);
         claim.invalid = true;
         inProcessCounter--;
-        if(inProcessCounter < 0){
-            inProcessCounter = 0;
-        }
+        emit SuperblockClaimFailed(superblockHash, claim.challenger, inProcessCounter);
         return true;
     }
 
@@ -415,8 +410,9 @@ contract SyscoinClaimManager is Initializable, SyscoinDepositsManager, SyscoinEr
             claim.decided = true;
             uint err = trustedSuperblocks.invalidate(superblockHash, claim.submitter);
             require(err == ERR_SUPERBLOCK_OK);
-            emit SuperblockClaimFailed(superblockHash, claim.challenger);
             doPayChallenger(superblockHash, claim);
+            inProcessCounter--;
+            emit SuperblockClaimFailed(superblockHash, claim.challenger, inProcessCounter);
             return false;
         }
 
@@ -443,15 +439,12 @@ contract SyscoinClaimManager is Initializable, SyscoinDepositsManager, SyscoinEr
             require(err == ERR_SUPERBLOCK_OK);
             address submitter = claim.submitter;
             unbondDeposit(superblockHash, submitter);
-            emit SuperblockClaimSuccessful(superblockHash, submitter);
+            inProcessCounter--;
+            emit SuperblockClaimSuccessful(superblockHash, submitter, inProcessCounter);
         } else {
             uint err = trustedSuperblocks.semiApprove(superblockHash, msg.sender);
             require(err == ERR_SUPERBLOCK_OK);
             emit SuperblockClaimPending(superblockHash, claim.submitter);
-        }
-        inProcessCounter--;
-        if(inProcessCounter < 0){
-            inProcessCounter = 0;
         }
         return true;
     }
@@ -481,17 +474,32 @@ contract SyscoinClaimManager is Initializable, SyscoinDepositsManager, SyscoinEr
         emit SuperblockBattleDecided(superblockHash, winner, loser);
     }
 
-    // @dev - Pay challenger
+    // @dev - Pay challenger 2 eth and 0.7 to previous submitters, leave 0.3 effectively unspendable
     function doPayChallenger(bytes32 superblockHash, SuperblockClaim storage claim) private {
         address challenger = claim.challenger;
         address submitter = claim.submitter;
 
-        if (challenger != address(0)) {
+        if (challenger != address(0) && submitter != address(0)) {
             uint reward = claim.bondedDeposits[submitter];
+            reward -= 1000000000000000000; // 1 ether
             claim.bondedDeposits[challenger] = claim.bondedDeposits[challenger].add(reward);
             unbondDeposit(superblockHash, challenger);
+            delete claim.bondedDeposits[submitter];
+            // distribute 0.7 eth to last 7 approved superblock submitters (0.1 each)
+            uint numPaid = 0;
+            address prevSubmitter;
+            SyscoinSuperblocksI.Status status;
+            while (numPaid < 7) {
+                (,,,,,superblockHash,prevSubmitter,status,) = trustedSuperblocks.getSuperblock(superblockHash);
+                if(superblockHash == 0x0)
+                    break;
+                if (status != SyscoinSuperblocksI.Status.Approved) {
+                    continue;
+                }
+                deposits[prevSubmitter] = deposits[prevSubmitter].add(100000000000000000); // 0.1 ether
+                numPaid++;
+            } 
         }
-        delete claim.bondedDeposits[submitter];
     }
 
     // @dev - Pay submitter with challenger deposit
@@ -499,14 +507,12 @@ contract SyscoinClaimManager is Initializable, SyscoinDepositsManager, SyscoinEr
         address challenger = claim.challenger;
         address submitter = claim.submitter;
 
-        if (challenger != address(0)) {
+        if (challenger != address(0) && submitter != address(0)) {
             uint reward = claim.bondedDeposits[challenger];
-            claim.bondedDeposits[challenger] = 0;
             claim.bondedDeposits[submitter] = claim.bondedDeposits[submitter].add(reward);
-
-            unbondDeposit(superblockHash, challenger);
+            unbondDeposit(superblockHash, submitter);
+            delete claim.bondedDeposits[challenger];
         }
-        unbondDeposit(superblockHash, submitter);
     }
 
     // @dev - Check if a superblock can be semi approved by calling checkClaimFinished
@@ -544,7 +550,6 @@ contract SyscoinClaimManager is Initializable, SyscoinDepositsManager, SyscoinEr
 
     // @dev - Check if a claim is invalid
     function getClaimInvalid(bytes32 superblockHash) external view returns (bool) {
-        // TODO: see if this is redundant with superblock status
         return claims[superblockHash].invalid;
     }
 
