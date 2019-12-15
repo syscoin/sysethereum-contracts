@@ -446,10 +446,6 @@ contract SyscoinClaimManager is Initializable, SyscoinDepositsManager, SyscoinEr
             require(err == ERR_SUPERBLOCK_OK);
             emit SuperblockClaimPending(superblockHash, claim.submitter);
         }
-        inProcessCounter--;
-        if(inProcessCounter < 0){
-            inProcessCounter = 0;
-        }
         return true;
     }
 
