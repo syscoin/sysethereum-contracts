@@ -9,7 +9,7 @@ const ERC20Asset = artifacts.require('./token/SyscoinERC20.sol');
 const SYSCOIN_MAINNET = 0;
 const SYSCOIN_TESTNET = 1;
 const SYSCOIN_REGTEST = 2;
-const SYSX_ASSET_GUID = 1965866356; // testnet sysx
+const SYSX_ASSET_GUID = 1045909988; // mainnet sysx
 const SUPERBLOCK_OPTIONS_PRODUCTION = {
   DURATION: 60,   // 60 blocks per superblock
   DELAY: 3 * 3600,  // 3 hours
