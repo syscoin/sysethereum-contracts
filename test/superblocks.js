@@ -280,7 +280,7 @@ contract('SyscoinSuperblocks', (accounts) => {
         initArgs: [utils.SYSCOIN_REGTEST, superblocksForChallange.options.address]
       });
 
-      await superblocksForChallange.methods.init(erc20Manager.options.address, claimManager).send({from: owner});
+      await superblocksForChallange.methods.init(erc20Manager.options.address, claimManager).send({from: owner, gas: 300000});
 
       erc20Asset = await SyscoinERC20.new("SyscoinToken", "SYSX", 8, {from: owner});
 
@@ -306,13 +306,13 @@ contract('SyscoinSuperblocks', (accounts) => {
         
         await superblocksForChallange.methods.addSuperblock(_superblockHash, blocksMerkleRoot, 0, 0, "0x", "0x",randomAddress, 0, 0, 4).send({from: randomAddress});
         
-        let tx = await superblocksForChallange.methods.challengeCancelTransfer(_txBytesCorrupted, _txIndex, _txSiblings, _syscoinBlockHeader, _syscoinBlockIndex, _syscoinBlockSiblings, _superblockHash).send({from: challangerAddress});
+        let tx = await superblocksForChallange.methods.challengeCancelTransfer(_txBytesCorrupted, _txIndex, _txSiblings, _syscoinBlockHeader, _syscoinBlockIndex, _syscoinBlockSiblings, _superblockHash).send({from: challangerAddress, gas: 3000000});
         assert.equal(tx.events.VerifyTransaction.returnValues.returnCode, 20050, "20050 expected");
         assert.equal(tx.events.ChallengeCancelTransferRequest.returnValues.returnCode, 30020, "30020 expected");
       });
 
       it("transaction is not found in superblock", async () => {
-        let tx = await superblocksForChallange.methods.challengeCancelTransfer(_txBytes, _txIndex, _txSiblings, _syscoinBlockHeader, _syscoinBlockIndex, _syscoinBlockSiblings, _superblockHash).send({from: challangerAddress});
+        let tx = await superblocksForChallange.methods.challengeCancelTransfer(_txBytes, _txIndex, _txSiblings, _syscoinBlockHeader, _syscoinBlockIndex, _syscoinBlockSiblings, _superblockHash).send({from: challangerAddress, gas: 3000000});
         assert.equal(tx.events.VerifyTransaction.returnValues.returnCode, 20070, "20070 expected");
         assert.equal(tx.events.ChallengeCancelTransferRequest.returnValues.returnCode, 30020, "30020 expected");
       })
@@ -326,7 +326,7 @@ contract('SyscoinSuperblocks', (accounts) => {
       const startingAssetGUIDBal = await erc20Manager.methods.assetBalances(assetGUID).call();
       const startingEthBal = parseInt(await web3.eth.getBalance(challangerAddress));
 
-      let tx2 = await superblocksForChallange.methods.challengeCancelTransfer(_txBytes, _txIndex, _txSiblings, _syscoinBlockHeader, _syscoinBlockIndex, _syscoinBlockSiblings, _superblockHash).send({from: challangerAddress});
+      let tx2 = await superblocksForChallange.methods.challengeCancelTransfer(_txBytes, _txIndex, _txSiblings, _syscoinBlockHeader, _syscoinBlockIndex, _syscoinBlockSiblings, _superblockHash).send({from: challangerAddress, gas: 3000000});
 
       let finalErc20Bal = await erc20Asset.balanceOf(cancelAddress);
       let finalAssetGUIDBal = await erc20Manager.methods.assetBalances(assetGUID).call();
