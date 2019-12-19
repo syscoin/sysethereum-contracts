@@ -243,7 +243,7 @@ contract('SyscoinERC20Manager', function(accounts) {
         await blockchainTimeoutSeconds(CANCEL_TRANSFER_TIMEOUT+1);
         let tx = await erc20ManagerForCancel.methods.cancelTransferSuccess(bridgetransferid).send({from: cancelAddress});
 
-        let finalEthBal = parseInt(await await web3.eth.getBalance(cancelAddress));
+        let finalEthBal = parseInt(await web3.eth.getBalance(cancelAddress));
         let finalErc20Bal = await erc20AssetCancel.balanceOf(cancelAddress);
         let finalAssetGUIDBal = await erc20ManagerForCancel.methods.assetBalances(assetGUID).call();
 
