@@ -17,9 +17,9 @@ contract SyscoinSuperblocks is Initializable, SyscoinSuperblocksI, SyscoinErrorC
     uint32 constant SYSCOIN_TX_VERSION_ALLOCATION_MINT = 0x7406;
     
     // Mapping superblock id => superblock data
-    mapping (bytes32 => SuperblockInfo) private superblocks;
+    mapping (bytes32 => SuperblockInfo) internal superblocks;
 
-    bytes32 private bestSuperblock;
+    bytes32 internal bestSuperblock;
 
     SyscoinTransactionProcessor public syscoinERC20Manager;
 
