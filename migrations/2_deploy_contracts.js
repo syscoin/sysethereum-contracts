@@ -54,12 +54,12 @@ async function deploy(networkName, options, accounts, networkId, superblockOptio
   let tx = await SyscoinSuperblocks.methods.init(SyscoinERC20Manager.address, SyscoinClaimManager.address).send({ from: accounts[0], gas: 300000 });
   console.log('TX hash: ', tx.transactionHash, '\n');
 
-  var superblocksMerkleRoot = "0x00000a52cb9c7e2a8adf64421eadba8a90b895a0f7aa20e1695b0491040b6e3c";
-  var timestamp = 1576019883;
-  var mtptimestamp = 1576019875;
-  var lastHash = "0x00000a52cb9c7e2a8adf64421eadba8a90b895a0f7aa20e1695b0491040b6e3c"; // 360
+  var superblocksMerkleRoot = "0x33de3e710118e85a26cd3673c9d24c6d044520a6241c37248cf2cacb4a100f0f";
+  var timestamp = 1576850904;
+  var mtptimestamp = 1576850690;
+  var lastHash = "0x33de3e710118e85a26cd3673c9d24c6d044520a6241c37248cf2cacb4a100f0f"; // 292680
   var parentId = "0x0";
-  var lastBits = 504281460; // 1e0eb974
+  var lastBits = 402958772; // 1804a9b4
 
   let tx2 = await SyscoinSuperblocks.methods.initialize(superblocksMerkleRoot, timestamp, mtptimestamp, lastHash, lastBits, parentId).send({ from: accounts[0], gas: 300000 });
   console.log('TX2 hash: ', tx2.transactionHash, '\n');
