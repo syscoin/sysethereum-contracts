@@ -17,7 +17,7 @@
     "js-sha3": "^0.8.0",
     "openzeppelin-solidity": "^2.4.0",
     "openzeppelin-test-helpers": "^0.4.3",
-    "solc": "^0.5.15",
+    "solc": "^0.5.13",
     "solidity-rlp": "^2.0.1",
     "truffle": "^5.1.5",
     "truffle-assertions": "^0.9.1",
