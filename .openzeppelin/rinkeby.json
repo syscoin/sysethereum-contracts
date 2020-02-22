@@ -405,11 +405,11 @@
       }
     },
     "SyscoinClaimManager": {
-      "address": "0x7Af757F7Ec39E4fe4019Ff3d4F53dE6d532859D5",
-      "constructorCode": "608060405234801561001057600080fd5b50612a9c806100206000396000f3fe",
-      "bodyBytecodeHash": "ba028e4d67b8df4ff6fe5ec05c021abb22065be3a1705ffa917cddf59dc600af",
-      "localBytecodeHash": "499dae96358e5b2d8fc002ae80397d926a7ba326f68a1b30a6507c49e323ea08",
-      "deployedBytecodeHash": "499dae96358e5b2d8fc002ae80397d926a7ba326f68a1b30a6507c49e323ea08",
+      "address": "0xd476CAe857b975f6f5688aF08F9E2Bc276b619C4",
+      "constructorCode": "608060405234801561001057600080fd5b50612aca806100206000396000f3fe",
+      "bodyBytecodeHash": "673792b5f50bd2e66c287b55e6c21f6b8a172096d9b7a637d65dcbf4a3de2577",
+      "localBytecodeHash": "ee074340e18e8259d5cd026ba30b0c20839887f552d8dd384fda0a578ce8ab5c",
+      "deployedBytecodeHash": "ee074340e18e8259d5cd026ba30b0c20839887f552d8dd384fda0a578ce8ab5c",
       "types": {
         "t_bool": {
           "id": "t_bool",
@@ -523,31 +523,31 @@
           "contract": "Initializable",
           "path": "@openzeppelin/upgrades/contracts/Initializable.sol",
           "label": "initialized",
-          "astId": 8615,
+          "astId": 8795,
           "type": "t_bool",
-          "src": "757:24:15"
+          "src": "757:24:16"
         },
         {
           "contract": "Initializable",
           "path": "@openzeppelin/upgrades/contracts/Initializable.sol",
           "label": "initializing",
-          "astId": 8617,
+          "astId": 8797,
           "type": "t_bool",
-          "src": "876:25:15"
+          "src": "876:25:16"
         },
         {
           "contract": "Initializable",
           "path": "@openzeppelin/upgrades/contracts/Initializable.sol",
           "label": "______gap",
-          "astId": 8673,
+          "astId": 8853,
           "type": "t_array:50<t_uint256>",
-          "src": "1951:29:15"
+          "src": "1951:29:16"
         },
         {
           "contract": "SyscoinDepositsManager",
           "path": "contracts/SyscoinDepositsManager.sol",
           "label": "deposits",
-          "astId": 4347,
+          "astId": 4349,
           "type": "t_mapping<t_uint256>",
           "src": "156:40:3"
         },
@@ -613,7 +613,18 @@
         "hasSelfDestruct": false,
         "hasDelegateCall": false,
         "hasInitialValuesInDeclarations": false,
-        "uninitializedBaseContracts": []
+        "uninitializedBaseContracts": [],
+        "storageUncheckedVars": [
+          {
+            "contract": "SyscoinClaimManager",
+            "path": "contracts/SyscoinClaimManager.sol",
+            "label": "claims",
+            "astId": 2588,
+            "type": "t_mapping<t_struct<SyscoinClaimManager.SuperblockClaim>>",
+            "src": "1602:50:2"
+          }
+        ],
+        "storageDiff": []
       }
     },
     "SyscoinSuperblocks": {
@@ -847,7 +858,7 @@
       {
         "address": "0x983417E9BA6ddD46564087086e6a2dF10A1b3cc4",
         "version": "1.0.0",
-        "implementation": "0x7Af757F7Ec39E4fe4019Ff3d4F53dE6d532859D5",
+        "implementation": "0xd476CAe857b975f6f5688aF08F9E2Bc276b619C4",
         "admin": "0x64029603505438a85a819E6baA0251f698a2Aa88",
         "kind": "Upgradeable"
       }

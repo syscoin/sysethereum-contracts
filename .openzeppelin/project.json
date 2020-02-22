@@ -9,5 +9,14 @@
   "dependencies": {},
   "name": "sysethereum-contracts",
   "version": "1.0.0",
-  "telemetryOptIn": false
+  "telemetryOptIn": false,
+  "compiler": {
+    "manager": "truffle",
+    "compilerSettings": {
+      "optimizer": {
+        "enabled": false,
+        "runs": "200"
+      }
+    }
+  }
 }

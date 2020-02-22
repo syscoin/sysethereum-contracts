@@ -199,7 +199,7 @@
                         "name": "msg",
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
-                        "referencedDeclaration": 10184,
+                        "referencedDeclaration": 10316,
                         "src": "159:3:0",
                         "typeDescriptions": {
                           "typeIdentifier": "t_magic_message",
@@ -283,7 +283,7 @@
                         "name": "msg",
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
-                        "referencedDeclaration": 10184,
+                        "referencedDeclaration": 10316,
                         "src": "218:3:0",
                         "typeDescriptions": {
                           "typeIdentifier": "t_magic_message",
@@ -845,7 +845,7 @@
                         "name": "msg",
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
-                        "referencedDeclaration": 10184,
+                        "referencedDeclaration": 10316,
                         "src": "159:3:0",
                         "typeDescriptions": {
                           "typeIdentifier": "t_magic_message",
@@ -929,7 +929,7 @@
                         "name": "msg",
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
-                        "referencedDeclaration": 10184,
+                        "referencedDeclaration": 10316,
                         "src": "218:3:0",
                         "typeDescriptions": {
                           "typeIdentifier": "t_magic_message",
@@ -1379,8 +1379,8 @@
       "transactionHash": "0x446bf9c459ebe2b1279bce9c47fd74658358ef593900f4ed9b2648102e1ce316"
     }
   },
-  "schemaVersion": "3.0.19",
-  "updatedAt": "2019-12-12T06:20:51.328Z",
+  "schemaVersion": "3.0.20",
+  "updatedAt": "2020-02-22T04:23:02.770Z",
   "devdoc": {
     "methods": {}
   },
