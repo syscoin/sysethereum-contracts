@@ -506,7 +506,7 @@ contract SyscoinClaimManager is Initializable, SyscoinDepositsManager, SyscoinEr
     function doPaySubmitter(bytes32 superblockHash, SuperblockClaim storage claim) private {
         address challenger = claim.challenger;
         address submitter = claim.submitter;
-        if (claim.challenger != address(0)) {
+        if (challenger != address(0)) {
             uint reward = claim.bondedDeposits[challenger];
             claim.bondedDeposits[submitter] = claim.bondedDeposits[submitter].add(reward);
             delete claim.bondedDeposits[challenger];
