@@ -129,7 +129,7 @@ contract SyscoinClaimManager is Initializable, SyscoinDepositsManager, SyscoinEr
     // @param superblockHash – claim id.
     // @param account – user's address.
     // @return – user's deposit which was unbonded from the claim.
-    function unbondDeposit(bytes32 superblockHash, address account) private returns (uint, uint) {
+    function unbondDeposit(bytes32 superblockHash, address account) public returns (uint, uint) {
         SuperblockClaim storage claim = claims[superblockHash];
         if (!claimExists(claim)) {
             return (ERR_SUPERBLOCK_BAD_CLAIM, 0);
@@ -506,12 +506,13 @@ contract SyscoinClaimManager is Initializable, SyscoinDepositsManager, SyscoinEr
     function doPaySubmitter(bytes32 superblockHash, SuperblockClaim storage claim) private {
         address challenger = claim.challenger;
         address submitter = claim.submitter;
-
-        if (challenger != address(0) && submitter != address(0)) {
+        if (claim.challenger != address(0)) {
             uint reward = claim.bondedDeposits[challenger];
             claim.bondedDeposits[submitter] = claim.bondedDeposits[submitter].add(reward);
-            unbondDeposit(superblockHash, submitter);
             delete claim.bondedDeposits[challenger];
+        }
+        if (submitter != address(0)) {
+            unbondDeposit(superblockHash, submitter);
         }
     }
 
