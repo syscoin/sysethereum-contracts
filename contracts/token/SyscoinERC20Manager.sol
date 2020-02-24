@@ -165,6 +165,8 @@ contract SyscoinERC20Manager is Initializable {
             "#SyscoinERC20Manager cancelTransferSuccess(): Status must be CancelRequested");
         // check if timeout period passed (atleast 1 hour of blocks have to have passed)
         require((block.timestamp - bridgeTransfer.timestamp) > CANCEL_TRANSFER_TIMEOUT, "#SyscoinERC20Manager cancelTransferSuccess(): 1 hour timeout is required");
+        // set state of bridge transfer to CancelOk
+        bridgeTransfer.status = BridgeTransferStatus.CancelOk;
         // refund erc20 to the tokenFreezerAddress
         SyscoinERC20I erc20 = SyscoinERC20I(bridgeTransfer.erc20ContractAddress);
         assetBalances[bridgeTransfer.assetGUID] = assetBalances[bridgeTransfer.assetGUID].sub(bridgeTransfer.value);
@@ -173,8 +175,6 @@ contract SyscoinERC20Manager is Initializable {
         address payable tokenFreezeAddressPayable = address(uint160(bridgeTransfer.tokenFreezerAddress));
         tokenFreezeAddressPayable.transfer(deposits[bridgeTransferId]);
         delete deposits[bridgeTransferId];
-        // set state of bridge transfer to CancelOk
-        bridgeTransfer.status = BridgeTransferStatus.CancelOk;
         emit CancelTransferSucceeded(bridgeTransfer.tokenFreezerAddress, bridgeTransferId);
     }
 
@@ -213,7 +213,6 @@ contract SyscoinERC20Manager is Initializable {
 
         SyscoinERC20I erc20 = SyscoinERC20I(erc20ContractAddress);
         require(precision == erc20.decimals(), "Decimals were not provided with the correct value");
-        erc20.transferFrom(msg.sender, address(this), value);
         assetBalances[assetGUID] = assetBalances[assetGUID].add(value);
 
         // store some state needed for potential bridge transfer cancellation
@@ -227,6 +226,7 @@ contract SyscoinERC20Manager is Initializable {
             timestamp: block.timestamp,
             tokenFreezerAddress: msg.sender
         });
+        erc20.transferFrom(msg.sender, address(this), value);
         emit TokenFreeze(msg.sender, value, bridgeTransferIdCount);
         return true;
     }
