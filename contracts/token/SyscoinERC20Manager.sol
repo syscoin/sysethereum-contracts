@@ -134,7 +134,7 @@ contract SyscoinERC20Manager is Initializable {
     }
     
     function cancelTransferRequest(uint32 bridgeTransferId) public payable {
-        revert("disabled")
+        revert("disabled");
         // lookup state by bridgeTransferId
         BridgeTransfer storage bridgeTransfer = bridgeTransfers[bridgeTransferId];
         // ensure state is Ok
