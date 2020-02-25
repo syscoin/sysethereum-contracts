@@ -1363,7 +1363,7 @@
         "id": 5002,
         "nodeType": "ImportDirective",
         "scope": 7499,
-        "sourceUnit": 8858,
+        "sourceUnit": 8862,
         "src": "151:60:6",
         "symbolAliases": [],
         "unitAlias": ""
@@ -1388,10 +1388,10 @@
               "id": 5004,
               "name": "Initializable",
               "nodeType": "UserDefinedTypeName",
-              "referencedDeclaration": 8857,
+              "referencedDeclaration": 8861,
               "src": "381:13:6",
               "typeDescriptions": {
-                "typeIdentifier": "t_contract$_Initializable_$8857",
+                "typeIdentifier": "t_contract$_Initializable_$8861",
                 "typeString": "contract Initializable"
               }
             },
@@ -1458,7 +1458,7 @@
           4682,
           4996,
           7926,
-          8857
+          8861
         ],
         "contractKind": "contract",
         "documentation": null,
@@ -1469,7 +1469,7 @@
           4996,
           4682,
           7926,
-          8857
+          8861
         ],
         "name": "SyscoinSuperblocks",
         "nodeType": "ContractDefinition",
@@ -2359,7 +2359,7 @@
                             "name": "msg",
                             "nodeType": "Identifier",
                             "overloadedDeclarations": [],
-                            "referencedDeclaration": 10319,
+                            "referencedDeclaration": 10323,
                             "src": "1560:3:6",
                             "typeDescriptions": {
                               "typeIdentifier": "t_magic_message",
@@ -2413,10 +2413,10 @@
                       "name": "require",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [
-                        10322,
-                        10323
+                        10326,
+                        10327
                       ],
-                      "referencedDeclaration": 10322,
+                      "referencedDeclaration": 10326,
                       "src": "1552:7:6",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_require_pure$_t_bool_$returns$__$",
@@ -2716,10 +2716,10 @@
                       "name": "require",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [
-                        10322,
-                        10323
+                        10326,
+                        10327
                       ],
-                      "referencedDeclaration": 10322,
+                      "referencedDeclaration": 10326,
                       "src": "1906:7:6",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_require_pure$_t_bool_$returns$__$",
@@ -3075,10 +3075,10 @@
                       "name": "require",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [
-                        10322,
-                        10323
+                        10326,
+                        10327
                       ],
-                      "referencedDeclaration": 10322,
+                      "referencedDeclaration": 10326,
                       "src": "2087:7:6",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_require_pure$_t_bool_$returns$__$",
@@ -3165,7 +3165,7 @@
                   "name": "initializer",
                   "nodeType": "Identifier",
                   "overloadedDeclarations": [],
-                  "referencedDeclaration": 8838,
+                  "referencedDeclaration": 8842,
                   "src": "1884:11:6",
                   "typeDescriptions": {
                     "typeIdentifier": "t_modifier$__$",
@@ -7064,10 +7064,10 @@
                       "name": "require",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [
-                        10322,
-                        10323
+                        10326,
+                        10327
                       ],
-                      "referencedDeclaration": 10322,
+                      "referencedDeclaration": 10326,
                       "src": "3693:7:6",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_require_pure$_t_bool_$returns$__$",
@@ -7432,10 +7432,10 @@
                       "name": "require",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [
-                        10322,
-                        10323
+                        10326,
+                        10327
                       ],
-                      "referencedDeclaration": 10322,
+                      "referencedDeclaration": 10326,
                       "src": "3853:7:6",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_require_pure$_t_bool_$returns$__$",
@@ -7800,10 +7800,10 @@
                       "name": "require",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [
-                        10322,
-                        10323
+                        10326,
+                        10327
                       ],
-                      "referencedDeclaration": 10322,
+                      "referencedDeclaration": 10326,
                       "src": "4090:7:6",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_require_pure$_t_bool_$returns$__$",
@@ -8168,10 +8168,10 @@
                       "name": "require",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [
-                        10322,
-                        10323
+                        10326,
+                        10327
                       ],
-                      "referencedDeclaration": 10322,
+                      "referencedDeclaration": 10326,
                       "src": "4268:7:6",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_require_pure$_t_bool_$returns$__$",
@@ -8548,10 +8548,10 @@
                       "name": "require",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [
-                        10322,
-                        10323
+                        10326,
+                        10327
                       ],
-                      "referencedDeclaration": 10322,
+                      "referencedDeclaration": 10326,
                       "src": "4426:7:6",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_require_pure$_t_bool_$returns$__$",
@@ -9340,10 +9340,10 @@
                       "name": "require",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [
-                        10322,
-                        10323
+                        10326,
+                        10327
                       ],
-                      "referencedDeclaration": 10322,
+                      "referencedDeclaration": 10326,
                       "src": "5044:7:6",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_require_pure$_t_bool_$returns$__$",
@@ -10212,10 +10212,10 @@
                             "name": "require",
                             "nodeType": "Identifier",
                             "overloadedDeclarations": [
-                              10322,
-                              10323
+                              10326,
+                              10327
                             ],
-                            "referencedDeclaration": 10323,
+                            "referencedDeclaration": 10327,
                             "src": "5544:7:6",
                             "typeDescriptions": {
                               "typeIdentifier": "t_function_require_pure$_t_bool_$_t_string_memory_ptr_$returns$__$",
@@ -10460,10 +10460,10 @@
                       "name": "require",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [
-                        10322,
-                        10323
+                        10326,
+                        10327
                       ],
-                      "referencedDeclaration": 10323,
+                      "referencedDeclaration": 10327,
                       "src": "5774:7:6",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_require_pure$_t_bool_$_t_string_memory_ptr_$returns$__$",
@@ -11113,10 +11113,10 @@
                       "name": "require",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [
-                        10322,
-                        10323
+                        10326,
+                        10327
                       ],
-                      "referencedDeclaration": 10323,
+                      "referencedDeclaration": 10327,
                       "src": "6155:7:6",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_require_pure$_t_bool_$_t_string_memory_ptr_$returns$__$",
@@ -11767,10 +11767,10 @@
                       "name": "revert",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [
-                        10324,
-                        10325
+                        10328,
+                        10329
                       ],
-                      "referencedDeclaration": 10325,
+                      "referencedDeclaration": 10329,
                       "src": "6684:6:6",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_revert_pure$_t_string_memory_ptr_$returns$__$",
@@ -15333,7 +15333,7 @@
                       "stateVariable": false,
                       "storageLocation": "memory",
                       "typeDescriptions": {
-                        "typeIdentifier": "t_array$_t_struct$_RLPItem_$9625_memory_$dyn_memory_ptr",
+                        "typeIdentifier": "t_array$_t_struct$_RLPItem_$9629_memory_$dyn_memory_ptr",
                         "typeString": "struct RLPReader.RLPItem[]"
                       },
                       "typeName": {
@@ -15342,10 +15342,10 @@
                           "id": 5998,
                           "name": "RLPReader.RLPItem",
                           "nodeType": "UserDefinedTypeName",
-                          "referencedDeclaration": 9625,
+                          "referencedDeclaration": 9629,
                           "src": "10578:17:6",
                           "typeDescriptions": {
-                            "typeIdentifier": "t_struct$_RLPItem_$9625_storage_ptr",
+                            "typeIdentifier": "t_struct$_RLPItem_$9629_storage_ptr",
                             "typeString": "struct RLPReader.RLPItem"
                           }
                         },
@@ -15354,7 +15354,7 @@
                         "nodeType": "ArrayTypeName",
                         "src": "10578:19:6",
                         "typeDescriptions": {
-                          "typeIdentifier": "t_array$_t_struct$_RLPItem_$9625_storage_$dyn_storage_ptr",
+                          "typeIdentifier": "t_array$_t_struct$_RLPItem_$9629_storage_$dyn_storage_ptr",
                           "typeString": "struct RLPReader.RLPItem[]"
                         }
                       },
@@ -15393,10 +15393,10 @@
                           "lValueRequested": false,
                           "memberName": "toRlpItem",
                           "nodeType": "MemberAccess",
-                          "referencedDeclaration": 9708,
+                          "referencedDeclaration": 9712,
                           "src": "10624:22:6",
                           "typeDescriptions": {
-                            "typeIdentifier": "t_function_internal_pure$_t_bytes_memory_ptr_$returns$_t_struct$_RLPItem_$9625_memory_ptr_$bound_to$_t_bytes_memory_ptr_$",
+                            "typeIdentifier": "t_function_internal_pure$_t_bytes_memory_ptr_$returns$_t_struct$_RLPItem_$9629_memory_ptr_$bound_to$_t_bytes_memory_ptr_$",
                             "typeString": "function (bytes memory) pure returns (struct RLPReader.RLPItem memory)"
                           }
                         },
@@ -15410,7 +15410,7 @@
                         "nodeType": "FunctionCall",
                         "src": "10624:24:6",
                         "typeDescriptions": {
-                          "typeIdentifier": "t_struct$_RLPItem_$9625_memory_ptr",
+                          "typeIdentifier": "t_struct$_RLPItem_$9629_memory_ptr",
                           "typeString": "struct RLPReader.RLPItem memory"
                         }
                       },
@@ -15421,10 +15421,10 @@
                       "lValueRequested": false,
                       "memberName": "toList",
                       "nodeType": "MemberAccess",
-                      "referencedDeclaration": 9843,
+                      "referencedDeclaration": 9847,
                       "src": "10624:31:6",
                       "typeDescriptions": {
-                        "typeIdentifier": "t_function_internal_pure$_t_struct$_RLPItem_$9625_memory_ptr_$returns$_t_array$_t_struct$_RLPItem_$9625_memory_$dyn_memory_ptr_$bound_to$_t_struct$_RLPItem_$9625_memory_ptr_$",
+                        "typeIdentifier": "t_function_internal_pure$_t_struct$_RLPItem_$9629_memory_ptr_$returns$_t_array$_t_struct$_RLPItem_$9629_memory_$dyn_memory_ptr_$bound_to$_t_struct$_RLPItem_$9629_memory_ptr_$",
                         "typeString": "function (struct RLPReader.RLPItem memory) pure returns (struct RLPReader.RLPItem memory[] memory)"
                       }
                     },
@@ -15438,7 +15438,7 @@
                     "nodeType": "FunctionCall",
                     "src": "10624:33:6",
                     "typeDescriptions": {
-                      "typeIdentifier": "t_array$_t_struct$_RLPItem_$9625_memory_$dyn_memory_ptr",
+                      "typeIdentifier": "t_array$_t_struct$_RLPItem_$9629_memory_$dyn_memory_ptr",
                       "typeString": "struct RLPReader.RLPItem memory[] memory"
                     }
                   },
@@ -15460,7 +15460,7 @@
                       "stateVariable": false,
                       "storageLocation": "memory",
                       "typeDescriptions": {
-                        "typeIdentifier": "t_array$_t_struct$_RLPItem_$9625_memory_$dyn_memory_ptr",
+                        "typeIdentifier": "t_array$_t_struct$_RLPItem_$9629_memory_$dyn_memory_ptr",
                         "typeString": "struct RLPReader.RLPItem[]"
                       },
                       "typeName": {
@@ -15469,10 +15469,10 @@
                           "id": 6009,
                           "name": "RLPReader.RLPItem",
                           "nodeType": "UserDefinedTypeName",
-                          "referencedDeclaration": 9625,
+                          "referencedDeclaration": 9629,
                           "src": "10667:17:6",
                           "typeDescriptions": {
-                            "typeIdentifier": "t_struct$_RLPItem_$9625_storage_ptr",
+                            "typeIdentifier": "t_struct$_RLPItem_$9629_storage_ptr",
                             "typeString": "struct RLPReader.RLPItem"
                           }
                         },
@@ -15481,7 +15481,7 @@
                         "nodeType": "ArrayTypeName",
                         "src": "10667:19:6",
                         "typeDescriptions": {
-                          "typeIdentifier": "t_array$_t_struct$_RLPItem_$9625_storage_$dyn_storage_ptr",
+                          "typeIdentifier": "t_array$_t_struct$_RLPItem_$9629_storage_$dyn_storage_ptr",
                           "typeString": "struct RLPReader.RLPItem[]"
                         }
                       },
@@ -15506,7 +15506,7 @@
                           "referencedDeclaration": 6000,
                           "src": "10705:16:6",
                           "typeDescriptions": {
-                            "typeIdentifier": "t_array$_t_struct$_RLPItem_$9625_memory_$dyn_memory_ptr",
+                            "typeIdentifier": "t_array$_t_struct$_RLPItem_$9629_memory_$dyn_memory_ptr",
                             "typeString": "struct RLPReader.RLPItem memory[] memory"
                           }
                         },
@@ -15536,7 +15536,7 @@
                         "nodeType": "IndexAccess",
                         "src": "10705:19:6",
                         "typeDescriptions": {
-                          "typeIdentifier": "t_struct$_RLPItem_$9625_memory",
+                          "typeIdentifier": "t_struct$_RLPItem_$9629_memory",
                           "typeString": "struct RLPReader.RLPItem memory"
                         }
                       },
@@ -15547,10 +15547,10 @@
                       "lValueRequested": false,
                       "memberName": "toList",
                       "nodeType": "MemberAccess",
-                      "referencedDeclaration": 9843,
+                      "referencedDeclaration": 9847,
                       "src": "10705:26:6",
                       "typeDescriptions": {
-                        "typeIdentifier": "t_function_internal_pure$_t_struct$_RLPItem_$9625_memory_ptr_$returns$_t_array$_t_struct$_RLPItem_$9625_memory_$dyn_memory_ptr_$bound_to$_t_struct$_RLPItem_$9625_memory_ptr_$",
+                        "typeIdentifier": "t_function_internal_pure$_t_struct$_RLPItem_$9629_memory_ptr_$returns$_t_array$_t_struct$_RLPItem_$9629_memory_$dyn_memory_ptr_$bound_to$_t_struct$_RLPItem_$9629_memory_ptr_$",
                         "typeString": "function (struct RLPReader.RLPItem memory) pure returns (struct RLPReader.RLPItem memory[] memory)"
                       }
                     },
@@ -15564,7 +15564,7 @@
                     "nodeType": "FunctionCall",
                     "src": "10705:28:6",
                     "typeDescriptions": {
-                      "typeIdentifier": "t_array$_t_struct$_RLPItem_$9625_memory_$dyn_memory_ptr",
+                      "typeIdentifier": "t_array$_t_struct$_RLPItem_$9629_memory_$dyn_memory_ptr",
                       "typeString": "struct RLPReader.RLPItem memory[] memory"
                     }
                   },
@@ -15592,7 +15592,7 @@
                             "stateVariable": false,
                             "storageLocation": "memory",
                             "typeDescriptions": {
-                              "typeIdentifier": "t_array$_t_struct$_RLPItem_$9625_memory_$dyn_memory_ptr",
+                              "typeIdentifier": "t_array$_t_struct$_RLPItem_$9629_memory_$dyn_memory_ptr",
                               "typeString": "struct RLPReader.RLPItem[]"
                             },
                             "typeName": {
@@ -15601,10 +15601,10 @@
                                 "id": 6031,
                                 "name": "RLPReader.RLPItem",
                                 "nodeType": "UserDefinedTypeName",
-                                "referencedDeclaration": 9625,
+                                "referencedDeclaration": 9629,
                                 "src": "10803:17:6",
                                 "typeDescriptions": {
-                                  "typeIdentifier": "t_struct$_RLPItem_$9625_storage_ptr",
+                                  "typeIdentifier": "t_struct$_RLPItem_$9629_storage_ptr",
                                   "typeString": "struct RLPReader.RLPItem"
                                 }
                               },
@@ -15613,7 +15613,7 @@
                               "nodeType": "ArrayTypeName",
                               "src": "10803:19:6",
                               "typeDescriptions": {
-                                "typeIdentifier": "t_array$_t_struct$_RLPItem_$9625_storage_$dyn_storage_ptr",
+                                "typeIdentifier": "t_array$_t_struct$_RLPItem_$9629_storage_$dyn_storage_ptr",
                                 "typeString": "struct RLPReader.RLPItem[]"
                               }
                             },
@@ -15638,7 +15638,7 @@
                                 "referencedDeclaration": 6011,
                                 "src": "10836:8:6",
                                 "typeDescriptions": {
-                                  "typeIdentifier": "t_array$_t_struct$_RLPItem_$9625_memory_$dyn_memory_ptr",
+                                  "typeIdentifier": "t_array$_t_struct$_RLPItem_$9629_memory_$dyn_memory_ptr",
                                   "typeString": "struct RLPReader.RLPItem memory[] memory"
                                 }
                               },
@@ -15663,7 +15663,7 @@
                               "nodeType": "IndexAccess",
                               "src": "10836:11:6",
                               "typeDescriptions": {
-                                "typeIdentifier": "t_struct$_RLPItem_$9625_memory",
+                                "typeIdentifier": "t_struct$_RLPItem_$9629_memory",
                                 "typeString": "struct RLPReader.RLPItem memory"
                               }
                             },
@@ -15674,10 +15674,10 @@
                             "lValueRequested": false,
                             "memberName": "toList",
                             "nodeType": "MemberAccess",
-                            "referencedDeclaration": 9843,
+                            "referencedDeclaration": 9847,
                             "src": "10836:18:6",
                             "typeDescriptions": {
-                              "typeIdentifier": "t_function_internal_pure$_t_struct$_RLPItem_$9625_memory_ptr_$returns$_t_array$_t_struct$_RLPItem_$9625_memory_$dyn_memory_ptr_$bound_to$_t_struct$_RLPItem_$9625_memory_ptr_$",
+                              "typeIdentifier": "t_function_internal_pure$_t_struct$_RLPItem_$9629_memory_ptr_$returns$_t_array$_t_struct$_RLPItem_$9629_memory_$dyn_memory_ptr_$bound_to$_t_struct$_RLPItem_$9629_memory_ptr_$",
                               "typeString": "function (struct RLPReader.RLPItem memory) pure returns (struct RLPReader.RLPItem memory[] memory)"
                             }
                           },
@@ -15691,7 +15691,7 @@
                           "nodeType": "FunctionCall",
                           "src": "10836:20:6",
                           "typeDescriptions": {
-                            "typeIdentifier": "t_array$_t_struct$_RLPItem_$9625_memory_$dyn_memory_ptr",
+                            "typeIdentifier": "t_array$_t_struct$_RLPItem_$9629_memory_$dyn_memory_ptr",
                             "typeString": "struct RLPReader.RLPItem memory[] memory"
                           }
                         },
@@ -15747,7 +15747,7 @@
                                 "referencedDeclaration": 6033,
                                 "src": "10894:3:6",
                                 "typeDescriptions": {
-                                  "typeIdentifier": "t_array$_t_struct$_RLPItem_$9625_memory_$dyn_memory_ptr",
+                                  "typeIdentifier": "t_array$_t_struct$_RLPItem_$9629_memory_$dyn_memory_ptr",
                                   "typeString": "struct RLPReader.RLPItem memory[] memory"
                                 }
                               },
@@ -15777,7 +15777,7 @@
                               "nodeType": "IndexAccess",
                               "src": "10894:6:6",
                               "typeDescriptions": {
-                                "typeIdentifier": "t_struct$_RLPItem_$9625_memory",
+                                "typeIdentifier": "t_struct$_RLPItem_$9629_memory",
                                 "typeString": "struct RLPReader.RLPItem memory"
                               }
                             },
@@ -15788,10 +15788,10 @@
                             "lValueRequested": false,
                             "memberName": "toBytes",
                             "nodeType": "MemberAccess",
-                            "referencedDeclaration": 10090,
+                            "referencedDeclaration": 10094,
                             "src": "10894:14:6",
                             "typeDescriptions": {
-                              "typeIdentifier": "t_function_internal_pure$_t_struct$_RLPItem_$9625_memory_ptr_$returns$_t_bytes_memory_ptr_$bound_to$_t_struct$_RLPItem_$9625_memory_ptr_$",
+                              "typeIdentifier": "t_function_internal_pure$_t_struct$_RLPItem_$9629_memory_ptr_$returns$_t_bytes_memory_ptr_$bound_to$_t_struct$_RLPItem_$9629_memory_ptr_$",
                               "typeString": "function (struct RLPReader.RLPItem memory) pure returns (bytes memory)"
                             }
                           },
@@ -15991,7 +15991,7 @@
                                       "referencedDeclaration": 6033,
                                       "src": "11106:3:6",
                                       "typeDescriptions": {
-                                        "typeIdentifier": "t_array$_t_struct$_RLPItem_$9625_memory_$dyn_memory_ptr",
+                                        "typeIdentifier": "t_array$_t_struct$_RLPItem_$9629_memory_$dyn_memory_ptr",
                                         "typeString": "struct RLPReader.RLPItem memory[] memory"
                                       }
                                     },
@@ -16021,7 +16021,7 @@
                                     "nodeType": "IndexAccess",
                                     "src": "11106:6:6",
                                     "typeDescriptions": {
-                                      "typeIdentifier": "t_struct$_RLPItem_$9625_memory",
+                                      "typeIdentifier": "t_struct$_RLPItem_$9629_memory",
                                       "typeString": "struct RLPReader.RLPItem memory"
                                     }
                                   },
@@ -16032,10 +16032,10 @@
                                   "lValueRequested": false,
                                   "memberName": "toBytes",
                                   "nodeType": "MemberAccess",
-                                  "referencedDeclaration": 10090,
+                                  "referencedDeclaration": 10094,
                                   "src": "11106:14:6",
                                   "typeDescriptions": {
-                                    "typeIdentifier": "t_function_internal_pure$_t_struct$_RLPItem_$9625_memory_ptr_$returns$_t_bytes_memory_ptr_$bound_to$_t_struct$_RLPItem_$9625_memory_ptr_$",
+                                    "typeIdentifier": "t_function_internal_pure$_t_struct$_RLPItem_$9629_memory_ptr_$returns$_t_bytes_memory_ptr_$bound_to$_t_struct$_RLPItem_$9629_memory_ptr_$",
                                     "typeString": "function (struct RLPReader.RLPItem memory) pure returns (bytes memory)"
                                   }
                                 },
@@ -16100,7 +16100,7 @@
                         "referencedDeclaration": 6011,
                         "src": "10767:8:6",
                         "typeDescriptions": {
-                          "typeIdentifier": "t_array$_t_struct$_RLPItem_$9625_memory_$dyn_memory_ptr",
+                          "typeIdentifier": "t_array$_t_struct$_RLPItem_$9629_memory_$dyn_memory_ptr",
                           "typeString": "struct RLPReader.RLPItem memory[] memory"
                         }
                       },
@@ -16250,10 +16250,10 @@
                       "name": "revert",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [
-                        10324,
-                        10325
+                        10328,
+                        10329
                       ],
-                      "referencedDeclaration": 10325,
+                      "referencedDeclaration": 10329,
                       "src": "11156:6:6",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_revert_pure$_t_string_memory_ptr_$returns$__$",
@@ -16633,10 +16633,10 @@
                       "name": "require",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [
-                        10322,
-                        10323
+                        10326,
+                        10327
                       ],
-                      "referencedDeclaration": 10322,
+                      "referencedDeclaration": 10326,
                       "src": "12491:7:6",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_require_pure$_t_bool_$returns$__$",
@@ -16727,10 +16727,10 @@
                       "name": "require",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [
-                        10322,
-                        10323
+                        10326,
+                        10327
                       ],
-                      "referencedDeclaration": 10322,
+                      "referencedDeclaration": 10326,
                       "src": "12529:7:6",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_require_pure$_t_bool_$returns$__$",
@@ -17096,10 +17096,10 @@
                       "name": "require",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [
-                        10322,
-                        10323
+                        10326,
+                        10327
                       ],
-                      "referencedDeclaration": 10322,
+                      "referencedDeclaration": 10326,
                       "src": "12769:7:6",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_require_pure$_t_bool_$returns$__$",
@@ -17481,7 +17481,7 @@
                         "name": "msg",
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
-                        "referencedDeclaration": 10319,
+                        "referencedDeclaration": 10323,
                         "src": "13084:3:6",
                         "typeDescriptions": {
                           "typeIdentifier": "t_magic_message",
@@ -17744,7 +17744,7 @@
                           "name": "msg",
                           "nodeType": "Identifier",
                           "overloadedDeclarations": [],
-                          "referencedDeclaration": 10319,
+                          "referencedDeclaration": 10323,
                           "src": "13257:3:6",
                           "typeDescriptions": {
                             "typeIdentifier": "t_magic_message",
@@ -17877,7 +17877,7 @@
                           "name": "msg",
                           "nodeType": "Identifier",
                           "overloadedDeclarations": [],
-                          "referencedDeclaration": 10319,
+                          "referencedDeclaration": 10323,
                           "src": "13360:3:6",
                           "typeDescriptions": {
                             "typeIdentifier": "t_magic_message",
@@ -18251,7 +18251,7 @@
                         "name": "msg",
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
-                        "referencedDeclaration": 10319,
+                        "referencedDeclaration": 10323,
                         "src": "14349:3:6",
                         "typeDescriptions": {
                           "typeIdentifier": "t_magic_message",
@@ -20587,7 +20587,7 @@
                         "name": "msg",
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
-                        "referencedDeclaration": 10319,
+                        "referencedDeclaration": 10323,
                         "src": "16365:3:6",
                         "typeDescriptions": {
                           "typeIdentifier": "t_magic_message",
@@ -21888,7 +21888,7 @@
                         "name": "msg",
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
-                        "referencedDeclaration": 10319,
+                        "referencedDeclaration": 10323,
                         "src": "17943:3:6",
                         "typeDescriptions": {
                           "typeIdentifier": "t_magic_message",
@@ -22852,7 +22852,7 @@
                         "name": "msg",
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
-                        "referencedDeclaration": 10319,
+                        "referencedDeclaration": 10323,
                         "src": "19263:3:6",
                         "typeDescriptions": {
                           "typeIdentifier": "t_magic_message",
@@ -23652,7 +23652,7 @@
                         "name": "msg",
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
-                        "referencedDeclaration": 10319,
+                        "referencedDeclaration": 10323,
                         "src": "20472:3:6",
                         "typeDescriptions": {
                           "typeIdentifier": "t_magic_message",
@@ -27326,7 +27326,7 @@
                                 "name": "msg",
                                 "nodeType": "Identifier",
                                 "overloadedDeclarations": [],
-                                "referencedDeclaration": 10319,
+                                "referencedDeclaration": 10323,
                                 "src": "26196:3:6",
                                 "typeDescriptions": {
                                   "typeIdentifier": "t_magic_message",
@@ -29375,10 +29375,10 @@
                             "name": "require",
                             "nodeType": "Identifier",
                             "overloadedDeclarations": [
-                              10322,
-                              10323
+                              10326,
+                              10327
                             ],
-                            "referencedDeclaration": 10322,
+                            "referencedDeclaration": 10326,
                             "src": "27815:7:6",
                             "typeDescriptions": {
                               "typeIdentifier": "t_function_require_pure$_t_bool_$returns$__$",
@@ -29601,10 +29601,10 @@
                       "name": "require",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [
-                        10322,
-                        10323
+                        10326,
+                        10327
                       ],
-                      "referencedDeclaration": 10322,
+                      "referencedDeclaration": 10326,
                       "src": "27982:7:6",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_require_pure$_t_bool_$returns$__$",
@@ -30929,7 +30929,7 @@
                                             "name": "abi",
                                             "nodeType": "Identifier",
                                             "overloadedDeclarations": [],
-                                            "referencedDeclaration": 10306,
+                                            "referencedDeclaration": 10310,
                                             "src": "29947:3:6",
                                             "typeDescriptions": {
                                               "typeIdentifier": "t_magic_abi",
@@ -30976,7 +30976,7 @@
                                       "name": "sha256",
                                       "nodeType": "Identifier",
                                       "overloadedDeclarations": [],
-                                      "referencedDeclaration": 10328,
+                                      "referencedDeclaration": 10332,
                                       "src": "29940:6:6",
                                       "typeDescriptions": {
                                         "typeIdentifier": "t_function_sha256_pure$_t_bytes_memory_ptr_$returns$_t_bytes32_$",
@@ -31011,7 +31011,7 @@
                                     "name": "abi",
                                     "nodeType": "Identifier",
                                     "overloadedDeclarations": [],
-                                    "referencedDeclaration": 10306,
+                                    "referencedDeclaration": 10310,
                                     "src": "29923:3:6",
                                     "typeDescriptions": {
                                       "typeIdentifier": "t_magic_abi",
@@ -31058,7 +31058,7 @@
                               "name": "sha256",
                               "nodeType": "Identifier",
                               "overloadedDeclarations": [],
-                              "referencedDeclaration": 10328,
+                              "referencedDeclaration": 10332,
                               "src": "29916:6:6",
                               "typeDescriptions": {
                                 "typeIdentifier": "t_function_sha256_pure$_t_bytes_memory_ptr_$returns$_t_bytes32_$",
@@ -32386,7 +32386,7 @@
                             "name": "abi",
                             "nodeType": "Identifier",
                             "overloadedDeclarations": [],
-                            "referencedDeclaration": 10306,
+                            "referencedDeclaration": 10310,
                             "src": "32955:3:6",
                             "typeDescriptions": {
                               "typeIdentifier": "t_magic_abi",
@@ -32433,7 +32433,7 @@
                       "name": "keccak256",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [],
-                      "referencedDeclaration": 10313,
+                      "referencedDeclaration": 10317,
                       "src": "32945:9:6",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_keccak256_pure$_t_bytes_memory_ptr_$returns$_t_bytes32_$",
@@ -34889,7 +34889,7 @@
         "id": 5002,
         "nodeType": "ImportDirective",
         "scope": 7499,
-        "sourceUnit": 8858,
+        "sourceUnit": 8862,
         "src": "151:60:6",
         "symbolAliases": [],
         "unitAlias": ""
@@ -34914,10 +34914,10 @@
               "id": 5004,
               "name": "Initializable",
               "nodeType": "UserDefinedTypeName",
-              "referencedDeclaration": 8857,
+              "referencedDeclaration": 8861,
               "src": "381:13:6",
               "typeDescriptions": {
-                "typeIdentifier": "t_contract$_Initializable_$8857",
+                "typeIdentifier": "t_contract$_Initializable_$8861",
                 "typeString": "contract Initializable"
               }
             },
@@ -34984,7 +34984,7 @@
           4682,
           4996,
           7926,
-          8857
+          8861
         ],
         "contractKind": "contract",
         "documentation": null,
@@ -34995,7 +34995,7 @@
           4996,
           4682,
           7926,
-          8857
+          8861
         ],
         "name": "SyscoinSuperblocks",
         "nodeType": "ContractDefinition",
@@ -35885,7 +35885,7 @@
                             "name": "msg",
                             "nodeType": "Identifier",
                             "overloadedDeclarations": [],
-                            "referencedDeclaration": 10319,
+                            "referencedDeclaration": 10323,
                             "src": "1560:3:6",
                             "typeDescriptions": {
                               "typeIdentifier": "t_magic_message",
@@ -35939,10 +35939,10 @@
                       "name": "require",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [
-                        10322,
-                        10323
+                        10326,
+                        10327
                       ],
-                      "referencedDeclaration": 10322,
+                      "referencedDeclaration": 10326,
                       "src": "1552:7:6",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_require_pure$_t_bool_$returns$__$",
@@ -36242,10 +36242,10 @@
                       "name": "require",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [
-                        10322,
-                        10323
+                        10326,
+                        10327
                       ],
-                      "referencedDeclaration": 10322,
+                      "referencedDeclaration": 10326,
                       "src": "1906:7:6",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_require_pure$_t_bool_$returns$__$",
@@ -36601,10 +36601,10 @@
                       "name": "require",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [
-                        10322,
-                        10323
+                        10326,
+                        10327
                       ],
-                      "referencedDeclaration": 10322,
+                      "referencedDeclaration": 10326,
                       "src": "2087:7:6",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_require_pure$_t_bool_$returns$__$",
@@ -36691,7 +36691,7 @@
                   "name": "initializer",
                   "nodeType": "Identifier",
                   "overloadedDeclarations": [],
-                  "referencedDeclaration": 8838,
+                  "referencedDeclaration": 8842,
                   "src": "1884:11:6",
                   "typeDescriptions": {
                     "typeIdentifier": "t_modifier$__$",
@@ -40590,10 +40590,10 @@
                       "name": "require",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [
-                        10322,
-                        10323
+                        10326,
+                        10327
                       ],
-                      "referencedDeclaration": 10322,
+                      "referencedDeclaration": 10326,
                       "src": "3693:7:6",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_require_pure$_t_bool_$returns$__$",
@@ -40958,10 +40958,10 @@
                       "name": "require",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [
-                        10322,
-                        10323
+                        10326,
+                        10327
                       ],
-                      "referencedDeclaration": 10322,
+                      "referencedDeclaration": 10326,
                       "src": "3853:7:6",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_require_pure$_t_bool_$returns$__$",
@@ -41326,10 +41326,10 @@
                       "name": "require",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [
-                        10322,
-                        10323
+                        10326,
+                        10327
                       ],
-                      "referencedDeclaration": 10322,
+                      "referencedDeclaration": 10326,
                       "src": "4090:7:6",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_require_pure$_t_bool_$returns$__$",
@@ -41694,10 +41694,10 @@
                       "name": "require",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [
-                        10322,
-                        10323
+                        10326,
+                        10327
                       ],
-                      "referencedDeclaration": 10322,
+                      "referencedDeclaration": 10326,
                       "src": "4268:7:6",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_require_pure$_t_bool_$returns$__$",
@@ -42074,10 +42074,10 @@
                       "name": "require",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [
-                        10322,
-                        10323
+                        10326,
+                        10327
                       ],
-                      "referencedDeclaration": 10322,
+                      "referencedDeclaration": 10326,
                       "src": "4426:7:6",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_require_pure$_t_bool_$returns$__$",
@@ -42866,10 +42866,10 @@
                       "name": "require",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [
-                        10322,
-                        10323
+                        10326,
+                        10327
                       ],
-                      "referencedDeclaration": 10322,
+                      "referencedDeclaration": 10326,
                       "src": "5044:7:6",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_require_pure$_t_bool_$returns$__$",
@@ -43738,10 +43738,10 @@
                             "name": "require",
                             "nodeType": "Identifier",
                             "overloadedDeclarations": [
-                              10322,
-                              10323
+                              10326,
+                              10327
                             ],
-                            "referencedDeclaration": 10323,
+                            "referencedDeclaration": 10327,
                             "src": "5544:7:6",
                             "typeDescriptions": {
                               "typeIdentifier": "t_function_require_pure$_t_bool_$_t_string_memory_ptr_$returns$__$",
@@ -43986,10 +43986,10 @@
                       "name": "require",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [
-                        10322,
-                        10323
+                        10326,
+                        10327
                       ],
-                      "referencedDeclaration": 10323,
+                      "referencedDeclaration": 10327,
                       "src": "5774:7:6",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_require_pure$_t_bool_$_t_string_memory_ptr_$returns$__$",
@@ -44639,10 +44639,10 @@
                       "name": "require",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [
-                        10322,
-                        10323
+                        10326,
+                        10327
                       ],
-                      "referencedDeclaration": 10323,
+                      "referencedDeclaration": 10327,
                       "src": "6155:7:6",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_require_pure$_t_bool_$_t_string_memory_ptr_$returns$__$",
@@ -45293,10 +45293,10 @@
                       "name": "revert",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [
-                        10324,
-                        10325
+                        10328,
+                        10329
                       ],
-                      "referencedDeclaration": 10325,
+                      "referencedDeclaration": 10329,
                       "src": "6684:6:6",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_revert_pure$_t_string_memory_ptr_$returns$__$",
@@ -48859,7 +48859,7 @@
                       "stateVariable": false,
                       "storageLocation": "memory",
                       "typeDescriptions": {
-                        "typeIdentifier": "t_array$_t_struct$_RLPItem_$9625_memory_$dyn_memory_ptr",
+                        "typeIdentifier": "t_array$_t_struct$_RLPItem_$9629_memory_$dyn_memory_ptr",
                         "typeString": "struct RLPReader.RLPItem[]"
                       },
                       "typeName": {
@@ -48868,10 +48868,10 @@
                           "id": 5998,
                           "name": "RLPReader.RLPItem",
                           "nodeType": "UserDefinedTypeName",
-                          "referencedDeclaration": 9625,
+                          "referencedDeclaration": 9629,
                           "src": "10578:17:6",
                           "typeDescriptions": {
-                            "typeIdentifier": "t_struct$_RLPItem_$9625_storage_ptr",
+                            "typeIdentifier": "t_struct$_RLPItem_$9629_storage_ptr",
                             "typeString": "struct RLPReader.RLPItem"
                           }
                         },
@@ -48880,7 +48880,7 @@
                         "nodeType": "ArrayTypeName",
                         "src": "10578:19:6",
                         "typeDescriptions": {
-                          "typeIdentifier": "t_array$_t_struct$_RLPItem_$9625_storage_$dyn_storage_ptr",
+                          "typeIdentifier": "t_array$_t_struct$_RLPItem_$9629_storage_$dyn_storage_ptr",
                           "typeString": "struct RLPReader.RLPItem[]"
                         }
                       },
@@ -48919,10 +48919,10 @@
                           "lValueRequested": false,
                           "memberName": "toRlpItem",
                           "nodeType": "MemberAccess",
-                          "referencedDeclaration": 9708,
+                          "referencedDeclaration": 9712,
                           "src": "10624:22:6",
                           "typeDescriptions": {
-                            "typeIdentifier": "t_function_internal_pure$_t_bytes_memory_ptr_$returns$_t_struct$_RLPItem_$9625_memory_ptr_$bound_to$_t_bytes_memory_ptr_$",
+                            "typeIdentifier": "t_function_internal_pure$_t_bytes_memory_ptr_$returns$_t_struct$_RLPItem_$9629_memory_ptr_$bound_to$_t_bytes_memory_ptr_$",
                             "typeString": "function (bytes memory) pure returns (struct RLPReader.RLPItem memory)"
                           }
                         },
@@ -48936,7 +48936,7 @@
                         "nodeType": "FunctionCall",
                         "src": "10624:24:6",
                         "typeDescriptions": {
-                          "typeIdentifier": "t_struct$_RLPItem_$9625_memory_ptr",
+                          "typeIdentifier": "t_struct$_RLPItem_$9629_memory_ptr",
                           "typeString": "struct RLPReader.RLPItem memory"
                         }
                       },
@@ -48947,10 +48947,10 @@
                       "lValueRequested": false,
                       "memberName": "toList",
                       "nodeType": "MemberAccess",
-                      "referencedDeclaration": 9843,
+                      "referencedDeclaration": 9847,
                       "src": "10624:31:6",
                       "typeDescriptions": {
-                        "typeIdentifier": "t_function_internal_pure$_t_struct$_RLPItem_$9625_memory_ptr_$returns$_t_array$_t_struct$_RLPItem_$9625_memory_$dyn_memory_ptr_$bound_to$_t_struct$_RLPItem_$9625_memory_ptr_$",
+                        "typeIdentifier": "t_function_internal_pure$_t_struct$_RLPItem_$9629_memory_ptr_$returns$_t_array$_t_struct$_RLPItem_$9629_memory_$dyn_memory_ptr_$bound_to$_t_struct$_RLPItem_$9629_memory_ptr_$",
                         "typeString": "function (struct RLPReader.RLPItem memory) pure returns (struct RLPReader.RLPItem memory[] memory)"
                       }
                     },
@@ -48964,7 +48964,7 @@
                     "nodeType": "FunctionCall",
                     "src": "10624:33:6",
                     "typeDescriptions": {
-                      "typeIdentifier": "t_array$_t_struct$_RLPItem_$9625_memory_$dyn_memory_ptr",
+                      "typeIdentifier": "t_array$_t_struct$_RLPItem_$9629_memory_$dyn_memory_ptr",
                       "typeString": "struct RLPReader.RLPItem memory[] memory"
                     }
                   },
@@ -48986,7 +48986,7 @@
                       "stateVariable": false,
                       "storageLocation": "memory",
                       "typeDescriptions": {
-                        "typeIdentifier": "t_array$_t_struct$_RLPItem_$9625_memory_$dyn_memory_ptr",
+                        "typeIdentifier": "t_array$_t_struct$_RLPItem_$9629_memory_$dyn_memory_ptr",
                         "typeString": "struct RLPReader.RLPItem[]"
                       },
                       "typeName": {
@@ -48995,10 +48995,10 @@
                           "id": 6009,
                           "name": "RLPReader.RLPItem",
                           "nodeType": "UserDefinedTypeName",
-                          "referencedDeclaration": 9625,
+                          "referencedDeclaration": 9629,
                           "src": "10667:17:6",
                           "typeDescriptions": {
-                            "typeIdentifier": "t_struct$_RLPItem_$9625_storage_ptr",
+                            "typeIdentifier": "t_struct$_RLPItem_$9629_storage_ptr",
                             "typeString": "struct RLPReader.RLPItem"
                           }
                         },
@@ -49007,7 +49007,7 @@
                         "nodeType": "ArrayTypeName",
                         "src": "10667:19:6",
                         "typeDescriptions": {
-                          "typeIdentifier": "t_array$_t_struct$_RLPItem_$9625_storage_$dyn_storage_ptr",
+                          "typeIdentifier": "t_array$_t_struct$_RLPItem_$9629_storage_$dyn_storage_ptr",
                           "typeString": "struct RLPReader.RLPItem[]"
                         }
                       },
@@ -49032,7 +49032,7 @@
                           "referencedDeclaration": 6000,
                           "src": "10705:16:6",
                           "typeDescriptions": {
-                            "typeIdentifier": "t_array$_t_struct$_RLPItem_$9625_memory_$dyn_memory_ptr",
+                            "typeIdentifier": "t_array$_t_struct$_RLPItem_$9629_memory_$dyn_memory_ptr",
                             "typeString": "struct RLPReader.RLPItem memory[] memory"
                           }
                         },
@@ -49062,7 +49062,7 @@
                         "nodeType": "IndexAccess",
                         "src": "10705:19:6",
                         "typeDescriptions": {
-                          "typeIdentifier": "t_struct$_RLPItem_$9625_memory",
+                          "typeIdentifier": "t_struct$_RLPItem_$9629_memory",
                           "typeString": "struct RLPReader.RLPItem memory"
                         }
                       },
@@ -49073,10 +49073,10 @@
                       "lValueRequested": false,
                       "memberName": "toList",
                       "nodeType": "MemberAccess",
-                      "referencedDeclaration": 9843,
+                      "referencedDeclaration": 9847,
                       "src": "10705:26:6",
                       "typeDescriptions": {
-                        "typeIdentifier": "t_function_internal_pure$_t_struct$_RLPItem_$9625_memory_ptr_$returns$_t_array$_t_struct$_RLPItem_$9625_memory_$dyn_memory_ptr_$bound_to$_t_struct$_RLPItem_$9625_memory_ptr_$",
+                        "typeIdentifier": "t_function_internal_pure$_t_struct$_RLPItem_$9629_memory_ptr_$returns$_t_array$_t_struct$_RLPItem_$9629_memory_$dyn_memory_ptr_$bound_to$_t_struct$_RLPItem_$9629_memory_ptr_$",
                         "typeString": "function (struct RLPReader.RLPItem memory) pure returns (struct RLPReader.RLPItem memory[] memory)"
                       }
                     },
@@ -49090,7 +49090,7 @@
                     "nodeType": "FunctionCall",
                     "src": "10705:28:6",
                     "typeDescriptions": {
-                      "typeIdentifier": "t_array$_t_struct$_RLPItem_$9625_memory_$dyn_memory_ptr",
+                      "typeIdentifier": "t_array$_t_struct$_RLPItem_$9629_memory_$dyn_memory_ptr",
                       "typeString": "struct RLPReader.RLPItem memory[] memory"
                     }
                   },
@@ -49118,7 +49118,7 @@
                             "stateVariable": false,
                             "storageLocation": "memory",
                             "typeDescriptions": {
-                              "typeIdentifier": "t_array$_t_struct$_RLPItem_$9625_memory_$dyn_memory_ptr",
+                              "typeIdentifier": "t_array$_t_struct$_RLPItem_$9629_memory_$dyn_memory_ptr",
                               "typeString": "struct RLPReader.RLPItem[]"
                             },
                             "typeName": {
@@ -49127,10 +49127,10 @@
                                 "id": 6031,
                                 "name": "RLPReader.RLPItem",
                                 "nodeType": "UserDefinedTypeName",
-                                "referencedDeclaration": 9625,
+                                "referencedDeclaration": 9629,
                                 "src": "10803:17:6",
                                 "typeDescriptions": {
-                                  "typeIdentifier": "t_struct$_RLPItem_$9625_storage_ptr",
+                                  "typeIdentifier": "t_struct$_RLPItem_$9629_storage_ptr",
                                   "typeString": "struct RLPReader.RLPItem"
                                 }
                               },
@@ -49139,7 +49139,7 @@
                               "nodeType": "ArrayTypeName",
                               "src": "10803:19:6",
                               "typeDescriptions": {
-                                "typeIdentifier": "t_array$_t_struct$_RLPItem_$9625_storage_$dyn_storage_ptr",
+                                "typeIdentifier": "t_array$_t_struct$_RLPItem_$9629_storage_$dyn_storage_ptr",
                                 "typeString": "struct RLPReader.RLPItem[]"
                               }
                             },
@@ -49164,7 +49164,7 @@
                                 "referencedDeclaration": 6011,
                                 "src": "10836:8:6",
                                 "typeDescriptions": {
-                                  "typeIdentifier": "t_array$_t_struct$_RLPItem_$9625_memory_$dyn_memory_ptr",
+                                  "typeIdentifier": "t_array$_t_struct$_RLPItem_$9629_memory_$dyn_memory_ptr",
                                   "typeString": "struct RLPReader.RLPItem memory[] memory"
                                 }
                               },
@@ -49189,7 +49189,7 @@
                               "nodeType": "IndexAccess",
                               "src": "10836:11:6",
                               "typeDescriptions": {
-                                "typeIdentifier": "t_struct$_RLPItem_$9625_memory",
+                                "typeIdentifier": "t_struct$_RLPItem_$9629_memory",
                                 "typeString": "struct RLPReader.RLPItem memory"
                               }
                             },
@@ -49200,10 +49200,10 @@
                             "lValueRequested": false,
                             "memberName": "toList",
                             "nodeType": "MemberAccess",
-                            "referencedDeclaration": 9843,
+                            "referencedDeclaration": 9847,
                             "src": "10836:18:6",
                             "typeDescriptions": {
-                              "typeIdentifier": "t_function_internal_pure$_t_struct$_RLPItem_$9625_memory_ptr_$returns$_t_array$_t_struct$_RLPItem_$9625_memory_$dyn_memory_ptr_$bound_to$_t_struct$_RLPItem_$9625_memory_ptr_$",
+                              "typeIdentifier": "t_function_internal_pure$_t_struct$_RLPItem_$9629_memory_ptr_$returns$_t_array$_t_struct$_RLPItem_$9629_memory_$dyn_memory_ptr_$bound_to$_t_struct$_RLPItem_$9629_memory_ptr_$",
                               "typeString": "function (struct RLPReader.RLPItem memory) pure returns (struct RLPReader.RLPItem memory[] memory)"
                             }
                           },
@@ -49217,7 +49217,7 @@
                           "nodeType": "FunctionCall",
                           "src": "10836:20:6",
                           "typeDescriptions": {
-                            "typeIdentifier": "t_array$_t_struct$_RLPItem_$9625_memory_$dyn_memory_ptr",
+                            "typeIdentifier": "t_array$_t_struct$_RLPItem_$9629_memory_$dyn_memory_ptr",
                             "typeString": "struct RLPReader.RLPItem memory[] memory"
                           }
                         },
@@ -49273,7 +49273,7 @@
                                 "referencedDeclaration": 6033,
                                 "src": "10894:3:6",
                                 "typeDescriptions": {
-                                  "typeIdentifier": "t_array$_t_struct$_RLPItem_$9625_memory_$dyn_memory_ptr",
+                                  "typeIdentifier": "t_array$_t_struct$_RLPItem_$9629_memory_$dyn_memory_ptr",
                                   "typeString": "struct RLPReader.RLPItem memory[] memory"
                                 }
                               },
@@ -49303,7 +49303,7 @@
                               "nodeType": "IndexAccess",
                               "src": "10894:6:6",
                               "typeDescriptions": {
-                                "typeIdentifier": "t_struct$_RLPItem_$9625_memory",
+                                "typeIdentifier": "t_struct$_RLPItem_$9629_memory",
                                 "typeString": "struct RLPReader.RLPItem memory"
                               }
                             },
@@ -49314,10 +49314,10 @@
                             "lValueRequested": false,
                             "memberName": "toBytes",
                             "nodeType": "MemberAccess",
-                            "referencedDeclaration": 10090,
+                            "referencedDeclaration": 10094,
                             "src": "10894:14:6",
                             "typeDescriptions": {
-                              "typeIdentifier": "t_function_internal_pure$_t_struct$_RLPItem_$9625_memory_ptr_$returns$_t_bytes_memory_ptr_$bound_to$_t_struct$_RLPItem_$9625_memory_ptr_$",
+                              "typeIdentifier": "t_function_internal_pure$_t_struct$_RLPItem_$9629_memory_ptr_$returns$_t_bytes_memory_ptr_$bound_to$_t_struct$_RLPItem_$9629_memory_ptr_$",
                               "typeString": "function (struct RLPReader.RLPItem memory) pure returns (bytes memory)"
                             }
                           },
@@ -49517,7 +49517,7 @@
                                       "referencedDeclaration": 6033,
                                       "src": "11106:3:6",
                                       "typeDescriptions": {
-                                        "typeIdentifier": "t_array$_t_struct$_RLPItem_$9625_memory_$dyn_memory_ptr",
+                                        "typeIdentifier": "t_array$_t_struct$_RLPItem_$9629_memory_$dyn_memory_ptr",
                                         "typeString": "struct RLPReader.RLPItem memory[] memory"
                                       }
                                     },
@@ -49547,7 +49547,7 @@
                                     "nodeType": "IndexAccess",
                                     "src": "11106:6:6",
                                     "typeDescriptions": {
-                                      "typeIdentifier": "t_struct$_RLPItem_$9625_memory",
+                                      "typeIdentifier": "t_struct$_RLPItem_$9629_memory",
                                       "typeString": "struct RLPReader.RLPItem memory"
                                     }
                                   },
@@ -49558,10 +49558,10 @@
                                   "lValueRequested": false,
                                   "memberName": "toBytes",
                                   "nodeType": "MemberAccess",
-                                  "referencedDeclaration": 10090,
+                                  "referencedDeclaration": 10094,
                                   "src": "11106:14:6",
                                   "typeDescriptions": {
-                                    "typeIdentifier": "t_function_internal_pure$_t_struct$_RLPItem_$9625_memory_ptr_$returns$_t_bytes_memory_ptr_$bound_to$_t_struct$_RLPItem_$9625_memory_ptr_$",
+                                    "typeIdentifier": "t_function_internal_pure$_t_struct$_RLPItem_$9629_memory_ptr_$returns$_t_bytes_memory_ptr_$bound_to$_t_struct$_RLPItem_$9629_memory_ptr_$",
                                     "typeString": "function (struct RLPReader.RLPItem memory) pure returns (bytes memory)"
                                   }
                                 },
@@ -49626,7 +49626,7 @@
                         "referencedDeclaration": 6011,
                         "src": "10767:8:6",
                         "typeDescriptions": {
-                          "typeIdentifier": "t_array$_t_struct$_RLPItem_$9625_memory_$dyn_memory_ptr",
+                          "typeIdentifier": "t_array$_t_struct$_RLPItem_$9629_memory_$dyn_memory_ptr",
                           "typeString": "struct RLPReader.RLPItem memory[] memory"
                         }
                       },
@@ -49776,10 +49776,10 @@
                       "name": "revert",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [
-                        10324,
-                        10325
+                        10328,
+                        10329
                       ],
-                      "referencedDeclaration": 10325,
+                      "referencedDeclaration": 10329,
                       "src": "11156:6:6",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_revert_pure$_t_string_memory_ptr_$returns$__$",
@@ -50159,10 +50159,10 @@
                       "name": "require",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [
-                        10322,
-                        10323
+                        10326,
+                        10327
                       ],
-                      "referencedDeclaration": 10322,
+                      "referencedDeclaration": 10326,
                       "src": "12491:7:6",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_require_pure$_t_bool_$returns$__$",
@@ -50253,10 +50253,10 @@
                       "name": "require",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [
-                        10322,
-                        10323
+                        10326,
+                        10327
                       ],
-                      "referencedDeclaration": 10322,
+                      "referencedDeclaration": 10326,
                       "src": "12529:7:6",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_require_pure$_t_bool_$returns$__$",
@@ -50622,10 +50622,10 @@
                       "name": "require",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [
-                        10322,
-                        10323
+                        10326,
+                        10327
                       ],
-                      "referencedDeclaration": 10322,
+                      "referencedDeclaration": 10326,
                       "src": "12769:7:6",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_require_pure$_t_bool_$returns$__$",
@@ -51007,7 +51007,7 @@
                         "name": "msg",
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
-                        "referencedDeclaration": 10319,
+                        "referencedDeclaration": 10323,
                         "src": "13084:3:6",
                         "typeDescriptions": {
                           "typeIdentifier": "t_magic_message",
@@ -51270,7 +51270,7 @@
                           "name": "msg",
                           "nodeType": "Identifier",
                           "overloadedDeclarations": [],
-                          "referencedDeclaration": 10319,
+                          "referencedDeclaration": 10323,
                           "src": "13257:3:6",
                           "typeDescriptions": {
                             "typeIdentifier": "t_magic_message",
@@ -51403,7 +51403,7 @@
                           "name": "msg",
                           "nodeType": "Identifier",
                           "overloadedDeclarations": [],
-                          "referencedDeclaration": 10319,
+                          "referencedDeclaration": 10323,
                           "src": "13360:3:6",
                           "typeDescriptions": {
                             "typeIdentifier": "t_magic_message",
@@ -51777,7 +51777,7 @@
                         "name": "msg",
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
-                        "referencedDeclaration": 10319,
+                        "referencedDeclaration": 10323,
                         "src": "14349:3:6",
                         "typeDescriptions": {
                           "typeIdentifier": "t_magic_message",
@@ -54113,7 +54113,7 @@
                         "name": "msg",
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
-                        "referencedDeclaration": 10319,
+                        "referencedDeclaration": 10323,
                         "src": "16365:3:6",
                         "typeDescriptions": {
                           "typeIdentifier": "t_magic_message",
@@ -55414,7 +55414,7 @@
                         "name": "msg",
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
-                        "referencedDeclaration": 10319,
+                        "referencedDeclaration": 10323,
                         "src": "17943:3:6",
                         "typeDescriptions": {
                           "typeIdentifier": "t_magic_message",
@@ -56378,7 +56378,7 @@
                         "name": "msg",
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
-                        "referencedDeclaration": 10319,
+                        "referencedDeclaration": 10323,
                         "src": "19263:3:6",
                         "typeDescriptions": {
                           "typeIdentifier": "t_magic_message",
@@ -57178,7 +57178,7 @@
                         "name": "msg",
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
-                        "referencedDeclaration": 10319,
+                        "referencedDeclaration": 10323,
                         "src": "20472:3:6",
                         "typeDescriptions": {
                           "typeIdentifier": "t_magic_message",
@@ -60852,7 +60852,7 @@
                                 "name": "msg",
                                 "nodeType": "Identifier",
                                 "overloadedDeclarations": [],
-                                "referencedDeclaration": 10319,
+                                "referencedDeclaration": 10323,
                                 "src": "26196:3:6",
                                 "typeDescriptions": {
                                   "typeIdentifier": "t_magic_message",
@@ -62901,10 +62901,10 @@
                             "name": "require",
                             "nodeType": "Identifier",
                             "overloadedDeclarations": [
-                              10322,
-                              10323
+                              10326,
+                              10327
                             ],
-                            "referencedDeclaration": 10322,
+                            "referencedDeclaration": 10326,
                             "src": "27815:7:6",
                             "typeDescriptions": {
                               "typeIdentifier": "t_function_require_pure$_t_bool_$returns$__$",
@@ -63127,10 +63127,10 @@
                       "name": "require",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [
-                        10322,
-                        10323
+                        10326,
+                        10327
                       ],
-                      "referencedDeclaration": 10322,
+                      "referencedDeclaration": 10326,
                       "src": "27982:7:6",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_require_pure$_t_bool_$returns$__$",
@@ -64455,7 +64455,7 @@
                                             "name": "abi",
                                             "nodeType": "Identifier",
                                             "overloadedDeclarations": [],
-                                            "referencedDeclaration": 10306,
+                                            "referencedDeclaration": 10310,
                                             "src": "29947:3:6",
                                             "typeDescriptions": {
                                               "typeIdentifier": "t_magic_abi",
@@ -64502,7 +64502,7 @@
                                       "name": "sha256",
                                       "nodeType": "Identifier",
                                       "overloadedDeclarations": [],
-                                      "referencedDeclaration": 10328,
+                                      "referencedDeclaration": 10332,
                                       "src": "29940:6:6",
                                       "typeDescriptions": {
                                         "typeIdentifier": "t_function_sha256_pure$_t_bytes_memory_ptr_$returns$_t_bytes32_$",
@@ -64537,7 +64537,7 @@
                                     "name": "abi",
                                     "nodeType": "Identifier",
                                     "overloadedDeclarations": [],
-                                    "referencedDeclaration": 10306,
+                                    "referencedDeclaration": 10310,
                                     "src": "29923:3:6",
                                     "typeDescriptions": {
                                       "typeIdentifier": "t_magic_abi",
@@ -64584,7 +64584,7 @@
                               "name": "sha256",
                               "nodeType": "Identifier",
                               "overloadedDeclarations": [],
-                              "referencedDeclaration": 10328,
+                              "referencedDeclaration": 10332,
                               "src": "29916:6:6",
                               "typeDescriptions": {
                                 "typeIdentifier": "t_function_sha256_pure$_t_bytes_memory_ptr_$returns$_t_bytes32_$",
@@ -65912,7 +65912,7 @@
                             "name": "abi",
                             "nodeType": "Identifier",
                             "overloadedDeclarations": [],
-                            "referencedDeclaration": 10306,
+                            "referencedDeclaration": 10310,
                             "src": "32955:3:6",
                             "typeDescriptions": {
                               "typeIdentifier": "t_magic_abi",
@@ -65959,7 +65959,7 @@
                       "name": "keccak256",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [],
-                      "referencedDeclaration": 10313,
+                      "referencedDeclaration": 10317,
                       "src": "32945:9:6",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_keccak256_pure$_t_bytes_memory_ptr_$returns$_t_bytes32_$",
@@ -68368,7 +68368,7 @@
     }
   },
   "schemaVersion": "3.0.20",
-  "updatedAt": "2020-02-24T23:36:55.952Z",
+  "updatedAt": "2020-02-25T22:00:23.072Z",
   "devdoc": {
     "methods": {
       "getBridgeTransactionId(bytes)": {

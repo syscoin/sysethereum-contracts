@@ -370,7 +370,7 @@
         "id": 7929,
         "nodeType": "ImportDirective",
         "scope": 7964,
-        "sourceUnit": 9477,
+        "sourceUnit": 9481,
         "src": "26:63:13",
         "symbolAliases": [],
         "unitAlias": ""
@@ -381,7 +381,7 @@
         "id": 7930,
         "nodeType": "ImportDirective",
         "scope": 7964,
-        "sourceUnit": 9535,
+        "sourceUnit": 9539,
         "src": "90:71:13",
         "symbolAliases": [],
         "unitAlias": ""
@@ -395,10 +395,10 @@
               "id": 7931,
               "name": "ERC20",
               "nodeType": "UserDefinedTypeName",
-              "referencedDeclaration": 9476,
+              "referencedDeclaration": 9480,
               "src": "188:5:13",
               "typeDescriptions": {
-                "typeIdentifier": "t_contract$_ERC20_$9476",
+                "typeIdentifier": "t_contract$_ERC20_$9480",
                 "typeString": "contract ERC20"
               }
             },
@@ -413,10 +413,10 @@
               "id": 7933,
               "name": "ERC20Detailed",
               "nodeType": "UserDefinedTypeName",
-              "referencedDeclaration": 9534,
+              "referencedDeclaration": 9538,
               "src": "195:13:13",
               "typeDescriptions": {
-                "typeIdentifier": "t_contract$_ERC20Detailed_$9534",
+                "typeIdentifier": "t_contract$_ERC20Detailed_$9538",
                 "typeString": "contract ERC20Detailed"
               }
             },
@@ -426,10 +426,10 @@
           }
         ],
         "contractDependencies": [
-          8884,
-          9476,
-          9534,
-          9603
+          8888,
+          9480,
+          9538,
+          9607
         ],
         "contractKind": "contract",
         "documentation": null,
@@ -437,10 +437,10 @@
         "id": 7963,
         "linearizedBaseContracts": [
           7963,
-          9534,
-          9476,
-          9603,
-          8884
+          9538,
+          9480,
+          9607,
+          8888
         ],
         "name": "SyscoinERC20",
         "nodeType": "ContractDefinition",
@@ -506,10 +506,10 @@
                   "name": "ERC20Detailed",
                   "nodeType": "Identifier",
                   "overloadedDeclarations": [],
-                  "referencedDeclaration": 9534,
+                  "referencedDeclaration": 9538,
                   "src": "315:13:13",
                   "typeDescriptions": {
-                    "typeIdentifier": "t_type$_t_contract$_ERC20Detailed_$9534_$",
+                    "typeIdentifier": "t_type$_t_contract$_ERC20Detailed_$9538_$",
                     "typeString": "type(contract ERC20Detailed)"
                   }
                 },
@@ -668,7 +668,7 @@
                       "name": "_mint",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [],
-                      "referencedDeclaration": 9360,
+                      "referencedDeclaration": 9364,
                       "src": "430:5:13",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_internal_nonpayable$_t_address_$_t_uint256_$returns$__$",
@@ -808,7 +808,7 @@
         "id": 7929,
         "nodeType": "ImportDirective",
         "scope": 7964,
-        "sourceUnit": 9477,
+        "sourceUnit": 9481,
         "src": "26:63:13",
         "symbolAliases": [],
         "unitAlias": ""
@@ -819,7 +819,7 @@
         "id": 7930,
         "nodeType": "ImportDirective",
         "scope": 7964,
-        "sourceUnit": 9535,
+        "sourceUnit": 9539,
         "src": "90:71:13",
         "symbolAliases": [],
         "unitAlias": ""
@@ -833,10 +833,10 @@
               "id": 7931,
               "name": "ERC20",
               "nodeType": "UserDefinedTypeName",
-              "referencedDeclaration": 9476,
+              "referencedDeclaration": 9480,
               "src": "188:5:13",
               "typeDescriptions": {
-                "typeIdentifier": "t_contract$_ERC20_$9476",
+                "typeIdentifier": "t_contract$_ERC20_$9480",
                 "typeString": "contract ERC20"
               }
             },
@@ -851,10 +851,10 @@
               "id": 7933,
               "name": "ERC20Detailed",
               "nodeType": "UserDefinedTypeName",
-              "referencedDeclaration": 9534,
+              "referencedDeclaration": 9538,
               "src": "195:13:13",
               "typeDescriptions": {
-                "typeIdentifier": "t_contract$_ERC20Detailed_$9534",
+                "typeIdentifier": "t_contract$_ERC20Detailed_$9538",
                 "typeString": "contract ERC20Detailed"
               }
             },
@@ -864,10 +864,10 @@
           }
         ],
         "contractDependencies": [
-          8884,
-          9476,
-          9534,
-          9603
+          8888,
+          9480,
+          9538,
+          9607
         ],
         "contractKind": "contract",
         "documentation": null,
@@ -875,10 +875,10 @@
         "id": 7963,
         "linearizedBaseContracts": [
           7963,
-          9534,
-          9476,
-          9603,
-          8884
+          9538,
+          9480,
+          9607,
+          8888
         ],
         "name": "SyscoinERC20",
         "nodeType": "ContractDefinition",
@@ -944,10 +944,10 @@
                   "name": "ERC20Detailed",
                   "nodeType": "Identifier",
                   "overloadedDeclarations": [],
-                  "referencedDeclaration": 9534,
+                  "referencedDeclaration": 9538,
                   "src": "315:13:13",
                   "typeDescriptions": {
-                    "typeIdentifier": "t_type$_t_contract$_ERC20Detailed_$9534_$",
+                    "typeIdentifier": "t_type$_t_contract$_ERC20Detailed_$9538_$",
                     "typeString": "type(contract ERC20Detailed)"
                   }
                 },
@@ -1106,7 +1106,7 @@
                       "name": "_mint",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [],
-                      "referencedDeclaration": 9360,
+                      "referencedDeclaration": 9364,
                       "src": "430:5:13",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_internal_nonpayable$_t_address_$_t_uint256_$returns$__$",
@@ -1285,7 +1285,7 @@
     }
   },
   "schemaVersion": "3.0.20",
-  "updatedAt": "2020-02-24T23:36:55.993Z",
+  "updatedAt": "2020-02-25T22:00:23.120Z",
   "devdoc": {
     "methods": {
       "allowance(address,address)": {

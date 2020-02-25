@@ -246,7 +246,7 @@
         "id": 7736,
         "nodeType": "ImportDirective",
         "scope": 7745,
-        "sourceUnit": 9604,
+        "sourceUnit": 9608,
         "src": "26:64:11",
         "symbolAliases": [],
         "unitAlias": ""
@@ -260,10 +260,10 @@
               "id": 7737,
               "name": "IERC20",
               "nodeType": "UserDefinedTypeName",
-              "referencedDeclaration": 9603,
+              "referencedDeclaration": 9607,
               "src": "118:6:11",
               "typeDescriptions": {
-                "typeIdentifier": "t_contract$_IERC20_$9603",
+                "typeIdentifier": "t_contract$_IERC20_$9607",
                 "typeString": "contract IERC20"
               }
             },
@@ -273,7 +273,7 @@
           }
         ],
         "contractDependencies": [
-          9603
+          9607
         ],
         "contractKind": "contract",
         "documentation": null,
@@ -281,7 +281,7 @@
         "id": 7744,
         "linearizedBaseContracts": [
           7744,
-          9603
+          9607
         ],
         "name": "SyscoinERC20I",
         "nodeType": "ContractDefinition",
@@ -374,7 +374,7 @@
         "id": 7736,
         "nodeType": "ImportDirective",
         "scope": 7745,
-        "sourceUnit": 9604,
+        "sourceUnit": 9608,
         "src": "26:64:11",
         "symbolAliases": [],
         "unitAlias": ""
@@ -388,10 +388,10 @@
               "id": 7737,
               "name": "IERC20",
               "nodeType": "UserDefinedTypeName",
-              "referencedDeclaration": 9603,
+              "referencedDeclaration": 9607,
               "src": "118:6:11",
               "typeDescriptions": {
-                "typeIdentifier": "t_contract$_IERC20_$9603",
+                "typeIdentifier": "t_contract$_IERC20_$9607",
                 "typeString": "contract IERC20"
               }
             },
@@ -401,7 +401,7 @@
           }
         ],
         "contractDependencies": [
-          9603
+          9607
         ],
         "contractKind": "contract",
         "documentation": null,
@@ -409,7 +409,7 @@
         "id": 7744,
         "linearizedBaseContracts": [
           7744,
-          9603
+          9607
         ],
         "name": "SyscoinERC20I",
         "nodeType": "ContractDefinition",
@@ -481,7 +481,7 @@
   },
   "networks": {},
   "schemaVersion": "3.0.20",
-  "updatedAt": "2020-02-24T23:36:55.988Z",
+  "updatedAt": "2020-02-25T22:00:23.112Z",
   "devdoc": {
     "methods": {
       "allowance(address,address)": {
