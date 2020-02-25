@@ -111,14 +111,14 @@
     "absolutePath": "/Users/jsidhu/Documents/GitHub/sysethereum-contracts1/contracts/interfaces/SyscoinClaimManagerI.sol",
     "exportedSymbols": {
       "SyscoinClaimManagerI": [
-        7728
+        7733
       ]
     },
-    "id": 7729,
+    "id": 7734,
     "nodeType": "SourceUnit",
     "nodes": [
       {
-        "id": 7692,
+        "id": 7697,
         "literals": [
           "solidity",
           "^",
@@ -131,10 +131,10 @@
       {
         "absolutePath": "/Users/jsidhu/Documents/GitHub/sysethereum-contracts1/contracts/interfaces/SyscoinSuperblocksI.sol",
         "file": "./SyscoinSuperblocksI.sol",
-        "id": 7693,
+        "id": 7698,
         "nodeType": "ImportDirective",
-        "scope": 7729,
-        "sourceUnit": 7922,
+        "scope": 7734,
+        "sourceUnit": 7927,
         "src": "26:35:10",
         "symbolAliases": [],
         "unitAlias": ""
@@ -145,9 +145,9 @@
         "contractKind": "interface",
         "documentation": null,
         "fullyImplemented": false,
-        "id": 7728,
+        "id": 7733,
         "linearizedBaseContracts": [
-          7728
+          7733
         ],
         "name": "SyscoinClaimManagerI",
         "nodeType": "ContractDefinition",
@@ -155,22 +155,22 @@
           {
             "body": null,
             "documentation": null,
-            "id": 7704,
+            "id": 7709,
             "implemented": false,
             "kind": "function",
             "modifiers": [],
             "name": "bondDeposit",
             "nodeType": "FunctionDefinition",
             "parameters": {
-              "id": 7700,
+              "id": 7705,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 7695,
+                  "id": 7700,
                   "name": "superblockHash",
                   "nodeType": "VariableDeclaration",
-                  "scope": 7704,
+                  "scope": 7709,
                   "src": "121:22:10",
                   "stateVariable": false,
                   "storageLocation": "default",
@@ -179,7 +179,7 @@
                     "typeString": "bytes32"
                   },
                   "typeName": {
-                    "id": 7694,
+                    "id": 7699,
                     "name": "bytes32",
                     "nodeType": "ElementaryTypeName",
                     "src": "121:7:10",
@@ -193,10 +193,10 @@
                 },
                 {
                   "constant": false,
-                  "id": 7697,
+                  "id": 7702,
                   "name": "account",
                   "nodeType": "VariableDeclaration",
-                  "scope": 7704,
+                  "scope": 7709,
                   "src": "145:15:10",
                   "stateVariable": false,
                   "storageLocation": "default",
@@ -205,7 +205,7 @@
                     "typeString": "address"
                   },
                   "typeName": {
-                    "id": 7696,
+                    "id": 7701,
                     "name": "address",
                     "nodeType": "ElementaryTypeName",
                     "src": "145:7:10",
@@ -220,10 +220,10 @@
                 },
                 {
                   "constant": false,
-                  "id": 7699,
+                  "id": 7704,
                   "name": "amount",
                   "nodeType": "VariableDeclaration",
-                  "scope": 7704,
+                  "scope": 7709,
                   "src": "162:11:10",
                   "stateVariable": false,
                   "storageLocation": "default",
@@ -232,7 +232,7 @@
                     "typeString": "uint256"
                   },
                   "typeName": {
-                    "id": 7698,
+                    "id": 7703,
                     "name": "uint",
                     "nodeType": "ElementaryTypeName",
                     "src": "162:4:10",
@@ -248,15 +248,15 @@
               "src": "120:54:10"
             },
             "returnParameters": {
-              "id": 7703,
+              "id": 7708,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 7702,
+                  "id": 7707,
                   "name": "",
                   "nodeType": "VariableDeclaration",
-                  "scope": 7704,
+                  "scope": 7709,
                   "src": "193:4:10",
                   "stateVariable": false,
                   "storageLocation": "default",
@@ -265,7 +265,7 @@
                     "typeString": "uint256"
                   },
                   "typeName": {
-                    "id": 7701,
+                    "id": 7706,
                     "name": "uint",
                     "nodeType": "ElementaryTypeName",
                     "src": "193:4:10",
@@ -280,7 +280,7 @@
               ],
               "src": "192:6:10"
             },
-            "scope": 7728,
+            "scope": 7733,
             "src": "100:99:10",
             "stateMutability": "nonpayable",
             "superFunction": null,
@@ -289,22 +289,22 @@
           {
             "body": null,
             "documentation": null,
-            "id": 7711,
+            "id": 7716,
             "implemented": false,
             "kind": "function",
             "modifiers": [],
             "name": "getDeposit",
             "nodeType": "FunctionDefinition",
             "parameters": {
-              "id": 7707,
+              "id": 7712,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 7706,
+                  "id": 7711,
                   "name": "account",
                   "nodeType": "VariableDeclaration",
-                  "scope": 7711,
+                  "scope": 7716,
                   "src": "224:15:10",
                   "stateVariable": false,
                   "storageLocation": "default",
@@ -313,7 +313,7 @@
                     "typeString": "address"
                   },
                   "typeName": {
-                    "id": 7705,
+                    "id": 7710,
                     "name": "address",
                     "nodeType": "ElementaryTypeName",
                     "src": "224:7:10",
@@ -330,15 +330,15 @@
               "src": "223:17:10"
             },
             "returnParameters": {
-              "id": 7710,
+              "id": 7715,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 7709,
+                  "id": 7714,
                   "name": "",
                   "nodeType": "VariableDeclaration",
-                  "scope": 7711,
+                  "scope": 7716,
                   "src": "264:4:10",
                   "stateVariable": false,
                   "storageLocation": "default",
@@ -347,7 +347,7 @@
                     "typeString": "uint256"
                   },
                   "typeName": {
-                    "id": 7708,
+                    "id": 7713,
                     "name": "uint",
                     "nodeType": "ElementaryTypeName",
                     "src": "264:4:10",
@@ -362,7 +362,7 @@
               ],
               "src": "263:6:10"
             },
-            "scope": 7728,
+            "scope": 7733,
             "src": "204:66:10",
             "stateMutability": "view",
             "superFunction": null,
@@ -371,22 +371,22 @@
           {
             "body": null,
             "documentation": null,
-            "id": 7718,
+            "id": 7723,
             "implemented": false,
             "kind": "function",
             "modifiers": [],
             "name": "checkClaimFinished",
             "nodeType": "FunctionDefinition",
             "parameters": {
-              "id": 7714,
+              "id": 7719,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 7713,
+                  "id": 7718,
                   "name": "superblockHash",
                   "nodeType": "VariableDeclaration",
-                  "scope": 7718,
+                  "scope": 7723,
                   "src": "303:22:10",
                   "stateVariable": false,
                   "storageLocation": "default",
@@ -395,7 +395,7 @@
                     "typeString": "bytes32"
                   },
                   "typeName": {
-                    "id": 7712,
+                    "id": 7717,
                     "name": "bytes32",
                     "nodeType": "ElementaryTypeName",
                     "src": "303:7:10",
@@ -411,15 +411,15 @@
               "src": "302:24:10"
             },
             "returnParameters": {
-              "id": 7717,
+              "id": 7722,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 7716,
+                  "id": 7721,
                   "name": "",
                   "nodeType": "VariableDeclaration",
-                  "scope": 7718,
+                  "scope": 7723,
                   "src": "345:4:10",
                   "stateVariable": false,
                   "storageLocation": "default",
@@ -428,7 +428,7 @@
                     "typeString": "bool"
                   },
                   "typeName": {
-                    "id": 7715,
+                    "id": 7720,
                     "name": "bool",
                     "nodeType": "ElementaryTypeName",
                     "src": "345:4:10",
@@ -443,7 +443,7 @@
               ],
               "src": "344:6:10"
             },
-            "scope": 7728,
+            "scope": 7733,
             "src": "275:76:10",
             "stateMutability": "nonpayable",
             "superFunction": null,
@@ -452,22 +452,22 @@
           {
             "body": null,
             "documentation": null,
-            "id": 7727,
+            "id": 7732,
             "implemented": false,
             "kind": "function",
             "modifiers": [],
             "name": "sessionDecided",
             "nodeType": "FunctionDefinition",
             "parameters": {
-              "id": 7725,
+              "id": 7730,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 7720,
+                  "id": 7725,
                   "name": "superblockHash",
                   "nodeType": "VariableDeclaration",
-                  "scope": 7727,
+                  "scope": 7732,
                   "src": "380:22:10",
                   "stateVariable": false,
                   "storageLocation": "default",
@@ -476,7 +476,7 @@
                     "typeString": "bytes32"
                   },
                   "typeName": {
-                    "id": 7719,
+                    "id": 7724,
                     "name": "bytes32",
                     "nodeType": "ElementaryTypeName",
                     "src": "380:7:10",
@@ -490,10 +490,10 @@
                 },
                 {
                   "constant": false,
-                  "id": 7722,
+                  "id": 7727,
                   "name": "winner",
                   "nodeType": "VariableDeclaration",
-                  "scope": 7727,
+                  "scope": 7732,
                   "src": "404:14:10",
                   "stateVariable": false,
                   "storageLocation": "default",
@@ -502,7 +502,7 @@
                     "typeString": "address"
                   },
                   "typeName": {
-                    "id": 7721,
+                    "id": 7726,
                     "name": "address",
                     "nodeType": "ElementaryTypeName",
                     "src": "404:7:10",
@@ -517,10 +517,10 @@
                 },
                 {
                   "constant": false,
-                  "id": 7724,
+                  "id": 7729,
                   "name": "loser",
                   "nodeType": "VariableDeclaration",
-                  "scope": 7727,
+                  "scope": 7732,
                   "src": "420:13:10",
                   "stateVariable": false,
                   "storageLocation": "default",
@@ -529,7 +529,7 @@
                     "typeString": "address"
                   },
                   "typeName": {
-                    "id": 7723,
+                    "id": 7728,
                     "name": "address",
                     "nodeType": "ElementaryTypeName",
                     "src": "420:7:10",
@@ -546,19 +546,19 @@
               "src": "379:55:10"
             },
             "returnParameters": {
-              "id": 7726,
+              "id": 7731,
               "nodeType": "ParameterList",
               "parameters": [],
               "src": "443:0:10"
             },
-            "scope": 7728,
+            "scope": 7733,
             "src": "356:88:10",
             "stateMutability": "nonpayable",
             "superFunction": null,
             "visibility": "external"
           }
         ],
-        "scope": 7729,
+        "scope": 7734,
         "src": "63:383:10"
       }
     ],
@@ -568,14 +568,14 @@
     "absolutePath": "/Users/jsidhu/Documents/GitHub/sysethereum-contracts1/contracts/interfaces/SyscoinClaimManagerI.sol",
     "exportedSymbols": {
       "SyscoinClaimManagerI": [
-        7728
+        7733
       ]
     },
-    "id": 7729,
+    "id": 7734,
     "nodeType": "SourceUnit",
     "nodes": [
       {
-        "id": 7692,
+        "id": 7697,
         "literals": [
           "solidity",
           "^",
@@ -588,10 +588,10 @@
       {
         "absolutePath": "/Users/jsidhu/Documents/GitHub/sysethereum-contracts1/contracts/interfaces/SyscoinSuperblocksI.sol",
         "file": "./SyscoinSuperblocksI.sol",
-        "id": 7693,
+        "id": 7698,
         "nodeType": "ImportDirective",
-        "scope": 7729,
-        "sourceUnit": 7922,
+        "scope": 7734,
+        "sourceUnit": 7927,
         "src": "26:35:10",
         "symbolAliases": [],
         "unitAlias": ""
@@ -602,9 +602,9 @@
         "contractKind": "interface",
         "documentation": null,
         "fullyImplemented": false,
-        "id": 7728,
+        "id": 7733,
         "linearizedBaseContracts": [
-          7728
+          7733
         ],
         "name": "SyscoinClaimManagerI",
         "nodeType": "ContractDefinition",
@@ -612,22 +612,22 @@
           {
             "body": null,
             "documentation": null,
-            "id": 7704,
+            "id": 7709,
             "implemented": false,
             "kind": "function",
             "modifiers": [],
             "name": "bondDeposit",
             "nodeType": "FunctionDefinition",
             "parameters": {
-              "id": 7700,
+              "id": 7705,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 7695,
+                  "id": 7700,
                   "name": "superblockHash",
                   "nodeType": "VariableDeclaration",
-                  "scope": 7704,
+                  "scope": 7709,
                   "src": "121:22:10",
                   "stateVariable": false,
                   "storageLocation": "default",
@@ -636,7 +636,7 @@
                     "typeString": "bytes32"
                   },
                   "typeName": {
-                    "id": 7694,
+                    "id": 7699,
                     "name": "bytes32",
                     "nodeType": "ElementaryTypeName",
                     "src": "121:7:10",
@@ -650,10 +650,10 @@
                 },
                 {
                   "constant": false,
-                  "id": 7697,
+                  "id": 7702,
                   "name": "account",
                   "nodeType": "VariableDeclaration",
-                  "scope": 7704,
+                  "scope": 7709,
                   "src": "145:15:10",
                   "stateVariable": false,
                   "storageLocation": "default",
@@ -662,7 +662,7 @@
                     "typeString": "address"
                   },
                   "typeName": {
-                    "id": 7696,
+                    "id": 7701,
                     "name": "address",
                     "nodeType": "ElementaryTypeName",
                     "src": "145:7:10",
@@ -677,10 +677,10 @@
                 },
                 {
                   "constant": false,
-                  "id": 7699,
+                  "id": 7704,
                   "name": "amount",
                   "nodeType": "VariableDeclaration",
-                  "scope": 7704,
+                  "scope": 7709,
                   "src": "162:11:10",
                   "stateVariable": false,
                   "storageLocation": "default",
@@ -689,7 +689,7 @@
                     "typeString": "uint256"
                   },
                   "typeName": {
-                    "id": 7698,
+                    "id": 7703,
                     "name": "uint",
                     "nodeType": "ElementaryTypeName",
                     "src": "162:4:10",
@@ -705,15 +705,15 @@
               "src": "120:54:10"
             },
             "returnParameters": {
-              "id": 7703,
+              "id": 7708,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 7702,
+                  "id": 7707,
                   "name": "",
                   "nodeType": "VariableDeclaration",
-                  "scope": 7704,
+                  "scope": 7709,
                   "src": "193:4:10",
                   "stateVariable": false,
                   "storageLocation": "default",
@@ -722,7 +722,7 @@
                     "typeString": "uint256"
                   },
                   "typeName": {
-                    "id": 7701,
+                    "id": 7706,
                     "name": "uint",
                     "nodeType": "ElementaryTypeName",
                     "src": "193:4:10",
@@ -737,7 +737,7 @@
               ],
               "src": "192:6:10"
             },
-            "scope": 7728,
+            "scope": 7733,
             "src": "100:99:10",
             "stateMutability": "nonpayable",
             "superFunction": null,
@@ -746,22 +746,22 @@
           {
             "body": null,
             "documentation": null,
-            "id": 7711,
+            "id": 7716,
             "implemented": false,
             "kind": "function",
             "modifiers": [],
             "name": "getDeposit",
             "nodeType": "FunctionDefinition",
             "parameters": {
-              "id": 7707,
+              "id": 7712,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 7706,
+                  "id": 7711,
                   "name": "account",
                   "nodeType": "VariableDeclaration",
-                  "scope": 7711,
+                  "scope": 7716,
                   "src": "224:15:10",
                   "stateVariable": false,
                   "storageLocation": "default",
@@ -770,7 +770,7 @@
                     "typeString": "address"
                   },
                   "typeName": {
-                    "id": 7705,
+                    "id": 7710,
                     "name": "address",
                     "nodeType": "ElementaryTypeName",
                     "src": "224:7:10",
@@ -787,15 +787,15 @@
               "src": "223:17:10"
             },
             "returnParameters": {
-              "id": 7710,
+              "id": 7715,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 7709,
+                  "id": 7714,
                   "name": "",
                   "nodeType": "VariableDeclaration",
-                  "scope": 7711,
+                  "scope": 7716,
                   "src": "264:4:10",
                   "stateVariable": false,
                   "storageLocation": "default",
@@ -804,7 +804,7 @@
                     "typeString": "uint256"
                   },
                   "typeName": {
-                    "id": 7708,
+                    "id": 7713,
                     "name": "uint",
                     "nodeType": "ElementaryTypeName",
                     "src": "264:4:10",
@@ -819,7 +819,7 @@
               ],
               "src": "263:6:10"
             },
-            "scope": 7728,
+            "scope": 7733,
             "src": "204:66:10",
             "stateMutability": "view",
             "superFunction": null,
@@ -828,22 +828,22 @@
           {
             "body": null,
             "documentation": null,
-            "id": 7718,
+            "id": 7723,
             "implemented": false,
             "kind": "function",
             "modifiers": [],
             "name": "checkClaimFinished",
             "nodeType": "FunctionDefinition",
             "parameters": {
-              "id": 7714,
+              "id": 7719,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 7713,
+                  "id": 7718,
                   "name": "superblockHash",
                   "nodeType": "VariableDeclaration",
-                  "scope": 7718,
+                  "scope": 7723,
                   "src": "303:22:10",
                   "stateVariable": false,
                   "storageLocation": "default",
@@ -852,7 +852,7 @@
                     "typeString": "bytes32"
                   },
                   "typeName": {
-                    "id": 7712,
+                    "id": 7717,
                     "name": "bytes32",
                     "nodeType": "ElementaryTypeName",
                     "src": "303:7:10",
@@ -868,15 +868,15 @@
               "src": "302:24:10"
             },
             "returnParameters": {
-              "id": 7717,
+              "id": 7722,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 7716,
+                  "id": 7721,
                   "name": "",
                   "nodeType": "VariableDeclaration",
-                  "scope": 7718,
+                  "scope": 7723,
                   "src": "345:4:10",
                   "stateVariable": false,
                   "storageLocation": "default",
@@ -885,7 +885,7 @@
                     "typeString": "bool"
                   },
                   "typeName": {
-                    "id": 7715,
+                    "id": 7720,
                     "name": "bool",
                     "nodeType": "ElementaryTypeName",
                     "src": "345:4:10",
@@ -900,7 +900,7 @@
               ],
               "src": "344:6:10"
             },
-            "scope": 7728,
+            "scope": 7733,
             "src": "275:76:10",
             "stateMutability": "nonpayable",
             "superFunction": null,
@@ -909,22 +909,22 @@
           {
             "body": null,
             "documentation": null,
-            "id": 7727,
+            "id": 7732,
             "implemented": false,
             "kind": "function",
             "modifiers": [],
             "name": "sessionDecided",
             "nodeType": "FunctionDefinition",
             "parameters": {
-              "id": 7725,
+              "id": 7730,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 7720,
+                  "id": 7725,
                   "name": "superblockHash",
                   "nodeType": "VariableDeclaration",
-                  "scope": 7727,
+                  "scope": 7732,
                   "src": "380:22:10",
                   "stateVariable": false,
                   "storageLocation": "default",
@@ -933,7 +933,7 @@
                     "typeString": "bytes32"
                   },
                   "typeName": {
-                    "id": 7719,
+                    "id": 7724,
                     "name": "bytes32",
                     "nodeType": "ElementaryTypeName",
                     "src": "380:7:10",
@@ -947,10 +947,10 @@
                 },
                 {
                   "constant": false,
-                  "id": 7722,
+                  "id": 7727,
                   "name": "winner",
                   "nodeType": "VariableDeclaration",
-                  "scope": 7727,
+                  "scope": 7732,
                   "src": "404:14:10",
                   "stateVariable": false,
                   "storageLocation": "default",
@@ -959,7 +959,7 @@
                     "typeString": "address"
                   },
                   "typeName": {
-                    "id": 7721,
+                    "id": 7726,
                     "name": "address",
                     "nodeType": "ElementaryTypeName",
                     "src": "404:7:10",
@@ -974,10 +974,10 @@
                 },
                 {
                   "constant": false,
-                  "id": 7724,
+                  "id": 7729,
                   "name": "loser",
                   "nodeType": "VariableDeclaration",
-                  "scope": 7727,
+                  "scope": 7732,
                   "src": "420:13:10",
                   "stateVariable": false,
                   "storageLocation": "default",
@@ -986,7 +986,7 @@
                     "typeString": "address"
                   },
                   "typeName": {
-                    "id": 7723,
+                    "id": 7728,
                     "name": "address",
                     "nodeType": "ElementaryTypeName",
                     "src": "420:7:10",
@@ -1003,19 +1003,19 @@
               "src": "379:55:10"
             },
             "returnParameters": {
-              "id": 7726,
+              "id": 7731,
               "nodeType": "ParameterList",
               "parameters": [],
               "src": "443:0:10"
             },
-            "scope": 7728,
+            "scope": 7733,
             "src": "356:88:10",
             "stateMutability": "nonpayable",
             "superFunction": null,
             "visibility": "external"
           }
         ],
-        "scope": 7729,
+        "scope": 7734,
         "src": "63:383:10"
       }
     ],
@@ -1027,7 +1027,7 @@
   },
   "networks": {},
   "schemaVersion": "3.0.20",
-  "updatedAt": "2019-12-20T19:41:49.410Z",
+  "updatedAt": "2020-02-25T22:42:05.517Z",
   "devdoc": {
     "methods": {}
   },

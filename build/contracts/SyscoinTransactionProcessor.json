@@ -154,14 +154,14 @@
     "absolutePath": "/Users/jsidhu/Documents/GitHub/sysethereum-contracts1/contracts/SyscoinTransactionProcessor.sol",
     "exportedSymbols": {
       "SyscoinTransactionProcessor": [
-        7678
+        7683
       ]
     },
-    "id": 7679,
+    "id": 7684,
     "nodeType": "SourceUnit",
     "nodes": [
       {
-        "id": 7626,
+        "id": 7631,
         "literals": [
           "solidity",
           "^",
@@ -177,9 +177,9 @@
         "contractKind": "interface",
         "documentation": null,
         "fullyImplemented": false,
-        "id": 7678,
+        "id": 7683,
         "linearizedBaseContracts": [
-          7678
+          7683
         ],
         "name": "SyscoinTransactionProcessor",
         "nodeType": "ContractDefinition",
@@ -187,22 +187,22 @@
           {
             "body": null,
             "documentation": null,
-            "id": 7643,
+            "id": 7648,
             "implemented": false,
             "kind": "function",
             "modifiers": [],
             "name": "processTransaction",
             "nodeType": "FunctionDefinition",
             "parameters": {
-              "id": 7641,
+              "id": 7646,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 7628,
+                  "id": 7633,
                   "name": "txHash",
                   "nodeType": "VariableDeclaration",
-                  "scope": 7643,
+                  "scope": 7648,
                   "src": "161:11:8",
                   "stateVariable": false,
                   "storageLocation": "default",
@@ -211,7 +211,7 @@
                     "typeString": "uint256"
                   },
                   "typeName": {
-                    "id": 7627,
+                    "id": 7632,
                     "name": "uint",
                     "nodeType": "ElementaryTypeName",
                     "src": "161:4:8",
@@ -225,10 +225,10 @@
                 },
                 {
                   "constant": false,
-                  "id": 7630,
+                  "id": 7635,
                   "name": "value",
                   "nodeType": "VariableDeclaration",
-                  "scope": 7643,
+                  "scope": 7648,
                   "src": "174:10:8",
                   "stateVariable": false,
                   "storageLocation": "default",
@@ -237,7 +237,7 @@
                     "typeString": "uint256"
                   },
                   "typeName": {
-                    "id": 7629,
+                    "id": 7634,
                     "name": "uint",
                     "nodeType": "ElementaryTypeName",
                     "src": "174:4:8",
@@ -251,10 +251,10 @@
                 },
                 {
                   "constant": false,
-                  "id": 7632,
+                  "id": 7637,
                   "name": "destinationAddress",
                   "nodeType": "VariableDeclaration",
-                  "scope": 7643,
+                  "scope": 7648,
                   "src": "186:26:8",
                   "stateVariable": false,
                   "storageLocation": "default",
@@ -263,7 +263,7 @@
                     "typeString": "address"
                   },
                   "typeName": {
-                    "id": 7631,
+                    "id": 7636,
                     "name": "address",
                     "nodeType": "ElementaryTypeName",
                     "src": "186:7:8",
@@ -278,10 +278,10 @@
                 },
                 {
                   "constant": false,
-                  "id": 7634,
+                  "id": 7639,
                   "name": "superblockSubmitterAddress",
                   "nodeType": "VariableDeclaration",
-                  "scope": 7643,
+                  "scope": 7648,
                   "src": "214:34:8",
                   "stateVariable": false,
                   "storageLocation": "default",
@@ -290,7 +290,7 @@
                     "typeString": "address"
                   },
                   "typeName": {
-                    "id": 7633,
+                    "id": 7638,
                     "name": "address",
                     "nodeType": "ElementaryTypeName",
                     "src": "214:7:8",
@@ -305,10 +305,10 @@
                 },
                 {
                   "constant": false,
-                  "id": 7636,
+                  "id": 7641,
                   "name": "erc20ContractAddress",
                   "nodeType": "VariableDeclaration",
-                  "scope": 7643,
+                  "scope": 7648,
                   "src": "250:28:8",
                   "stateVariable": false,
                   "storageLocation": "default",
@@ -317,7 +317,7 @@
                     "typeString": "address"
                   },
                   "typeName": {
-                    "id": 7635,
+                    "id": 7640,
                     "name": "address",
                     "nodeType": "ElementaryTypeName",
                     "src": "250:7:8",
@@ -332,10 +332,10 @@
                 },
                 {
                   "constant": false,
-                  "id": 7638,
+                  "id": 7643,
                   "name": "assetGUID",
                   "nodeType": "VariableDeclaration",
-                  "scope": 7643,
+                  "scope": 7648,
                   "src": "280:16:8",
                   "stateVariable": false,
                   "storageLocation": "default",
@@ -344,7 +344,7 @@
                     "typeString": "uint32"
                   },
                   "typeName": {
-                    "id": 7637,
+                    "id": 7642,
                     "name": "uint32",
                     "nodeType": "ElementaryTypeName",
                     "src": "280:6:8",
@@ -358,10 +358,10 @@
                 },
                 {
                   "constant": false,
-                  "id": 7640,
+                  "id": 7645,
                   "name": "precision",
                   "nodeType": "VariableDeclaration",
-                  "scope": 7643,
+                  "scope": 7648,
                   "src": "298:15:8",
                   "stateVariable": false,
                   "storageLocation": "default",
@@ -370,7 +370,7 @@
                     "typeString": "uint8"
                   },
                   "typeName": {
-                    "id": 7639,
+                    "id": 7644,
                     "name": "uint8",
                     "nodeType": "ElementaryTypeName",
                     "src": "298:5:8",
@@ -386,12 +386,12 @@
               "src": "160:154:8"
             },
             "returnParameters": {
-              "id": 7642,
+              "id": 7647,
               "nodeType": "ParameterList",
               "parameters": [],
               "src": "323:0:8"
             },
-            "scope": 7678,
+            "scope": 7683,
             "src": "133:191:8",
             "stateMutability": "nonpayable",
             "superFunction": null,
@@ -400,22 +400,22 @@
           {
             "body": null,
             "documentation": null,
-            "id": 7658,
+            "id": 7663,
             "implemented": false,
             "kind": "function",
             "modifiers": [],
             "name": "freezeBurnERC20",
             "nodeType": "FunctionDefinition",
             "parameters": {
-              "id": 7654,
+              "id": 7659,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 7645,
+                  "id": 7650,
                   "name": "value",
                   "nodeType": "VariableDeclaration",
-                  "scope": 7658,
+                  "scope": 7663,
                   "src": "354:10:8",
                   "stateVariable": false,
                   "storageLocation": "default",
@@ -424,7 +424,7 @@
                     "typeString": "uint256"
                   },
                   "typeName": {
-                    "id": 7644,
+                    "id": 7649,
                     "name": "uint",
                     "nodeType": "ElementaryTypeName",
                     "src": "354:4:8",
@@ -438,10 +438,10 @@
                 },
                 {
                   "constant": false,
-                  "id": 7647,
+                  "id": 7652,
                   "name": "assetGUID",
                   "nodeType": "VariableDeclaration",
-                  "scope": 7658,
+                  "scope": 7663,
                   "src": "366:16:8",
                   "stateVariable": false,
                   "storageLocation": "default",
@@ -450,7 +450,7 @@
                     "typeString": "uint32"
                   },
                   "typeName": {
-                    "id": 7646,
+                    "id": 7651,
                     "name": "uint32",
                     "nodeType": "ElementaryTypeName",
                     "src": "366:6:8",
@@ -464,10 +464,10 @@
                 },
                 {
                   "constant": false,
-                  "id": 7649,
+                  "id": 7654,
                   "name": "erc20ContractAddress",
                   "nodeType": "VariableDeclaration",
-                  "scope": 7658,
+                  "scope": 7663,
                   "src": "384:28:8",
                   "stateVariable": false,
                   "storageLocation": "default",
@@ -476,7 +476,7 @@
                     "typeString": "address"
                   },
                   "typeName": {
-                    "id": 7648,
+                    "id": 7653,
                     "name": "address",
                     "nodeType": "ElementaryTypeName",
                     "src": "384:7:8",
@@ -491,10 +491,10 @@
                 },
                 {
                   "constant": false,
-                  "id": 7651,
+                  "id": 7656,
                   "name": "precision",
                   "nodeType": "VariableDeclaration",
-                  "scope": 7658,
+                  "scope": 7663,
                   "src": "414:15:8",
                   "stateVariable": false,
                   "storageLocation": "default",
@@ -503,7 +503,7 @@
                     "typeString": "uint8"
                   },
                   "typeName": {
-                    "id": 7650,
+                    "id": 7655,
                     "name": "uint8",
                     "nodeType": "ElementaryTypeName",
                     "src": "414:5:8",
@@ -517,10 +517,10 @@
                 },
                 {
                   "constant": false,
-                  "id": 7653,
+                  "id": 7658,
                   "name": "syscoinAddress",
                   "nodeType": "VariableDeclaration",
-                  "scope": 7658,
+                  "scope": 7663,
                   "src": "431:29:8",
                   "stateVariable": false,
                   "storageLocation": "calldata",
@@ -529,7 +529,7 @@
                     "typeString": "bytes"
                   },
                   "typeName": {
-                    "id": 7652,
+                    "id": 7657,
                     "name": "bytes",
                     "nodeType": "ElementaryTypeName",
                     "src": "431:5:8",
@@ -545,15 +545,15 @@
               "src": "353:108:8"
             },
             "returnParameters": {
-              "id": 7657,
+              "id": 7662,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 7656,
+                  "id": 7661,
                   "name": "",
                   "nodeType": "VariableDeclaration",
-                  "scope": 7658,
+                  "scope": 7663,
                   "src": "480:4:8",
                   "stateVariable": false,
                   "storageLocation": "default",
@@ -562,7 +562,7 @@
                     "typeString": "bool"
                   },
                   "typeName": {
-                    "id": 7655,
+                    "id": 7660,
                     "name": "bool",
                     "nodeType": "ElementaryTypeName",
                     "src": "480:4:8",
@@ -577,7 +577,7 @@
               ],
               "src": "479:6:8"
             },
-            "scope": 7678,
+            "scope": 7683,
             "src": "329:157:8",
             "stateMutability": "nonpayable",
             "superFunction": null,
@@ -586,22 +586,22 @@
           {
             "body": null,
             "documentation": null,
-            "id": 7663,
+            "id": 7668,
             "implemented": false,
             "kind": "function",
             "modifiers": [],
             "name": "cancelTransferRequest",
             "nodeType": "FunctionDefinition",
             "parameters": {
-              "id": 7661,
+              "id": 7666,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 7660,
+                  "id": 7665,
                   "name": "bridgeTransferId",
                   "nodeType": "VariableDeclaration",
-                  "scope": 7663,
+                  "scope": 7668,
                   "src": "522:23:8",
                   "stateVariable": false,
                   "storageLocation": "default",
@@ -610,7 +610,7 @@
                     "typeString": "uint32"
                   },
                   "typeName": {
-                    "id": 7659,
+                    "id": 7664,
                     "name": "uint32",
                     "nodeType": "ElementaryTypeName",
                     "src": "522:6:8",
@@ -626,12 +626,12 @@
               "src": "521:25:8"
             },
             "returnParameters": {
-              "id": 7662,
+              "id": 7667,
               "nodeType": "ParameterList",
               "parameters": [],
               "src": "555:0:8"
             },
-            "scope": 7678,
+            "scope": 7683,
             "src": "491:65:8",
             "stateMutability": "nonpayable",
             "superFunction": null,
@@ -640,22 +640,22 @@
           {
             "body": null,
             "documentation": null,
-            "id": 7670,
+            "id": 7675,
             "implemented": false,
             "kind": "function",
             "modifiers": [],
             "name": "cancelTransferSuccess",
             "nodeType": "FunctionDefinition",
             "parameters": {
-              "id": 7668,
+              "id": 7673,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 7665,
+                  "id": 7670,
                   "name": "bridgeTransferId",
                   "nodeType": "VariableDeclaration",
-                  "scope": 7670,
+                  "scope": 7675,
                   "src": "592:23:8",
                   "stateVariable": false,
                   "storageLocation": "default",
@@ -664,7 +664,7 @@
                     "typeString": "uint32"
                   },
                   "typeName": {
-                    "id": 7664,
+                    "id": 7669,
                     "name": "uint32",
                     "nodeType": "ElementaryTypeName",
                     "src": "592:6:8",
@@ -678,10 +678,10 @@
                 },
                 {
                   "constant": false,
-                  "id": 7667,
+                  "id": 7672,
                   "name": "challengerAddress",
                   "nodeType": "VariableDeclaration",
-                  "scope": 7670,
+                  "scope": 7675,
                   "src": "617:25:8",
                   "stateVariable": false,
                   "storageLocation": "default",
@@ -690,7 +690,7 @@
                     "typeString": "address"
                   },
                   "typeName": {
-                    "id": 7666,
+                    "id": 7671,
                     "name": "address",
                     "nodeType": "ElementaryTypeName",
                     "src": "617:7:8",
@@ -707,12 +707,12 @@
               "src": "591:52:8"
             },
             "returnParameters": {
-              "id": 7669,
+              "id": 7674,
               "nodeType": "ParameterList",
               "parameters": [],
               "src": "652:0:8"
             },
-            "scope": 7678,
+            "scope": 7683,
             "src": "561:92:8",
             "stateMutability": "nonpayable",
             "superFunction": null,
@@ -721,22 +721,22 @@
           {
             "body": null,
             "documentation": null,
-            "id": 7677,
+            "id": 7682,
             "implemented": false,
             "kind": "function",
             "modifiers": [],
             "name": "processCancelTransferFail",
             "nodeType": "FunctionDefinition",
             "parameters": {
-              "id": 7675,
+              "id": 7680,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 7672,
+                  "id": 7677,
                   "name": "bridgeTransferId",
                   "nodeType": "VariableDeclaration",
-                  "scope": 7677,
+                  "scope": 7682,
                   "src": "693:23:8",
                   "stateVariable": false,
                   "storageLocation": "default",
@@ -745,7 +745,7 @@
                     "typeString": "uint32"
                   },
                   "typeName": {
-                    "id": 7671,
+                    "id": 7676,
                     "name": "uint32",
                     "nodeType": "ElementaryTypeName",
                     "src": "693:6:8",
@@ -759,10 +759,10 @@
                 },
                 {
                   "constant": false,
-                  "id": 7674,
+                  "id": 7679,
                   "name": "challengerAddress",
                   "nodeType": "VariableDeclaration",
-                  "scope": 7677,
+                  "scope": 7682,
                   "src": "718:33:8",
                   "stateVariable": false,
                   "storageLocation": "default",
@@ -771,7 +771,7 @@
                     "typeString": "address payable"
                   },
                   "typeName": {
-                    "id": 7673,
+                    "id": 7678,
                     "name": "address",
                     "nodeType": "ElementaryTypeName",
                     "src": "718:15:8",
@@ -788,19 +788,19 @@
               "src": "692:60:8"
             },
             "returnParameters": {
-              "id": 7676,
+              "id": 7681,
               "nodeType": "ParameterList",
               "parameters": [],
               "src": "761:0:8"
             },
-            "scope": 7678,
+            "scope": 7683,
             "src": "658:104:8",
             "stateMutability": "nonpayable",
             "superFunction": null,
             "visibility": "external"
           }
         ],
-        "scope": 7679,
+        "scope": 7684,
         "src": "89:675:8"
       }
     ],
@@ -810,14 +810,14 @@
     "absolutePath": "/Users/jsidhu/Documents/GitHub/sysethereum-contracts1/contracts/SyscoinTransactionProcessor.sol",
     "exportedSymbols": {
       "SyscoinTransactionProcessor": [
-        7678
+        7683
       ]
     },
-    "id": 7679,
+    "id": 7684,
     "nodeType": "SourceUnit",
     "nodes": [
       {
-        "id": 7626,
+        "id": 7631,
         "literals": [
           "solidity",
           "^",
@@ -833,9 +833,9 @@
         "contractKind": "interface",
         "documentation": null,
         "fullyImplemented": false,
-        "id": 7678,
+        "id": 7683,
         "linearizedBaseContracts": [
-          7678
+          7683
         ],
         "name": "SyscoinTransactionProcessor",
         "nodeType": "ContractDefinition",
@@ -843,22 +843,22 @@
           {
             "body": null,
             "documentation": null,
-            "id": 7643,
+            "id": 7648,
             "implemented": false,
             "kind": "function",
             "modifiers": [],
             "name": "processTransaction",
             "nodeType": "FunctionDefinition",
             "parameters": {
-              "id": 7641,
+              "id": 7646,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 7628,
+                  "id": 7633,
                   "name": "txHash",
                   "nodeType": "VariableDeclaration",
-                  "scope": 7643,
+                  "scope": 7648,
                   "src": "161:11:8",
                   "stateVariable": false,
                   "storageLocation": "default",
@@ -867,7 +867,7 @@
                     "typeString": "uint256"
                   },
                   "typeName": {
-                    "id": 7627,
+                    "id": 7632,
                     "name": "uint",
                     "nodeType": "ElementaryTypeName",
                     "src": "161:4:8",
@@ -881,10 +881,10 @@
                 },
                 {
                   "constant": false,
-                  "id": 7630,
+                  "id": 7635,
                   "name": "value",
                   "nodeType": "VariableDeclaration",
-                  "scope": 7643,
+                  "scope": 7648,
                   "src": "174:10:8",
                   "stateVariable": false,
                   "storageLocation": "default",
@@ -893,7 +893,7 @@
                     "typeString": "uint256"
                   },
                   "typeName": {
-                    "id": 7629,
+                    "id": 7634,
                     "name": "uint",
                     "nodeType": "ElementaryTypeName",
                     "src": "174:4:8",
@@ -907,10 +907,10 @@
                 },
                 {
                   "constant": false,
-                  "id": 7632,
+                  "id": 7637,
                   "name": "destinationAddress",
                   "nodeType": "VariableDeclaration",
-                  "scope": 7643,
+                  "scope": 7648,
                   "src": "186:26:8",
                   "stateVariable": false,
                   "storageLocation": "default",
@@ -919,7 +919,7 @@
                     "typeString": "address"
                   },
                   "typeName": {
-                    "id": 7631,
+                    "id": 7636,
                     "name": "address",
                     "nodeType": "ElementaryTypeName",
                     "src": "186:7:8",
@@ -934,10 +934,10 @@
                 },
                 {
                   "constant": false,
-                  "id": 7634,
+                  "id": 7639,
                   "name": "superblockSubmitterAddress",
                   "nodeType": "VariableDeclaration",
-                  "scope": 7643,
+                  "scope": 7648,
                   "src": "214:34:8",
                   "stateVariable": false,
                   "storageLocation": "default",
@@ -946,7 +946,7 @@
                     "typeString": "address"
                   },
                   "typeName": {
-                    "id": 7633,
+                    "id": 7638,
                     "name": "address",
                     "nodeType": "ElementaryTypeName",
                     "src": "214:7:8",
@@ -961,10 +961,10 @@
                 },
                 {
                   "constant": false,
-                  "id": 7636,
+                  "id": 7641,
                   "name": "erc20ContractAddress",
                   "nodeType": "VariableDeclaration",
-                  "scope": 7643,
+                  "scope": 7648,
                   "src": "250:28:8",
                   "stateVariable": false,
                   "storageLocation": "default",
@@ -973,7 +973,7 @@
                     "typeString": "address"
                   },
                   "typeName": {
-                    "id": 7635,
+                    "id": 7640,
                     "name": "address",
                     "nodeType": "ElementaryTypeName",
                     "src": "250:7:8",
@@ -988,10 +988,10 @@
                 },
                 {
                   "constant": false,
-                  "id": 7638,
+                  "id": 7643,
                   "name": "assetGUID",
                   "nodeType": "VariableDeclaration",
-                  "scope": 7643,
+                  "scope": 7648,
                   "src": "280:16:8",
                   "stateVariable": false,
                   "storageLocation": "default",
@@ -1000,7 +1000,7 @@
                     "typeString": "uint32"
                   },
                   "typeName": {
-                    "id": 7637,
+                    "id": 7642,
                     "name": "uint32",
                     "nodeType": "ElementaryTypeName",
                     "src": "280:6:8",
@@ -1014,10 +1014,10 @@
                 },
                 {
                   "constant": false,
-                  "id": 7640,
+                  "id": 7645,
                   "name": "precision",
                   "nodeType": "VariableDeclaration",
-                  "scope": 7643,
+                  "scope": 7648,
                   "src": "298:15:8",
                   "stateVariable": false,
                   "storageLocation": "default",
@@ -1026,7 +1026,7 @@
                     "typeString": "uint8"
                   },
                   "typeName": {
-                    "id": 7639,
+                    "id": 7644,
                     "name": "uint8",
                     "nodeType": "ElementaryTypeName",
                     "src": "298:5:8",
@@ -1042,12 +1042,12 @@
               "src": "160:154:8"
             },
             "returnParameters": {
-              "id": 7642,
+              "id": 7647,
               "nodeType": "ParameterList",
               "parameters": [],
               "src": "323:0:8"
             },
-            "scope": 7678,
+            "scope": 7683,
             "src": "133:191:8",
             "stateMutability": "nonpayable",
             "superFunction": null,
@@ -1056,22 +1056,22 @@
           {
             "body": null,
             "documentation": null,
-            "id": 7658,
+            "id": 7663,
             "implemented": false,
             "kind": "function",
             "modifiers": [],
             "name": "freezeBurnERC20",
             "nodeType": "FunctionDefinition",
             "parameters": {
-              "id": 7654,
+              "id": 7659,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 7645,
+                  "id": 7650,
                   "name": "value",
                   "nodeType": "VariableDeclaration",
-                  "scope": 7658,
+                  "scope": 7663,
                   "src": "354:10:8",
                   "stateVariable": false,
                   "storageLocation": "default",
@@ -1080,7 +1080,7 @@
                     "typeString": "uint256"
                   },
                   "typeName": {
-                    "id": 7644,
+                    "id": 7649,
                     "name": "uint",
                     "nodeType": "ElementaryTypeName",
                     "src": "354:4:8",
@@ -1094,10 +1094,10 @@
                 },
                 {
                   "constant": false,
-                  "id": 7647,
+                  "id": 7652,
                   "name": "assetGUID",
                   "nodeType": "VariableDeclaration",
-                  "scope": 7658,
+                  "scope": 7663,
                   "src": "366:16:8",
                   "stateVariable": false,
                   "storageLocation": "default",
@@ -1106,7 +1106,7 @@
                     "typeString": "uint32"
                   },
                   "typeName": {
-                    "id": 7646,
+                    "id": 7651,
                     "name": "uint32",
                     "nodeType": "ElementaryTypeName",
                     "src": "366:6:8",
@@ -1120,10 +1120,10 @@
                 },
                 {
                   "constant": false,
-                  "id": 7649,
+                  "id": 7654,
                   "name": "erc20ContractAddress",
                   "nodeType": "VariableDeclaration",
-                  "scope": 7658,
+                  "scope": 7663,
                   "src": "384:28:8",
                   "stateVariable": false,
                   "storageLocation": "default",
@@ -1132,7 +1132,7 @@
                     "typeString": "address"
                   },
                   "typeName": {
-                    "id": 7648,
+                    "id": 7653,
                     "name": "address",
                     "nodeType": "ElementaryTypeName",
                     "src": "384:7:8",
@@ -1147,10 +1147,10 @@
                 },
                 {
                   "constant": false,
-                  "id": 7651,
+                  "id": 7656,
                   "name": "precision",
                   "nodeType": "VariableDeclaration",
-                  "scope": 7658,
+                  "scope": 7663,
                   "src": "414:15:8",
                   "stateVariable": false,
                   "storageLocation": "default",
@@ -1159,7 +1159,7 @@
                     "typeString": "uint8"
                   },
                   "typeName": {
-                    "id": 7650,
+                    "id": 7655,
                     "name": "uint8",
                     "nodeType": "ElementaryTypeName",
                     "src": "414:5:8",
@@ -1173,10 +1173,10 @@
                 },
                 {
                   "constant": false,
-                  "id": 7653,
+                  "id": 7658,
                   "name": "syscoinAddress",
                   "nodeType": "VariableDeclaration",
-                  "scope": 7658,
+                  "scope": 7663,
                   "src": "431:29:8",
                   "stateVariable": false,
                   "storageLocation": "calldata",
@@ -1185,7 +1185,7 @@
                     "typeString": "bytes"
                   },
                   "typeName": {
-                    "id": 7652,
+                    "id": 7657,
                     "name": "bytes",
                     "nodeType": "ElementaryTypeName",
                     "src": "431:5:8",
@@ -1201,15 +1201,15 @@
               "src": "353:108:8"
             },
             "returnParameters": {
-              "id": 7657,
+              "id": 7662,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 7656,
+                  "id": 7661,
                   "name": "",
                   "nodeType": "VariableDeclaration",
-                  "scope": 7658,
+                  "scope": 7663,
                   "src": "480:4:8",
                   "stateVariable": false,
                   "storageLocation": "default",
@@ -1218,7 +1218,7 @@
                     "typeString": "bool"
                   },
                   "typeName": {
-                    "id": 7655,
+                    "id": 7660,
                     "name": "bool",
                     "nodeType": "ElementaryTypeName",
                     "src": "480:4:8",
@@ -1233,7 +1233,7 @@
               ],
               "src": "479:6:8"
             },
-            "scope": 7678,
+            "scope": 7683,
             "src": "329:157:8",
             "stateMutability": "nonpayable",
             "superFunction": null,
@@ -1242,22 +1242,22 @@
           {
             "body": null,
             "documentation": null,
-            "id": 7663,
+            "id": 7668,
             "implemented": false,
             "kind": "function",
             "modifiers": [],
             "name": "cancelTransferRequest",
             "nodeType": "FunctionDefinition",
             "parameters": {
-              "id": 7661,
+              "id": 7666,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 7660,
+                  "id": 7665,
                   "name": "bridgeTransferId",
                   "nodeType": "VariableDeclaration",
-                  "scope": 7663,
+                  "scope": 7668,
                   "src": "522:23:8",
                   "stateVariable": false,
                   "storageLocation": "default",
@@ -1266,7 +1266,7 @@
                     "typeString": "uint32"
                   },
                   "typeName": {
-                    "id": 7659,
+                    "id": 7664,
                     "name": "uint32",
                     "nodeType": "ElementaryTypeName",
                     "src": "522:6:8",
@@ -1282,12 +1282,12 @@
               "src": "521:25:8"
             },
             "returnParameters": {
-              "id": 7662,
+              "id": 7667,
               "nodeType": "ParameterList",
               "parameters": [],
               "src": "555:0:8"
             },
-            "scope": 7678,
+            "scope": 7683,
             "src": "491:65:8",
             "stateMutability": "nonpayable",
             "superFunction": null,
@@ -1296,22 +1296,22 @@
           {
             "body": null,
             "documentation": null,
-            "id": 7670,
+            "id": 7675,
             "implemented": false,
             "kind": "function",
             "modifiers": [],
             "name": "cancelTransferSuccess",
             "nodeType": "FunctionDefinition",
             "parameters": {
-              "id": 7668,
+              "id": 7673,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 7665,
+                  "id": 7670,
                   "name": "bridgeTransferId",
                   "nodeType": "VariableDeclaration",
-                  "scope": 7670,
+                  "scope": 7675,
                   "src": "592:23:8",
                   "stateVariable": false,
                   "storageLocation": "default",
@@ -1320,7 +1320,7 @@
                     "typeString": "uint32"
                   },
                   "typeName": {
-                    "id": 7664,
+                    "id": 7669,
                     "name": "uint32",
                     "nodeType": "ElementaryTypeName",
                     "src": "592:6:8",
@@ -1334,10 +1334,10 @@
                 },
                 {
                   "constant": false,
-                  "id": 7667,
+                  "id": 7672,
                   "name": "challengerAddress",
                   "nodeType": "VariableDeclaration",
-                  "scope": 7670,
+                  "scope": 7675,
                   "src": "617:25:8",
                   "stateVariable": false,
                   "storageLocation": "default",
@@ -1346,7 +1346,7 @@
                     "typeString": "address"
                   },
                   "typeName": {
-                    "id": 7666,
+                    "id": 7671,
                     "name": "address",
                     "nodeType": "ElementaryTypeName",
                     "src": "617:7:8",
@@ -1363,12 +1363,12 @@
               "src": "591:52:8"
             },
             "returnParameters": {
-              "id": 7669,
+              "id": 7674,
               "nodeType": "ParameterList",
               "parameters": [],
               "src": "652:0:8"
             },
-            "scope": 7678,
+            "scope": 7683,
             "src": "561:92:8",
             "stateMutability": "nonpayable",
             "superFunction": null,
@@ -1377,22 +1377,22 @@
           {
             "body": null,
             "documentation": null,
-            "id": 7677,
+            "id": 7682,
             "implemented": false,
             "kind": "function",
             "modifiers": [],
             "name": "processCancelTransferFail",
             "nodeType": "FunctionDefinition",
             "parameters": {
-              "id": 7675,
+              "id": 7680,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 7672,
+                  "id": 7677,
                   "name": "bridgeTransferId",
                   "nodeType": "VariableDeclaration",
-                  "scope": 7677,
+                  "scope": 7682,
                   "src": "693:23:8",
                   "stateVariable": false,
                   "storageLocation": "default",
@@ -1401,7 +1401,7 @@
                     "typeString": "uint32"
                   },
                   "typeName": {
-                    "id": 7671,
+                    "id": 7676,
                     "name": "uint32",
                     "nodeType": "ElementaryTypeName",
                     "src": "693:6:8",
@@ -1415,10 +1415,10 @@
                 },
                 {
                   "constant": false,
-                  "id": 7674,
+                  "id": 7679,
                   "name": "challengerAddress",
                   "nodeType": "VariableDeclaration",
-                  "scope": 7677,
+                  "scope": 7682,
                   "src": "718:33:8",
                   "stateVariable": false,
                   "storageLocation": "default",
@@ -1427,7 +1427,7 @@
                     "typeString": "address payable"
                   },
                   "typeName": {
-                    "id": 7673,
+                    "id": 7678,
                     "name": "address",
                     "nodeType": "ElementaryTypeName",
                     "src": "718:15:8",
@@ -1444,19 +1444,19 @@
               "src": "692:60:8"
             },
             "returnParameters": {
-              "id": 7676,
+              "id": 7681,
               "nodeType": "ParameterList",
               "parameters": [],
               "src": "761:0:8"
             },
-            "scope": 7678,
+            "scope": 7683,
             "src": "658:104:8",
             "stateMutability": "nonpayable",
             "superFunction": null,
             "visibility": "external"
           }
         ],
-        "scope": 7679,
+        "scope": 7684,
         "src": "89:675:8"
       }
     ],
@@ -1468,7 +1468,7 @@
   },
   "networks": {},
   "schemaVersion": "3.0.20",
-  "updatedAt": "2019-12-20T19:41:49.409Z",
+  "updatedAt": "2020-02-25T22:42:05.513Z",
   "devdoc": {
     "methods": {}
   },
