@@ -91,7 +91,7 @@ module.exports = function(deployer, networkName, accounts) {
     const { network, txParams } = await ConfigManager.initNetworkConfiguration({ network: networkName, from: accounts[0] })
 
     if (networkName === 'development') {
-      SyscoinERC20Manager = await deploy(networkName, { network, txParams }, accounts, SYSCOIN_MAINNET, SUPERBLOCK_OPTIONS_LOCAL);
+      SyscoinERC20Manager = await deploy(networkName, { network, txParams }, accounts, SYSCOIN_REGTEST, SUPERBLOCK_OPTIONS_LOCAL);
     } else {
       if (networkName === 'ropsten') {
         SyscoinERC20Manager = await deploy(networkName, { network, txParams }, accounts, SYSCOIN_MAINNET, SUPERBLOCK_OPTIONS_PRODUCTION);

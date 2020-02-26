@@ -171,7 +171,7 @@ contract('validateDifficultyAdjustmentPOW', (accounts) => {
             claimManager,
             battleManager
         } = await utils.initSuperblockChain({
-            network: utils.SYSCOIN_MAINNET,
+            network: utils.SYSCOIN_REGTEST,
             params: {
                 ...utils.SUPERBLOCK_OPTIONS_LOCAL
             },
@@ -284,7 +284,7 @@ contract('validateDifficultyAdjustmentPOW', (accounts) => {
         
     }
 
-    describe('Propose and challenge sixth', async () => {
+    /*describe('Propose and challenge sixth', async () => {
         before(initSuperblockChain);
         it('Deploy superblocks', async () => {
             await deploySuperblocks();
@@ -331,5 +331,5 @@ contract('validateDifficultyAdjustmentPOW', (accounts) => {
             const result = await claimManager.methods.checkClaimFinished(superblock6Id).send({ from: challenger, gas: 300000 });
             assert.ok(result.events.SuperblockClaimPending, 'Superblock challenged');
         });
-    });   
+    });  */ 
 });

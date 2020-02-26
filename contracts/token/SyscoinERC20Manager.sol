@@ -223,12 +223,13 @@ contract SyscoinERC20Manager is Initializable {
     {
         require(syscoinAddress.length > 0, "syscoinAddress cannot be zero");
         require(assetGUID > 0, "Asset GUID must not be 0");
-        /*if (net != Network.REGTEST) {
+        if (net != Network.REGTEST) {
             require(assetRegistry[assetGUID] == erc20ContractAddress, "Asset registry contract does not match what was provided to this call");
-        }*/
+        }
 
         SyscoinERC20I erc20 = SyscoinERC20I(erc20ContractAddress);
         require(precision == erc20.decimals(), "Decimals were not provided with the correct value");
+        erc20.transferFrom(msg.sender, address(this), value);
         assetBalances[assetGUID] = assetBalances[assetGUID].add(value);
 
         // store some state needed for potential bridge transfer cancellation
@@ -242,7 +243,6 @@ contract SyscoinERC20Manager is Initializable {
             timestamp: block.timestamp,
             tokenFreezerAddress: msg.sender
         });
-        erc20.transferFrom(msg.sender, address(this), value);
         emit TokenFreeze(msg.sender, value, bridgeTransferIdCount);
         return true;
     }
