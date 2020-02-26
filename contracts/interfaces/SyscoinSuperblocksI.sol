@@ -59,4 +59,14 @@ interface SyscoinSuperblocksI {
     function getSuperblockAt(uint _height) external view returns (bytes32);
     function getSuperblockTimestamp(bytes32 _superblockHash) external view returns (uint);
     function getSuperblockMedianTimestamp(bytes32 _superblockHash) external view returns (uint);
+
+    function relayAssetTx(
+        bytes calldata _txBytes,
+        uint _txIndex,
+        uint[] calldata _txSiblings,
+        bytes calldata _syscoinBlockHeader,
+        uint _syscoinBlockIndex,
+        uint[] calldata _syscoinBlockSiblings,
+        bytes32 _superblockHash
+    ) external returns (uint);
 }
