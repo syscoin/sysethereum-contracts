@@ -37,6 +37,8 @@ contract SyscoinSuperblocks is Initializable, SyscoinSuperblocksI, SyscoinErrorC
     // SyscoinClaimManager
     address public trustedClaimManager;
 
+    uint32 constant SYSCOIN_TX_VERSION_ASSET_ACTIVATE = 0x7402;
+    uint32 constant SYSCOIN_TX_VERSION_ASSET_UPDATE = 0x7403;
     modifier onlyClaimManager() {
         require(msg.sender == trustedClaimManager);
         _;
@@ -194,6 +196,30 @@ contract SyscoinSuperblocks is Initializable, SyscoinSuperblocksI, SyscoinErrorC
         );
     }
 
+
+     /** @dev Parse syscoin asset transaction to recover asset guid and contract, for purposes of updating asset registry in erc20manager
+     * @param txBytes syscoin raw transaction
+     * @return errorCode, assetGuid, erc20Address
+     */
+    function parseAssetTx(bytes memory txBytes)
+        public
+        view
+        returns (uint errorCode, uint32 assetGuid, address erc20Address)
+    {
+        uint32 version;
+        uint pos = 0;
+        version = bytesToUint32Flipped(txBytes, pos);
+        if(version != SYSCOIN_TX_VERSION_ASSET_ACTIVATE && version != SYSCOIN_TX_VERSION_ASSET_UPDATE){
+            return (ERR_PARSE_TX_SYS, 0, address(0));
+        }
+        pos = getOpReturnPos(txBytes, 4);
+        pos += 3; // skip pushdata2 + 2 bytes for opreturn varint
+
+        (assetGuid, erc20Address) = scanAssetTx(txBytes, pos);
+        require(erc20Address != address(0),
+        "parseAssetTx(): erc20Address cannot be empty");
+    }
+
     function bytesToUint16(bytes memory input, uint pos) public pure returns (uint16 result) {
         result = uint16(uint8(input[pos+1])) + uint16(uint8(input[pos]))*(2**8);
     }
@@ -239,6 +265,61 @@ contract SyscoinSuperblocks is Initializable, SyscoinSuperblocksI, SyscoinErrorC
             ethTxReceipt = sliceArray(txBytes, pos, pos+bytesToRead);      
         }
         return ethTxReceipt;
+    }
+
+     /**
+     * Parse txBytes and returns assetguid + contract address
+     * @param txBytes syscoin raw transaction
+     * @param pos position at where to start parsing
+     * @return asset guid (uint32) and erc20 address linked to the asset guid to update registry in erc20manager
+     */
+    function scanAssetTx(bytes memory txBytes, uint pos)
+        public
+        view
+        returns (uint32, address)
+    {
+        uint32 assetGUID;
+        address erc20Address;
+        uint bytesToRead;
+        // skip vchPubData
+        (bytesToRead, pos) = parseVarInt(txBytes, pos);
+        pos += bytesToRead;
+        // skip txHash
+        pos += 32;
+        // get nAsset
+        assetGUID = bytesToUint32(txBytes, pos);
+        pos += 4;
+        // skip strSymbol
+        (bytesToRead, pos) = parseVarInt(txBytes, pos);
+        pos += bytesToRead;
+        // skip witnessAddress.nVersion
+        pos += 1;
+        // skip witnessAddress.vchWitnessProgram
+        (bytesToRead, pos) = parseVarInt(txBytes, pos);
+        pos += bytesToRead;
+        // skip witnessAddressTransfer.nVersion
+        pos += 1;
+        // skip witnessAddressTransfer.vchWitnessProgram
+        (bytesToRead, pos) = parseVarInt(txBytes, pos);
+        pos += bytesToRead;
+        // skip nBalance
+        pos += 8;
+        // skip nTotalSupply
+        pos += 8;
+        // skip nMaxSupply
+        pos += 8;
+        // skip nHeight
+        pos += 4;
+        // skip nUpdateFlags
+        pos += 1;
+        // skip nPrecision
+        pos += 1;
+        // get vchContract
+        (bytesToRead, pos) = parseVarInt(txBytes, pos);
+        require(bytesToRead == 0x14,
+        "scanAssetTx(): Invalid number of bytes read for contract field");
+        erc20Address = readEthereumAddress(txBytes, pos);
+        return (assetGUID, erc20Address);
     }
 
     // @dev converts bytes of any length to bytes32.
@@ -573,6 +654,46 @@ contract SyscoinSuperblocks is Initializable, SyscoinSuperblocksI, SyscoinErrorC
             }
             syscoinERC20Manager.processTransaction(txHash, value, destinationAddress, superblocks[_superblockHash].submitter, erc20ContractAddress, assetGUID, precision);
             return value;
+        }
+        emit RelayTransaction(bytes32(0), ERR_RELAY_VERIFY);
+        return(ERR_RELAY_VERIFY);
+    }
+
+    // @dev - relays asset transaction(new or update) `_txBytes` to ERC20Manager's processAsset() method.
+    // Also logs the value of processAsset.
+    // Note: callers cannot be 100% certain when an ERR_RELAY_VERIFY occurs because
+    // it may also have been returned by processAsset(). Callers should be
+    // aware of the contract that they are relaying transactions to and
+    // understand what that contract's processTransaction method returns.
+    //
+    // @param _txBytes - transaction bytes
+    // @param _txIndex - transaction's index within the block
+    // @param _txSiblings - transaction's Merkle siblings
+    // @param _syscoinBlockHeader - block header containing transaction
+    // @param _syscoinBlockIndex - block's index within superblock
+    // @param _syscoinBlockSiblings - block's merkle siblings
+    // @param _superblockHash - superblock containing block header
+    function relayAssetTx(
+        bytes memory _txBytes,
+        uint _txIndex,
+        uint[] memory _txSiblings,
+        bytes memory _syscoinBlockHeader,
+        uint _syscoinBlockIndex,
+        uint[] memory _syscoinBlockSiblings,
+        bytes32 _superblockHash
+    ) public returns (uint) {
+        uint txHash = verifySPVProofs(_syscoinBlockHeader, _syscoinBlockIndex, _syscoinBlockSiblings, _superblockHash, _txBytes, _txIndex, _txSiblings);
+        if (txHash != 0) {
+            uint ret;
+            uint32 assetGUID;
+            address erc20ContractAddress;
+            (ret, assetGUID, erc20ContractAddress) = parseAssetTx(_txBytes);
+            if(ret != 0){
+                emit RelayTransaction(bytes32(txHash), ret);
+                return ret;
+            }
+            syscoinERC20Manager.processAsset(txHash, assetGUID, erc20ContractAddress);
+            return 0;
         }
         emit RelayTransaction(bytes32(0), ERR_RELAY_VERIFY);
         return(ERR_RELAY_VERIFY);
