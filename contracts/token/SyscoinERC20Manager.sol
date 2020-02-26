@@ -52,6 +52,9 @@ contract SyscoinERC20Manager is Initializable {
     event CancelTransferRequest(address canceller, uint32 bridgetransferid);
     event CancelTransferSucceeded(address canceller, uint32 bridgetransferid);
     event CancelTransferFailed(address canceller, uint32 bridgetransferid);
+
+    mapping(uint32 => address) public assetRegistry;
+    event TokenRegistry(uint32 assetGuid, address erc20ContractAddress);
     function contains(uint value) private view returns (bool) {
         return syscoinTxHashesAlreadyProcessed[value];
     }
@@ -132,9 +135,19 @@ contract SyscoinERC20Manager is Initializable {
         erc20.transfer(destinationAddress, userValue);
         emit TokenUnfreeze(destinationAddress, userValue);
     }
+
+    function processAsset(
+        uint txHash,
+        uint32 assetGUID,
+        address erc20ContractAddress
+    ) public onlyTrustedRelayer {
+        // Add tx to the syscoinTxHashesAlreadyProcessed and Check tx was not already processed
+        require(insert(txHash), "TX already processed");
+        assetRegistry[assetGUID] = erc20ContractAddress;
+        emit TokenRegistry(assetGUID, erc20ContractAddress);
+    }
     
     function cancelTransferRequest(uint32 bridgeTransferId) public payable {
-        revert("disabled");
         // lookup state by bridgeTransferId
         BridgeTransfer storage bridgeTransfer = bridgeTransfers[bridgeTransferId];
         // ensure state is Ok
@@ -210,7 +223,9 @@ contract SyscoinERC20Manager is Initializable {
     {
         require(syscoinAddress.length > 0, "syscoinAddress cannot be zero");
         require(assetGUID > 0, "Asset GUID must not be 0");
-        
+        /*if (net != Network.REGTEST) {
+            require(assetRegistry[assetGUID] == erc20ContractAddress, "Asset registry contract does not match what was provided to this call");
+        }*/
 
         SyscoinERC20I erc20 = SyscoinERC20I(erc20ContractAddress);
         require(precision == erc20.decimals(), "Decimals were not provided with the correct value");
