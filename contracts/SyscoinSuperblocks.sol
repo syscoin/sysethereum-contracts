@@ -213,7 +213,11 @@ contract SyscoinSuperblocks is Initializable, SyscoinSuperblocksI, SyscoinErrorC
             return (ERR_PARSE_TX_SYS, 0, address(0));
         }
         pos = getOpReturnPos(txBytes, 4);
-        pos += 3; // skip pushdata2 + 2 bytes for opreturn varint
+        byte pushDataOp = txBytes[pos+1];
+        pos += 2; // we will have to skip pushdata op as well as atleast 1 byte
+        if(pushDataOp == 0x4d){
+            pos++; // skip pushdata2 + 2 bytes for opreturn varint
+        }
 
         (assetGuid, erc20Address) = scanAssetTx(txBytes, pos);
         require(erc20Address != address(0),
@@ -287,7 +291,7 @@ contract SyscoinSuperblocks is Initializable, SyscoinSuperblocksI, SyscoinErrorC
         // skip txHash
         pos += 32;
         // get nAsset
-        assetGUID = bytesToUint32(txBytes, pos);
+        assetGUID = bytesToUint32Flipped(txBytes, pos);
         pos += 4;
         // skip strSymbol
         (bytesToRead, pos) = parseVarInt(txBytes, pos);
@@ -774,11 +778,11 @@ contract SyscoinSuperblocks is Initializable, SyscoinSuperblocksI, SyscoinErrorC
         // if dummy 0x00 is present this is a witness transaction
         if(n_inputs == 0x00){
             (n_inputs, pos) = parseVarInt(txBytes, pos); // flag
-            require(n_inputs != 0x00);
+            require(n_inputs != 0x00, "#SyscoinSuperblocks skipInputs(): Unexpected dummy/flag");
             // after dummy/flag the real var int comes for txins
             (n_inputs, pos) = parseVarInt(txBytes, pos);
         }
-        require(n_inputs < 100);
+        require(n_inputs < 100, "#SyscoinSuperblocks skipInputs(): Incorrect size of n_inputs");
 
         for (uint i = 0; i < n_inputs; i++) {
             pos += 36;  // skip outpoint
