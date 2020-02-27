@@ -7,5 +7,5 @@ interface SyscoinTransactionProcessor {
     function cancelTransferRequest(uint32 bridgeTransferId) external;
     function cancelTransferSuccess(uint32 bridgeTransferId, address challengerAddress) external;
     function processCancelTransferFail(uint32 bridgeTransferId, address payable challengerAddress) external;
-    function processAsset(uint txHash, uint32 assetGUID, address erc20ContractAddress) external;
+    function processAsset(uint txHash, uint32 assetGUID, uint32 height, address erc20ContractAddress) external;
 }

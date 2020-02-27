@@ -185,7 +185,7 @@ contract SyscoinSuperblocks is Initializable, SyscoinSuperblocksI, SyscoinErrorC
         pos = getOpReturnPos(txBytes, 4);
         pos += 3; // skip pushdata2 + 2 bytes for opreturn varint
 
-        // SHA3 of TokenFreeze(address,uint256,uin32)
+        // SHA3 of TokenFreeze(address,uint256,uint32)
         bytes32 tokenFreezeTopic = 0xaabab1db49e504b5156edf3f99042aeecb9607a08f392589571cd49743aaba8d;
         bridgeTransferId = uint32(
             getBridgeTransactionId(
@@ -696,7 +696,10 @@ contract SyscoinSuperblocks is Initializable, SyscoinSuperblocksI, SyscoinErrorC
                 emit RelayTransaction(bytes32(txHash), ret);
                 return ret;
             }
-            syscoinERC20Manager.processAsset(txHash, assetGUID, erc20ContractAddress);
+            uint32 height = (superblocks[_superblockHash].height-1)*60;
+            height += uint32(_syscoinBlockIndex);
+            // pass in height of block as well by calc superblock sets of 60 blocks
+            syscoinERC20Manager.processAsset(txHash, assetGUID, height, erc20ContractAddress);
             return 0;
         }
         emit RelayTransaction(bytes32(0), ERR_RELAY_VERIFY);

@@ -53,7 +53,11 @@ contract SyscoinERC20Manager is Initializable {
     event CancelTransferSucceeded(address canceller, uint32 bridgetransferid);
     event CancelTransferFailed(address canceller, uint32 bridgetransferid);
 
-    mapping(uint32 => address) public assetRegistry;
+    struct AssetRegistryItem {
+        address erc20ContractAddress;
+        uint32 height;     
+    }
+    mapping(uint32 => AssetRegistryItem) public assetRegistry;
     event TokenRegistry(uint32 assetGuid, address erc20ContractAddress);
     function contains(uint value) private view returns (bool) {
         return syscoinTxHashesAlreadyProcessed[value];
@@ -137,14 +141,17 @@ contract SyscoinERC20Manager is Initializable {
     }
 
     function processAsset(
-        uint txHash,
-        uint32 assetGUID,
-        address erc20ContractAddress
+        uint _txHash,
+        uint32 _assetGUID,
+        uint32 _height,
+        address _erc20ContractAddress
     ) public onlyTrustedRelayer {
+        // ensure height increases over asset updates
+        require(assetRegistry[_assetGUID].height < _height, "Height must increase when updating asset registry");
         // Add tx to the syscoinTxHashesAlreadyProcessed and Check tx was not already processed
-        require(insert(txHash), "TX already processed");
-        assetRegistry[assetGUID] = erc20ContractAddress;
-        emit TokenRegistry(assetGUID, erc20ContractAddress);
+        require(insert(_txHash), "TX already processed");
+        assetRegistry[_assetGUID] = AssetRegistryItem({erc20ContractAddress:_erc20ContractAddress, height:_height});
+        emit TokenRegistry(_assetGUID, _erc20ContractAddress);
     }
     
     function cancelTransferRequest(uint32 bridgeTransferId) public payable {
@@ -187,8 +194,10 @@ contract SyscoinERC20Manager is Initializable {
         erc20.transfer(bridgeTransfer.tokenFreezerAddress, bridgeTransfer.value);
         // pay back deposit
         address payable tokenFreezeAddressPayable = address(uint160(bridgeTransfer.tokenFreezerAddress));
-        tokenFreezeAddressPayable.transfer(deposits[bridgeTransferId]);
+        uint d = deposits[bridgeTransferId];
         delete deposits[bridgeTransferId];
+        // stop using .transfer() because of gas issue after ethereum upgrade
+        tokenFreezeAddressPayable.call.value(d)("");
         emit CancelTransferSucceeded(bridgeTransfer.tokenFreezerAddress, bridgeTransferId);
     }
 
@@ -201,11 +210,13 @@ contract SyscoinERC20Manager is Initializable {
         // ensure state is CancelRequested
         require(bridgeTransfer.status == BridgeTransferStatus.CancelRequested,
             "#SyscoinERC20Manager cancelTransferSuccess(): Status must be CancelRequested to Fail the transfer");
-        // pay deposit to challenger
-        challengerAddress.transfer(deposits[bridgeTransferId]);
-        delete deposits[bridgeTransferId];
         // set state of bridge transfer to CancelChallenged
         bridgeTransfer.status = BridgeTransferStatus.CancelChallenged;
+        // pay deposit to challenger
+        uint d = deposits[bridgeTransferId];
+        delete deposits[bridgeTransferId];
+        // stop using .transfer() because of gas issue after ethereum upgrade
+        challengerAddress.call.value(d)("");
         emit CancelTransferFailed(bridgeTransfer.tokenFreezerAddress, bridgeTransferId);
     }
 
@@ -224,7 +235,7 @@ contract SyscoinERC20Manager is Initializable {
         require(syscoinAddress.length > 0, "syscoinAddress cannot be zero");
         require(assetGUID > 0, "Asset GUID must not be 0");
         if (net != Network.REGTEST) {
-            require(assetRegistry[assetGUID] == erc20ContractAddress, "Asset registry contract does not match what was provided to this call");
+            require(assetRegistry[assetGUID].erc20ContractAddress == erc20ContractAddress, "Asset registry contract does not match what was provided to this call");
         }
 
         SyscoinERC20I erc20 = SyscoinERC20I(erc20ContractAddress);
