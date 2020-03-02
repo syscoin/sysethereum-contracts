@@ -696,7 +696,7 @@ contract SyscoinSuperblocks is Initializable, SyscoinSuperblocksI, SyscoinErrorC
                 emit RelayTransaction(bytes32(txHash), ret);
                 return ret;
             }
-            uint32 height = (superblocks[_superblockHash].height-1)*60;
+            uint32 height = superblocks[_superblockHash].height*60;
             height += uint32(_syscoinBlockIndex);
             // pass in height of block as well by calc superblock sets of 60 blocks
             syscoinERC20Manager.processAsset(txHash, assetGUID, height, erc20ContractAddress);
