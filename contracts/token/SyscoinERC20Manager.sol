@@ -5,7 +5,6 @@ import "../interfaces/SyscoinERC20I.sol";
 import "@openzeppelin/upgrades/contracts/Initializable.sol";
 
 contract SyscoinERC20Manager is Initializable {
-
     using SafeMath for uint;
     using SafeMath for uint8;
 
@@ -59,6 +58,7 @@ contract SyscoinERC20Manager is Initializable {
     }
     mapping(uint32 => AssetRegistryItem) public assetRegistry;
     event TokenRegistry(uint32 assetGuid, address erc20ContractAddress);
+    using SafeERC20 for SyscoinERC20I;
     function contains(uint value) private view returns (bool) {
         return syscoinTxHashesAlreadyProcessed[value];
     }
@@ -132,11 +132,11 @@ contract SyscoinERC20Manager is Initializable {
         uint userValue = value.sub(superblockSubmitterFee);
 
         // pay the fee
-        erc20.transfer(superblockSubmitterAddress, superblockSubmitterFee);
+        erc20.safeTransfer(superblockSubmitterAddress, superblockSubmitterFee);
         emit TokenUnfreezeFee(superblockSubmitterAddress, superblockSubmitterFee);
 
         // get your token
-        erc20.transfer(destinationAddress, userValue);
+        erc20.safeTransfer(destinationAddress, userValue);
         emit TokenUnfreeze(destinationAddress, userValue);
     }
 
@@ -191,7 +191,7 @@ contract SyscoinERC20Manager is Initializable {
         // refund erc20 to the tokenFreezerAddress
         SyscoinERC20I erc20 = SyscoinERC20I(bridgeTransfer.erc20ContractAddress);
         assetBalances[bridgeTransfer.assetGUID] = assetBalances[bridgeTransfer.assetGUID].sub(bridgeTransfer.value);
-        erc20.transfer(bridgeTransfer.tokenFreezerAddress, bridgeTransfer.value);
+        erc20.safeTransfer(bridgeTransfer.tokenFreezerAddress, bridgeTransfer.value);
         // pay back deposit
         address payable tokenFreezeAddressPayable = address(uint160(bridgeTransfer.tokenFreezerAddress));
         uint d = deposits[bridgeTransferId];
@@ -240,7 +240,7 @@ contract SyscoinERC20Manager is Initializable {
 
         SyscoinERC20I erc20 = SyscoinERC20I(erc20ContractAddress);
         require(precision == erc20.decimals(), "Decimals were not provided with the correct value");
-        erc20.transferFrom(msg.sender, address(this), value);
+        erc20.safeTransferFrom(msg.sender, address(this), value);
         assetBalances[assetGUID] = assetBalances[assetGUID].add(value);
 
         // store some state needed for potential bridge transfer cancellation
