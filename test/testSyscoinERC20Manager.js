@@ -82,7 +82,7 @@ contract('SyscoinERC20Manager', function(accounts) {
   it('should fail to freeze & burn token without approval', async () => {
     await expectRevert(
       erc20Manager.methods.freezeBurnERC20(value, assetGUID, erc20Asset.address, 8, syscoinAddress).send({from: owner}),
-      "ERC20: transfer amount exceeds allowance"
+      "SafeERC20: low-level call failed"
     );
   });
 
@@ -97,7 +97,7 @@ contract('SyscoinERC20Manager', function(accounts) {
     await erc20Asset.approve(erc20Manager.options.address, 2*value, {from: owner});
     await expectRevert(
       erc20Manager.methods.freezeBurnERC20(2*value, assetGUID, erc20Asset.address, 8, syscoinAddress).send({from: owner}),
-      "ERC20: transfer amount exceeds balance"
+      "SafeERC20: low-level call failed"
     );
   });
 

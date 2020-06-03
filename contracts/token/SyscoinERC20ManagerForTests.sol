@@ -4,6 +4,7 @@ import "./SyscoinERC20Manager.sol";
 
 // DONOT USE IN PRODUCTION
 contract SyscoinERC20ManagerForTests is SyscoinERC20Manager {
+    using SafeERC20 for SyscoinERC20I;
     // keyhash or scripthash for syscoinWitnessProgram
     function freezeBurnERC20(
         uint value,

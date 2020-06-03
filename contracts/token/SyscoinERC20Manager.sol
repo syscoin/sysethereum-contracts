@@ -5,7 +5,6 @@ import "../interfaces/SyscoinERC20I.sol";
 import "@openzeppelin/upgrades/contracts/Initializable.sol";
 
 contract SyscoinERC20Manager is Initializable {
-
     using SafeMath for uint;
     using SafeMath for uint8;
 
@@ -60,6 +59,7 @@ contract SyscoinERC20Manager is Initializable {
     }
     mapping(uint32 => AssetRegistryItem) public assetRegistry;
     event TokenRegistry(uint32 assetGuid, address erc20ContractAddress);
+    using SafeERC20 for SyscoinERC20I;
     function contains(uint value) private view returns (bool) {
         return syscoinTxHashesAlreadyProcessed[value];
     }
@@ -229,8 +229,10 @@ contract SyscoinERC20Manager is Initializable {
         // lookup asset from registry
         AssetRegistryItem storage assetRegistryItem = assetRegistry[assetGUID];
         // ensure state is Ok
-        require(assetRegistryItem.erc20ContractAddress != address(0),
-            "#SyscoinERC20Manager processTransaction(): Asset not found in registry");
+        if (net != Network.REGTEST) {
+            require(assetRegistryItem.erc20ContractAddress != address(0),
+                "#SyscoinERC20Manager processTransaction(): Asset not found in registry");
+        }
         
         SyscoinERC20I erc20 = SyscoinERC20I(assetRegistryItem.erc20ContractAddress);
         uint8 nLocalPrecision = erc20.decimals();
