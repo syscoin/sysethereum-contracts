@@ -8,26 +8,38 @@ contract SyscoinERC20ManagerForTests is SyscoinERC20Manager {
     function freezeBurnERC20(
         uint value,
         uint32 assetGUID,
-        address erc20ContractAddress,
-        uint8 precision,
         bytes memory
-    )
-        public
-        minimumValue(erc20ContractAddress, value)
-        returns (bool)
+    ) public returns (bool)
     {
         // commented out on purpose
         // require(syscoinAddress.length > 0, "syscoinAddress cannot be zero");
 
         // commented out on purpose
         // require(assetGUID > 0, "Asset GUID must not be 0");
+        // lookup asset from registry
+        AssetRegistryItem storage assetRegistryItem = assetRegistry[assetGUID];
+        // ensure state is Ok
+        require(assetRegistryItem.erc20ContractAddress != address(0),
+            "#SyscoinERC20ManagerForTests processTransaction(): Asset not found in registry");
         
-        assetBalances[assetGUID] = assetBalances[assetGUID].add(value);
+        SyscoinERC20I erc20 = SyscoinERC20I(assetRegistryItem.erc20ContractAddress);
+        uint8 nLocalPrecision = erc20.decimals();
+        requireMinimumValue(nLocalPrecision, value);
+        // see issue #372 on syscoin
+        if(assetRegistryItem.precision > nLocalPrecision){
+            value *= uint(10)**(uint(assetRegistryItem.precision - nLocalPrecision));
+        }else if(assetRegistryItem.precision < nLocalPrecision){
+            value /= uint(10)**(uint(nLocalPrecision - assetRegistryItem.precision ));
+        }
+        // truncate to uint64
+        uint64 amount = uint64(value);
+        uint amountTruncated = uint(amount)    
+        assetBalances[assetGUID] = assetBalances[assetGUID].add(amountTruncated);
 
         SyscoinERC20I erc20 = SyscoinERC20I(erc20ContractAddress);
-        require(precision == erc20.decimals(), "Decimals were not provided with the correct value");
-        erc20.transferFrom(msg.sender, address(this), value);
-        emit TokenFreeze(msg.sender, value, 0);
+        requireMinimumValue(nLocalPrecision, amountTruncated);
+        erc20.safeTransferFrom(msg.sender, address(this), amountTruncated);
+        emit TokenFreeze(msg.sender, amountTruncated, 0);
 
         return true;
     }

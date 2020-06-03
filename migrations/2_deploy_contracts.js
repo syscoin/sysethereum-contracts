@@ -110,7 +110,7 @@ module.exports = function(deployer, networkName, accounts) {
     );
     await erc20Asset.assign(accounts[0], burnVal);
     await erc20Asset.approve(SyscoinERC20Manager.address, burnVal, {from: accounts[0]}); 
-    tx = await SyscoinERC20Manager.methods.freezeBurnERC20(burnVal, SYSX_ASSET_GUID, erc20Asset.address, 8, "0x1").send({from: accounts[0], gas: 300000});
+    tx = await SyscoinERC20Manager.methods.freezeBurnERC20(burnVal, SYSX_ASSET_GUID, "0x1").send({from: accounts[0], gas: 300000});
     let balance = await erc20Asset.balanceOf(accounts[0]);
     if(balance != 0)
       console.log('\nerc20Asset user balance after burn is not the expected one');

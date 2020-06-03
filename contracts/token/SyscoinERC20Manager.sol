@@ -48,14 +48,15 @@ contract SyscoinERC20Manager is Initializable {
 
     event TokenUnfreeze(address receipient, uint value);
     event TokenUnfreezeFee(address receipient, uint value);
-    event TokenFreeze(address freezer, uint value, uint32 bridgetransferid);
+    event TokenFreeze(address freezer, uint value, uint transferIdAndPrecisions);
     event CancelTransferRequest(address canceller, uint32 bridgetransferid);
     event CancelTransferSucceeded(address canceller, uint32 bridgetransferid);
     event CancelTransferFailed(address canceller, uint32 bridgetransferid);
 
     struct AssetRegistryItem {
         address erc20ContractAddress;
-        uint32 height;     
+        uint32 height;
+        uint8 precision;   
     }
     mapping(uint32 => AssetRegistryItem) public assetRegistry;
     event TokenRegistry(uint32 assetGuid, address erc20ContractAddress);
@@ -81,15 +82,6 @@ contract SyscoinERC20Manager is Initializable {
         _;
     }
 
-    modifier minimumValue(address erc20ContractAddress, uint value) {
-        uint256 decimals = SyscoinERC20I(erc20ContractAddress).decimals();
-        require(
-            value >= (uint256(10) ** decimals).div(MIN_LOCK_VALUE),
-            "Value must be bigger or equal MIN_LOCK_VALUE"
-        );
-        _;
-    }
-
     function requireMinimumValue(uint8 decimalsIn, uint value) private pure {
         uint256 decimals = uint256(decimalsIn);
         require(value > 0, "Value must be positive");
@@ -109,17 +101,21 @@ contract SyscoinERC20Manager is Initializable {
         uint value,
         address destinationAddress,
         address superblockSubmitterAddress,
-        address erc20ContractAddress,
-        uint32 assetGUID,
-        uint8 precision
+        uint32 assetGUID
     ) public onlyTrustedRelayer {
-        SyscoinERC20I erc20 = SyscoinERC20I(erc20ContractAddress);
+        // lookup asset from registry
+        AssetRegistryItem storage assetRegistryItem = assetRegistry[assetGUID];
+        // ensure state is Ok
+        require(assetRegistryItem.erc20ContractAddress != address(0),
+            "#SyscoinERC20Manager processTransaction(): Asset not found in registry");
+        
+        SyscoinERC20I erc20 = SyscoinERC20I(assetRegistryItem.erc20ContractAddress);
         uint8 nLocalPrecision = erc20.decimals();
         // see issue #372 on syscoin
-        if(nLocalPrecision > precision){
-            value *= uint(10)**(uint(nLocalPrecision - precision));
-        }else if(nLocalPrecision < precision){
-            value /= uint(10)**(uint(precision - nLocalPrecision));
+        if(nLocalPrecision > assetRegistryItem.precision){
+            value *= uint(10)**(uint(nLocalPrecision - assetRegistryItem.precision));
+        }else if(nLocalPrecision < assetRegistryItem.precision){
+            value /= uint(10)**(uint(assetRegistryItem.precision - nLocalPrecision));
         }
         requireMinimumValue(nLocalPrecision, value);
         // Add tx to the syscoinTxHashesAlreadyProcessed and Check tx was not already processed
@@ -132,11 +128,11 @@ contract SyscoinERC20Manager is Initializable {
         uint userValue = value.sub(superblockSubmitterFee);
 
         // pay the fee
-        erc20.transfer(superblockSubmitterAddress, superblockSubmitterFee);
+        erc20.safeTransfer(superblockSubmitterAddress, superblockSubmitterFee);
         emit TokenUnfreezeFee(superblockSubmitterAddress, superblockSubmitterFee);
 
         // get your token
-        erc20.transfer(destinationAddress, userValue);
+        erc20.safeTransfer(destinationAddress, userValue);
         emit TokenUnfreeze(destinationAddress, userValue);
     }
 
@@ -144,13 +140,14 @@ contract SyscoinERC20Manager is Initializable {
         uint _txHash,
         uint32 _assetGUID,
         uint32 _height,
-        address _erc20ContractAddress
+        address _erc20ContractAddress,
+        uint8 _precision
     ) public onlyTrustedRelayer {
         // ensure height increases over asset updates
         require(assetRegistry[_assetGUID].height < _height, "Height must increase when updating asset registry");
         // Add tx to the syscoinTxHashesAlreadyProcessed and Check tx was not already processed
         require(insert(_txHash), "TX already processed");
-        assetRegistry[_assetGUID] = AssetRegistryItem({erc20ContractAddress:_erc20ContractAddress, height:_height});
+        assetRegistry[_assetGUID] = AssetRegistryItem({erc20ContractAddress:_erc20ContractAddress, height:_height, precision: _precision});
         emit TokenRegistry(_assetGUID, _erc20ContractAddress);
     }
     
@@ -191,7 +188,7 @@ contract SyscoinERC20Manager is Initializable {
         // refund erc20 to the tokenFreezerAddress
         SyscoinERC20I erc20 = SyscoinERC20I(bridgeTransfer.erc20ContractAddress);
         assetBalances[bridgeTransfer.assetGUID] = assetBalances[bridgeTransfer.assetGUID].sub(bridgeTransfer.value);
-        erc20.transfer(bridgeTransfer.tokenFreezerAddress, bridgeTransfer.value);
+        erc20.safeTransfer(bridgeTransfer.tokenFreezerAddress, bridgeTransfer.value);
         // pay back deposit
         address payable tokenFreezeAddressPayable = address(uint160(bridgeTransfer.tokenFreezerAddress));
         uint d = deposits[bridgeTransferId];
@@ -224,23 +221,21 @@ contract SyscoinERC20Manager is Initializable {
     function freezeBurnERC20(
         uint value,
         uint32 assetGUID,
-        address erc20ContractAddress,
-        uint8 precision,
         bytes memory syscoinAddress
-    )
-        public
-        minimumValue(erc20ContractAddress, value)
-        returns (bool)
+    ) public returns (bool)
     {
         require(syscoinAddress.length > 0, "syscoinAddress cannot be zero");
         require(assetGUID > 0, "Asset GUID must not be 0");
-        if (net != Network.REGTEST) {
-            require(assetRegistry[assetGUID].erc20ContractAddress == erc20ContractAddress, "Asset registry contract does not match what was provided to this call");
-        }
-
-        SyscoinERC20I erc20 = SyscoinERC20I(erc20ContractAddress);
-        require(precision == erc20.decimals(), "Decimals were not provided with the correct value");
-        erc20.transferFrom(msg.sender, address(this), value);
+        // lookup asset from registry
+        AssetRegistryItem storage assetRegistryItem = assetRegistry[assetGUID];
+        // ensure state is Ok
+        require(assetRegistryItem.erc20ContractAddress != address(0),
+            "#SyscoinERC20Manager processTransaction(): Asset not found in registry");
+        
+        SyscoinERC20I erc20 = SyscoinERC20I(assetRegistryItem.erc20ContractAddress);
+        uint8 nLocalPrecision = erc20.decimals();
+        requireMinimumValue(nLocalPrecision, value);
+        erc20.safeTransferFrom(msg.sender, address(this), value);
         assetBalances[assetGUID] = assetBalances[assetGUID].add(value);
 
         // store some state needed for potential bridge transfer cancellation
@@ -249,12 +244,13 @@ contract SyscoinERC20Manager is Initializable {
         bridgeTransfers[bridgeTransferIdCount] = BridgeTransfer({
             status: BridgeTransferStatus.Ok,
             value: value,
-            erc20ContractAddress: erc20ContractAddress,
+            erc20ContractAddress: assetRegistryItem.erc20ContractAddress,
             assetGUID: assetGUID,
             timestamp: block.timestamp,
             tokenFreezerAddress: msg.sender
         });
-        emit TokenFreeze(msg.sender, value, bridgeTransferIdCount);
+        uint transferIdAndPrecisions = bridgeTransferIdCount + uint(nLocalPrecision)*(2**32) + uint(assetRegistryItem.precision)*(2**40)
+        emit TokenFreeze(msg.sender, value, transferIdAndPrecisions);
         return true;
     }
 

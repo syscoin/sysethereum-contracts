@@ -13,8 +13,8 @@ contract SyscoinSuperblocks is Initializable, SyscoinSuperblocksI, SyscoinErrorC
 
     uint constant ERR_PARSE_TX_SYS = 10170;
 
-    uint32 constant SYSCOIN_TX_VERSION_ALLOCATION_BURN_TO_ETHEREUM = 0x7407;
-    uint32 constant SYSCOIN_TX_VERSION_ALLOCATION_MINT = 0x7406;
+    uint32 constant SYSCOIN_TX_VERSION_ALLOCATION_BURN_TO_ETHEREUM = 134;
+    uint32 constant SYSCOIN_TX_VERSION_ALLOCATION_MINT = 133;
     
     // Mapping superblock id => superblock data
     mapping (bytes32 => SuperblockInfo) internal superblocks;
@@ -37,8 +37,8 @@ contract SyscoinSuperblocks is Initializable, SyscoinSuperblocksI, SyscoinErrorC
     // SyscoinClaimManager
     address public trustedClaimManager;
 
-    uint32 constant SYSCOIN_TX_VERSION_ASSET_ACTIVATE = 0x7402;
-    uint32 constant SYSCOIN_TX_VERSION_ASSET_UPDATE = 0x7403;
+    uint32 constant SYSCOIN_TX_VERSION_ASSET_ACTIVATE = 130;
+    uint32 constant SYSCOIN_TX_VERSION_ASSET_UPDATE = 131;
     modifier onlyClaimManager() {
         require(msg.sender == trustedClaimManager);
         _;
@@ -69,45 +69,58 @@ contract SyscoinSuperblocks is Initializable, SyscoinSuperblocksI, SyscoinErrorC
         result = uint32(uint8(input[pos+3])) + uint32(uint8(input[pos + 2]))*(2**8) + uint32(uint8(input[pos + 1]))*(2**16) + uint32(uint8(input[pos]))*(2**24);
     }
 
+    uint64 DecompressAmount(uint64 x) internal pure returns (uint64) {
+        // x = 0  OR  x = 1+10*(9*n + d - 1) + e  OR  x = 1+10*(n - 1) + 9
+        if (x == 0)
+            return 0;
+        x--;
+        // x = 10*(9*n + d - 1) + e
+        int32 e = x % 10;
+        x /= 10;
+        uint64 n = 0;
+        if (e < 9) {
+            // x = 9*n + d - 1
+            int32 d = (x % 9) + 1;
+            x /= 9;
+            // x = n
+            n = x*10 + d;
+        } else {
+            n = x+1;
+        }
+        while (e) {
+            n *= 10;
+            e--;
+        }
+        return n;
+    }
+
     // Returns asset data parsed from the op_return data output from syscoin asset burn transaction
-    function scanAssetDetails(bytes memory txBytes, uint pos)
+    function scanBurnTx(bytes memory txBytes, uint pos)
         internal
         pure
-        returns (uint, address, uint32, uint8, address)
+        returns (uint, address, address)
     {
         uint32 assetGUID;
         address destinationAddress;
-        address erc20Address;
         uint output_value;
-        uint8 precision;
         uint8 op;
-        // vchAsset
-        (op, pos) = getOpcode(txBytes, pos);
-        // guid length should be 4 bytes
-        require(op == 0x04);
-        assetGUID = bytesToUint32(txBytes, pos);
-        pos += op;
-        // amount
-        (op, pos) = getOpcode(txBytes, pos);
-        require(op == 0x08);
-        output_value = bytesToUint64(txBytes, pos);
-        pos += op;
+        (uint numAssets, pos) = parseVarInt(txBytes, pos);
+        require(numAssets == 1);
+        // get nAsset
+        assetGUID = bytesToUint32Flipped(txBytes, pos);
+        (uint numOutputs, pos) = parseVarInt(txBytes, pos);
+        require(numOutputs == 1);
+        // skip over output index
+        pos += 1;
+        // get compressed amount
+        (uint output_value_compressed, pos) = parseVarInt(txBytes, pos);
+        output_value = DecompressAmount(output_value_compressed);
          // destination address
         (op, pos) = getOpcode(txBytes, pos);
         // ethereum contracts are 20 bytes (without the 0x)
         require(op == 0x14);
         destinationAddress = readEthereumAddress(txBytes, pos);
-        pos += op;
-        // precision
-        (op, pos) = getOpcode(txBytes, pos);
-        require(op == 0x01);
-        precision = uint8(txBytes[pos]);
-        pos += op;
-        // erc20Address
-        (op, pos) = getOpcode(txBytes, pos);
-        require(op == 0x14);
-        erc20Address = readEthereumAddress(txBytes, pos);
-        return (output_value, destinationAddress, assetGUID, precision, erc20Address);
+        return (output_value, destinationAddress, assetGUID);
     }
 
     // Read the ethereum address embedded in the tx output
@@ -183,17 +196,13 @@ contract SyscoinSuperblocks is Initializable, SyscoinSuperblocksI, SyscoinErrorC
             return (ERR_PARSE_TX_SYS, bridgeTransferId);
         }
         pos = getOpReturnPos(txBytes, 4);
-        pos += 3; // skip pushdata2 + 2 bytes for opreturn varint
+        byte pushDataOp = txBytes[pos+1];
+        pos += 2; // we will have to skip pushdata op as well as atleast 1 byte
+        if(pushDataOp == 0x4d){
+            pos++; // skip pushdata2 + 2 bytes for opreturn varint
+        }
 
-        // SHA3 of TokenFreeze(address,uint256,uint32)
-        bytes32 tokenFreezeTopic = 0xaabab1db49e504b5156edf3f99042aeecb9607a08f392589571cd49743aaba8d;
-        bridgeTransferId = uint32(
-            getBridgeTransactionId(
-                getLogValuesForTopic(
-                    getEthReceipt(txBytes, pos), tokenFreezeTopic
-                )
-            )
-        );
+        bridgeTransferId = scanMintTx(txBytes, pos);
     }
 
 
@@ -219,163 +228,73 @@ contract SyscoinSuperblocks is Initializable, SyscoinSuperblocksI, SyscoinErrorC
             pos++; // skip pushdata2 + 2 bytes for opreturn varint
         }
 
-        (assetGuid, erc20Address) = scanAssetTx(txBytes, pos);
+        (assetGuid, erc20Address, precision) = scanAssetTx(txBytes, pos);
         require(erc20Address != address(0),
         "parseAssetTx(): erc20Address cannot be empty");
     }
 
-    function bytesToUint16(bytes memory input, uint pos) public pure returns (uint16 result) {
-        result = uint16(uint8(input[pos+1])) + uint16(uint8(input[pos]))*(2**8);
-    }
-
     /**
-     * Parse txBytes and returns ethereum tx receipt
+     * Parse txBytes and returns Bridge Transfer ID
      * @param txBytes syscoin raw transaction
      * @param pos position at where to start parsing
-     * @return ethTxReceipt ethereum tx receipt
+     * @return bridge id (uint32)
      */
-    function getEthReceipt(bytes memory txBytes, uint pos)
+    function scanMintTx(bytes memory txBytes, uint pos)
         public
         view
-        returns (bytes memory)
+        returns (uint32)
     {
-        bytes memory ethTxReceipt = new bytes(0);
-        uint bytesToRead;
-        // skip vchTxValue
-        (bytesToRead, pos) = parseVarInt(txBytes, pos);
-        pos += bytesToRead;
-        // skip vchTxParentNodes
-        (bytesToRead, pos) = parseVarInt(txBytes, pos);
-        pos += bytesToRead;
-        // skip vchTxRoot
-        (bytesToRead, pos) = parseVarInt(txBytes, pos);
-        pos += bytesToRead;
-        // skip vchTxPath
-        (bytesToRead, pos) = parseVarInt(txBytes, pos);
-        pos += bytesToRead;
-        // get vchReceiptValue
-        (bytesToRead, pos) = parseVarInt(txBytes, pos);
-        // if position is encoded in receipt value, decode position and read the value from next field (parent nodes)
-        if(bytesToRead == 2){
-            uint16 positionOfValue = bytesToUint16(txBytes, pos);
-            pos += bytesToRead;
-            // get vchReceiptParentNodes
-            (bytesToRead, pos) = parseVarInt(txBytes, pos);
-            pos += positionOfValue;
-            ethTxReceipt = sliceArray(txBytes, pos, pos+(bytesToRead-positionOfValue));
-        }
-        // size > 2 means receipt value is fully serialized in this field and no need to get parent nodes field
-        else{
-            ethTxReceipt = sliceArray(txBytes, pos, pos+bytesToRead);      
-        }
-        return ethTxReceipt;
+        uint32 bridgeId;
+        (uint numAssets, pos) = parseVarInt(txBytes, pos);
+        require(numAssets == 1);
+        // skip nAsset
+        pos += 4;
+        (uint numOutputs, pos) = parseVarInt(txBytes, pos);
+        require(numOutputs == 1);
+        // skip over output index
+        pos += 1;
+        // skip over compressed amount
+        (uint amount, pos) = parseVarInt(txBytes, pos);
+        (bridgeId, pos) = parseVarInt(txBytes, pos);
+        return bridgeId;
     }
 
      /**
      * Parse txBytes and returns assetguid + contract address
      * @param txBytes syscoin raw transaction
      * @param pos position at where to start parsing
-     * @return asset guid (uint32) and erc20 address linked to the asset guid to update registry in erc20manager
+     * @return asset guid (uint32), erc20 address and precision linked to the asset guid to update registry in erc20manager
      */
     function scanAssetTx(bytes memory txBytes, uint pos)
         public
         view
-        returns (uint32, address)
+        returns (uint32, address, uint8)
     {
         uint32 assetGUID;
         address erc20Address;
+        uint8 precision;
         uint bytesToRead;
-        // skip vchPubData
-        (bytesToRead, pos) = parseVarInt(txBytes, pos);
-        pos += bytesToRead;
-        // skip txHash
-        pos += 32;
+        (uint numAssets, pos) = parseVarInt(txBytes, pos);
+        require(numAssets == 1);
         // get nAsset
         assetGUID = bytesToUint32Flipped(txBytes, pos);
-        pos += 4;
-        // skip strSymbol
-        (bytesToRead, pos) = parseVarInt(txBytes, pos);
-        pos += bytesToRead;
-        // skip witnessAddress.nVersion
+        (uint numOutputs, pos) = parseVarInt(txBytes, pos);
+        require(numOutputs == 1);
+        // skip over output index
         pos += 1;
-        // skip witnessAddress.vchWitnessProgram
+        // skip over compressed amount
         (bytesToRead, pos) = parseVarInt(txBytes, pos);
-        pos += bytesToRead;
-        // skip witnessAddressTransfer.nVersion
-        pos += 1;
-        // skip witnessAddressTransfer.vchWitnessProgram
-        (bytesToRead, pos) = parseVarInt(txBytes, pos);
-        pos += bytesToRead;
-        // skip nBalance
-        pos += 8;
-        // skip nTotalSupply
-        pos += 8;
-        // skip nMaxSupply
-        pos += 8;
-        // skip nHeight
-        pos += 4;
-        // skip nUpdateFlags
-        pos += 1;
-        // skip nPrecision
+        // nPrecision
+        precision = uint8(txBytes[pos]);
         pos += 1;
         // get vchContract
         (bytesToRead, pos) = parseVarInt(txBytes, pos);
         require(bytesToRead == 0x14,
         "scanAssetTx(): Invalid number of bytes read for contract field");
         erc20Address = readEthereumAddress(txBytes, pos);
-        return (assetGUID, erc20Address);
+        return (assetGUID, erc20Address, precision);
     }
 
-    // @dev converts bytes of any length to bytes32.
-    // If `_rawBytes` is longer than 32 bytes, it truncates to the 32 leftmost bytes.
-    // If it is shorter, it pads with 0s on the left.
-    // Should be private, made internal for testing
-    //
-    // @param _rawBytes - arbitrary length bytes
-    // @return - leftmost 32 or less bytes of input value; padded if less than 32
-    function bytesToBytes32(bytes memory _rawBytes, uint pos) public pure returns (bytes32) {
-        bytes32 out;
-        assembly {
-            out := mload(add(add(_rawBytes, 0x20), pos))
-        }
-        return out;
-    }
-
-    /**
-     * Return logs for given ethereum transaction receipt
-     * @param  ethTxReceipt ethereum transaction receipt
-     * @return logs bloom
-     */
-    function getLogValuesForTopic(bytes memory ethTxReceipt, bytes32 expectedTopic)
-        public
-        pure
-        returns (bytes memory)
-    {
-        RLPReader.RLPItem[] memory ethTxReceiptList = ethTxReceipt.toRlpItem().toList();
-        RLPReader.RLPItem[] memory logsList = ethTxReceiptList[3].toList();
-        for (uint256 i = 0; i < logsList.length; i++) {
-            RLPReader.RLPItem[] memory log = logsList[i].toList();
-            bytes memory rawTopic = log[1].toBytes();
-            bytes32 topic = bytesToBytes32(rawTopic, 1); // need to remove first byte "a0"
-            if (topic == expectedTopic) {
-                // data for given log
-                return log[2].toBytes();
-            }
-        }
-        revert("Topic not found");
-    }
-
-    /**
-     * Get bridgeTransactionId from logs bloom
-     * @param logValues log values
-     * @return bridgeTransactionId
-     */
-    function getBridgeTransactionId(bytes memory logValues) public pure returns (uint256 value) {
-        uint8 index = 3; // log's third value
-        assembly {
-            value := mload(add(logValues, mul(32, index)))
-        }
-    }
 
     // @dev - Initializes superblocks contract
     //
@@ -651,12 +570,12 @@ contract SyscoinSuperblocks is Initializable, SyscoinSuperblocksI, SyscoinErrorC
             uint32 assetGUID;
             address erc20ContractAddress;
             uint8 precision;
-            (ret, value, destinationAddress, assetGUID, precision, erc20ContractAddress) = parseBurnTx(_txBytes);
+            (ret, value, destinationAddress, assetGUID) = parseBurnTx(_txBytes);
             if(ret != 0){
                 emit RelayTransaction(bytes32(txHash), ret);
                 return ret;
             }
-            syscoinERC20Manager.processTransaction(txHash, value, destinationAddress, superblocks[_superblockHash].submitter, erc20ContractAddress, assetGUID, precision);
+            syscoinERC20Manager.processTransaction(txHash, value, destinationAddress, superblocks[_superblockHash].submitter, assetGUID);
             return value;
         }
         emit RelayTransaction(bytes32(0), ERR_RELAY_VERIFY);
@@ -691,7 +610,8 @@ contract SyscoinSuperblocks is Initializable, SyscoinSuperblocksI, SyscoinErrorC
             uint ret;
             uint32 assetGUID;
             address erc20ContractAddress;
-            (ret, assetGUID, erc20ContractAddress) = parseAssetTx(_txBytes);
+            uint8 precision;
+            (ret, assetGUID, erc20ContractAddress, precision) = parseAssetTx(_txBytes);
             if(ret != 0){
                 emit RelayTransaction(bytes32(txHash), ret);
                 return ret;
@@ -699,7 +619,7 @@ contract SyscoinSuperblocks is Initializable, SyscoinSuperblocksI, SyscoinErrorC
             uint32 height = superblocks[_superblockHash].height*60;
             height += uint32(_syscoinBlockIndex);
             // pass in height of block as well by calc superblock sets of 60 blocks
-            syscoinERC20Manager.processAsset(txHash, assetGUID, height, erc20ContractAddress);
+            syscoinERC20Manager.processAsset(txHash, assetGUID, height, erc20ContractAddress, precision);
             return 0;
         }
         emit RelayTransaction(bytes32(0), ERR_RELAY_VERIFY);
@@ -758,16 +678,20 @@ contract SyscoinSuperblocks is Initializable, SyscoinSuperblocksI, SyscoinErrorC
         uint32 assetGUID;
         address destinationAddress;
         uint32 version;
-        address erc20Address;
-        uint8 precision;
         uint pos = 0;
         version = bytesToUint32Flipped(txBytes, pos);
         if(version != SYSCOIN_TX_VERSION_ALLOCATION_BURN_TO_ETHEREUM){
-            return (ERR_PARSE_TX_SYS, output_value, destinationAddress, assetGUID, precision, erc20Address);
+            return (ERR_PARSE_TX_SYS, output_value, destinationAddress, assetGUID);
         }
         pos = getOpReturnPos(txBytes, 4);
-        (output_value, destinationAddress, assetGUID, precision, erc20Address) = scanAssetDetails(txBytes, pos);
-        return (0, output_value, destinationAddress, assetGUID, precision, erc20Address);
+        byte pushDataOp = txBytes[pos+1];
+        pos += 2; // we will have to skip pushdata op as well as atleast 1 byte
+        if(pushDataOp == 0x4d){
+            pos++; // skip pushdata2 + 2 bytes for opreturn varint
+        }
+
+        (output_value, destinationAddress, assetGUID) = scanBurnTx(txBytes, pos);
+        return (0, output_value, destinationAddress, assetGUID);
     }
 
     function skipInputs(bytes memory txBytes, uint pos)
