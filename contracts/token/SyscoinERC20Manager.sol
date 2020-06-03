@@ -229,10 +229,8 @@ contract SyscoinERC20Manager is Initializable {
         // lookup asset from registry
         AssetRegistryItem storage assetRegistryItem = assetRegistry[assetGUID];
         // ensure state is Ok
-        if (net != Network.REGTEST) {
-            require(assetRegistryItem.erc20ContractAddress != address(0),
-                "#SyscoinERC20Manager processTransaction(): Asset not found in registry");
-        }
+        require(assetRegistryItem.erc20ContractAddress != address(0),
+            "#SyscoinERC20Manager processTransaction(): Asset not found in registry");
         
         SyscoinERC20I erc20 = SyscoinERC20I(assetRegistryItem.erc20ContractAddress);
         uint8 nLocalPrecision = erc20.decimals();
@@ -251,7 +249,7 @@ contract SyscoinERC20Manager is Initializable {
             timestamp: block.timestamp,
             tokenFreezerAddress: msg.sender
         });
-        uint transferIdAndPrecisions = bridgeTransferIdCount + uint(nLocalPrecision)*(2**32) + uint(assetRegistryItem.precision)*(2**40)
+        uint transferIdAndPrecisions = bridgeTransferIdCount + uint(nLocalPrecision)*(2**32) + uint(assetRegistryItem.precision)*(2**40);
         emit TokenFreeze(msg.sender, value, transferIdAndPrecisions);
         return true;
     }

@@ -69,25 +69,25 @@ contract SyscoinSuperblocks is Initializable, SyscoinSuperblocksI, SyscoinErrorC
         result = uint32(uint8(input[pos+3])) + uint32(uint8(input[pos + 2]))*(2**8) + uint32(uint8(input[pos + 1]))*(2**16) + uint32(uint8(input[pos]))*(2**24);
     }
 
-    uint64 DecompressAmount(uint64 x) internal pure returns (uint64) {
+    function DecompressAmount(uint64 x) internal pure returns (uint64) {
         // x = 0  OR  x = 1+10*(9*n + d - 1) + e  OR  x = 1+10*(n - 1) + 9
         if (x == 0)
             return 0;
         x--;
         // x = 10*(9*n + d - 1) + e
-        int32 e = x % 10;
+        int32 e = int32(x % 10);
         x /= 10;
         uint64 n = 0;
         if (e < 9) {
             // x = 9*n + d - 1
-            int32 d = (x % 9) + 1;
+            int32 d = int32(x % 9) + 1;
             x /= 9;
             // x = n
-            n = x*10 + d;
+            n = x*10 + uint64(d);
         } else {
             n = x+1;
         }
-        while (e) {
+        while (e > 0) {
             n *= 10;
             e--;
         }
@@ -98,23 +98,27 @@ contract SyscoinSuperblocks is Initializable, SyscoinSuperblocksI, SyscoinErrorC
     function scanBurnTx(bytes memory txBytes, uint pos)
         internal
         pure
-        returns (uint, address, address)
+        returns (uint, address, uint32)
     {
         uint32 assetGUID;
         address destinationAddress;
         uint output_value;
         uint8 op;
-        (uint numAssets, pos) = parseVarInt(txBytes, pos);
+        uint pos;
+        uint numAssets;
+        uint numOutputs;
+        uint output_value_compressed;
+        (numAssets, pos) = parseVarInt(txBytes, pos);
         require(numAssets == 1);
         // get nAsset
         assetGUID = bytesToUint32Flipped(txBytes, pos);
-        (uint numOutputs, pos) = parseVarInt(txBytes, pos);
+        (numOutputs, pos) = parseVarInt(txBytes, pos);
         require(numOutputs == 1);
         // skip over output index
         pos += 1;
         // get compressed amount
-        (uint output_value_compressed, pos) = parseVarInt(txBytes, pos);
-        output_value = DecompressAmount(output_value_compressed);
+        (output_value_compressed, pos) = parseVarInt(txBytes, pos);
+        output_value = DecompressAmount(uint64(output_value_compressed));
          // destination address
         (op, pos) = getOpcode(txBytes, pos);
         // ethereum contracts are 20 bytes (without the 0x)
@@ -203,6 +207,7 @@ contract SyscoinSuperblocks is Initializable, SyscoinSuperblocksI, SyscoinErrorC
         }
 
         bridgeTransferId = scanMintTx(txBytes, pos);
+        return (0, bridgeTransferId);
     }
 
 
@@ -213,13 +218,13 @@ contract SyscoinSuperblocks is Initializable, SyscoinSuperblocksI, SyscoinErrorC
     function parseAssetTx(bytes memory txBytes)
         public
         view
-        returns (uint errorCode, uint32 assetGuid, address erc20Address)
+        returns (uint errorCode, uint32 assetGuid, address erc20Address, uint8 precision)
     {
         uint32 version;
         uint pos = 0;
         version = bytesToUint32Flipped(txBytes, pos);
         if(version != SYSCOIN_TX_VERSION_ASSET_ACTIVATE && version != SYSCOIN_TX_VERSION_ASSET_UPDATE){
-            return (ERR_PARSE_TX_SYS, 0, address(0));
+            return (ERR_PARSE_TX_SYS, 0, address(0), 0);
         }
         pos = getOpReturnPos(txBytes, 4);
         byte pushDataOp = txBytes[pos+1];
@@ -231,6 +236,7 @@ contract SyscoinSuperblocks is Initializable, SyscoinSuperblocksI, SyscoinErrorC
         (assetGuid, erc20Address, precision) = scanAssetTx(txBytes, pos);
         require(erc20Address != address(0),
         "parseAssetTx(): erc20Address cannot be empty");
+        return (0, assetGuid, erc20Address, precision);
     }
 
     /**
@@ -244,19 +250,22 @@ contract SyscoinSuperblocks is Initializable, SyscoinSuperblocksI, SyscoinErrorC
         view
         returns (uint32)
     {
-        uint32 bridgeId;
-        (uint numAssets, pos) = parseVarInt(txBytes, pos);
+        uint bridgeId;
+        uint numAssets;
+        uint numOutputs;
+        uint amount;
+        (numAssets, pos) = parseVarInt(txBytes, pos);
         require(numAssets == 1);
         // skip nAsset
         pos += 4;
-        (uint numOutputs, pos) = parseVarInt(txBytes, pos);
+        (numOutputs, pos) = parseVarInt(txBytes, pos);
         require(numOutputs == 1);
         // skip over output index
         pos += 1;
         // skip over compressed amount
-        (uint amount, pos) = parseVarInt(txBytes, pos);
+        (amount, pos) = parseVarInt(txBytes, pos);
         (bridgeId, pos) = parseVarInt(txBytes, pos);
-        return bridgeId;
+        return uint32(bridgeId);
     }
 
      /**
@@ -274,11 +283,13 @@ contract SyscoinSuperblocks is Initializable, SyscoinSuperblocksI, SyscoinErrorC
         address erc20Address;
         uint8 precision;
         uint bytesToRead;
-        (uint numAssets, pos) = parseVarInt(txBytes, pos);
+        uint numAssets;
+        uint numOutputs;
+        (numAssets, pos) = parseVarInt(txBytes, pos);
         require(numAssets == 1);
         // get nAsset
         assetGUID = bytesToUint32Flipped(txBytes, pos);
-        (uint numOutputs, pos) = parseVarInt(txBytes, pos);
+        (numOutputs, pos) = parseVarInt(txBytes, pos);
         require(numOutputs == 1);
         // skip over output index
         pos += 1;
@@ -672,7 +683,7 @@ contract SyscoinSuperblocks is Initializable, SyscoinSuperblocksI, SyscoinErrorC
     function parseBurnTx(bytes memory txBytes)
         public
         pure
-        returns (uint, uint, address, uint32, uint8, address)
+        returns (uint, uint, address, uint32)
     {
         uint output_value;
         uint32 assetGUID;
