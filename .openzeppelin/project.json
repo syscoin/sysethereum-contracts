@@ -11,12 +11,13 @@
   "version": "1.0.0",
   "telemetryOptIn": false,
   "compiler": {
-    "manager": "truffle",
+    "manager": "openzeppelin",
     "compilerSettings": {
       "optimizer": {
         "enabled": false,
         "runs": "200"
       }
-    }
+    },
+    "solcVersion": "0.5.17"
   }
 }
