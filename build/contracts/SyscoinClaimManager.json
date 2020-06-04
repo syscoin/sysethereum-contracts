@@ -995,7 +995,7 @@
         "id": 2540,
         "nodeType": "ImportDirective",
         "scope": 4339,
-        "sourceUnit": 8315,
+        "sourceUnit": 8313,
         "src": "26:46:2",
         "symbolAliases": [],
         "unitAlias": ""
@@ -1006,7 +1006,7 @@
         "id": 2541,
         "nodeType": "ImportDirective",
         "scope": 4339,
-        "sourceUnit": 8101,
+        "sourceUnit": 8098,
         "src": "73:47:2",
         "symbolAliases": [],
         "unitAlias": ""
@@ -1017,7 +1017,7 @@
         "id": 2542,
         "nodeType": "ImportDirective",
         "scope": 4339,
-        "sourceUnit": 8063,
+        "sourceUnit": 8060,
         "src": "121:48:2",
         "symbolAliases": [],
         "unitAlias": ""
@@ -1050,7 +1050,7 @@
         "id": 2545,
         "nodeType": "ImportDirective",
         "scope": 4339,
-        "sourceUnit": 9552,
+        "sourceUnit": 9556,
         "src": "243:59:2",
         "symbolAliases": [],
         "unitAlias": ""
@@ -1061,7 +1061,7 @@
         "id": 2546,
         "nodeType": "ImportDirective",
         "scope": 4339,
-        "sourceUnit": 9338,
+        "sourceUnit": 9342,
         "src": "303:60:2",
         "symbolAliases": [],
         "unitAlias": ""
@@ -1075,10 +1075,10 @@
               "id": 2547,
               "name": "Initializable",
               "nodeType": "UserDefinedTypeName",
-              "referencedDeclaration": 9337,
+              "referencedDeclaration": 9341,
               "src": "486:13:2",
               "typeDescriptions": {
-                "typeIdentifier": "t_contract$_Initializable_$9337",
+                "typeIdentifier": "t_contract$_Initializable_$9341",
                 "typeString": "contract Initializable"
               }
             },
@@ -1126,7 +1126,7 @@
         "contractDependencies": [
           4479,
           4686,
-          9337
+          9341
         ],
         "contractKind": "contract",
         "documentation": null,
@@ -1136,7 +1136,7 @@
           4338,
           4686,
           4479,
-          9337
+          9341
         ],
         "name": "SyscoinClaimManager",
         "nodeType": "ContractDefinition",
@@ -1148,10 +1148,10 @@
               "id": 2553,
               "name": "SafeMath",
               "nodeType": "UserDefinedTypeName",
-              "referencedDeclaration": 9551,
+              "referencedDeclaration": 9555,
               "src": "556:8:2",
               "typeDescriptions": {
-                "typeIdentifier": "t_contract$_SafeMath_$9551",
+                "typeIdentifier": "t_contract$_SafeMath_$9555",
                 "typeString": "library SafeMath"
               }
             },
@@ -1603,7 +1603,7 @@
             "stateVariable": true,
             "storageLocation": "default",
             "typeDescriptions": {
-              "typeIdentifier": "t_contract$_SyscoinSuperblocksI_$8314",
+              "typeIdentifier": "t_contract$_SyscoinSuperblocksI_$8312",
               "typeString": "contract SyscoinSuperblocksI"
             },
             "typeName": {
@@ -1611,10 +1611,10 @@
               "id": 2589,
               "name": "SyscoinSuperblocksI",
               "nodeType": "UserDefinedTypeName",
-              "referencedDeclaration": 8314,
+              "referencedDeclaration": 8312,
               "src": "1687:19:2",
               "typeDescriptions": {
-                "typeIdentifier": "t_contract$_SyscoinSuperblocksI_$8314",
+                "typeIdentifier": "t_contract$_SyscoinSuperblocksI_$8312",
                 "typeString": "contract SyscoinSuperblocksI"
               }
             },
@@ -1631,7 +1631,7 @@
             "stateVariable": true,
             "storageLocation": "default",
             "typeDescriptions": {
-              "typeIdentifier": "t_contract$_SyscoinBattleManagerI_$8062",
+              "typeIdentifier": "t_contract$_SyscoinBattleManagerI_$8059",
               "typeString": "contract SyscoinBattleManagerI"
             },
             "typeName": {
@@ -1639,10 +1639,10 @@
               "id": 2591,
               "name": "SyscoinBattleManagerI",
               "nodeType": "UserDefinedTypeName",
-              "referencedDeclaration": 8062,
+              "referencedDeclaration": 8059,
               "src": "1770:21:2",
               "typeDescriptions": {
-                "typeIdentifier": "t_contract$_SyscoinBattleManagerI_$8062",
+                "typeIdentifier": "t_contract$_SyscoinBattleManagerI_$8059",
                 "typeString": "contract SyscoinBattleManagerI"
               }
             },
@@ -2672,7 +2672,7 @@
                             "name": "msg",
                             "nodeType": "Identifier",
                             "overloadedDeclarations": [],
-                            "referencedDeclaration": 10799,
+                            "referencedDeclaration": 11098,
                             "src": "3148:3:2",
                             "typeDescriptions": {
                               "typeIdentifier": "t_magic_message",
@@ -2707,7 +2707,7 @@
                               "referencedDeclaration": 2592,
                               "src": "3170:27:2",
                               "typeDescriptions": {
-                                "typeIdentifier": "t_contract$_SyscoinBattleManagerI_$8062",
+                                "typeIdentifier": "t_contract$_SyscoinBattleManagerI_$8059",
                                 "typeString": "contract SyscoinBattleManagerI"
                               }
                             }
@@ -2715,7 +2715,7 @@
                           "expression": {
                             "argumentTypes": [
                               {
-                                "typeIdentifier": "t_contract$_SyscoinBattleManagerI_$8062",
+                                "typeIdentifier": "t_contract$_SyscoinBattleManagerI_$8059",
                                 "typeString": "contract SyscoinBattleManagerI"
                               }
                             ],
@@ -2764,10 +2764,10 @@
                       "name": "require",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [
-                        10802,
-                        10803
+                        11101,
+                        11102
                       ],
-                      "referencedDeclaration": 10802,
+                      "referencedDeclaration": 11101,
                       "src": "3140:7:2",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_require_pure$_t_bool_$returns$__$",
@@ -2852,7 +2852,7 @@
                               "name": "msg",
                               "nodeType": "Identifier",
                               "overloadedDeclarations": [],
-                              "referencedDeclaration": 10799,
+                              "referencedDeclaration": 11098,
                               "src": "3274:3:2",
                               "typeDescriptions": {
                                 "typeIdentifier": "t_magic_message",
@@ -2887,7 +2887,7 @@
                                 "referencedDeclaration": 2592,
                                 "src": "3296:27:2",
                                 "typeDescriptions": {
-                                  "typeIdentifier": "t_contract$_SyscoinBattleManagerI_$8062",
+                                  "typeIdentifier": "t_contract$_SyscoinBattleManagerI_$8059",
                                   "typeString": "contract SyscoinBattleManagerI"
                                 }
                               }
@@ -2895,7 +2895,7 @@
                             "expression": {
                               "argumentTypes": [
                                 {
-                                  "typeIdentifier": "t_contract$_SyscoinBattleManagerI_$8062",
+                                  "typeIdentifier": "t_contract$_SyscoinBattleManagerI_$8059",
                                   "typeString": "contract SyscoinBattleManagerI"
                                 }
                               ],
@@ -2953,7 +2953,7 @@
                               "name": "msg",
                               "nodeType": "Identifier",
                               "overloadedDeclarations": [],
-                              "referencedDeclaration": 10799,
+                              "referencedDeclaration": 11098,
                               "src": "3328:3:2",
                               "typeDescriptions": {
                                 "typeIdentifier": "t_magic_message",
@@ -2985,7 +2985,7 @@
                                 "name": "this",
                                 "nodeType": "Identifier",
                                 "overloadedDeclarations": [],
-                                "referencedDeclaration": 10835,
+                                "referencedDeclaration": 11134,
                                 "src": "3350:4:2",
                                 "typeDescriptions": {
                                   "typeIdentifier": "t_contract$_SyscoinClaimManager_$4338",
@@ -3051,10 +3051,10 @@
                       "name": "require",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [
-                        10802,
-                        10803
+                        11101,
+                        11102
                       ],
-                      "referencedDeclaration": 10802,
+                      "referencedDeclaration": 11101,
                       "src": "3266:7:2",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_require_pure$_t_bool_$returns$__$",
@@ -3122,7 +3122,7 @@
                       "referencedDeclaration": 2590,
                       "src": "4076:18:2",
                       "typeDescriptions": {
-                        "typeIdentifier": "t_contract$_SyscoinSuperblocksI_$8314",
+                        "typeIdentifier": "t_contract$_SyscoinSuperblocksI_$8312",
                         "typeString": "contract SyscoinSuperblocksI"
                       }
                     },
@@ -3137,13 +3137,13 @@
                       "referencedDeclaration": 2709,
                       "src": "4097:12:2",
                       "typeDescriptions": {
-                        "typeIdentifier": "t_contract$_SyscoinSuperblocksI_$8314",
+                        "typeIdentifier": "t_contract$_SyscoinSuperblocksI_$8312",
                         "typeString": "contract SyscoinSuperblocksI"
                       }
                     },
                     "src": "4076:33:2",
                     "typeDescriptions": {
-                      "typeIdentifier": "t_contract$_SyscoinSuperblocksI_$8314",
+                      "typeIdentifier": "t_contract$_SyscoinSuperblocksI_$8312",
                       "typeString": "contract SyscoinSuperblocksI"
                     }
                   },
@@ -3168,7 +3168,7 @@
                       "referencedDeclaration": 2592,
                       "src": "4119:27:2",
                       "typeDescriptions": {
-                        "typeIdentifier": "t_contract$_SyscoinBattleManagerI_$8062",
+                        "typeIdentifier": "t_contract$_SyscoinBattleManagerI_$8059",
                         "typeString": "contract SyscoinBattleManagerI"
                       }
                     },
@@ -3183,13 +3183,13 @@
                       "referencedDeclaration": 2711,
                       "src": "4149:21:2",
                       "typeDescriptions": {
-                        "typeIdentifier": "t_contract$_SyscoinBattleManagerI_$8062",
+                        "typeIdentifier": "t_contract$_SyscoinBattleManagerI_$8059",
                         "typeString": "contract SyscoinBattleManagerI"
                       }
                     },
                     "src": "4119:51:2",
                     "typeDescriptions": {
-                      "typeIdentifier": "t_contract$_SyscoinBattleManagerI_$8062",
+                      "typeIdentifier": "t_contract$_SyscoinBattleManagerI_$8059",
                       "typeString": "contract SyscoinBattleManagerI"
                     }
                   },
@@ -3402,7 +3402,7 @@
                   "name": "initializer",
                   "nodeType": "Identifier",
                   "overloadedDeclarations": [],
-                  "referencedDeclaration": 9318,
+                  "referencedDeclaration": 9322,
                   "src": "4054:11:2",
                   "typeDescriptions": {
                     "typeIdentifier": "t_modifier$__$",
@@ -3429,7 +3429,7 @@
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
-                    "typeIdentifier": "t_contract$_SyscoinSuperblocksI_$8314",
+                    "typeIdentifier": "t_contract$_SyscoinSuperblocksI_$8312",
                     "typeString": "contract SyscoinSuperblocksI"
                   },
                   "typeName": {
@@ -3437,10 +3437,10 @@
                     "id": 2708,
                     "name": "SyscoinSuperblocksI",
                     "nodeType": "UserDefinedTypeName",
-                    "referencedDeclaration": 8314,
+                    "referencedDeclaration": 8312,
                     "src": "3852:19:2",
                     "typeDescriptions": {
-                      "typeIdentifier": "t_contract$_SyscoinSuperblocksI_$8314",
+                      "typeIdentifier": "t_contract$_SyscoinSuperblocksI_$8312",
                       "typeString": "contract SyscoinSuperblocksI"
                     }
                   },
@@ -3457,7 +3457,7 @@
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
-                    "typeIdentifier": "t_contract$_SyscoinBattleManagerI_$8062",
+                    "typeIdentifier": "t_contract$_SyscoinBattleManagerI_$8059",
                     "typeString": "contract SyscoinBattleManagerI"
                   },
                   "typeName": {
@@ -3465,10 +3465,10 @@
                     "id": 2710,
                     "name": "SyscoinBattleManagerI",
                     "nodeType": "UserDefinedTypeName",
-                    "referencedDeclaration": 8062,
+                    "referencedDeclaration": 8059,
                     "src": "3894:21:2",
                     "typeDescriptions": {
-                      "typeIdentifier": "t_contract$_SyscoinBattleManagerI_$8062",
+                      "typeIdentifier": "t_contract$_SyscoinBattleManagerI_$8059",
                       "typeString": "contract SyscoinBattleManagerI"
                     }
                   },
@@ -3974,7 +3974,7 @@
                         "lValueRequested": false,
                         "memberName": "sub",
                         "nodeType": "MemberAccess",
-                        "referencedDeclaration": 9407,
+                        "referencedDeclaration": 9411,
                         "src": "5032:21:2",
                         "typeDescriptions": {
                           "typeIdentifier": "t_function_internal_pure$_t_uint256_$_t_uint256_$returns$_t_uint256_$bound_to$_t_uint256_$",
@@ -4158,7 +4158,7 @@
                         "lValueRequested": false,
                         "memberName": "add",
                         "nodeType": "MemberAccess",
-                        "referencedDeclaration": 9391,
+                        "referencedDeclaration": 9395,
                         "src": "5103:33:2",
                         "typeDescriptions": {
                           "typeIdentifier": "t_function_internal_pure$_t_uint256_$_t_uint256_$returns$_t_uint256_$bound_to$_t_uint256_$",
@@ -4599,10 +4599,10 @@
                       "name": "require",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [
-                        10802,
-                        10803
+                        11101,
+                        11102
                       ],
-                      "referencedDeclaration": 10802,
+                      "referencedDeclaration": 11101,
                       "src": "5620:7:2",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_require_pure$_t_bool_$returns$__$",
@@ -5415,7 +5415,7 @@
                         "lValueRequested": false,
                         "memberName": "add",
                         "nodeType": "MemberAccess",
-                        "referencedDeclaration": 9391,
+                        "referencedDeclaration": 9395,
                         "src": "6403:21:2",
                         "typeDescriptions": {
                           "typeIdentifier": "t_function_internal_pure$_t_uint256_$_t_uint256_$returns$_t_uint256_$bound_to$_t_uint256_$",
@@ -5750,7 +5750,7 @@
                               "referencedDeclaration": 2590,
                               "src": "7375:18:2",
                               "typeDescriptions": {
-                                "typeIdentifier": "t_contract$_SyscoinSuperblocksI_$8314",
+                                "typeIdentifier": "t_contract$_SyscoinSuperblocksI_$8312",
                                 "typeString": "contract SyscoinSuperblocksI"
                               }
                             }
@@ -5758,7 +5758,7 @@
                           "expression": {
                             "argumentTypes": [
                               {
-                                "typeIdentifier": "t_contract$_SyscoinSuperblocksI_$8314",
+                                "typeIdentifier": "t_contract$_SyscoinSuperblocksI_$8312",
                                 "typeString": "contract SyscoinSuperblocksI"
                               }
                             ],
@@ -5865,10 +5865,10 @@
                       "name": "require",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [
-                        10802,
-                        10803
+                        11101,
+                        11102
                       ],
-                      "referencedDeclaration": 10802,
+                      "referencedDeclaration": 11101,
                       "src": "7359:7:2",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_require_pure$_t_bool_$returns$__$",
@@ -6122,7 +6122,7 @@
                           "name": "msg",
                           "nodeType": "Identifier",
                           "overloadedDeclarations": [],
-                          "referencedDeclaration": 10799,
+                          "referencedDeclaration": 11098,
                           "src": "7618:3:2",
                           "typeDescriptions": {
                             "typeIdentifier": "t_magic_message",
@@ -6384,7 +6384,7 @@
                         "name": "block",
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
-                        "referencedDeclaration": 10789,
+                        "referencedDeclaration": 11088,
                         "src": "7823:5:2",
                         "typeDescriptions": {
                           "typeIdentifier": "t_magic_block",
@@ -6595,7 +6595,7 @@
                             "name": "block",
                             "nodeType": "Identifier",
                             "overloadedDeclarations": [],
-                            "referencedDeclaration": 10789,
+                            "referencedDeclaration": 11088,
                             "src": "7989:5:2",
                             "typeDescriptions": {
                               "typeIdentifier": "t_magic_block",
@@ -7037,7 +7037,7 @@
                             "name": "msg",
                             "nodeType": "Identifier",
                             "overloadedDeclarations": [],
-                            "referencedDeclaration": 10799,
+                            "referencedDeclaration": 11098,
                             "src": "8404:3:2",
                             "typeDescriptions": {
                               "typeIdentifier": "t_magic_message",
@@ -7099,7 +7099,7 @@
                           "referencedDeclaration": 2590,
                           "src": "8296:18:2",
                           "typeDescriptions": {
-                            "typeIdentifier": "t_contract$_SyscoinSuperblocksI_$8314",
+                            "typeIdentifier": "t_contract$_SyscoinSuperblocksI_$8312",
                             "typeString": "contract SyscoinSuperblocksI"
                           }
                         },
@@ -7110,7 +7110,7 @@
                         "lValueRequested": false,
                         "memberName": "propose",
                         "nodeType": "MemberAccess",
-                        "referencedDeclaration": 8160,
+                        "referencedDeclaration": 8158,
                         "src": "8296:26:2",
                         "typeDescriptions": {
                           "typeIdentifier": "t_function_external_nonpayable$_t_bytes32_$_t_uint256_$_t_uint256_$_t_bytes32_$_t_uint32_$_t_bytes32_$_t_address_$returns$_t_uint256_$_t_bytes32_$",
@@ -7679,7 +7679,7 @@
                                     "name": "msg",
                                     "nodeType": "Identifier",
                                     "overloadedDeclarations": [],
-                                    "referencedDeclaration": 10799,
+                                    "referencedDeclaration": 11098,
                                     "src": "9032:3:2",
                                     "typeDescriptions": {
                                       "typeIdentifier": "t_magic_message",
@@ -7724,10 +7724,10 @@
                             "name": "require",
                             "nodeType": "Identifier",
                             "overloadedDeclarations": [
-                              10802,
-                              10803
+                              11101,
+                              11102
                             ],
-                            "referencedDeclaration": 10802,
+                            "referencedDeclaration": 11101,
                             "src": "8955:7:2",
                             "typeDescriptions": {
                               "typeIdentifier": "t_function_require_pure$_t_bool_$returns$__$",
@@ -7864,7 +7864,7 @@
                         "name": "msg",
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
-                        "referencedDeclaration": 10799,
+                        "referencedDeclaration": 11098,
                         "src": "9129:3:2",
                         "typeDescriptions": {
                           "typeIdentifier": "t_magic_message",
@@ -8248,7 +8248,7 @@
                         "name": "block",
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
-                        "referencedDeclaration": 10789,
+                        "referencedDeclaration": 11088,
                         "src": "9311:5:2",
                         "typeDescriptions": {
                           "typeIdentifier": "t_magic_block",
@@ -8337,7 +8337,7 @@
                           "name": "block",
                           "nodeType": "Identifier",
                           "overloadedDeclarations": [],
-                          "referencedDeclaration": 10789,
+                          "referencedDeclaration": 11088,
                           "src": "9361:5:2",
                           "typeDescriptions": {
                             "typeIdentifier": "t_magic_block",
@@ -8503,7 +8503,7 @@
                             "name": "msg",
                             "nodeType": "Identifier",
                             "overloadedDeclarations": [],
-                            "referencedDeclaration": 10799,
+                            "referencedDeclaration": 11098,
                             "src": "9486:3:2",
                             "typeDescriptions": {
                               "typeIdentifier": "t_magic_message",
@@ -8559,7 +8559,7 @@
                           "name": "this",
                           "nodeType": "Identifier",
                           "overloadedDeclarations": [],
-                          "referencedDeclaration": 10835,
+                          "referencedDeclaration": 11134,
                           "src": "9453:4:2",
                           "typeDescriptions": {
                             "typeIdentifier": "t_contract$_SyscoinClaimManager_$4338",
@@ -8665,10 +8665,10 @@
                       "name": "require",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [
-                        10802,
-                        10803
+                        11101,
+                        11102
                       ],
-                      "referencedDeclaration": 10802,
+                      "referencedDeclaration": 11101,
                       "src": "9527:7:2",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_require_pure$_t_bool_$returns$__$",
@@ -8752,7 +8752,7 @@
                           "name": "msg",
                           "nodeType": "Identifier",
                           "overloadedDeclarations": [],
-                          "referencedDeclaration": 10799,
+                          "referencedDeclaration": 11098,
                           "src": "9642:3:2",
                           "typeDescriptions": {
                             "typeIdentifier": "t_magic_message",
@@ -9150,7 +9150,7 @@
                               "referencedDeclaration": 2590,
                               "src": "10003:18:2",
                               "typeDescriptions": {
-                                "typeIdentifier": "t_contract$_SyscoinSuperblocksI_$8314",
+                                "typeIdentifier": "t_contract$_SyscoinSuperblocksI_$8312",
                                 "typeString": "contract SyscoinSuperblocksI"
                               }
                             }
@@ -9158,7 +9158,7 @@
                           "expression": {
                             "argumentTypes": [
                               {
-                                "typeIdentifier": "t_contract$_SyscoinSuperblocksI_$8314",
+                                "typeIdentifier": "t_contract$_SyscoinSuperblocksI_$8312",
                                 "typeString": "contract SyscoinSuperblocksI"
                               }
                             ],
@@ -9265,10 +9265,10 @@
                       "name": "require",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [
-                        10802,
-                        10803
+                        11101,
+                        11102
                       ],
-                      "referencedDeclaration": 10802,
+                      "referencedDeclaration": 11101,
                       "src": "9987:7:2",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_require_pure$_t_bool_$returns$__$",
@@ -10176,7 +10176,7 @@
                           "name": "msg",
                           "nodeType": "Identifier",
                           "overloadedDeclarations": [],
-                          "referencedDeclaration": 10799,
+                          "referencedDeclaration": 11098,
                           "src": "10928:3:2",
                           "typeDescriptions": {
                             "typeIdentifier": "t_magic_message",
@@ -10418,7 +10418,7 @@
                           "name": "msg",
                           "nodeType": "Identifier",
                           "overloadedDeclarations": [],
-                          "referencedDeclaration": 10799,
+                          "referencedDeclaration": 11098,
                           "src": "11181:3:2",
                           "typeDescriptions": {
                             "typeIdentifier": "t_magic_message",
@@ -10460,7 +10460,7 @@
                         "referencedDeclaration": 2590,
                         "src": "11136:18:2",
                         "typeDescriptions": {
-                          "typeIdentifier": "t_contract$_SyscoinSuperblocksI_$8314",
+                          "typeIdentifier": "t_contract$_SyscoinSuperblocksI_$8312",
                           "typeString": "contract SyscoinSuperblocksI"
                         }
                       },
@@ -10471,7 +10471,7 @@
                       "lValueRequested": false,
                       "memberName": "challenge",
                       "nodeType": "MemberAccess",
-                      "referencedDeclaration": 8222,
+                      "referencedDeclaration": 8220,
                       "src": "11136:28:2",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_external_nonpayable$_t_bytes32_$_t_address_$returns$_t_uint256_$",
@@ -10730,7 +10730,7 @@
                             "name": "msg",
                             "nodeType": "Identifier",
                             "overloadedDeclarations": [],
-                            "referencedDeclaration": 10799,
+                            "referencedDeclaration": 11098,
                             "src": "11355:3:2",
                             "typeDescriptions": {
                               "typeIdentifier": "t_magic_message",
@@ -10786,7 +10786,7 @@
                           "name": "this",
                           "nodeType": "Identifier",
                           "overloadedDeclarations": [],
-                          "referencedDeclaration": 10835,
+                          "referencedDeclaration": 11134,
                           "src": "11322:4:2",
                           "typeDescriptions": {
                             "typeIdentifier": "t_contract$_SyscoinClaimManager_$4338",
@@ -10892,10 +10892,10 @@
                       "name": "require",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [
-                        10802,
-                        10803
+                        11101,
+                        11102
                       ],
-                      "referencedDeclaration": 10802,
+                      "referencedDeclaration": 11101,
                       "src": "11396:7:2",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_require_pure$_t_bool_$returns$__$",
@@ -10978,7 +10978,7 @@
                           "name": "block",
                           "nodeType": "Identifier",
                           "overloadedDeclarations": [],
-                          "referencedDeclaration": 10789,
+                          "referencedDeclaration": 11088,
                           "src": "11465:5:2",
                           "typeDescriptions": {
                             "typeIdentifier": "t_magic_block",
@@ -11077,7 +11077,7 @@
                         "name": "msg",
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
-                        "referencedDeclaration": 10799,
+                        "referencedDeclaration": 11098,
                         "src": "11529:3:2",
                         "typeDescriptions": {
                           "typeIdentifier": "t_magic_message",
@@ -11133,7 +11133,7 @@
                           "name": "msg",
                           "nodeType": "Identifier",
                           "overloadedDeclarations": [],
-                          "referencedDeclaration": 10799,
+                          "referencedDeclaration": 11098,
                           "src": "11596:3:2",
                           "typeDescriptions": {
                             "typeIdentifier": "t_magic_message",
@@ -11295,7 +11295,7 @@
                         "referencedDeclaration": 2592,
                         "src": "11618:27:2",
                         "typeDescriptions": {
-                          "typeIdentifier": "t_contract$_SyscoinBattleManagerI_$8062",
+                          "typeIdentifier": "t_contract$_SyscoinBattleManagerI_$8059",
                           "typeString": "contract SyscoinBattleManagerI"
                         }
                       },
@@ -11306,7 +11306,7 @@
                       "lValueRequested": false,
                       "memberName": "beginBattleSession",
                       "nodeType": "MemberAccess",
-                      "referencedDeclaration": 8061,
+                      "referencedDeclaration": 8058,
                       "src": "11618:46:2",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_external_nonpayable$_t_bytes32_$_t_address_$_t_address_$returns$__$",
@@ -12146,7 +12146,7 @@
                         "condition": {
                           "argumentTypes": null,
                           "commonType": {
-                            "typeIdentifier": "t_enum$_Status_$8120",
+                            "typeIdentifier": "t_enum$_Status_$8118",
                             "typeString": "enum SyscoinSuperblocksI.Status"
                           },
                           "id": 3412,
@@ -12187,7 +12187,7 @@
                                 "referencedDeclaration": 2590,
                                 "src": "12789:18:2",
                                 "typeDescriptions": {
-                                  "typeIdentifier": "t_contract$_SyscoinSuperblocksI_$8314",
+                                  "typeIdentifier": "t_contract$_SyscoinSuperblocksI_$8312",
                                   "typeString": "contract SyscoinSuperblocksI"
                                 }
                               },
@@ -12198,10 +12198,10 @@
                               "lValueRequested": false,
                               "memberName": "getSuperblockStatus",
                               "nodeType": "MemberAccess",
-                              "referencedDeclaration": 8271,
+                              "referencedDeclaration": 8269,
                               "src": "12789:38:2",
                               "typeDescriptions": {
-                                "typeIdentifier": "t_function_external_view$_t_bytes32_$returns$_t_enum$_Status_$8120_$",
+                                "typeIdentifier": "t_function_external_view$_t_bytes32_$returns$_t_enum$_Status_$8118_$",
                                 "typeString": "function (bytes32) view external returns (enum SyscoinSuperblocksI.Status)"
                               }
                             },
@@ -12215,7 +12215,7 @@
                             "nodeType": "FunctionCall",
                             "src": "12789:42:2",
                             "typeDescriptions": {
-                              "typeIdentifier": "t_enum$_Status_$8120",
+                              "typeIdentifier": "t_enum$_Status_$8118",
                               "typeString": "enum SyscoinSuperblocksI.Status"
                             }
                           },
@@ -12231,10 +12231,10 @@
                                 "name": "SyscoinSuperblocksI",
                                 "nodeType": "Identifier",
                                 "overloadedDeclarations": [],
-                                "referencedDeclaration": 8314,
+                                "referencedDeclaration": 8312,
                                 "src": "12835:19:2",
                                 "typeDescriptions": {
-                                  "typeIdentifier": "t_type$_t_contract$_SyscoinSuperblocksI_$8314_$",
+                                  "typeIdentifier": "t_type$_t_contract$_SyscoinSuperblocksI_$8312_$",
                                   "typeString": "type(contract SyscoinSuperblocksI)"
                                 }
                               },
@@ -12245,10 +12245,10 @@
                               "lValueRequested": false,
                               "memberName": "Status",
                               "nodeType": "MemberAccess",
-                              "referencedDeclaration": 8120,
+                              "referencedDeclaration": 8118,
                               "src": "12835:26:2",
                               "typeDescriptions": {
-                                "typeIdentifier": "t_type$_t_enum$_Status_$8120_$",
+                                "typeIdentifier": "t_type$_t_enum$_Status_$8118_$",
                                 "typeString": "type(enum SyscoinSuperblocksI.Status)"
                               }
                             },
@@ -12262,7 +12262,7 @@
                             "referencedDeclaration": null,
                             "src": "12835:39:2",
                             "typeDescriptions": {
-                              "typeIdentifier": "t_enum$_Status_$8120",
+                              "typeIdentifier": "t_enum$_Status_$8118",
                               "typeString": "enum SyscoinSuperblocksI.Status"
                             }
                           },
@@ -12635,7 +12635,7 @@
                                 "referencedDeclaration": 2590,
                                 "src": "13145:18:2",
                                 "typeDescriptions": {
-                                  "typeIdentifier": "t_contract$_SyscoinSuperblocksI_$8314",
+                                  "typeIdentifier": "t_contract$_SyscoinSuperblocksI_$8312",
                                   "typeString": "contract SyscoinSuperblocksI"
                                 }
                               },
@@ -12646,7 +12646,7 @@
                               "lValueRequested": false,
                               "memberName": "getSuperblockParentId",
                               "nodeType": "MemberAccess",
-                              "referencedDeclaration": 8264,
+                              "referencedDeclaration": 8262,
                               "src": "13145:40:2",
                               "typeDescriptions": {
                                 "typeIdentifier": "t_function_external_view$_t_bytes32_$returns$_t_bytes32_$",
@@ -13009,7 +13009,7 @@
                   "condition": {
                     "argumentTypes": null,
                     "commonType": {
-                      "typeIdentifier": "t_enum$_Status_$8120",
+                      "typeIdentifier": "t_enum$_Status_$8118",
                       "typeString": "enum SyscoinSuperblocksI.Status"
                     },
                     "id": 3474,
@@ -13050,7 +13050,7 @@
                           "referencedDeclaration": 2590,
                           "src": "13454:18:2",
                           "typeDescriptions": {
-                            "typeIdentifier": "t_contract$_SyscoinSuperblocksI_$8314",
+                            "typeIdentifier": "t_contract$_SyscoinSuperblocksI_$8312",
                             "typeString": "contract SyscoinSuperblocksI"
                           }
                         },
@@ -13061,10 +13061,10 @@
                         "lValueRequested": false,
                         "memberName": "getSuperblockStatus",
                         "nodeType": "MemberAccess",
-                        "referencedDeclaration": 8271,
+                        "referencedDeclaration": 8269,
                         "src": "13454:38:2",
                         "typeDescriptions": {
-                          "typeIdentifier": "t_function_external_view$_t_bytes32_$returns$_t_enum$_Status_$8120_$",
+                          "typeIdentifier": "t_function_external_view$_t_bytes32_$returns$_t_enum$_Status_$8118_$",
                           "typeString": "function (bytes32) view external returns (enum SyscoinSuperblocksI.Status)"
                         }
                       },
@@ -13078,7 +13078,7 @@
                       "nodeType": "FunctionCall",
                       "src": "13454:42:2",
                       "typeDescriptions": {
-                        "typeIdentifier": "t_enum$_Status_$8120",
+                        "typeIdentifier": "t_enum$_Status_$8118",
                         "typeString": "enum SyscoinSuperblocksI.Status"
                       }
                     },
@@ -13094,10 +13094,10 @@
                           "name": "SyscoinSuperblocksI",
                           "nodeType": "Identifier",
                           "overloadedDeclarations": [],
-                          "referencedDeclaration": 8314,
+                          "referencedDeclaration": 8312,
                           "src": "13500:19:2",
                           "typeDescriptions": {
-                            "typeIdentifier": "t_type$_t_contract$_SyscoinSuperblocksI_$8314_$",
+                            "typeIdentifier": "t_type$_t_contract$_SyscoinSuperblocksI_$8312_$",
                             "typeString": "type(contract SyscoinSuperblocksI)"
                           }
                         },
@@ -13108,10 +13108,10 @@
                         "lValueRequested": false,
                         "memberName": "Status",
                         "nodeType": "MemberAccess",
-                        "referencedDeclaration": 8120,
+                        "referencedDeclaration": 8118,
                         "src": "13500:26:2",
                         "typeDescriptions": {
-                          "typeIdentifier": "t_type$_t_enum$_Status_$8120_$",
+                          "typeIdentifier": "t_type$_t_enum$_Status_$8118_$",
                           "typeString": "type(enum SyscoinSuperblocksI.Status)"
                         }
                       },
@@ -13125,7 +13125,7 @@
                       "referencedDeclaration": null,
                       "src": "13500:39:2",
                       "typeDescriptions": {
-                        "typeIdentifier": "t_enum$_Status_$8120",
+                        "typeIdentifier": "t_enum$_Status_$8118",
                         "typeString": "enum SyscoinSuperblocksI.Status"
                       }
                     },
@@ -13299,7 +13299,7 @@
                           "name": "msg",
                           "nodeType": "Identifier",
                           "overloadedDeclarations": [],
-                          "referencedDeclaration": 10799,
+                          "referencedDeclaration": 11098,
                           "src": "13714:3:2",
                           "typeDescriptions": {
                             "typeIdentifier": "t_magic_message",
@@ -13341,7 +13341,7 @@
                         "referencedDeclaration": 2590,
                         "src": "13671:18:2",
                         "typeDescriptions": {
-                          "typeIdentifier": "t_contract$_SyscoinSuperblocksI_$8314",
+                          "typeIdentifier": "t_contract$_SyscoinSuperblocksI_$8312",
                           "typeString": "contract SyscoinSuperblocksI"
                         }
                       },
@@ -13352,7 +13352,7 @@
                       "lValueRequested": false,
                       "memberName": "confirm",
                       "nodeType": "MemberAccess",
-                      "referencedDeclaration": 8213,
+                      "referencedDeclaration": 8211,
                       "src": "13671:26:2",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_external_nonpayable$_t_bytes32_$_t_address_$returns$_t_uint256_$",
@@ -13974,7 +13974,7 @@
                                       "referencedDeclaration": 2590,
                                       "src": "14169:18:2",
                                       "typeDescriptions": {
-                                        "typeIdentifier": "t_contract$_SyscoinSuperblocksI_$8314",
+                                        "typeIdentifier": "t_contract$_SyscoinSuperblocksI_$8312",
                                         "typeString": "contract SyscoinSuperblocksI"
                                       }
                                     },
@@ -13985,7 +13985,7 @@
                                     "lValueRequested": false,
                                     "memberName": "getSuperblockParentId",
                                     "nodeType": "MemberAccess",
-                                    "referencedDeclaration": 8264,
+                                    "referencedDeclaration": 8262,
                                     "src": "14169:40:2",
                                     "typeDescriptions": {
                                       "typeIdentifier": "t_function_external_view$_t_bytes32_$returns$_t_bytes32_$",
@@ -14368,7 +14368,7 @@
                                         "name": "msg",
                                         "nodeType": "Identifier",
                                         "overloadedDeclarations": [],
-                                        "referencedDeclaration": 10799,
+                                        "referencedDeclaration": 11098,
                                         "src": "14439:3:2",
                                         "typeDescriptions": {
                                           "typeIdentifier": "t_magic_message",
@@ -14410,7 +14410,7 @@
                                       "referencedDeclaration": 2590,
                                       "src": "14408:18:2",
                                       "typeDescriptions": {
-                                        "typeIdentifier": "t_contract$_SyscoinSuperblocksI_$8314",
+                                        "typeIdentifier": "t_contract$_SyscoinSuperblocksI_$8312",
                                         "typeString": "contract SyscoinSuperblocksI"
                                       }
                                     },
@@ -14421,7 +14421,7 @@
                                     "lValueRequested": false,
                                     "memberName": "confirm",
                                     "nodeType": "MemberAccess",
-                                    "referencedDeclaration": 8213,
+                                    "referencedDeclaration": 8211,
                                     "src": "14408:26:2",
                                     "typeDescriptions": {
                                       "typeIdentifier": "t_function_external_nonpayable$_t_bytes32_$_t_address_$returns$_t_uint256_$",
@@ -14513,10 +14513,10 @@
                                   "name": "require",
                                   "nodeType": "Identifier",
                                   "overloadedDeclarations": [
-                                    10802,
-                                    10803
+                                    11101,
+                                    11102
                                   ],
-                                  "referencedDeclaration": 10802,
+                                  "referencedDeclaration": 11101,
                                   "src": "14468:7:2",
                                   "typeDescriptions": {
                                     "typeIdentifier": "t_function_require_pure$_t_bool_$returns$__$",
@@ -15401,7 +15401,7 @@
                         "referencedDeclaration": 2590,
                         "src": "15339:18:2",
                         "typeDescriptions": {
-                          "typeIdentifier": "t_contract$_SyscoinSuperblocksI_$8314",
+                          "typeIdentifier": "t_contract$_SyscoinSuperblocksI_$8312",
                           "typeString": "contract SyscoinSuperblocksI"
                         }
                       },
@@ -15412,7 +15412,7 @@
                       "lValueRequested": false,
                       "memberName": "getSuperblockHeight",
                       "nodeType": "MemberAccess",
-                      "referencedDeclaration": 8257,
+                      "referencedDeclaration": 8255,
                       "src": "15339:38:2",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_external_view$_t_bytes32_$returns$_t_uint32_$",
@@ -15477,7 +15477,7 @@
                           "referencedDeclaration": 2590,
                           "src": "15417:18:2",
                           "typeDescriptions": {
-                            "typeIdentifier": "t_contract$_SyscoinSuperblocksI_$8314",
+                            "typeIdentifier": "t_contract$_SyscoinSuperblocksI_$8312",
                             "typeString": "contract SyscoinSuperblocksI"
                           }
                         },
@@ -15488,7 +15488,7 @@
                         "lValueRequested": false,
                         "memberName": "getChainHeight",
                         "nodeType": "MemberAccess",
-                        "referencedDeclaration": 8250,
+                        "referencedDeclaration": 8248,
                         "src": "15417:33:2",
                         "typeDescriptions": {
                           "typeIdentifier": "t_function_external_view$__$returns$_t_uint256_$",
@@ -15637,7 +15637,7 @@
                       "stateVariable": false,
                       "storageLocation": "default",
                       "typeDescriptions": {
-                        "typeIdentifier": "t_enum$_Status_$8120",
+                        "typeIdentifier": "t_enum$_Status_$8118",
                         "typeString": "enum SyscoinSuperblocksI.Status"
                       },
                       "typeName": {
@@ -15645,10 +15645,10 @@
                         "id": 3666,
                         "name": "SyscoinSuperblocksI.Status",
                         "nodeType": "UserDefinedTypeName",
-                        "referencedDeclaration": 8120,
+                        "referencedDeclaration": 8118,
                         "src": "15578:26:2",
                         "typeDescriptions": {
-                          "typeIdentifier": "t_enum$_Status_$8120",
+                          "typeIdentifier": "t_enum$_Status_$8118",
                           "typeString": "enum SyscoinSuperblocksI.Status"
                         }
                       },
@@ -15690,7 +15690,7 @@
                         "referencedDeclaration": 2590,
                         "src": "15614:18:2",
                         "typeDescriptions": {
-                          "typeIdentifier": "t_contract$_SyscoinSuperblocksI_$8314",
+                          "typeIdentifier": "t_contract$_SyscoinSuperblocksI_$8312",
                           "typeString": "contract SyscoinSuperblocksI"
                         }
                       },
@@ -15701,10 +15701,10 @@
                       "lValueRequested": false,
                       "memberName": "getSuperblockStatus",
                       "nodeType": "MemberAccess",
-                      "referencedDeclaration": 8271,
+                      "referencedDeclaration": 8269,
                       "src": "15614:38:2",
                       "typeDescriptions": {
-                        "typeIdentifier": "t_function_external_view$_t_bytes32_$returns$_t_enum$_Status_$8120_$",
+                        "typeIdentifier": "t_function_external_view$_t_bytes32_$returns$_t_enum$_Status_$8118_$",
                         "typeString": "function (bytes32) view external returns (enum SyscoinSuperblocksI.Status)"
                       }
                     },
@@ -15718,7 +15718,7 @@
                     "nodeType": "FunctionCall",
                     "src": "15614:54:2",
                     "typeDescriptions": {
-                      "typeIdentifier": "t_enum$_Status_$8120",
+                      "typeIdentifier": "t_enum$_Status_$8118",
                       "typeString": "enum SyscoinSuperblocksI.Status"
                     }
                   },
@@ -15729,7 +15729,7 @@
                   "condition": {
                     "argumentTypes": null,
                     "commonType": {
-                      "typeIdentifier": "t_enum$_Status_$8120",
+                      "typeIdentifier": "t_enum$_Status_$8118",
                       "typeString": "enum SyscoinSuperblocksI.Status"
                     },
                     "id": 3677,
@@ -15746,7 +15746,7 @@
                       "referencedDeclaration": 3667,
                       "src": "15683:6:2",
                       "typeDescriptions": {
-                        "typeIdentifier": "t_enum$_Status_$8120",
+                        "typeIdentifier": "t_enum$_Status_$8118",
                         "typeString": "enum SyscoinSuperblocksI.Status"
                       }
                     },
@@ -15762,10 +15762,10 @@
                           "name": "SyscoinSuperblocksI",
                           "nodeType": "Identifier",
                           "overloadedDeclarations": [],
-                          "referencedDeclaration": 8314,
+                          "referencedDeclaration": 8312,
                           "src": "15693:19:2",
                           "typeDescriptions": {
-                            "typeIdentifier": "t_type$_t_contract$_SyscoinSuperblocksI_$8314_$",
+                            "typeIdentifier": "t_type$_t_contract$_SyscoinSuperblocksI_$8312_$",
                             "typeString": "type(contract SyscoinSuperblocksI)"
                           }
                         },
@@ -15776,10 +15776,10 @@
                         "lValueRequested": false,
                         "memberName": "Status",
                         "nodeType": "MemberAccess",
-                        "referencedDeclaration": 8120,
+                        "referencedDeclaration": 8118,
                         "src": "15693:26:2",
                         "typeDescriptions": {
-                          "typeIdentifier": "t_type$_t_enum$_Status_$8120_$",
+                          "typeIdentifier": "t_type$_t_enum$_Status_$8118_$",
                           "typeString": "type(enum SyscoinSuperblocksI.Status)"
                         }
                       },
@@ -15793,7 +15793,7 @@
                       "referencedDeclaration": null,
                       "src": "15693:39:2",
                       "typeDescriptions": {
-                        "typeIdentifier": "t_enum$_Status_$8120",
+                        "typeIdentifier": "t_enum$_Status_$8118",
                         "typeString": "enum SyscoinSuperblocksI.Status"
                       }
                     },
@@ -16162,7 +16162,7 @@
                         "referencedDeclaration": 2590,
                         "src": "16006:18:2",
                         "typeDescriptions": {
-                          "typeIdentifier": "t_contract$_SyscoinSuperblocksI_$8314",
+                          "typeIdentifier": "t_contract$_SyscoinSuperblocksI_$8312",
                           "typeString": "contract SyscoinSuperblocksI"
                         }
                       },
@@ -16173,7 +16173,7 @@
                       "lValueRequested": false,
                       "memberName": "invalidate",
                       "nodeType": "MemberAccess",
-                      "referencedDeclaration": 8240,
+                      "referencedDeclaration": 8238,
                       "src": "16006:29:2",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_external_nonpayable$_t_bytes32_$_t_address_$returns$_t_uint256_$",
@@ -16258,10 +16258,10 @@
                       "name": "require",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [
-                        10802,
-                        10803
+                        11101,
+                        11102
                       ],
-                      "referencedDeclaration": 10802,
+                      "referencedDeclaration": 11101,
                       "src": "16078:7:2",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_require_pure$_t_bool_$returns$__$",
@@ -17314,7 +17314,7 @@
                               "referencedDeclaration": 2590,
                               "src": "17503:18:2",
                               "typeDescriptions": {
-                                "typeIdentifier": "t_contract$_SyscoinSuperblocksI_$8314",
+                                "typeIdentifier": "t_contract$_SyscoinSuperblocksI_$8312",
                                 "typeString": "contract SyscoinSuperblocksI"
                               }
                             },
@@ -17325,7 +17325,7 @@
                             "lValueRequested": false,
                             "memberName": "invalidate",
                             "nodeType": "MemberAccess",
-                            "referencedDeclaration": 8240,
+                            "referencedDeclaration": 8238,
                             "src": "17503:29:2",
                             "typeDescriptions": {
                               "typeIdentifier": "t_function_external_nonpayable$_t_bytes32_$_t_address_$returns$_t_uint256_$",
@@ -17410,10 +17410,10 @@
                             "name": "require",
                             "nodeType": "Identifier",
                             "overloadedDeclarations": [
-                              10802,
-                              10803
+                              11101,
+                              11102
                             ],
-                            "referencedDeclaration": 10802,
+                            "referencedDeclaration": 11101,
                             "src": "17579:7:2",
                             "typeDescriptions": {
                               "typeIdentifier": "t_function_require_pure$_t_bool_$returns$__$",
@@ -17694,7 +17694,7 @@
                         "name": "block",
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
-                        "referencedDeclaration": 10789,
+                        "referencedDeclaration": 11088,
                         "src": "17924:5:2",
                         "typeDescriptions": {
                           "typeIdentifier": "t_magic_block",
@@ -18160,7 +18160,7 @@
                               "referencedDeclaration": 2590,
                               "src": "18293:18:2",
                               "typeDescriptions": {
-                                "typeIdentifier": "t_contract$_SyscoinSuperblocksI_$8314",
+                                "typeIdentifier": "t_contract$_SyscoinSuperblocksI_$8312",
                                 "typeString": "contract SyscoinSuperblocksI"
                               }
                             },
@@ -18171,7 +18171,7 @@
                             "lValueRequested": false,
                             "memberName": "getSuperblockParentId",
                             "nodeType": "MemberAccess",
-                            "referencedDeclaration": 8264,
+                            "referencedDeclaration": 8262,
                             "src": "18293:40:2",
                             "typeDescriptions": {
                               "typeIdentifier": "t_function_external_view$_t_bytes32_$returns$_t_bytes32_$",
@@ -18210,7 +18210,7 @@
                             "stateVariable": false,
                             "storageLocation": "default",
                             "typeDescriptions": {
-                              "typeIdentifier": "t_enum$_Status_$8120",
+                              "typeIdentifier": "t_enum$_Status_$8118",
                               "typeString": "enum SyscoinSuperblocksI.Status"
                             },
                             "typeName": {
@@ -18218,10 +18218,10 @@
                               "id": 3859,
                               "name": "SyscoinSuperblocksI.Status",
                               "nodeType": "UserDefinedTypeName",
-                              "referencedDeclaration": 8120,
+                              "referencedDeclaration": 8118,
                               "src": "18363:26:2",
                               "typeDescriptions": {
-                                "typeIdentifier": "t_enum$_Status_$8120",
+                                "typeIdentifier": "t_enum$_Status_$8118",
                                 "typeString": "enum SyscoinSuperblocksI.Status"
                               }
                             },
@@ -18263,7 +18263,7 @@
                               "referencedDeclaration": 2590,
                               "src": "18399:18:2",
                               "typeDescriptions": {
-                                "typeIdentifier": "t_contract$_SyscoinSuperblocksI_$8314",
+                                "typeIdentifier": "t_contract$_SyscoinSuperblocksI_$8312",
                                 "typeString": "contract SyscoinSuperblocksI"
                               }
                             },
@@ -18274,10 +18274,10 @@
                             "lValueRequested": false,
                             "memberName": "getSuperblockStatus",
                             "nodeType": "MemberAccess",
-                            "referencedDeclaration": 8271,
+                            "referencedDeclaration": 8269,
                             "src": "18399:38:2",
                             "typeDescriptions": {
-                              "typeIdentifier": "t_function_external_view$_t_bytes32_$returns$_t_enum$_Status_$8120_$",
+                              "typeIdentifier": "t_function_external_view$_t_bytes32_$returns$_t_enum$_Status_$8118_$",
                               "typeString": "function (bytes32) view external returns (enum SyscoinSuperblocksI.Status)"
                             }
                           },
@@ -18291,7 +18291,7 @@
                           "nodeType": "FunctionCall",
                           "src": "18399:48:2",
                           "typeDescriptions": {
-                            "typeIdentifier": "t_enum$_Status_$8120",
+                            "typeIdentifier": "t_enum$_Status_$8118",
                             "typeString": "enum SyscoinSuperblocksI.Status"
                           }
                         },
@@ -18302,7 +18302,7 @@
                         "condition": {
                           "argumentTypes": null,
                           "commonType": {
-                            "typeIdentifier": "t_enum$_Status_$8120",
+                            "typeIdentifier": "t_enum$_Status_$8118",
                             "typeString": "enum SyscoinSuperblocksI.Status"
                           },
                           "id": 3870,
@@ -18319,7 +18319,7 @@
                             "referencedDeclaration": 3860,
                             "src": "18465:6:2",
                             "typeDescriptions": {
-                              "typeIdentifier": "t_enum$_Status_$8120",
+                              "typeIdentifier": "t_enum$_Status_$8118",
                               "typeString": "enum SyscoinSuperblocksI.Status"
                             }
                           },
@@ -18335,10 +18335,10 @@
                                 "name": "SyscoinSuperblocksI",
                                 "nodeType": "Identifier",
                                 "overloadedDeclarations": [],
-                                "referencedDeclaration": 8314,
+                                "referencedDeclaration": 8312,
                                 "src": "18475:19:2",
                                 "typeDescriptions": {
-                                  "typeIdentifier": "t_type$_t_contract$_SyscoinSuperblocksI_$8314_$",
+                                  "typeIdentifier": "t_type$_t_contract$_SyscoinSuperblocksI_$8312_$",
                                   "typeString": "type(contract SyscoinSuperblocksI)"
                                 }
                               },
@@ -18349,10 +18349,10 @@
                               "lValueRequested": false,
                               "memberName": "Status",
                               "nodeType": "MemberAccess",
-                              "referencedDeclaration": 8120,
+                              "referencedDeclaration": 8118,
                               "src": "18475:26:2",
                               "typeDescriptions": {
-                                "typeIdentifier": "t_type$_t_enum$_Status_$8120_$",
+                                "typeIdentifier": "t_type$_t_enum$_Status_$8118_$",
                                 "typeString": "type(enum SyscoinSuperblocksI.Status)"
                               }
                             },
@@ -18366,7 +18366,7 @@
                             "referencedDeclaration": null,
                             "src": "18475:35:2",
                             "typeDescriptions": {
-                              "typeIdentifier": "t_enum$_Status_$8120",
+                              "typeIdentifier": "t_enum$_Status_$8118",
                               "typeString": "enum SyscoinSuperblocksI.Status"
                             }
                           },
@@ -18518,7 +18518,7 @@
                                 "name": "msg",
                                 "nodeType": "Identifier",
                                 "overloadedDeclarations": [],
-                                "referencedDeclaration": 10799,
+                                "referencedDeclaration": 11098,
                                 "src": "19053:3:2",
                                 "typeDescriptions": {
                                   "typeIdentifier": "t_magic_message",
@@ -18560,7 +18560,7 @@
                               "referencedDeclaration": 2590,
                               "src": "19006:18:2",
                               "typeDescriptions": {
-                                "typeIdentifier": "t_contract$_SyscoinSuperblocksI_$8314",
+                                "typeIdentifier": "t_contract$_SyscoinSuperblocksI_$8312",
                                 "typeString": "contract SyscoinSuperblocksI"
                               }
                             },
@@ -18571,7 +18571,7 @@
                             "lValueRequested": false,
                             "memberName": "semiApprove",
                             "nodeType": "MemberAccess",
-                            "referencedDeclaration": 8231,
+                            "referencedDeclaration": 8229,
                             "src": "19006:30:2",
                             "typeDescriptions": {
                               "typeIdentifier": "t_function_external_nonpayable$_t_bytes32_$_t_address_$returns$_t_uint256_$",
@@ -18656,10 +18656,10 @@
                             "name": "require",
                             "nodeType": "Identifier",
                             "overloadedDeclarations": [
-                              10802,
-                              10803
+                              11101,
+                              11102
                             ],
-                            "referencedDeclaration": 10802,
+                            "referencedDeclaration": 11101,
                             "src": "19078:7:2",
                             "typeDescriptions": {
                               "typeIdentifier": "t_function_require_pure$_t_bool_$returns$__$",
@@ -18838,7 +18838,7 @@
                                 "name": "msg",
                                 "nodeType": "Identifier",
                                 "overloadedDeclarations": [],
-                                "referencedDeclaration": 10799,
+                                "referencedDeclaration": 11098,
                                 "src": "18682:3:2",
                                 "typeDescriptions": {
                                   "typeIdentifier": "t_magic_message",
@@ -18880,7 +18880,7 @@
                               "referencedDeclaration": 2590,
                               "src": "18639:18:2",
                               "typeDescriptions": {
-                                "typeIdentifier": "t_contract$_SyscoinSuperblocksI_$8314",
+                                "typeIdentifier": "t_contract$_SyscoinSuperblocksI_$8312",
                                 "typeString": "contract SyscoinSuperblocksI"
                               }
                             },
@@ -18891,7 +18891,7 @@
                             "lValueRequested": false,
                             "memberName": "confirm",
                             "nodeType": "MemberAccess",
-                            "referencedDeclaration": 8213,
+                            "referencedDeclaration": 8211,
                             "src": "18639:26:2",
                             "typeDescriptions": {
                               "typeIdentifier": "t_function_external_nonpayable$_t_bytes32_$_t_address_$returns$_t_uint256_$",
@@ -18976,10 +18976,10 @@
                             "name": "require",
                             "nodeType": "Identifier",
                             "overloadedDeclarations": [
-                              10802,
-                              10803
+                              11101,
+                              11102
                             ],
-                            "referencedDeclaration": 10802,
+                            "referencedDeclaration": 11101,
                             "src": "18707:7:2",
                             "typeDescriptions": {
                               "typeIdentifier": "t_function_require_pure$_t_bool_$returns$__$",
@@ -19520,10 +19520,10 @@
                       "name": "require",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [
-                        10802,
-                        10803
+                        11101,
+                        11102
                       ],
-                      "referencedDeclaration": 10802,
+                      "referencedDeclaration": 11101,
                       "src": "19620:7:2",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_require_pure$_t_bool_$returns$__$",
@@ -19788,10 +19788,10 @@
                               "name": "revert",
                               "nodeType": "Identifier",
                               "overloadedDeclarations": [
-                                10804,
-                                10805
+                                11103,
+                                11104
                               ],
-                              "referencedDeclaration": 10804,
+                              "referencedDeclaration": 11103,
                               "src": "19929:6:2",
                               "typeDescriptions": {
                                 "typeIdentifier": "t_function_revert_pure$__$returns$__$",
@@ -20829,7 +20829,7 @@
                               "lValueRequested": false,
                               "memberName": "add",
                               "nodeType": "MemberAccess",
-                              "referencedDeclaration": 9391,
+                              "referencedDeclaration": 9395,
                               "src": "20540:36:2",
                               "typeDescriptions": {
                                 "typeIdentifier": "t_function_internal_pure$_t_uint256_$_t_uint256_$returns$_t_uint256_$bound_to$_t_uint256_$",
@@ -21115,7 +21115,7 @@
                             "stateVariable": false,
                             "storageLocation": "default",
                             "typeDescriptions": {
-                              "typeIdentifier": "t_enum$_Status_$8120",
+                              "typeIdentifier": "t_enum$_Status_$8118",
                               "typeString": "enum SyscoinSuperblocksI.Status"
                             },
                             "typeName": {
@@ -21123,10 +21123,10 @@
                               "id": 4081,
                               "name": "SyscoinSuperblocksI.Status",
                               "nodeType": "UserDefinedTypeName",
-                              "referencedDeclaration": 8120,
+                              "referencedDeclaration": 8118,
                               "src": "20856:26:2",
                               "typeDescriptions": {
-                                "typeIdentifier": "t_enum$_Status_$8120",
+                                "typeIdentifier": "t_enum$_Status_$8118",
                                 "typeString": "enum SyscoinSuperblocksI.Status"
                               }
                             },
@@ -21196,7 +21196,7 @@
                                       "referencedDeclaration": 4082,
                                       "src": "20976:6:2",
                                       "typeDescriptions": {
-                                        "typeIdentifier": "t_enum$_Status_$8120",
+                                        "typeIdentifier": "t_enum$_Status_$8118",
                                         "typeString": "enum SyscoinSuperblocksI.Status"
                                       }
                                     },
@@ -21211,7 +21211,7 @@
                                   "nodeType": "TupleExpression",
                                   "src": "20941:43:2",
                                   "typeDescriptions": {
-                                    "typeIdentifier": "t_tuple$__$__$__$__$__$_t_bytes32_$_t_address_$_t_enum$_Status_$8120_$__$",
+                                    "typeIdentifier": "t_tuple$__$__$__$__$__$_t_bytes32_$_t_address_$_t_enum$_Status_$8118_$__$",
                                     "typeString": "tuple(,,,,,bytes32,address,enum SyscoinSuperblocksI.Status,)"
                                   }
                                 },
@@ -21250,7 +21250,7 @@
                                       "referencedDeclaration": 2590,
                                       "src": "20987:18:2",
                                       "typeDescriptions": {
-                                        "typeIdentifier": "t_contract$_SyscoinSuperblocksI_$8314",
+                                        "typeIdentifier": "t_contract$_SyscoinSuperblocksI_$8312",
                                         "typeString": "contract SyscoinSuperblocksI"
                                       }
                                     },
@@ -21261,10 +21261,10 @@
                                     "lValueRequested": false,
                                     "memberName": "getSuperblock",
                                     "nodeType": "MemberAccess",
-                                    "referencedDeclaration": 8183,
+                                    "referencedDeclaration": 8181,
                                     "src": "20987:32:2",
                                     "typeDescriptions": {
-                                      "typeIdentifier": "t_function_external_view$_t_bytes32_$returns$_t_bytes32_$_t_uint256_$_t_uint256_$_t_bytes32_$_t_uint32_$_t_bytes32_$_t_address_$_t_enum$_Status_$8120_$_t_uint32_$",
+                                      "typeIdentifier": "t_function_external_view$_t_bytes32_$returns$_t_bytes32_$_t_uint256_$_t_uint256_$_t_bytes32_$_t_uint32_$_t_bytes32_$_t_address_$_t_enum$_Status_$8118_$_t_uint32_$",
                                       "typeString": "function (bytes32) view external returns (bytes32,uint256,uint256,bytes32,uint32,bytes32,address,enum SyscoinSuperblocksI.Status,uint32)"
                                     }
                                   },
@@ -21278,7 +21278,7 @@
                                   "nodeType": "FunctionCall",
                                   "src": "20987:48:2",
                                   "typeDescriptions": {
-                                    "typeIdentifier": "t_tuple$_t_bytes32_$_t_uint256_$_t_uint256_$_t_bytes32_$_t_uint32_$_t_bytes32_$_t_address_$_t_enum$_Status_$8120_$_t_uint32_$",
+                                    "typeIdentifier": "t_tuple$_t_bytes32_$_t_uint256_$_t_uint256_$_t_bytes32_$_t_uint32_$_t_bytes32_$_t_address_$_t_enum$_Status_$8118_$_t_uint32_$",
                                     "typeString": "tuple(bytes32,uint256,uint256,bytes32,uint32,bytes32,address,enum SyscoinSuperblocksI.Status,uint32)"
                                   }
                                 },
@@ -21357,7 +21357,7 @@
                               "condition": {
                                 "argumentTypes": null,
                                 "commonType": {
-                                  "typeIdentifier": "t_enum$_Status_$8120",
+                                  "typeIdentifier": "t_enum$_Status_$8118",
                                   "typeString": "enum SyscoinSuperblocksI.Status"
                                 },
                                 "id": 4106,
@@ -21374,7 +21374,7 @@
                                   "referencedDeclaration": 4082,
                                   "src": "21126:6:2",
                                   "typeDescriptions": {
-                                    "typeIdentifier": "t_enum$_Status_$8120",
+                                    "typeIdentifier": "t_enum$_Status_$8118",
                                     "typeString": "enum SyscoinSuperblocksI.Status"
                                   }
                                 },
@@ -21390,10 +21390,10 @@
                                       "name": "SyscoinSuperblocksI",
                                       "nodeType": "Identifier",
                                       "overloadedDeclarations": [],
-                                      "referencedDeclaration": 8314,
+                                      "referencedDeclaration": 8312,
                                       "src": "21136:19:2",
                                       "typeDescriptions": {
-                                        "typeIdentifier": "t_type$_t_contract$_SyscoinSuperblocksI_$8314_$",
+                                        "typeIdentifier": "t_type$_t_contract$_SyscoinSuperblocksI_$8312_$",
                                         "typeString": "type(contract SyscoinSuperblocksI)"
                                       }
                                     },
@@ -21404,10 +21404,10 @@
                                     "lValueRequested": false,
                                     "memberName": "Status",
                                     "nodeType": "MemberAccess",
-                                    "referencedDeclaration": 8120,
+                                    "referencedDeclaration": 8118,
                                     "src": "21136:26:2",
                                     "typeDescriptions": {
-                                      "typeIdentifier": "t_type$_t_enum$_Status_$8120_$",
+                                      "typeIdentifier": "t_type$_t_enum$_Status_$8118_$",
                                       "typeString": "type(enum SyscoinSuperblocksI.Status)"
                                     }
                                   },
@@ -21421,7 +21421,7 @@
                                   "referencedDeclaration": null,
                                   "src": "21136:35:2",
                                   "typeDescriptions": {
-                                    "typeIdentifier": "t_enum$_Status_$8120",
+                                    "typeIdentifier": "t_enum$_Status_$8118",
                                     "typeString": "enum SyscoinSuperblocksI.Status"
                                   }
                                 },
@@ -21574,7 +21574,7 @@
                                     "lValueRequested": false,
                                     "memberName": "add",
                                     "nodeType": "MemberAccess",
-                                    "referencedDeclaration": 9391,
+                                    "referencedDeclaration": 9395,
                                     "src": "21265:27:2",
                                     "typeDescriptions": {
                                       "typeIdentifier": "t_function_internal_pure$_t_uint256_$_t_uint256_$returns$_t_uint256_$bound_to$_t_uint256_$",
@@ -22261,7 +22261,7 @@
                               "lValueRequested": false,
                               "memberName": "add",
                               "nodeType": "MemberAccess",
-                              "referencedDeclaration": 9391,
+                              "referencedDeclaration": 9395,
                               "src": "21769:35:2",
                               "typeDescriptions": {
                                 "typeIdentifier": "t_function_internal_pure$_t_uint256_$_t_uint256_$returns$_t_uint256_$bound_to$_t_uint256_$",
@@ -22761,7 +22761,7 @@
                               "leftExpression": {
                                 "argumentTypes": null,
                                 "commonType": {
-                                  "typeIdentifier": "t_enum$_Status_$8120",
+                                  "typeIdentifier": "t_enum$_Status_$8118",
                                   "typeString": "enum SyscoinSuperblocksI.Status"
                                 },
                                 "id": 4213,
@@ -22802,7 +22802,7 @@
                                       "referencedDeclaration": 2590,
                                       "src": "22251:18:2",
                                       "typeDescriptions": {
-                                        "typeIdentifier": "t_contract$_SyscoinSuperblocksI_$8314",
+                                        "typeIdentifier": "t_contract$_SyscoinSuperblocksI_$8312",
                                         "typeString": "contract SyscoinSuperblocksI"
                                       }
                                     },
@@ -22813,10 +22813,10 @@
                                     "lValueRequested": false,
                                     "memberName": "getSuperblockStatus",
                                     "nodeType": "MemberAccess",
-                                    "referencedDeclaration": 8271,
+                                    "referencedDeclaration": 8269,
                                     "src": "22251:38:2",
                                     "typeDescriptions": {
-                                      "typeIdentifier": "t_function_external_view$_t_bytes32_$returns$_t_enum$_Status_$8120_$",
+                                      "typeIdentifier": "t_function_external_view$_t_bytes32_$returns$_t_enum$_Status_$8118_$",
                                       "typeString": "function (bytes32) view external returns (enum SyscoinSuperblocksI.Status)"
                                     }
                                   },
@@ -22830,7 +22830,7 @@
                                   "nodeType": "FunctionCall",
                                   "src": "22251:54:2",
                                   "typeDescriptions": {
-                                    "typeIdentifier": "t_enum$_Status_$8120",
+                                    "typeIdentifier": "t_enum$_Status_$8118",
                                     "typeString": "enum SyscoinSuperblocksI.Status"
                                   }
                                 },
@@ -22846,10 +22846,10 @@
                                       "name": "SyscoinSuperblocksI",
                                       "nodeType": "Identifier",
                                       "overloadedDeclarations": [],
-                                      "referencedDeclaration": 8314,
+                                      "referencedDeclaration": 8312,
                                       "src": "22309:19:2",
                                       "typeDescriptions": {
-                                        "typeIdentifier": "t_type$_t_contract$_SyscoinSuperblocksI_$8314_$",
+                                        "typeIdentifier": "t_type$_t_contract$_SyscoinSuperblocksI_$8312_$",
                                         "typeString": "type(contract SyscoinSuperblocksI)"
                                       }
                                     },
@@ -22860,10 +22860,10 @@
                                     "lValueRequested": false,
                                     "memberName": "Status",
                                     "nodeType": "MemberAccess",
-                                    "referencedDeclaration": 8120,
+                                    "referencedDeclaration": 8118,
                                     "src": "22309:26:2",
                                     "typeDescriptions": {
-                                      "typeIdentifier": "t_type$_t_enum$_Status_$8120_$",
+                                      "typeIdentifier": "t_type$_t_enum$_Status_$8118_$",
                                       "typeString": "type(enum SyscoinSuperblocksI.Status)"
                                     }
                                   },
@@ -22877,7 +22877,7 @@
                                   "referencedDeclaration": null,
                                   "src": "22309:35:2",
                                   "typeDescriptions": {
-                                    "typeIdentifier": "t_enum$_Status_$8120",
+                                    "typeIdentifier": "t_enum$_Status_$8118",
                                     "typeString": "enum SyscoinSuperblocksI.Status"
                                   }
                                 },
@@ -23014,7 +23014,7 @@
                                 "name": "block",
                                 "nodeType": "Identifier",
                                 "overloadedDeclarations": [],
-                                "referencedDeclaration": 10789,
+                                "referencedDeclaration": 11088,
                                 "src": "22408:5:2",
                                 "typeDescriptions": {
                                   "typeIdentifier": "t_magic_block",
@@ -24507,7 +24507,7 @@
         "id": 2540,
         "nodeType": "ImportDirective",
         "scope": 4339,
-        "sourceUnit": 8315,
+        "sourceUnit": 8313,
         "src": "26:46:2",
         "symbolAliases": [],
         "unitAlias": ""
@@ -24518,7 +24518,7 @@
         "id": 2541,
         "nodeType": "ImportDirective",
         "scope": 4339,
-        "sourceUnit": 8101,
+        "sourceUnit": 8098,
         "src": "73:47:2",
         "symbolAliases": [],
         "unitAlias": ""
@@ -24529,7 +24529,7 @@
         "id": 2542,
         "nodeType": "ImportDirective",
         "scope": 4339,
-        "sourceUnit": 8063,
+        "sourceUnit": 8060,
         "src": "121:48:2",
         "symbolAliases": [],
         "unitAlias": ""
@@ -24562,7 +24562,7 @@
         "id": 2545,
         "nodeType": "ImportDirective",
         "scope": 4339,
-        "sourceUnit": 9552,
+        "sourceUnit": 9556,
         "src": "243:59:2",
         "symbolAliases": [],
         "unitAlias": ""
@@ -24573,7 +24573,7 @@
         "id": 2546,
         "nodeType": "ImportDirective",
         "scope": 4339,
-        "sourceUnit": 9338,
+        "sourceUnit": 9342,
         "src": "303:60:2",
         "symbolAliases": [],
         "unitAlias": ""
@@ -24587,10 +24587,10 @@
               "id": 2547,
               "name": "Initializable",
               "nodeType": "UserDefinedTypeName",
-              "referencedDeclaration": 9337,
+              "referencedDeclaration": 9341,
               "src": "486:13:2",
               "typeDescriptions": {
-                "typeIdentifier": "t_contract$_Initializable_$9337",
+                "typeIdentifier": "t_contract$_Initializable_$9341",
                 "typeString": "contract Initializable"
               }
             },
@@ -24638,7 +24638,7 @@
         "contractDependencies": [
           4479,
           4686,
-          9337
+          9341
         ],
         "contractKind": "contract",
         "documentation": null,
@@ -24648,7 +24648,7 @@
           4338,
           4686,
           4479,
-          9337
+          9341
         ],
         "name": "SyscoinClaimManager",
         "nodeType": "ContractDefinition",
@@ -24660,10 +24660,10 @@
               "id": 2553,
               "name": "SafeMath",
               "nodeType": "UserDefinedTypeName",
-              "referencedDeclaration": 9551,
+              "referencedDeclaration": 9555,
               "src": "556:8:2",
               "typeDescriptions": {
-                "typeIdentifier": "t_contract$_SafeMath_$9551",
+                "typeIdentifier": "t_contract$_SafeMath_$9555",
                 "typeString": "library SafeMath"
               }
             },
@@ -25115,7 +25115,7 @@
             "stateVariable": true,
             "storageLocation": "default",
             "typeDescriptions": {
-              "typeIdentifier": "t_contract$_SyscoinSuperblocksI_$8314",
+              "typeIdentifier": "t_contract$_SyscoinSuperblocksI_$8312",
               "typeString": "contract SyscoinSuperblocksI"
             },
             "typeName": {
@@ -25123,10 +25123,10 @@
               "id": 2589,
               "name": "SyscoinSuperblocksI",
               "nodeType": "UserDefinedTypeName",
-              "referencedDeclaration": 8314,
+              "referencedDeclaration": 8312,
               "src": "1687:19:2",
               "typeDescriptions": {
-                "typeIdentifier": "t_contract$_SyscoinSuperblocksI_$8314",
+                "typeIdentifier": "t_contract$_SyscoinSuperblocksI_$8312",
                 "typeString": "contract SyscoinSuperblocksI"
               }
             },
@@ -25143,7 +25143,7 @@
             "stateVariable": true,
             "storageLocation": "default",
             "typeDescriptions": {
-              "typeIdentifier": "t_contract$_SyscoinBattleManagerI_$8062",
+              "typeIdentifier": "t_contract$_SyscoinBattleManagerI_$8059",
               "typeString": "contract SyscoinBattleManagerI"
             },
             "typeName": {
@@ -25151,10 +25151,10 @@
               "id": 2591,
               "name": "SyscoinBattleManagerI",
               "nodeType": "UserDefinedTypeName",
-              "referencedDeclaration": 8062,
+              "referencedDeclaration": 8059,
               "src": "1770:21:2",
               "typeDescriptions": {
-                "typeIdentifier": "t_contract$_SyscoinBattleManagerI_$8062",
+                "typeIdentifier": "t_contract$_SyscoinBattleManagerI_$8059",
                 "typeString": "contract SyscoinBattleManagerI"
               }
             },
@@ -26184,7 +26184,7 @@
                             "name": "msg",
                             "nodeType": "Identifier",
                             "overloadedDeclarations": [],
-                            "referencedDeclaration": 10799,
+                            "referencedDeclaration": 11098,
                             "src": "3148:3:2",
                             "typeDescriptions": {
                               "typeIdentifier": "t_magic_message",
@@ -26219,7 +26219,7 @@
                               "referencedDeclaration": 2592,
                               "src": "3170:27:2",
                               "typeDescriptions": {
-                                "typeIdentifier": "t_contract$_SyscoinBattleManagerI_$8062",
+                                "typeIdentifier": "t_contract$_SyscoinBattleManagerI_$8059",
                                 "typeString": "contract SyscoinBattleManagerI"
                               }
                             }
@@ -26227,7 +26227,7 @@
                           "expression": {
                             "argumentTypes": [
                               {
-                                "typeIdentifier": "t_contract$_SyscoinBattleManagerI_$8062",
+                                "typeIdentifier": "t_contract$_SyscoinBattleManagerI_$8059",
                                 "typeString": "contract SyscoinBattleManagerI"
                               }
                             ],
@@ -26276,10 +26276,10 @@
                       "name": "require",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [
-                        10802,
-                        10803
+                        11101,
+                        11102
                       ],
-                      "referencedDeclaration": 10802,
+                      "referencedDeclaration": 11101,
                       "src": "3140:7:2",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_require_pure$_t_bool_$returns$__$",
@@ -26364,7 +26364,7 @@
                               "name": "msg",
                               "nodeType": "Identifier",
                               "overloadedDeclarations": [],
-                              "referencedDeclaration": 10799,
+                              "referencedDeclaration": 11098,
                               "src": "3274:3:2",
                               "typeDescriptions": {
                                 "typeIdentifier": "t_magic_message",
@@ -26399,7 +26399,7 @@
                                 "referencedDeclaration": 2592,
                                 "src": "3296:27:2",
                                 "typeDescriptions": {
-                                  "typeIdentifier": "t_contract$_SyscoinBattleManagerI_$8062",
+                                  "typeIdentifier": "t_contract$_SyscoinBattleManagerI_$8059",
                                   "typeString": "contract SyscoinBattleManagerI"
                                 }
                               }
@@ -26407,7 +26407,7 @@
                             "expression": {
                               "argumentTypes": [
                                 {
-                                  "typeIdentifier": "t_contract$_SyscoinBattleManagerI_$8062",
+                                  "typeIdentifier": "t_contract$_SyscoinBattleManagerI_$8059",
                                   "typeString": "contract SyscoinBattleManagerI"
                                 }
                               ],
@@ -26465,7 +26465,7 @@
                               "name": "msg",
                               "nodeType": "Identifier",
                               "overloadedDeclarations": [],
-                              "referencedDeclaration": 10799,
+                              "referencedDeclaration": 11098,
                               "src": "3328:3:2",
                               "typeDescriptions": {
                                 "typeIdentifier": "t_magic_message",
@@ -26497,7 +26497,7 @@
                                 "name": "this",
                                 "nodeType": "Identifier",
                                 "overloadedDeclarations": [],
-                                "referencedDeclaration": 10835,
+                                "referencedDeclaration": 11134,
                                 "src": "3350:4:2",
                                 "typeDescriptions": {
                                   "typeIdentifier": "t_contract$_SyscoinClaimManager_$4338",
@@ -26563,10 +26563,10 @@
                       "name": "require",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [
-                        10802,
-                        10803
+                        11101,
+                        11102
                       ],
-                      "referencedDeclaration": 10802,
+                      "referencedDeclaration": 11101,
                       "src": "3266:7:2",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_require_pure$_t_bool_$returns$__$",
@@ -26634,7 +26634,7 @@
                       "referencedDeclaration": 2590,
                       "src": "4076:18:2",
                       "typeDescriptions": {
-                        "typeIdentifier": "t_contract$_SyscoinSuperblocksI_$8314",
+                        "typeIdentifier": "t_contract$_SyscoinSuperblocksI_$8312",
                         "typeString": "contract SyscoinSuperblocksI"
                       }
                     },
@@ -26649,13 +26649,13 @@
                       "referencedDeclaration": 2709,
                       "src": "4097:12:2",
                       "typeDescriptions": {
-                        "typeIdentifier": "t_contract$_SyscoinSuperblocksI_$8314",
+                        "typeIdentifier": "t_contract$_SyscoinSuperblocksI_$8312",
                         "typeString": "contract SyscoinSuperblocksI"
                       }
                     },
                     "src": "4076:33:2",
                     "typeDescriptions": {
-                      "typeIdentifier": "t_contract$_SyscoinSuperblocksI_$8314",
+                      "typeIdentifier": "t_contract$_SyscoinSuperblocksI_$8312",
                       "typeString": "contract SyscoinSuperblocksI"
                     }
                   },
@@ -26680,7 +26680,7 @@
                       "referencedDeclaration": 2592,
                       "src": "4119:27:2",
                       "typeDescriptions": {
-                        "typeIdentifier": "t_contract$_SyscoinBattleManagerI_$8062",
+                        "typeIdentifier": "t_contract$_SyscoinBattleManagerI_$8059",
                         "typeString": "contract SyscoinBattleManagerI"
                       }
                     },
@@ -26695,13 +26695,13 @@
                       "referencedDeclaration": 2711,
                       "src": "4149:21:2",
                       "typeDescriptions": {
-                        "typeIdentifier": "t_contract$_SyscoinBattleManagerI_$8062",
+                        "typeIdentifier": "t_contract$_SyscoinBattleManagerI_$8059",
                         "typeString": "contract SyscoinBattleManagerI"
                       }
                     },
                     "src": "4119:51:2",
                     "typeDescriptions": {
-                      "typeIdentifier": "t_contract$_SyscoinBattleManagerI_$8062",
+                      "typeIdentifier": "t_contract$_SyscoinBattleManagerI_$8059",
                       "typeString": "contract SyscoinBattleManagerI"
                     }
                   },
@@ -26914,7 +26914,7 @@
                   "name": "initializer",
                   "nodeType": "Identifier",
                   "overloadedDeclarations": [],
-                  "referencedDeclaration": 9318,
+                  "referencedDeclaration": 9322,
                   "src": "4054:11:2",
                   "typeDescriptions": {
                     "typeIdentifier": "t_modifier$__$",
@@ -26941,7 +26941,7 @@
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
-                    "typeIdentifier": "t_contract$_SyscoinSuperblocksI_$8314",
+                    "typeIdentifier": "t_contract$_SyscoinSuperblocksI_$8312",
                     "typeString": "contract SyscoinSuperblocksI"
                   },
                   "typeName": {
@@ -26949,10 +26949,10 @@
                     "id": 2708,
                     "name": "SyscoinSuperblocksI",
                     "nodeType": "UserDefinedTypeName",
-                    "referencedDeclaration": 8314,
+                    "referencedDeclaration": 8312,
                     "src": "3852:19:2",
                     "typeDescriptions": {
-                      "typeIdentifier": "t_contract$_SyscoinSuperblocksI_$8314",
+                      "typeIdentifier": "t_contract$_SyscoinSuperblocksI_$8312",
                       "typeString": "contract SyscoinSuperblocksI"
                     }
                   },
@@ -26969,7 +26969,7 @@
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
-                    "typeIdentifier": "t_contract$_SyscoinBattleManagerI_$8062",
+                    "typeIdentifier": "t_contract$_SyscoinBattleManagerI_$8059",
                     "typeString": "contract SyscoinBattleManagerI"
                   },
                   "typeName": {
@@ -26977,10 +26977,10 @@
                     "id": 2710,
                     "name": "SyscoinBattleManagerI",
                     "nodeType": "UserDefinedTypeName",
-                    "referencedDeclaration": 8062,
+                    "referencedDeclaration": 8059,
                     "src": "3894:21:2",
                     "typeDescriptions": {
-                      "typeIdentifier": "t_contract$_SyscoinBattleManagerI_$8062",
+                      "typeIdentifier": "t_contract$_SyscoinBattleManagerI_$8059",
                       "typeString": "contract SyscoinBattleManagerI"
                     }
                   },
@@ -27486,7 +27486,7 @@
                         "lValueRequested": false,
                         "memberName": "sub",
                         "nodeType": "MemberAccess",
-                        "referencedDeclaration": 9407,
+                        "referencedDeclaration": 9411,
                         "src": "5032:21:2",
                         "typeDescriptions": {
                           "typeIdentifier": "t_function_internal_pure$_t_uint256_$_t_uint256_$returns$_t_uint256_$bound_to$_t_uint256_$",
@@ -27670,7 +27670,7 @@
                         "lValueRequested": false,
                         "memberName": "add",
                         "nodeType": "MemberAccess",
-                        "referencedDeclaration": 9391,
+                        "referencedDeclaration": 9395,
                         "src": "5103:33:2",
                         "typeDescriptions": {
                           "typeIdentifier": "t_function_internal_pure$_t_uint256_$_t_uint256_$returns$_t_uint256_$bound_to$_t_uint256_$",
@@ -28111,10 +28111,10 @@
                       "name": "require",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [
-                        10802,
-                        10803
+                        11101,
+                        11102
                       ],
-                      "referencedDeclaration": 10802,
+                      "referencedDeclaration": 11101,
                       "src": "5620:7:2",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_require_pure$_t_bool_$returns$__$",
@@ -28927,7 +28927,7 @@
                         "lValueRequested": false,
                         "memberName": "add",
                         "nodeType": "MemberAccess",
-                        "referencedDeclaration": 9391,
+                        "referencedDeclaration": 9395,
                         "src": "6403:21:2",
                         "typeDescriptions": {
                           "typeIdentifier": "t_function_internal_pure$_t_uint256_$_t_uint256_$returns$_t_uint256_$bound_to$_t_uint256_$",
@@ -29262,7 +29262,7 @@
                               "referencedDeclaration": 2590,
                               "src": "7375:18:2",
                               "typeDescriptions": {
-                                "typeIdentifier": "t_contract$_SyscoinSuperblocksI_$8314",
+                                "typeIdentifier": "t_contract$_SyscoinSuperblocksI_$8312",
                                 "typeString": "contract SyscoinSuperblocksI"
                               }
                             }
@@ -29270,7 +29270,7 @@
                           "expression": {
                             "argumentTypes": [
                               {
-                                "typeIdentifier": "t_contract$_SyscoinSuperblocksI_$8314",
+                                "typeIdentifier": "t_contract$_SyscoinSuperblocksI_$8312",
                                 "typeString": "contract SyscoinSuperblocksI"
                               }
                             ],
@@ -29377,10 +29377,10 @@
                       "name": "require",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [
-                        10802,
-                        10803
+                        11101,
+                        11102
                       ],
-                      "referencedDeclaration": 10802,
+                      "referencedDeclaration": 11101,
                       "src": "7359:7:2",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_require_pure$_t_bool_$returns$__$",
@@ -29634,7 +29634,7 @@
                           "name": "msg",
                           "nodeType": "Identifier",
                           "overloadedDeclarations": [],
-                          "referencedDeclaration": 10799,
+                          "referencedDeclaration": 11098,
                           "src": "7618:3:2",
                           "typeDescriptions": {
                             "typeIdentifier": "t_magic_message",
@@ -29896,7 +29896,7 @@
                         "name": "block",
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
-                        "referencedDeclaration": 10789,
+                        "referencedDeclaration": 11088,
                         "src": "7823:5:2",
                         "typeDescriptions": {
                           "typeIdentifier": "t_magic_block",
@@ -30107,7 +30107,7 @@
                             "name": "block",
                             "nodeType": "Identifier",
                             "overloadedDeclarations": [],
-                            "referencedDeclaration": 10789,
+                            "referencedDeclaration": 11088,
                             "src": "7989:5:2",
                             "typeDescriptions": {
                               "typeIdentifier": "t_magic_block",
@@ -30549,7 +30549,7 @@
                             "name": "msg",
                             "nodeType": "Identifier",
                             "overloadedDeclarations": [],
-                            "referencedDeclaration": 10799,
+                            "referencedDeclaration": 11098,
                             "src": "8404:3:2",
                             "typeDescriptions": {
                               "typeIdentifier": "t_magic_message",
@@ -30611,7 +30611,7 @@
                           "referencedDeclaration": 2590,
                           "src": "8296:18:2",
                           "typeDescriptions": {
-                            "typeIdentifier": "t_contract$_SyscoinSuperblocksI_$8314",
+                            "typeIdentifier": "t_contract$_SyscoinSuperblocksI_$8312",
                             "typeString": "contract SyscoinSuperblocksI"
                           }
                         },
@@ -30622,7 +30622,7 @@
                         "lValueRequested": false,
                         "memberName": "propose",
                         "nodeType": "MemberAccess",
-                        "referencedDeclaration": 8160,
+                        "referencedDeclaration": 8158,
                         "src": "8296:26:2",
                         "typeDescriptions": {
                           "typeIdentifier": "t_function_external_nonpayable$_t_bytes32_$_t_uint256_$_t_uint256_$_t_bytes32_$_t_uint32_$_t_bytes32_$_t_address_$returns$_t_uint256_$_t_bytes32_$",
@@ -31191,7 +31191,7 @@
                                     "name": "msg",
                                     "nodeType": "Identifier",
                                     "overloadedDeclarations": [],
-                                    "referencedDeclaration": 10799,
+                                    "referencedDeclaration": 11098,
                                     "src": "9032:3:2",
                                     "typeDescriptions": {
                                       "typeIdentifier": "t_magic_message",
@@ -31236,10 +31236,10 @@
                             "name": "require",
                             "nodeType": "Identifier",
                             "overloadedDeclarations": [
-                              10802,
-                              10803
+                              11101,
+                              11102
                             ],
-                            "referencedDeclaration": 10802,
+                            "referencedDeclaration": 11101,
                             "src": "8955:7:2",
                             "typeDescriptions": {
                               "typeIdentifier": "t_function_require_pure$_t_bool_$returns$__$",
@@ -31376,7 +31376,7 @@
                         "name": "msg",
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
-                        "referencedDeclaration": 10799,
+                        "referencedDeclaration": 11098,
                         "src": "9129:3:2",
                         "typeDescriptions": {
                           "typeIdentifier": "t_magic_message",
@@ -31760,7 +31760,7 @@
                         "name": "block",
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
-                        "referencedDeclaration": 10789,
+                        "referencedDeclaration": 11088,
                         "src": "9311:5:2",
                         "typeDescriptions": {
                           "typeIdentifier": "t_magic_block",
@@ -31849,7 +31849,7 @@
                           "name": "block",
                           "nodeType": "Identifier",
                           "overloadedDeclarations": [],
-                          "referencedDeclaration": 10789,
+                          "referencedDeclaration": 11088,
                           "src": "9361:5:2",
                           "typeDescriptions": {
                             "typeIdentifier": "t_magic_block",
@@ -32015,7 +32015,7 @@
                             "name": "msg",
                             "nodeType": "Identifier",
                             "overloadedDeclarations": [],
-                            "referencedDeclaration": 10799,
+                            "referencedDeclaration": 11098,
                             "src": "9486:3:2",
                             "typeDescriptions": {
                               "typeIdentifier": "t_magic_message",
@@ -32071,7 +32071,7 @@
                           "name": "this",
                           "nodeType": "Identifier",
                           "overloadedDeclarations": [],
-                          "referencedDeclaration": 10835,
+                          "referencedDeclaration": 11134,
                           "src": "9453:4:2",
                           "typeDescriptions": {
                             "typeIdentifier": "t_contract$_SyscoinClaimManager_$4338",
@@ -32177,10 +32177,10 @@
                       "name": "require",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [
-                        10802,
-                        10803
+                        11101,
+                        11102
                       ],
-                      "referencedDeclaration": 10802,
+                      "referencedDeclaration": 11101,
                       "src": "9527:7:2",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_require_pure$_t_bool_$returns$__$",
@@ -32264,7 +32264,7 @@
                           "name": "msg",
                           "nodeType": "Identifier",
                           "overloadedDeclarations": [],
-                          "referencedDeclaration": 10799,
+                          "referencedDeclaration": 11098,
                           "src": "9642:3:2",
                           "typeDescriptions": {
                             "typeIdentifier": "t_magic_message",
@@ -32662,7 +32662,7 @@
                               "referencedDeclaration": 2590,
                               "src": "10003:18:2",
                               "typeDescriptions": {
-                                "typeIdentifier": "t_contract$_SyscoinSuperblocksI_$8314",
+                                "typeIdentifier": "t_contract$_SyscoinSuperblocksI_$8312",
                                 "typeString": "contract SyscoinSuperblocksI"
                               }
                             }
@@ -32670,7 +32670,7 @@
                           "expression": {
                             "argumentTypes": [
                               {
-                                "typeIdentifier": "t_contract$_SyscoinSuperblocksI_$8314",
+                                "typeIdentifier": "t_contract$_SyscoinSuperblocksI_$8312",
                                 "typeString": "contract SyscoinSuperblocksI"
                               }
                             ],
@@ -32777,10 +32777,10 @@
                       "name": "require",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [
-                        10802,
-                        10803
+                        11101,
+                        11102
                       ],
-                      "referencedDeclaration": 10802,
+                      "referencedDeclaration": 11101,
                       "src": "9987:7:2",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_require_pure$_t_bool_$returns$__$",
@@ -33688,7 +33688,7 @@
                           "name": "msg",
                           "nodeType": "Identifier",
                           "overloadedDeclarations": [],
-                          "referencedDeclaration": 10799,
+                          "referencedDeclaration": 11098,
                           "src": "10928:3:2",
                           "typeDescriptions": {
                             "typeIdentifier": "t_magic_message",
@@ -33930,7 +33930,7 @@
                           "name": "msg",
                           "nodeType": "Identifier",
                           "overloadedDeclarations": [],
-                          "referencedDeclaration": 10799,
+                          "referencedDeclaration": 11098,
                           "src": "11181:3:2",
                           "typeDescriptions": {
                             "typeIdentifier": "t_magic_message",
@@ -33972,7 +33972,7 @@
                         "referencedDeclaration": 2590,
                         "src": "11136:18:2",
                         "typeDescriptions": {
-                          "typeIdentifier": "t_contract$_SyscoinSuperblocksI_$8314",
+                          "typeIdentifier": "t_contract$_SyscoinSuperblocksI_$8312",
                           "typeString": "contract SyscoinSuperblocksI"
                         }
                       },
@@ -33983,7 +33983,7 @@
                       "lValueRequested": false,
                       "memberName": "challenge",
                       "nodeType": "MemberAccess",
-                      "referencedDeclaration": 8222,
+                      "referencedDeclaration": 8220,
                       "src": "11136:28:2",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_external_nonpayable$_t_bytes32_$_t_address_$returns$_t_uint256_$",
@@ -34242,7 +34242,7 @@
                             "name": "msg",
                             "nodeType": "Identifier",
                             "overloadedDeclarations": [],
-                            "referencedDeclaration": 10799,
+                            "referencedDeclaration": 11098,
                             "src": "11355:3:2",
                             "typeDescriptions": {
                               "typeIdentifier": "t_magic_message",
@@ -34298,7 +34298,7 @@
                           "name": "this",
                           "nodeType": "Identifier",
                           "overloadedDeclarations": [],
-                          "referencedDeclaration": 10835,
+                          "referencedDeclaration": 11134,
                           "src": "11322:4:2",
                           "typeDescriptions": {
                             "typeIdentifier": "t_contract$_SyscoinClaimManager_$4338",
@@ -34404,10 +34404,10 @@
                       "name": "require",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [
-                        10802,
-                        10803
+                        11101,
+                        11102
                       ],
-                      "referencedDeclaration": 10802,
+                      "referencedDeclaration": 11101,
                       "src": "11396:7:2",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_require_pure$_t_bool_$returns$__$",
@@ -34490,7 +34490,7 @@
                           "name": "block",
                           "nodeType": "Identifier",
                           "overloadedDeclarations": [],
-                          "referencedDeclaration": 10789,
+                          "referencedDeclaration": 11088,
                           "src": "11465:5:2",
                           "typeDescriptions": {
                             "typeIdentifier": "t_magic_block",
@@ -34589,7 +34589,7 @@
                         "name": "msg",
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
-                        "referencedDeclaration": 10799,
+                        "referencedDeclaration": 11098,
                         "src": "11529:3:2",
                         "typeDescriptions": {
                           "typeIdentifier": "t_magic_message",
@@ -34645,7 +34645,7 @@
                           "name": "msg",
                           "nodeType": "Identifier",
                           "overloadedDeclarations": [],
-                          "referencedDeclaration": 10799,
+                          "referencedDeclaration": 11098,
                           "src": "11596:3:2",
                           "typeDescriptions": {
                             "typeIdentifier": "t_magic_message",
@@ -34807,7 +34807,7 @@
                         "referencedDeclaration": 2592,
                         "src": "11618:27:2",
                         "typeDescriptions": {
-                          "typeIdentifier": "t_contract$_SyscoinBattleManagerI_$8062",
+                          "typeIdentifier": "t_contract$_SyscoinBattleManagerI_$8059",
                           "typeString": "contract SyscoinBattleManagerI"
                         }
                       },
@@ -34818,7 +34818,7 @@
                       "lValueRequested": false,
                       "memberName": "beginBattleSession",
                       "nodeType": "MemberAccess",
-                      "referencedDeclaration": 8061,
+                      "referencedDeclaration": 8058,
                       "src": "11618:46:2",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_external_nonpayable$_t_bytes32_$_t_address_$_t_address_$returns$__$",
@@ -35658,7 +35658,7 @@
                         "condition": {
                           "argumentTypes": null,
                           "commonType": {
-                            "typeIdentifier": "t_enum$_Status_$8120",
+                            "typeIdentifier": "t_enum$_Status_$8118",
                             "typeString": "enum SyscoinSuperblocksI.Status"
                           },
                           "id": 3412,
@@ -35699,7 +35699,7 @@
                                 "referencedDeclaration": 2590,
                                 "src": "12789:18:2",
                                 "typeDescriptions": {
-                                  "typeIdentifier": "t_contract$_SyscoinSuperblocksI_$8314",
+                                  "typeIdentifier": "t_contract$_SyscoinSuperblocksI_$8312",
                                   "typeString": "contract SyscoinSuperblocksI"
                                 }
                               },
@@ -35710,10 +35710,10 @@
                               "lValueRequested": false,
                               "memberName": "getSuperblockStatus",
                               "nodeType": "MemberAccess",
-                              "referencedDeclaration": 8271,
+                              "referencedDeclaration": 8269,
                               "src": "12789:38:2",
                               "typeDescriptions": {
-                                "typeIdentifier": "t_function_external_view$_t_bytes32_$returns$_t_enum$_Status_$8120_$",
+                                "typeIdentifier": "t_function_external_view$_t_bytes32_$returns$_t_enum$_Status_$8118_$",
                                 "typeString": "function (bytes32) view external returns (enum SyscoinSuperblocksI.Status)"
                               }
                             },
@@ -35727,7 +35727,7 @@
                             "nodeType": "FunctionCall",
                             "src": "12789:42:2",
                             "typeDescriptions": {
-                              "typeIdentifier": "t_enum$_Status_$8120",
+                              "typeIdentifier": "t_enum$_Status_$8118",
                               "typeString": "enum SyscoinSuperblocksI.Status"
                             }
                           },
@@ -35743,10 +35743,10 @@
                                 "name": "SyscoinSuperblocksI",
                                 "nodeType": "Identifier",
                                 "overloadedDeclarations": [],
-                                "referencedDeclaration": 8314,
+                                "referencedDeclaration": 8312,
                                 "src": "12835:19:2",
                                 "typeDescriptions": {
-                                  "typeIdentifier": "t_type$_t_contract$_SyscoinSuperblocksI_$8314_$",
+                                  "typeIdentifier": "t_type$_t_contract$_SyscoinSuperblocksI_$8312_$",
                                   "typeString": "type(contract SyscoinSuperblocksI)"
                                 }
                               },
@@ -35757,10 +35757,10 @@
                               "lValueRequested": false,
                               "memberName": "Status",
                               "nodeType": "MemberAccess",
-                              "referencedDeclaration": 8120,
+                              "referencedDeclaration": 8118,
                               "src": "12835:26:2",
                               "typeDescriptions": {
-                                "typeIdentifier": "t_type$_t_enum$_Status_$8120_$",
+                                "typeIdentifier": "t_type$_t_enum$_Status_$8118_$",
                                 "typeString": "type(enum SyscoinSuperblocksI.Status)"
                               }
                             },
@@ -35774,7 +35774,7 @@
                             "referencedDeclaration": null,
                             "src": "12835:39:2",
                             "typeDescriptions": {
-                              "typeIdentifier": "t_enum$_Status_$8120",
+                              "typeIdentifier": "t_enum$_Status_$8118",
                               "typeString": "enum SyscoinSuperblocksI.Status"
                             }
                           },
@@ -36147,7 +36147,7 @@
                                 "referencedDeclaration": 2590,
                                 "src": "13145:18:2",
                                 "typeDescriptions": {
-                                  "typeIdentifier": "t_contract$_SyscoinSuperblocksI_$8314",
+                                  "typeIdentifier": "t_contract$_SyscoinSuperblocksI_$8312",
                                   "typeString": "contract SyscoinSuperblocksI"
                                 }
                               },
@@ -36158,7 +36158,7 @@
                               "lValueRequested": false,
                               "memberName": "getSuperblockParentId",
                               "nodeType": "MemberAccess",
-                              "referencedDeclaration": 8264,
+                              "referencedDeclaration": 8262,
                               "src": "13145:40:2",
                               "typeDescriptions": {
                                 "typeIdentifier": "t_function_external_view$_t_bytes32_$returns$_t_bytes32_$",
@@ -36521,7 +36521,7 @@
                   "condition": {
                     "argumentTypes": null,
                     "commonType": {
-                      "typeIdentifier": "t_enum$_Status_$8120",
+                      "typeIdentifier": "t_enum$_Status_$8118",
                       "typeString": "enum SyscoinSuperblocksI.Status"
                     },
                     "id": 3474,
@@ -36562,7 +36562,7 @@
                           "referencedDeclaration": 2590,
                           "src": "13454:18:2",
                           "typeDescriptions": {
-                            "typeIdentifier": "t_contract$_SyscoinSuperblocksI_$8314",
+                            "typeIdentifier": "t_contract$_SyscoinSuperblocksI_$8312",
                             "typeString": "contract SyscoinSuperblocksI"
                           }
                         },
@@ -36573,10 +36573,10 @@
                         "lValueRequested": false,
                         "memberName": "getSuperblockStatus",
                         "nodeType": "MemberAccess",
-                        "referencedDeclaration": 8271,
+                        "referencedDeclaration": 8269,
                         "src": "13454:38:2",
                         "typeDescriptions": {
-                          "typeIdentifier": "t_function_external_view$_t_bytes32_$returns$_t_enum$_Status_$8120_$",
+                          "typeIdentifier": "t_function_external_view$_t_bytes32_$returns$_t_enum$_Status_$8118_$",
                           "typeString": "function (bytes32) view external returns (enum SyscoinSuperblocksI.Status)"
                         }
                       },
@@ -36590,7 +36590,7 @@
                       "nodeType": "FunctionCall",
                       "src": "13454:42:2",
                       "typeDescriptions": {
-                        "typeIdentifier": "t_enum$_Status_$8120",
+                        "typeIdentifier": "t_enum$_Status_$8118",
                         "typeString": "enum SyscoinSuperblocksI.Status"
                       }
                     },
@@ -36606,10 +36606,10 @@
                           "name": "SyscoinSuperblocksI",
                           "nodeType": "Identifier",
                           "overloadedDeclarations": [],
-                          "referencedDeclaration": 8314,
+                          "referencedDeclaration": 8312,
                           "src": "13500:19:2",
                           "typeDescriptions": {
-                            "typeIdentifier": "t_type$_t_contract$_SyscoinSuperblocksI_$8314_$",
+                            "typeIdentifier": "t_type$_t_contract$_SyscoinSuperblocksI_$8312_$",
                             "typeString": "type(contract SyscoinSuperblocksI)"
                           }
                         },
@@ -36620,10 +36620,10 @@
                         "lValueRequested": false,
                         "memberName": "Status",
                         "nodeType": "MemberAccess",
-                        "referencedDeclaration": 8120,
+                        "referencedDeclaration": 8118,
                         "src": "13500:26:2",
                         "typeDescriptions": {
-                          "typeIdentifier": "t_type$_t_enum$_Status_$8120_$",
+                          "typeIdentifier": "t_type$_t_enum$_Status_$8118_$",
                           "typeString": "type(enum SyscoinSuperblocksI.Status)"
                         }
                       },
@@ -36637,7 +36637,7 @@
                       "referencedDeclaration": null,
                       "src": "13500:39:2",
                       "typeDescriptions": {
-                        "typeIdentifier": "t_enum$_Status_$8120",
+                        "typeIdentifier": "t_enum$_Status_$8118",
                         "typeString": "enum SyscoinSuperblocksI.Status"
                       }
                     },
@@ -36811,7 +36811,7 @@
                           "name": "msg",
                           "nodeType": "Identifier",
                           "overloadedDeclarations": [],
-                          "referencedDeclaration": 10799,
+                          "referencedDeclaration": 11098,
                           "src": "13714:3:2",
                           "typeDescriptions": {
                             "typeIdentifier": "t_magic_message",
@@ -36853,7 +36853,7 @@
                         "referencedDeclaration": 2590,
                         "src": "13671:18:2",
                         "typeDescriptions": {
-                          "typeIdentifier": "t_contract$_SyscoinSuperblocksI_$8314",
+                          "typeIdentifier": "t_contract$_SyscoinSuperblocksI_$8312",
                           "typeString": "contract SyscoinSuperblocksI"
                         }
                       },
@@ -36864,7 +36864,7 @@
                       "lValueRequested": false,
                       "memberName": "confirm",
                       "nodeType": "MemberAccess",
-                      "referencedDeclaration": 8213,
+                      "referencedDeclaration": 8211,
                       "src": "13671:26:2",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_external_nonpayable$_t_bytes32_$_t_address_$returns$_t_uint256_$",
@@ -37486,7 +37486,7 @@
                                       "referencedDeclaration": 2590,
                                       "src": "14169:18:2",
                                       "typeDescriptions": {
-                                        "typeIdentifier": "t_contract$_SyscoinSuperblocksI_$8314",
+                                        "typeIdentifier": "t_contract$_SyscoinSuperblocksI_$8312",
                                         "typeString": "contract SyscoinSuperblocksI"
                                       }
                                     },
@@ -37497,7 +37497,7 @@
                                     "lValueRequested": false,
                                     "memberName": "getSuperblockParentId",
                                     "nodeType": "MemberAccess",
-                                    "referencedDeclaration": 8264,
+                                    "referencedDeclaration": 8262,
                                     "src": "14169:40:2",
                                     "typeDescriptions": {
                                       "typeIdentifier": "t_function_external_view$_t_bytes32_$returns$_t_bytes32_$",
@@ -37880,7 +37880,7 @@
                                         "name": "msg",
                                         "nodeType": "Identifier",
                                         "overloadedDeclarations": [],
-                                        "referencedDeclaration": 10799,
+                                        "referencedDeclaration": 11098,
                                         "src": "14439:3:2",
                                         "typeDescriptions": {
                                           "typeIdentifier": "t_magic_message",
@@ -37922,7 +37922,7 @@
                                       "referencedDeclaration": 2590,
                                       "src": "14408:18:2",
                                       "typeDescriptions": {
-                                        "typeIdentifier": "t_contract$_SyscoinSuperblocksI_$8314",
+                                        "typeIdentifier": "t_contract$_SyscoinSuperblocksI_$8312",
                                         "typeString": "contract SyscoinSuperblocksI"
                                       }
                                     },
@@ -37933,7 +37933,7 @@
                                     "lValueRequested": false,
                                     "memberName": "confirm",
                                     "nodeType": "MemberAccess",
-                                    "referencedDeclaration": 8213,
+                                    "referencedDeclaration": 8211,
                                     "src": "14408:26:2",
                                     "typeDescriptions": {
                                       "typeIdentifier": "t_function_external_nonpayable$_t_bytes32_$_t_address_$returns$_t_uint256_$",
@@ -38025,10 +38025,10 @@
                                   "name": "require",
                                   "nodeType": "Identifier",
                                   "overloadedDeclarations": [
-                                    10802,
-                                    10803
+                                    11101,
+                                    11102
                                   ],
-                                  "referencedDeclaration": 10802,
+                                  "referencedDeclaration": 11101,
                                   "src": "14468:7:2",
                                   "typeDescriptions": {
                                     "typeIdentifier": "t_function_require_pure$_t_bool_$returns$__$",
@@ -38913,7 +38913,7 @@
                         "referencedDeclaration": 2590,
                         "src": "15339:18:2",
                         "typeDescriptions": {
-                          "typeIdentifier": "t_contract$_SyscoinSuperblocksI_$8314",
+                          "typeIdentifier": "t_contract$_SyscoinSuperblocksI_$8312",
                           "typeString": "contract SyscoinSuperblocksI"
                         }
                       },
@@ -38924,7 +38924,7 @@
                       "lValueRequested": false,
                       "memberName": "getSuperblockHeight",
                       "nodeType": "MemberAccess",
-                      "referencedDeclaration": 8257,
+                      "referencedDeclaration": 8255,
                       "src": "15339:38:2",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_external_view$_t_bytes32_$returns$_t_uint32_$",
@@ -38989,7 +38989,7 @@
                           "referencedDeclaration": 2590,
                           "src": "15417:18:2",
                           "typeDescriptions": {
-                            "typeIdentifier": "t_contract$_SyscoinSuperblocksI_$8314",
+                            "typeIdentifier": "t_contract$_SyscoinSuperblocksI_$8312",
                             "typeString": "contract SyscoinSuperblocksI"
                           }
                         },
@@ -39000,7 +39000,7 @@
                         "lValueRequested": false,
                         "memberName": "getChainHeight",
                         "nodeType": "MemberAccess",
-                        "referencedDeclaration": 8250,
+                        "referencedDeclaration": 8248,
                         "src": "15417:33:2",
                         "typeDescriptions": {
                           "typeIdentifier": "t_function_external_view$__$returns$_t_uint256_$",
@@ -39149,7 +39149,7 @@
                       "stateVariable": false,
                       "storageLocation": "default",
                       "typeDescriptions": {
-                        "typeIdentifier": "t_enum$_Status_$8120",
+                        "typeIdentifier": "t_enum$_Status_$8118",
                         "typeString": "enum SyscoinSuperblocksI.Status"
                       },
                       "typeName": {
@@ -39157,10 +39157,10 @@
                         "id": 3666,
                         "name": "SyscoinSuperblocksI.Status",
                         "nodeType": "UserDefinedTypeName",
-                        "referencedDeclaration": 8120,
+                        "referencedDeclaration": 8118,
                         "src": "15578:26:2",
                         "typeDescriptions": {
-                          "typeIdentifier": "t_enum$_Status_$8120",
+                          "typeIdentifier": "t_enum$_Status_$8118",
                           "typeString": "enum SyscoinSuperblocksI.Status"
                         }
                       },
@@ -39202,7 +39202,7 @@
                         "referencedDeclaration": 2590,
                         "src": "15614:18:2",
                         "typeDescriptions": {
-                          "typeIdentifier": "t_contract$_SyscoinSuperblocksI_$8314",
+                          "typeIdentifier": "t_contract$_SyscoinSuperblocksI_$8312",
                           "typeString": "contract SyscoinSuperblocksI"
                         }
                       },
@@ -39213,10 +39213,10 @@
                       "lValueRequested": false,
                       "memberName": "getSuperblockStatus",
                       "nodeType": "MemberAccess",
-                      "referencedDeclaration": 8271,
+                      "referencedDeclaration": 8269,
                       "src": "15614:38:2",
                       "typeDescriptions": {
-                        "typeIdentifier": "t_function_external_view$_t_bytes32_$returns$_t_enum$_Status_$8120_$",
+                        "typeIdentifier": "t_function_external_view$_t_bytes32_$returns$_t_enum$_Status_$8118_$",
                         "typeString": "function (bytes32) view external returns (enum SyscoinSuperblocksI.Status)"
                       }
                     },
@@ -39230,7 +39230,7 @@
                     "nodeType": "FunctionCall",
                     "src": "15614:54:2",
                     "typeDescriptions": {
-                      "typeIdentifier": "t_enum$_Status_$8120",
+                      "typeIdentifier": "t_enum$_Status_$8118",
                       "typeString": "enum SyscoinSuperblocksI.Status"
                     }
                   },
@@ -39241,7 +39241,7 @@
                   "condition": {
                     "argumentTypes": null,
                     "commonType": {
-                      "typeIdentifier": "t_enum$_Status_$8120",
+                      "typeIdentifier": "t_enum$_Status_$8118",
                       "typeString": "enum SyscoinSuperblocksI.Status"
                     },
                     "id": 3677,
@@ -39258,7 +39258,7 @@
                       "referencedDeclaration": 3667,
                       "src": "15683:6:2",
                       "typeDescriptions": {
-                        "typeIdentifier": "t_enum$_Status_$8120",
+                        "typeIdentifier": "t_enum$_Status_$8118",
                         "typeString": "enum SyscoinSuperblocksI.Status"
                       }
                     },
@@ -39274,10 +39274,10 @@
                           "name": "SyscoinSuperblocksI",
                           "nodeType": "Identifier",
                           "overloadedDeclarations": [],
-                          "referencedDeclaration": 8314,
+                          "referencedDeclaration": 8312,
                           "src": "15693:19:2",
                           "typeDescriptions": {
-                            "typeIdentifier": "t_type$_t_contract$_SyscoinSuperblocksI_$8314_$",
+                            "typeIdentifier": "t_type$_t_contract$_SyscoinSuperblocksI_$8312_$",
                             "typeString": "type(contract SyscoinSuperblocksI)"
                           }
                         },
@@ -39288,10 +39288,10 @@
                         "lValueRequested": false,
                         "memberName": "Status",
                         "nodeType": "MemberAccess",
-                        "referencedDeclaration": 8120,
+                        "referencedDeclaration": 8118,
                         "src": "15693:26:2",
                         "typeDescriptions": {
-                          "typeIdentifier": "t_type$_t_enum$_Status_$8120_$",
+                          "typeIdentifier": "t_type$_t_enum$_Status_$8118_$",
                           "typeString": "type(enum SyscoinSuperblocksI.Status)"
                         }
                       },
@@ -39305,7 +39305,7 @@
                       "referencedDeclaration": null,
                       "src": "15693:39:2",
                       "typeDescriptions": {
-                        "typeIdentifier": "t_enum$_Status_$8120",
+                        "typeIdentifier": "t_enum$_Status_$8118",
                         "typeString": "enum SyscoinSuperblocksI.Status"
                       }
                     },
@@ -39674,7 +39674,7 @@
                         "referencedDeclaration": 2590,
                         "src": "16006:18:2",
                         "typeDescriptions": {
-                          "typeIdentifier": "t_contract$_SyscoinSuperblocksI_$8314",
+                          "typeIdentifier": "t_contract$_SyscoinSuperblocksI_$8312",
                           "typeString": "contract SyscoinSuperblocksI"
                         }
                       },
@@ -39685,7 +39685,7 @@
                       "lValueRequested": false,
                       "memberName": "invalidate",
                       "nodeType": "MemberAccess",
-                      "referencedDeclaration": 8240,
+                      "referencedDeclaration": 8238,
                       "src": "16006:29:2",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_external_nonpayable$_t_bytes32_$_t_address_$returns$_t_uint256_$",
@@ -39770,10 +39770,10 @@
                       "name": "require",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [
-                        10802,
-                        10803
+                        11101,
+                        11102
                       ],
-                      "referencedDeclaration": 10802,
+                      "referencedDeclaration": 11101,
                       "src": "16078:7:2",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_require_pure$_t_bool_$returns$__$",
@@ -40826,7 +40826,7 @@
                               "referencedDeclaration": 2590,
                               "src": "17503:18:2",
                               "typeDescriptions": {
-                                "typeIdentifier": "t_contract$_SyscoinSuperblocksI_$8314",
+                                "typeIdentifier": "t_contract$_SyscoinSuperblocksI_$8312",
                                 "typeString": "contract SyscoinSuperblocksI"
                               }
                             },
@@ -40837,7 +40837,7 @@
                             "lValueRequested": false,
                             "memberName": "invalidate",
                             "nodeType": "MemberAccess",
-                            "referencedDeclaration": 8240,
+                            "referencedDeclaration": 8238,
                             "src": "17503:29:2",
                             "typeDescriptions": {
                               "typeIdentifier": "t_function_external_nonpayable$_t_bytes32_$_t_address_$returns$_t_uint256_$",
@@ -40922,10 +40922,10 @@
                             "name": "require",
                             "nodeType": "Identifier",
                             "overloadedDeclarations": [
-                              10802,
-                              10803
+                              11101,
+                              11102
                             ],
-                            "referencedDeclaration": 10802,
+                            "referencedDeclaration": 11101,
                             "src": "17579:7:2",
                             "typeDescriptions": {
                               "typeIdentifier": "t_function_require_pure$_t_bool_$returns$__$",
@@ -41206,7 +41206,7 @@
                         "name": "block",
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
-                        "referencedDeclaration": 10789,
+                        "referencedDeclaration": 11088,
                         "src": "17924:5:2",
                         "typeDescriptions": {
                           "typeIdentifier": "t_magic_block",
@@ -41672,7 +41672,7 @@
                               "referencedDeclaration": 2590,
                               "src": "18293:18:2",
                               "typeDescriptions": {
-                                "typeIdentifier": "t_contract$_SyscoinSuperblocksI_$8314",
+                                "typeIdentifier": "t_contract$_SyscoinSuperblocksI_$8312",
                                 "typeString": "contract SyscoinSuperblocksI"
                               }
                             },
@@ -41683,7 +41683,7 @@
                             "lValueRequested": false,
                             "memberName": "getSuperblockParentId",
                             "nodeType": "MemberAccess",
-                            "referencedDeclaration": 8264,
+                            "referencedDeclaration": 8262,
                             "src": "18293:40:2",
                             "typeDescriptions": {
                               "typeIdentifier": "t_function_external_view$_t_bytes32_$returns$_t_bytes32_$",
@@ -41722,7 +41722,7 @@
                             "stateVariable": false,
                             "storageLocation": "default",
                             "typeDescriptions": {
-                              "typeIdentifier": "t_enum$_Status_$8120",
+                              "typeIdentifier": "t_enum$_Status_$8118",
                               "typeString": "enum SyscoinSuperblocksI.Status"
                             },
                             "typeName": {
@@ -41730,10 +41730,10 @@
                               "id": 3859,
                               "name": "SyscoinSuperblocksI.Status",
                               "nodeType": "UserDefinedTypeName",
-                              "referencedDeclaration": 8120,
+                              "referencedDeclaration": 8118,
                               "src": "18363:26:2",
                               "typeDescriptions": {
-                                "typeIdentifier": "t_enum$_Status_$8120",
+                                "typeIdentifier": "t_enum$_Status_$8118",
                                 "typeString": "enum SyscoinSuperblocksI.Status"
                               }
                             },
@@ -41775,7 +41775,7 @@
                               "referencedDeclaration": 2590,
                               "src": "18399:18:2",
                               "typeDescriptions": {
-                                "typeIdentifier": "t_contract$_SyscoinSuperblocksI_$8314",
+                                "typeIdentifier": "t_contract$_SyscoinSuperblocksI_$8312",
                                 "typeString": "contract SyscoinSuperblocksI"
                               }
                             },
@@ -41786,10 +41786,10 @@
                             "lValueRequested": false,
                             "memberName": "getSuperblockStatus",
                             "nodeType": "MemberAccess",
-                            "referencedDeclaration": 8271,
+                            "referencedDeclaration": 8269,
                             "src": "18399:38:2",
                             "typeDescriptions": {
-                              "typeIdentifier": "t_function_external_view$_t_bytes32_$returns$_t_enum$_Status_$8120_$",
+                              "typeIdentifier": "t_function_external_view$_t_bytes32_$returns$_t_enum$_Status_$8118_$",
                               "typeString": "function (bytes32) view external returns (enum SyscoinSuperblocksI.Status)"
                             }
                           },
@@ -41803,7 +41803,7 @@
                           "nodeType": "FunctionCall",
                           "src": "18399:48:2",
                           "typeDescriptions": {
-                            "typeIdentifier": "t_enum$_Status_$8120",
+                            "typeIdentifier": "t_enum$_Status_$8118",
                             "typeString": "enum SyscoinSuperblocksI.Status"
                           }
                         },
@@ -41814,7 +41814,7 @@
                         "condition": {
                           "argumentTypes": null,
                           "commonType": {
-                            "typeIdentifier": "t_enum$_Status_$8120",
+                            "typeIdentifier": "t_enum$_Status_$8118",
                             "typeString": "enum SyscoinSuperblocksI.Status"
                           },
                           "id": 3870,
@@ -41831,7 +41831,7 @@
                             "referencedDeclaration": 3860,
                             "src": "18465:6:2",
                             "typeDescriptions": {
-                              "typeIdentifier": "t_enum$_Status_$8120",
+                              "typeIdentifier": "t_enum$_Status_$8118",
                               "typeString": "enum SyscoinSuperblocksI.Status"
                             }
                           },
@@ -41847,10 +41847,10 @@
                                 "name": "SyscoinSuperblocksI",
                                 "nodeType": "Identifier",
                                 "overloadedDeclarations": [],
-                                "referencedDeclaration": 8314,
+                                "referencedDeclaration": 8312,
                                 "src": "18475:19:2",
                                 "typeDescriptions": {
-                                  "typeIdentifier": "t_type$_t_contract$_SyscoinSuperblocksI_$8314_$",
+                                  "typeIdentifier": "t_type$_t_contract$_SyscoinSuperblocksI_$8312_$",
                                   "typeString": "type(contract SyscoinSuperblocksI)"
                                 }
                               },
@@ -41861,10 +41861,10 @@
                               "lValueRequested": false,
                               "memberName": "Status",
                               "nodeType": "MemberAccess",
-                              "referencedDeclaration": 8120,
+                              "referencedDeclaration": 8118,
                               "src": "18475:26:2",
                               "typeDescriptions": {
-                                "typeIdentifier": "t_type$_t_enum$_Status_$8120_$",
+                                "typeIdentifier": "t_type$_t_enum$_Status_$8118_$",
                                 "typeString": "type(enum SyscoinSuperblocksI.Status)"
                               }
                             },
@@ -41878,7 +41878,7 @@
                             "referencedDeclaration": null,
                             "src": "18475:35:2",
                             "typeDescriptions": {
-                              "typeIdentifier": "t_enum$_Status_$8120",
+                              "typeIdentifier": "t_enum$_Status_$8118",
                               "typeString": "enum SyscoinSuperblocksI.Status"
                             }
                           },
@@ -42030,7 +42030,7 @@
                                 "name": "msg",
                                 "nodeType": "Identifier",
                                 "overloadedDeclarations": [],
-                                "referencedDeclaration": 10799,
+                                "referencedDeclaration": 11098,
                                 "src": "19053:3:2",
                                 "typeDescriptions": {
                                   "typeIdentifier": "t_magic_message",
@@ -42072,7 +42072,7 @@
                               "referencedDeclaration": 2590,
                               "src": "19006:18:2",
                               "typeDescriptions": {
-                                "typeIdentifier": "t_contract$_SyscoinSuperblocksI_$8314",
+                                "typeIdentifier": "t_contract$_SyscoinSuperblocksI_$8312",
                                 "typeString": "contract SyscoinSuperblocksI"
                               }
                             },
@@ -42083,7 +42083,7 @@
                             "lValueRequested": false,
                             "memberName": "semiApprove",
                             "nodeType": "MemberAccess",
-                            "referencedDeclaration": 8231,
+                            "referencedDeclaration": 8229,
                             "src": "19006:30:2",
                             "typeDescriptions": {
                               "typeIdentifier": "t_function_external_nonpayable$_t_bytes32_$_t_address_$returns$_t_uint256_$",
@@ -42168,10 +42168,10 @@
                             "name": "require",
                             "nodeType": "Identifier",
                             "overloadedDeclarations": [
-                              10802,
-                              10803
+                              11101,
+                              11102
                             ],
-                            "referencedDeclaration": 10802,
+                            "referencedDeclaration": 11101,
                             "src": "19078:7:2",
                             "typeDescriptions": {
                               "typeIdentifier": "t_function_require_pure$_t_bool_$returns$__$",
@@ -42350,7 +42350,7 @@
                                 "name": "msg",
                                 "nodeType": "Identifier",
                                 "overloadedDeclarations": [],
-                                "referencedDeclaration": 10799,
+                                "referencedDeclaration": 11098,
                                 "src": "18682:3:2",
                                 "typeDescriptions": {
                                   "typeIdentifier": "t_magic_message",
@@ -42392,7 +42392,7 @@
                               "referencedDeclaration": 2590,
                               "src": "18639:18:2",
                               "typeDescriptions": {
-                                "typeIdentifier": "t_contract$_SyscoinSuperblocksI_$8314",
+                                "typeIdentifier": "t_contract$_SyscoinSuperblocksI_$8312",
                                 "typeString": "contract SyscoinSuperblocksI"
                               }
                             },
@@ -42403,7 +42403,7 @@
                             "lValueRequested": false,
                             "memberName": "confirm",
                             "nodeType": "MemberAccess",
-                            "referencedDeclaration": 8213,
+                            "referencedDeclaration": 8211,
                             "src": "18639:26:2",
                             "typeDescriptions": {
                               "typeIdentifier": "t_function_external_nonpayable$_t_bytes32_$_t_address_$returns$_t_uint256_$",
@@ -42488,10 +42488,10 @@
                             "name": "require",
                             "nodeType": "Identifier",
                             "overloadedDeclarations": [
-                              10802,
-                              10803
+                              11101,
+                              11102
                             ],
-                            "referencedDeclaration": 10802,
+                            "referencedDeclaration": 11101,
                             "src": "18707:7:2",
                             "typeDescriptions": {
                               "typeIdentifier": "t_function_require_pure$_t_bool_$returns$__$",
@@ -43032,10 +43032,10 @@
                       "name": "require",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [
-                        10802,
-                        10803
+                        11101,
+                        11102
                       ],
-                      "referencedDeclaration": 10802,
+                      "referencedDeclaration": 11101,
                       "src": "19620:7:2",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_require_pure$_t_bool_$returns$__$",
@@ -43300,10 +43300,10 @@
                               "name": "revert",
                               "nodeType": "Identifier",
                               "overloadedDeclarations": [
-                                10804,
-                                10805
+                                11103,
+                                11104
                               ],
-                              "referencedDeclaration": 10804,
+                              "referencedDeclaration": 11103,
                               "src": "19929:6:2",
                               "typeDescriptions": {
                                 "typeIdentifier": "t_function_revert_pure$__$returns$__$",
@@ -44341,7 +44341,7 @@
                               "lValueRequested": false,
                               "memberName": "add",
                               "nodeType": "MemberAccess",
-                              "referencedDeclaration": 9391,
+                              "referencedDeclaration": 9395,
                               "src": "20540:36:2",
                               "typeDescriptions": {
                                 "typeIdentifier": "t_function_internal_pure$_t_uint256_$_t_uint256_$returns$_t_uint256_$bound_to$_t_uint256_$",
@@ -44627,7 +44627,7 @@
                             "stateVariable": false,
                             "storageLocation": "default",
                             "typeDescriptions": {
-                              "typeIdentifier": "t_enum$_Status_$8120",
+                              "typeIdentifier": "t_enum$_Status_$8118",
                               "typeString": "enum SyscoinSuperblocksI.Status"
                             },
                             "typeName": {
@@ -44635,10 +44635,10 @@
                               "id": 4081,
                               "name": "SyscoinSuperblocksI.Status",
                               "nodeType": "UserDefinedTypeName",
-                              "referencedDeclaration": 8120,
+                              "referencedDeclaration": 8118,
                               "src": "20856:26:2",
                               "typeDescriptions": {
-                                "typeIdentifier": "t_enum$_Status_$8120",
+                                "typeIdentifier": "t_enum$_Status_$8118",
                                 "typeString": "enum SyscoinSuperblocksI.Status"
                               }
                             },
@@ -44708,7 +44708,7 @@
                                       "referencedDeclaration": 4082,
                                       "src": "20976:6:2",
                                       "typeDescriptions": {
-                                        "typeIdentifier": "t_enum$_Status_$8120",
+                                        "typeIdentifier": "t_enum$_Status_$8118",
                                         "typeString": "enum SyscoinSuperblocksI.Status"
                                       }
                                     },
@@ -44723,7 +44723,7 @@
                                   "nodeType": "TupleExpression",
                                   "src": "20941:43:2",
                                   "typeDescriptions": {
-                                    "typeIdentifier": "t_tuple$__$__$__$__$__$_t_bytes32_$_t_address_$_t_enum$_Status_$8120_$__$",
+                                    "typeIdentifier": "t_tuple$__$__$__$__$__$_t_bytes32_$_t_address_$_t_enum$_Status_$8118_$__$",
                                     "typeString": "tuple(,,,,,bytes32,address,enum SyscoinSuperblocksI.Status,)"
                                   }
                                 },
@@ -44762,7 +44762,7 @@
                                       "referencedDeclaration": 2590,
                                       "src": "20987:18:2",
                                       "typeDescriptions": {
-                                        "typeIdentifier": "t_contract$_SyscoinSuperblocksI_$8314",
+                                        "typeIdentifier": "t_contract$_SyscoinSuperblocksI_$8312",
                                         "typeString": "contract SyscoinSuperblocksI"
                                       }
                                     },
@@ -44773,10 +44773,10 @@
                                     "lValueRequested": false,
                                     "memberName": "getSuperblock",
                                     "nodeType": "MemberAccess",
-                                    "referencedDeclaration": 8183,
+                                    "referencedDeclaration": 8181,
                                     "src": "20987:32:2",
                                     "typeDescriptions": {
-                                      "typeIdentifier": "t_function_external_view$_t_bytes32_$returns$_t_bytes32_$_t_uint256_$_t_uint256_$_t_bytes32_$_t_uint32_$_t_bytes32_$_t_address_$_t_enum$_Status_$8120_$_t_uint32_$",
+                                      "typeIdentifier": "t_function_external_view$_t_bytes32_$returns$_t_bytes32_$_t_uint256_$_t_uint256_$_t_bytes32_$_t_uint32_$_t_bytes32_$_t_address_$_t_enum$_Status_$8118_$_t_uint32_$",
                                       "typeString": "function (bytes32) view external returns (bytes32,uint256,uint256,bytes32,uint32,bytes32,address,enum SyscoinSuperblocksI.Status,uint32)"
                                     }
                                   },
@@ -44790,7 +44790,7 @@
                                   "nodeType": "FunctionCall",
                                   "src": "20987:48:2",
                                   "typeDescriptions": {
-                                    "typeIdentifier": "t_tuple$_t_bytes32_$_t_uint256_$_t_uint256_$_t_bytes32_$_t_uint32_$_t_bytes32_$_t_address_$_t_enum$_Status_$8120_$_t_uint32_$",
+                                    "typeIdentifier": "t_tuple$_t_bytes32_$_t_uint256_$_t_uint256_$_t_bytes32_$_t_uint32_$_t_bytes32_$_t_address_$_t_enum$_Status_$8118_$_t_uint32_$",
                                     "typeString": "tuple(bytes32,uint256,uint256,bytes32,uint32,bytes32,address,enum SyscoinSuperblocksI.Status,uint32)"
                                   }
                                 },
@@ -44869,7 +44869,7 @@
                               "condition": {
                                 "argumentTypes": null,
                                 "commonType": {
-                                  "typeIdentifier": "t_enum$_Status_$8120",
+                                  "typeIdentifier": "t_enum$_Status_$8118",
                                   "typeString": "enum SyscoinSuperblocksI.Status"
                                 },
                                 "id": 4106,
@@ -44886,7 +44886,7 @@
                                   "referencedDeclaration": 4082,
                                   "src": "21126:6:2",
                                   "typeDescriptions": {
-                                    "typeIdentifier": "t_enum$_Status_$8120",
+                                    "typeIdentifier": "t_enum$_Status_$8118",
                                     "typeString": "enum SyscoinSuperblocksI.Status"
                                   }
                                 },
@@ -44902,10 +44902,10 @@
                                       "name": "SyscoinSuperblocksI",
                                       "nodeType": "Identifier",
                                       "overloadedDeclarations": [],
-                                      "referencedDeclaration": 8314,
+                                      "referencedDeclaration": 8312,
                                       "src": "21136:19:2",
                                       "typeDescriptions": {
-                                        "typeIdentifier": "t_type$_t_contract$_SyscoinSuperblocksI_$8314_$",
+                                        "typeIdentifier": "t_type$_t_contract$_SyscoinSuperblocksI_$8312_$",
                                         "typeString": "type(contract SyscoinSuperblocksI)"
                                       }
                                     },
@@ -44916,10 +44916,10 @@
                                     "lValueRequested": false,
                                     "memberName": "Status",
                                     "nodeType": "MemberAccess",
-                                    "referencedDeclaration": 8120,
+                                    "referencedDeclaration": 8118,
                                     "src": "21136:26:2",
                                     "typeDescriptions": {
-                                      "typeIdentifier": "t_type$_t_enum$_Status_$8120_$",
+                                      "typeIdentifier": "t_type$_t_enum$_Status_$8118_$",
                                       "typeString": "type(enum SyscoinSuperblocksI.Status)"
                                     }
                                   },
@@ -44933,7 +44933,7 @@
                                   "referencedDeclaration": null,
                                   "src": "21136:35:2",
                                   "typeDescriptions": {
-                                    "typeIdentifier": "t_enum$_Status_$8120",
+                                    "typeIdentifier": "t_enum$_Status_$8118",
                                     "typeString": "enum SyscoinSuperblocksI.Status"
                                   }
                                 },
@@ -45086,7 +45086,7 @@
                                     "lValueRequested": false,
                                     "memberName": "add",
                                     "nodeType": "MemberAccess",
-                                    "referencedDeclaration": 9391,
+                                    "referencedDeclaration": 9395,
                                     "src": "21265:27:2",
                                     "typeDescriptions": {
                                       "typeIdentifier": "t_function_internal_pure$_t_uint256_$_t_uint256_$returns$_t_uint256_$bound_to$_t_uint256_$",
@@ -45773,7 +45773,7 @@
                               "lValueRequested": false,
                               "memberName": "add",
                               "nodeType": "MemberAccess",
-                              "referencedDeclaration": 9391,
+                              "referencedDeclaration": 9395,
                               "src": "21769:35:2",
                               "typeDescriptions": {
                                 "typeIdentifier": "t_function_internal_pure$_t_uint256_$_t_uint256_$returns$_t_uint256_$bound_to$_t_uint256_$",
@@ -46273,7 +46273,7 @@
                               "leftExpression": {
                                 "argumentTypes": null,
                                 "commonType": {
-                                  "typeIdentifier": "t_enum$_Status_$8120",
+                                  "typeIdentifier": "t_enum$_Status_$8118",
                                   "typeString": "enum SyscoinSuperblocksI.Status"
                                 },
                                 "id": 4213,
@@ -46314,7 +46314,7 @@
                                       "referencedDeclaration": 2590,
                                       "src": "22251:18:2",
                                       "typeDescriptions": {
-                                        "typeIdentifier": "t_contract$_SyscoinSuperblocksI_$8314",
+                                        "typeIdentifier": "t_contract$_SyscoinSuperblocksI_$8312",
                                         "typeString": "contract SyscoinSuperblocksI"
                                       }
                                     },
@@ -46325,10 +46325,10 @@
                                     "lValueRequested": false,
                                     "memberName": "getSuperblockStatus",
                                     "nodeType": "MemberAccess",
-                                    "referencedDeclaration": 8271,
+                                    "referencedDeclaration": 8269,
                                     "src": "22251:38:2",
                                     "typeDescriptions": {
-                                      "typeIdentifier": "t_function_external_view$_t_bytes32_$returns$_t_enum$_Status_$8120_$",
+                                      "typeIdentifier": "t_function_external_view$_t_bytes32_$returns$_t_enum$_Status_$8118_$",
                                       "typeString": "function (bytes32) view external returns (enum SyscoinSuperblocksI.Status)"
                                     }
                                   },
@@ -46342,7 +46342,7 @@
                                   "nodeType": "FunctionCall",
                                   "src": "22251:54:2",
                                   "typeDescriptions": {
-                                    "typeIdentifier": "t_enum$_Status_$8120",
+                                    "typeIdentifier": "t_enum$_Status_$8118",
                                     "typeString": "enum SyscoinSuperblocksI.Status"
                                   }
                                 },
@@ -46358,10 +46358,10 @@
                                       "name": "SyscoinSuperblocksI",
                                       "nodeType": "Identifier",
                                       "overloadedDeclarations": [],
-                                      "referencedDeclaration": 8314,
+                                      "referencedDeclaration": 8312,
                                       "src": "22309:19:2",
                                       "typeDescriptions": {
-                                        "typeIdentifier": "t_type$_t_contract$_SyscoinSuperblocksI_$8314_$",
+                                        "typeIdentifier": "t_type$_t_contract$_SyscoinSuperblocksI_$8312_$",
                                         "typeString": "type(contract SyscoinSuperblocksI)"
                                       }
                                     },
@@ -46372,10 +46372,10 @@
                                     "lValueRequested": false,
                                     "memberName": "Status",
                                     "nodeType": "MemberAccess",
-                                    "referencedDeclaration": 8120,
+                                    "referencedDeclaration": 8118,
                                     "src": "22309:26:2",
                                     "typeDescriptions": {
-                                      "typeIdentifier": "t_type$_t_enum$_Status_$8120_$",
+                                      "typeIdentifier": "t_type$_t_enum$_Status_$8118_$",
                                       "typeString": "type(enum SyscoinSuperblocksI.Status)"
                                     }
                                   },
@@ -46389,7 +46389,7 @@
                                   "referencedDeclaration": null,
                                   "src": "22309:35:2",
                                   "typeDescriptions": {
-                                    "typeIdentifier": "t_enum$_Status_$8120",
+                                    "typeIdentifier": "t_enum$_Status_$8118",
                                     "typeString": "enum SyscoinSuperblocksI.Status"
                                   }
                                 },
@@ -46526,7 +46526,7 @@
                                 "name": "block",
                                 "nodeType": "Identifier",
                                 "overloadedDeclarations": [],
-                                "referencedDeclaration": 10789,
+                                "referencedDeclaration": 11088,
                                 "src": "22408:5:2",
                                 "typeDescriptions": {
                                   "typeIdentifier": "t_magic_block",
@@ -47998,7 +47998,7 @@
   },
   "networks": {},
   "schemaVersion": "3.0.20",
-  "updatedAt": "2020-02-27T17:47:43.180Z",
+  "updatedAt": "2020-06-04T03:16:07.354Z",
   "devdoc": {
     "methods": {}
   },
