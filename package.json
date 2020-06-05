@@ -23,6 +23,7 @@
     "solidity-rlp": "^2.0.1",
     "truffle": "^5.1.5",
     "truffle-assertions": "^0.9.1",
+    "unorm": "^1.6.0",
     "web3": "^1.2.4"
   },
   "devDependencies": {
