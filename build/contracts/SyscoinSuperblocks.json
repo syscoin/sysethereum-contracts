@@ -77958,9 +77958,16 @@
     "name": "solc",
     "version": "0.5.13+commit.5b0b510c.Emscripten.clang"
   },
-  "networks": {},
+  "networks": {
+    "1": {
+      "links": {},
+      "events": {},
+      "address": "0xFF957eA28b537b34E0c6E6B50c6c938668DD28a0",
+      "updated_at": 1591390207307
+    }
+  },
   "schemaVersion": "3.0.20",
-  "updatedAt": "2020-06-05T19:53:35.437Z",
+  "updatedAt": "2020-06-05T20:47:48.208Z",
   "devdoc": {
     "methods": {
       "getBridgeTransactionId(bytes)": {
