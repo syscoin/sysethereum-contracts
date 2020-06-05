@@ -821,7 +821,7 @@
   "proxies": {
     "sysethereum-contracts/SyscoinSuperblocks": [
       {
-        "address": "0xFF957eA28b537b34E0c6E6B50c6c938668DD28a0",
+        "address": "0xa0Fe740Ed57C9FCB0A04E330824aD8aD574bc54c",
         "version": "1.0.0",
         "implementation": "0x005F8704B208E97D927a3499Dde7737a83A509bE",
         "admin": "0x4761d520D3285C4C41e942b1353885E03f5A1a5c",
@@ -830,7 +830,7 @@
     ],
     "sysethereum-contracts/SyscoinERC20Manager": [
       {
-        "address": "0xbf96Ded9600e6874c3247A61874f470fA7929f58",
+        "address": "0xFF957eA28b537b34E0c6E6B50c6c938668DD28a0",
         "version": "1.0.0",
         "implementation": "0x1179aC5beb651C17eE83c3862D37A3D87F79185F",
         "admin": "0x4761d520D3285C4C41e942b1353885E03f5A1a5c",
