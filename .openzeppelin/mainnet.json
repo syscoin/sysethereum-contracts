@@ -1,7 +1,7 @@
 {
   "contracts": {
     "SyscoinERC20Manager": {
-      "address": "0x269b4f1105a71529f2eac362299c0487a7936714",
+      "address": "0x41a4752b867e2d4b20212553ed17893b69436d51",
       "constructorCode": "608060405234801561001057600080fd5b50611d66806100206000396000f3fe",
       "bodyBytecodeHash": "61769edca8832608015da8c5dba8d988b59f753eec34baae630f62820317d2d6",
       "localBytecodeHash": "22cd16c91960ebedd204523f1ac0a6736701acc815f421bc1cbdc91bd787ce34",
@@ -242,7 +242,7 @@
       }
     },
     "SyscoinBattleManager": {
-      "address": "0x637e110a6c61cfd3a8838ec25a2dbf75a0f34b30",
+      "address": "0xa7a68b1bbbb027f9d583753a26411eafd353bae9",
       "constructorCode": "608060405234801561001057600080fd5b50612b7c806100206000396000f3fe",
       "bodyBytecodeHash": "1d9f5dccab6cd4259f56ebb71bc15acc29a5b5dd5ba4456e45b506eb982f9778",
       "localBytecodeHash": "5854d677f3ea357615a11f2e6ae15ed5928fcda2f531fbf27d1bbdd58f13725e",
@@ -419,7 +419,7 @@
       }
     },
     "SyscoinClaimManager": {
-      "address": "0xd03a860F481e83a8659640dC75008e9FcDF5d879",
+      "address": "0xfd47abfbb72499b6dbe999162fe0496d9a009060",
       "constructorCode": "608060405234801561001057600080fd5b50612af1806100206000396000f3fe",
       "bodyBytecodeHash": "b1a4d86ef06f6a5883ed9ec332f790f86cc0e5db2c8e1df4f00fd268a33bfb51",
       "localBytecodeHash": "a4d333315a437df60d12e428dfddd62ba8466042e588380e470ecdf77c11b3f0",
@@ -631,7 +631,7 @@
       }
     },
     "SyscoinSuperblocks": {
-      "address": "0xa3c431e1694983262452cc0a6dc4a001d8a51c68",
+      "address": "0x64da75671a3d342e50f9527837df050cdbea8369",
       "constructorCode": "608060405234801561001057600080fd5b506142b6806100206000396000f3fe",
       "bodyBytecodeHash": "d3acd438ade8aa85e332f14ff1af8a58ee53fb13cac5b0e616c622d554033359",
       "localBytecodeHash": "e321b54cde40d0a19f33f0ef9303d126100fa897f4a75414414c172acabc4786",
@@ -823,8 +823,8 @@
       {
         "address": "0xa0Fe740Ed57C9FCB0A04E330824aD8aD574bc54c",
         "version": "1.0.0",
-        "implementation": "0xa3c431e1694983262452cc0a6dc4a001d8a51c68",
-        "admin": "0x8d827Cf5515718a79Be1DC38152873bC0C1cA263",
+        "implementation": "0x64da75671a3d342e50f9527837df050cdbea8369",
+        "admin": "0x4761d520D3285C4C41e942b1353885E03f5A1a5c",
         "kind": "Upgradeable"
       }
     ],
@@ -832,8 +832,8 @@
       {
         "address": "0xFF957eA28b537b34E0c6E6B50c6c938668DD28a0",
         "version": "1.0.0",
-        "implementation": "0x269b4f1105a71529f2eac362299c0487a7936714",
-        "admin": "0x8d827Cf5515718a79Be1DC38152873bC0C1cA263",
+        "implementation": "0x41a4752b867e2d4b20212553ed17893b69436d51",
+        "admin": "0x4761d520D3285C4C41e942b1353885E03f5A1a5c",
         "kind": "Upgradeable"
       }
     ],
@@ -841,8 +841,8 @@
       {
         "address": "0xbf96Ded9600e6874c3247A61874f470fA7929f58",
         "version": "1.0.0",
-        "implementation": "0x637e110a6c61cfd3a8838ec25a2dbf75a0f34b30",
-        "admin": "0x8d827Cf5515718a79Be1DC38152873bC0C1cA263",
+        "implementation": "0xa7a68b1bbbb027f9d583753a26411eafd353bae9",
+        "admin": "0x4761d520D3285C4C41e942b1353885E03f5A1a5c",
         "kind": "Upgradeable"
       }
     ],
@@ -850,8 +850,8 @@
       {
         "address": "0xd03a860F481e83a8659640dC75008e9FcDF5d879",
         "version": "1.0.0",
-        "implementation": "0xb6d93f5391a45c08028e449fc0d6427c63603da1",
-        "admin": "0x8d827Cf5515718a79Be1DC38152873bC0C1cA263",
+        "implementation": "0xfd47abfbb72499b6dbe999162fe0496d9a009060",
+        "admin": "0x4761d520D3285C4C41e942b1353885E03f5A1a5c",
         "kind": "Upgradeable"
       }
     ]
@@ -859,6 +859,6 @@
   "manifestVersion": "2.2",
   "version": "1.0.0",
   "proxyAdmin": {
-    "address": "0x8d827Cf5515718a79Be1DC38152873bC0C1cA263"
+    "address": "0x4761d520D3285C4C41e942b1353885E03f5A1a5c"
   }
 }
