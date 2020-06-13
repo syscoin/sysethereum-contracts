@@ -13,7 +13,7 @@ contract SyscoinERC20Manager is Initializable {
     uint private constant SUPERBLOCK_SUBMITTER_LOCK_FEE = 10000; // 10000 = 0.01%
     uint private constant MIN_CANCEL_DEPOSIT = 3000000000000000000; // 3 eth
     uint private constant CANCEL_TRANSFER_TIMEOUT = 3600; // 1 hour in seconds
-    uint private constant CANCEL_MINT_TIMEOUT = 1814400; // 3 weeks in seconds
+    uint private constant CANCEL_MINT_TIMEOUT = 907200; // 1.5 weeks in seconds
     // Variables set by constructor
 
     // Contract to trust for tx included in a syscoin block verification.
@@ -163,9 +163,9 @@ contract SyscoinERC20Manager is Initializable {
         // ensure msg.sender is same as tokenFreezerAddress
         // we don't have to do this but we do it anyway so someone can't accidentily cancel a transfer they did not make
         require(msg.sender == bridgeTransfer.tokenFreezerAddress, "#SyscoinERC20Manager cancelTransferRequest(): Only msg.sender is allowed to cancel");
-        // if freezeBurnERC20 was called less than 3 weeks ago then return error
-        // 0.5 week buffer since only 2.5 week of blocks are allowed to pass before cannot mint on sys
-        require((block.timestamp - bridgeTransfer.timestamp) > CANCEL_MINT_TIMEOUT, "#SyscoinERC20Manager cancelTransferRequest(): Transfer must be at least 3 week old");
+        // if freezeBurnERC20 was called less than 1.5 weeks ago then return error
+        // 0.5 week buffer since only 1 week of blocks are allowed to pass before cannot mint on sys
+        require((block.timestamp - bridgeTransfer.timestamp) > (net == Network.MAINNET? CANCEL_MINT_TIMEOUT: 36000), "#SyscoinERC20Manager cancelTransferRequest(): Transfer must be at least 1.5 week old");
         // ensure min deposit paid
         require(msg.value >= MIN_CANCEL_DEPOSIT,
             "#SyscoinERC20Manager cancelTransferRequest(): Cancel deposit incorrect");

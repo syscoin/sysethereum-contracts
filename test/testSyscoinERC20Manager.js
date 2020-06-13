@@ -143,7 +143,7 @@ contract('SyscoinERC20Manager', function(accounts) {
     let wrongBridgeTransferId = 299;
     let erc20ManagerForCancel, erc20AssetCancel;
     let bridgetransferid;
-    const CANCEL_MINT_TIMEOUT = 1814400; // 3 weeks in seconds
+    const CANCEL_MINT_TIMEOUT = 907200; // 1.5 weeks in seconds
     const CANCEL_TRANSFER_TIMEOUT = 3600; // 1 hour in seconds
 
     beforeEach("Prepare env", async () => {
@@ -189,12 +189,12 @@ contract('SyscoinERC20Manager', function(accounts) {
         it("Freeze is not old enough", async () => {
           await expectRevert(
             erc20ManagerForCancel.methods.cancelTransferRequest(bridgetransferid).send({from: cancelAddress}),
-            "#SyscoinERC20Manager cancelTransferRequest(): Transfer must be at least 3 week old"
+            "#SyscoinERC20Manager cancelTransferRequest(): Transfer must be at least 1.5 week old"
           );
         });
 
         it("Cancel deposit is not enough", async () => {
-          // travel in time 3 weeks forward
+          // travel in time 1.5 weeks forward
           await blockchainTimeoutSeconds(CANCEL_MINT_TIMEOUT);
           await expectRevert(
             erc20ManagerForCancel.methods.cancelTransferRequest(bridgetransferid).send({from: cancelAddress}),
@@ -204,7 +204,7 @@ contract('SyscoinERC20Manager', function(accounts) {
       })
 
       it("should process cancel request succesfully", async () => {
-        // travel in time 3 weeks forward
+        // travel in time 1.5 weeks forward
         await blockchainTimeoutSeconds(CANCEL_MINT_TIMEOUT);
         let tx = await erc20ManagerForCancel.methods.cancelTransferRequest(bridgetransferid).send({from: cancelAddress, value: web3.utils.toWei('3', 'ether')});
         assert.equal(cancelAddress, tx.events.CancelTransferRequest.returnValues.canceller, "msg.sender incorrect");
@@ -233,7 +233,7 @@ contract('SyscoinERC20Manager', function(accounts) {
         let startingErc20Bal = await erc20AssetCancel.balanceOf(cancelAddress);
         let startingAssetGUIDBal = await erc20ManagerForCancel.methods.assetBalances(assetGUID).call();
 
-        // travel in time 3 weeks forward
+        // travel in time 1.5 weeks forward
         await blockchainTimeoutSeconds(CANCEL_MINT_TIMEOUT);
         await erc20ManagerForCancel.methods.cancelTransferRequest(bridgetransferid).send({from: cancelAddress, value: web3.utils.toWei('3', 'ether')});
 
@@ -285,7 +285,7 @@ contract('SyscoinERC20Manager', function(accounts) {
       })
 
       it("should processCancelTransferFail succesfully", async () => {
-        // travel in time 3 weeks forward
+        // travel in time 1.5 weeks forward
         await blockchainTimeoutSeconds(CANCEL_MINT_TIMEOUT);
         await erc20ManagerForCancel.methods.cancelTransferRequest(bridgetransferid).send({from: cancelAddress, value: web3.utils.toWei('3', 'ether')});
 
