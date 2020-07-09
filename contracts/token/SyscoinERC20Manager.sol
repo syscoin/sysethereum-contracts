@@ -221,16 +221,16 @@ contract SyscoinERC20Manager is Initializable {
     function freezeBurnERC20(
         uint value,
         uint32 assetGUID,
-        bytes memory syscoinAddress
+        string memory syscoinAddress
     ) public returns (bool)
     {
-        require(syscoinAddress.length > 0, "syscoinAddress cannot be zero");
+        require(bytes(syscoinAddress).length > 0, "syscoinAddress cannot be zero");
         require(assetGUID > 0, "Asset GUID must not be 0");
         // lookup asset from registry
         AssetRegistryItem storage assetRegistryItem = assetRegistry[assetGUID];
         // ensure state is Ok
         require(assetRegistryItem.erc20ContractAddress != address(0),
-            "#SyscoinERC20Manager processTransaction(): Asset not found in registry");
+            "#SyscoinERC20Manager freezeBurnERC20(): Asset not found in registry");
         
         SyscoinERC20I erc20 = SyscoinERC20I(assetRegistryItem.erc20ContractAddress);
         uint8 nLocalPrecision = erc20.decimals();

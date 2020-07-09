@@ -39,6 +39,8 @@ contract SyscoinSuperblocks is Initializable, SyscoinSuperblocksI, SyscoinErrorC
 
     uint32 constant SYSCOIN_TX_VERSION_ASSET_ACTIVATE = 130;
     uint32 constant SYSCOIN_TX_VERSION_ASSET_UPDATE = 131;
+    byte constant OP_PUSHDATA1 = 0x4c;
+    byte constant OP_PUSHDATA2 = 0x4d;
     modifier onlyClaimManager() {
         require(msg.sender == trustedClaimManager);
         _;
@@ -95,7 +97,7 @@ contract SyscoinSuperblocks is Initializable, SyscoinSuperblocksI, SyscoinErrorC
     }
 
     // Returns asset data parsed from the op_return data output from syscoin asset burn transaction
-    function scanBurnTx(bytes memory txBytes, uint pos)
+    function scanBurnTx(bytes memory txBytes, uint opIndex, uint pos)
         internal
         pure
         returns (uint, address, uint32)
@@ -104,25 +106,32 @@ contract SyscoinSuperblocks is Initializable, SyscoinSuperblocksI, SyscoinErrorC
         address destinationAddress;
         uint output_value;
         uint8 op;
-        uint pos;
         uint numAssets;
         uint numOutputs;
         uint output_value_compressed;
         (numAssets, pos) = parseVarInt(txBytes, pos);
-        require(numAssets == 1);
+        require(numAssets == 1, "#SyscoinSuperblocks scanBurnTx(): Invalid numAssets");
         // get nAsset
         assetGUID = bytesToUint32Flipped(txBytes, pos);
+        pos += 4;
         (numOutputs, pos) = parseVarInt(txBytes, pos);
-        require(numOutputs == 1);
-        // skip over output index
-        pos += 1;
-        // get compressed amount
-        (output_value_compressed, pos) = parseVarInt(txBytes, pos);
+        require(numOutputs < 10, "#SyscoinSuperblocks scanBurnTx(): Invalid numOutputs");
+        // find output that is connected to the burn output (opIndex)
+        for (uint i = 0; i < numOutputs; i++) {
+            (op, pos) = getOpcode(txBytes, pos);
+             // get compressed amount
+            if(op == opIndex) {
+                (output_value_compressed, pos) = parseVarInt(txBytes, pos);
+            } else {
+                (, pos) = parseVarInt(txBytes, pos);
+            }
+        }
+        require(output_value_compressed > 0, "#SyscoinSuperblocks scanBurnTx(): Burn output index not found");
         output_value = DecompressAmount(uint64(output_value_compressed));
          // destination address
         (op, pos) = getOpcode(txBytes, pos);
         // ethereum contracts are 20 bytes (without the 0x)
-        require(op == 0x14);
+        require(op == 0x14, "#SyscoinSuperblocks scanBurnTx(): Invalid destinationAddress");
         destinationAddress = readEthereumAddress(txBytes, pos);
         return (output_value, destinationAddress, assetGUID);
     }
@@ -142,7 +151,7 @@ contract SyscoinSuperblocks is Initializable, SyscoinSuperblocksI, SyscoinErrorC
         return (uint8(txBytes[pos]), pos + 1);
     }
 
-    function getOpReturnPos(bytes memory txBytes, uint pos) public pure returns (uint) {
+    function getOpReturnPos(bytes memory txBytes, uint pos) public pure returns (uint, uint) {
         uint n_inputs;
         uint script_len;
         uint output_value;
@@ -178,7 +187,18 @@ contract SyscoinSuperblocks is Initializable, SyscoinSuperblocksI, SyscoinErrorC
             }
             // skip opreturn marker
             pos += 1;
-            return pos;
+            byte pushDataOp = txBytes[pos];
+            // if payload >= OP_PUSHDATA1 && <= 0xff bytes skip 2 bytes (push data + 1 byte varint)
+            if (pushDataOp == OP_PUSHDATA1){
+                pos += 2;
+            }
+            // if payload > 0xff && <= 0xffff then skip 3 bytes (push data + 2 byte varint)
+            else if (pushDataOp == OP_PUSHDATA2){
+                pos += 3;
+            } else {
+                pos += 1; // skip 1 byte varint
+            }
+            return (i, pos);
         }
         revert("#SyscoinSuperblocks getOpReturnPos(): No OpReturn found");
     }
@@ -199,17 +219,10 @@ contract SyscoinSuperblocks is Initializable, SyscoinSuperblocksI, SyscoinErrorC
         if(version != SYSCOIN_TX_VERSION_ALLOCATION_MINT){
             return (ERR_PARSE_TX_SYS, bridgeTransferId);
         }
-        pos = getOpReturnPos(txBytes, 4);
-        byte pushDataOp = txBytes[pos+1];
-        pos += 2; // we will have to skip pushdata op as well as atleast 1 byte
-        if(pushDataOp == 0x4d){
-            pos++; // skip pushdata2 + 2 bytes for opreturn varint
-        }
-
+        (, pos) = getOpReturnPos(txBytes, 4);
         bridgeTransferId = scanMintTx(txBytes, pos);
         return (0, bridgeTransferId);
     }
-
 
      /** @dev Parse syscoin asset transaction to recover asset guid and contract, for purposes of updating asset registry in erc20manager
      * @param txBytes syscoin raw transaction
@@ -226,13 +239,7 @@ contract SyscoinSuperblocks is Initializable, SyscoinSuperblocksI, SyscoinErrorC
         if(version != SYSCOIN_TX_VERSION_ASSET_ACTIVATE && version != SYSCOIN_TX_VERSION_ASSET_UPDATE){
             return (ERR_PARSE_TX_SYS, 0, address(0), 0);
         }
-        pos = getOpReturnPos(txBytes, 4);
-        byte pushDataOp = txBytes[pos+1];
-        pos += 2; // we will have to skip pushdata op as well as atleast 1 byte
-        if(pushDataOp == 0x4d){
-            pos++; // skip pushdata2 + 2 bytes for opreturn varint
-        }
-
+        (, pos) = getOpReturnPos(txBytes, 4);
         (assetGuid, erc20Address, precision) = scanAssetTx(txBytes, pos);
         require(erc20Address != address(0),
         "parseAssetTx(): erc20Address cannot be empty");
@@ -289,6 +296,7 @@ contract SyscoinSuperblocks is Initializable, SyscoinSuperblocksI, SyscoinErrorC
         require(numAssets == 1);
         // get nAsset
         assetGUID = bytesToUint32Flipped(txBytes, pos);
+        pos += 4;
         (numOutputs, pos) = parseVarInt(txBytes, pos);
         require(numOutputs == 1);
         // skip over output index
@@ -690,18 +698,13 @@ contract SyscoinSuperblocks is Initializable, SyscoinSuperblocksI, SyscoinErrorC
         address destinationAddress;
         uint32 version;
         uint pos = 0;
+        uint opIndex = 0;
         version = bytesToUint32Flipped(txBytes, pos);
         if(version != SYSCOIN_TX_VERSION_ALLOCATION_BURN_TO_ETHEREUM){
             return (ERR_PARSE_TX_SYS, output_value, destinationAddress, assetGUID);
         }
-        pos = getOpReturnPos(txBytes, 4);
-        byte pushDataOp = txBytes[pos+1];
-        pos += 2; // we will have to skip pushdata op as well as atleast 1 byte
-        if(pushDataOp == 0x4d){
-            pos++; // skip pushdata2 + 2 bytes for opreturn varint
-        }
-
-        (output_value, destinationAddress, assetGUID) = scanBurnTx(txBytes, pos);
+        (opIndex, pos) = getOpReturnPos(txBytes, 4);
+        (output_value, destinationAddress, assetGUID) = scanBurnTx(txBytes, opIndex, pos);
         return (0, output_value, destinationAddress, assetGUID);
     }
 

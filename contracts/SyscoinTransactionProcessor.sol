@@ -3,7 +3,7 @@ pragma solidity ^0.5.13;
 // Interface contract to be implemented by SyscoinERC20Manager
 interface SyscoinTransactionProcessor {
     function processTransaction(uint txHash, uint value, address destinationAddress, address superblockSubmitterAddress, uint32 assetGUID) external;
-    function freezeBurnERC20(uint value, uint32 assetGUID, bytes calldata syscoinAddress) external returns (bool);
+    function freezeBurnERC20(uint value, uint32 assetGUID, string calldata syscoinAddress) external returns (bool);
     function cancelTransferRequest(uint32 bridgeTransferId) external;
     function cancelTransferSuccess(uint32 bridgeTransferId, address challengerAddress) external;
     function processCancelTransferFail(uint32 bridgeTransferId, address payable challengerAddress) external;

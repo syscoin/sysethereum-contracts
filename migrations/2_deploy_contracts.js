@@ -24,7 +24,7 @@ const SUPERBLOCK_OPTIONS_LOCAL = {
   TIMEOUT: 30,      // 30 seconds
   CONFIRMATIONS: 1 // Superblocks required to confirm semi approved superblock
 };
-
+var SyscoinSuperblocks;
 async function deploy(networkName, options, accounts, networkId, superblockOptions) {
   // Register contracts in the zos project
   add({ contractsData: [{ name: 'SyscoinSuperblocks', alias: 'SyscoinSuperblocks' }] });
@@ -39,7 +39,7 @@ async function deploy(networkName, options, accounts, networkId, superblockOptio
 
   // Create an instance of MyContract, setting initial value to 42
   console.log('\nDeploying SyscoinSuperblocks proxy instance at address ');
-  let SyscoinSuperblocks = await create(Object.assign({ contractAlias: 'SyscoinSuperblocks' }, options));
+  SyscoinSuperblocks = await create(Object.assign({ contractAlias: 'SyscoinSuperblocks' }, options));
 
   console.log('\nDeploying and Initializing SyscoinERC20Manager proxy instance at address ');
   let SyscoinERC20Manager = await create(Object.assign({ contractAlias: 'SyscoinERC20Manager', methodName: 'init', methodArgs: [networkId, SyscoinSuperblocks.address] }, options));
@@ -103,13 +103,14 @@ module.exports = function(deployer, networkName, accounts) {
         SyscoinERC20Manager = await deploy(networkName, { network, txParams }, accounts, SYSCOIN_REGTEST, SUPERBLOCK_OPTIONS_PRODUCTION);
       }
     }
-    let burnVal = web3.utils.toWei("88.8", "finney"); // total supply 888m COIN on Syscoin
+    /*let burnVal = web3.utils.toWei("88.8", "finney"); // total supply 888m COIN on Syscoin
     erc20Asset = await deployer.deploy(ERC20Asset,
       "SyscoinToken", "SYSX", 8,
       {from: accounts[0], gas: 2000000 }
     );
     await erc20Asset.assign(accounts[0], burnVal);
     await erc20Asset.approve(SyscoinERC20Manager.address, burnVal, {from: accounts[0]}); 
+    await SyscoinERC20Manager.methods.processAsset('0x1af00a984c6264e1202d676d79d9a099275f130c007e30d00a76fa299fcbb481', SYSX_ASSET_GUID, 1, erc20Asset.address, 8).send({gas: 300000, from: SyscoinSuperblocks.address});
     tx = await SyscoinERC20Manager.methods.freezeBurnERC20(burnVal, SYSX_ASSET_GUID, "0x1").send({from: accounts[0], gas: 300000});
     let balance = await erc20Asset.balanceOf(accounts[0]);
     if(balance != 0)
@@ -121,6 +122,6 @@ module.exports = function(deployer, networkName, accounts) {
     let erc20ManagerBalance = await erc20Asset.balanceOf(SyscoinERC20Manager.address);
     if(erc20ManagerBalance != burnVal){
       console.log('\Token balance for ERC20 manager is not correct: ' + erc20ManagerBalance);
-    }
+    }*/
   });
 };

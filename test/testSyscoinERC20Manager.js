@@ -30,7 +30,7 @@ contract('SyscoinERC20Manager', function(accounts) {
   const value =   2000000000;
   const burnVal = 1000000000;
   const belowMinValue = 9900000; // 0.099 token
-  const syscoinAddress = "0x004322ec9eb713f37cf8d701d819c165549d53d14e";
+  const syscoinAddress = "004322ec9eb713f37cf8d701d819c165549d53d14e";
   const assetGUID = 1702063431;
   const trustedRelayerContract = accounts[0];
   let erc20Manager, erc20Asset;
@@ -46,17 +46,19 @@ contract('SyscoinERC20Manager', function(accounts) {
     erc20Asset = await SyscoinERC20.new("SyscoinToken", "SYSX", 8, {from: owner});
     await erc20Asset.assign(owner, value);
     await erc20Asset.approve(erc20Manager.options.address, burnVal, {from: owner}); 
+    // set registry
+    await erc20Manager.methods.processAsset('0x0', assetGUID, 1, erc20Asset.address, 8).send({gas: 300000, from: trustedRelayerContract});
+
   })
 
   it('should burn SyscoinERC20 Asset', async () => {
     assert.equal(await erc20Manager.methods.trustedRelayerContract().call(), trustedRelayerContract, "trustedRelayerContract is not correct");
     assert.equal(await erc20Asset.balanceOf(owner), value, `ERC20Asset's ${owner} balance is not the expected one`);
-
-    let tx = await erc20Manager.methods.freezeBurnERC20(burnVal, assetGUID, erc20Asset.address, 8, syscoinAddress).send({from: owner, gas: 300000});
+    let tx = await erc20Manager.methods.freezeBurnERC20(burnVal, assetGUID, syscoinAddress).send({from: owner, gas: 300000});
     assert.equal(await erc20Asset.balanceOf(erc20Manager.options.address), burnVal, "erc20Manager balance is not correct");
     assert.equal(await erc20Asset.balanceOf(owner), value - burnVal, `erc20Asset's user balance after burn is not the expected one`);
     assert.equal(await erc20Manager.methods.assetBalances(assetGUID).call(), burnVal, `assetBalances for ${assetGUID} GUID is not correct`);
-    assert.equal(1, tx.events.TokenFreeze.returnValues.bridgetransferid, 'bridgetransferid should be 1');
+    assert.equal(1, tx.events.TokenFreeze.returnValues.transferIdAndPrecisions & 0xFFFFFFFF, 'bridgetransferid should be 1');
   });
 
 
@@ -65,14 +67,14 @@ contract('SyscoinERC20Manager', function(accounts) {
 
     assert.equal(await erc20Asset.balanceOf(owner), value, `ERC20Asset's ${owner} balance is not the expected one`);
 
-    await erc20Manager.methods.freezeBurnERC20(burnVal, assetGUID, erc20Asset.address, 8, syscoinAddress).send({from: owner, gas: 300000});
+    await erc20Manager.methods.freezeBurnERC20(burnVal, assetGUID, syscoinAddress).send({from: owner, gas: 300000});
 
     assert.equal(await erc20Asset.balanceOf(erc20Manager.options.address), burnVal, "erc20Manager balance is not correct");
     assert.equal(await erc20Asset.balanceOf(owner), value - burnVal, `erc20Asset's user balance after burn is not the expected one`);
     assert.equal(await erc20Manager.methods.assetBalances(assetGUID).call(), burnVal, `assetBalances for ${assetGUID} GUID is not correct`);
 
     await erc20Asset.approve(erc20Manager.options.address, burnVal, {from: owner});
-    await erc20Manager.methods.freezeBurnERC20(burnVal, assetGUID, erc20Asset.address, 8, syscoinAddress).send({from: owner, gas: 300000});
+    await erc20Manager.methods.freezeBurnERC20(burnVal, assetGUID, syscoinAddress).send({from: owner, gas: 300000});
 
     assert.equal(await erc20Asset.balanceOf(erc20Manager.options.address), burnVal + burnVal, "erc20Manager balance is not correct");
     assert.equal(await erc20Asset.balanceOf(owner), value - burnVal - burnVal, `erc20Asset's user balance after burn is not the expected one`);
@@ -81,14 +83,14 @@ contract('SyscoinERC20Manager', function(accounts) {
 
   it('should fail to freeze & burn token without approval', async () => {
     await expectRevert(
-      erc20Manager.methods.freezeBurnERC20(value, assetGUID, erc20Asset.address, 8, syscoinAddress).send({from: owner}),
+      erc20Manager.methods.freezeBurnERC20(value, assetGUID, syscoinAddress).send({from: owner}),
       "SafeERC20: low-level call failed"
     );
   });
 
   it('should fail to freeze & burn token below minimum value', async () => {
     await expectRevert(
-      erc20Manager.methods.freezeBurnERC20(belowMinValue, assetGUID, erc20Asset.address, 8, syscoinAddress).send({from: owner}),
+      erc20Manager.methods.freezeBurnERC20(belowMinValue, assetGUID, syscoinAddress).send({from: owner}),
       "Value must be bigger or equal MIN_LOCK_VALUE"
     );
   });
@@ -96,45 +98,38 @@ contract('SyscoinERC20Manager', function(accounts) {
   it('should fail to freeze & burn token if balance is not enough', async () => {
     await erc20Asset.approve(erc20Manager.options.address, 2*value, {from: owner});
     await expectRevert(
-      erc20Manager.methods.freezeBurnERC20(2*value, assetGUID, erc20Asset.address, 8, syscoinAddress).send({from: owner}),
+      erc20Manager.methods.freezeBurnERC20(2*value, assetGUID, syscoinAddress).send({from: owner}),
       "SafeERC20: low-level call failed"
     );
   });
 
-  it('should fail with incorrect precision', async () => {
-    await erc20Asset.assign(owner, value);
-    await expectRevert(
-      erc20Manager.methods.freezeBurnERC20(value, assetGUID, erc20Asset.address, 7, syscoinAddress).send({from: owner}),
-      "Decimals were not provided with the correct value"
-    );
-  });
 
   it('should fail with zero syscoinAddress', async () => {
     await expectRevert(
-      erc20Manager.methods.freezeBurnERC20(burnVal, assetGUID, erc20Asset.address, 8, '0x').send({from: owner}),
+      erc20Manager.methods.freezeBurnERC20(burnVal, assetGUID,'').send({from: owner}),
       "syscoinAddress cannot be zero"
       );
   });
 
   it('should fail with zero assetGUID', async () => {
     await expectRevert(
-      erc20Manager.methods.freezeBurnERC20(burnVal, 0, erc20Asset.address, 8, syscoinAddress).send({from: owner}),
+      erc20Manager.methods.freezeBurnERC20(burnVal, 0, syscoinAddress).send({from: owner}),
       "Asset GUID must not be 0"
     );
   });
 
   it('should upgrade to new logic and freeze token with zero syscoinAddress and zero assetGUID',  async () => {
     await expectRevert(
-      erc20Manager.methods.freezeBurnERC20(burnVal, 0, erc20Asset.address, 8, '0x').send({from: owner}),
+      erc20Manager.methods.freezeBurnERC20(burnVal, 0, '').send({from: owner}),
       "syscoinAddress cannot be zero"
     );
 
     await this.project.upgradeProxy(erc20Manager.address, SyscoinERC20ManagerV1);
-
+    await erc20Manager.methods.processAsset('0x1', 0, 2, erc20Asset.address, 8).send({gas: 300000, from: trustedRelayerContract});
     assert.equal(await erc20Manager.methods.assetBalances(0).call(), 0, `initial assetBalances for ${assetGUID} GUID is not correct`);
 
     // this would revert if upgrate did not succeed
-    await erc20Manager.methods.freezeBurnERC20(burnVal, 0, erc20Asset.address, 8, '0x').send({from: owner, gas: 300000});
+    await erc20Manager.methods.freezeBurnERC20(burnVal, 0, '0x').send({from: owner, gas: 300000});
 
     assert.equal(await erc20Manager.methods.assetBalances(0).call(), burnVal, `assetBalances for ${assetGUID} GUID is not correct`);
   });
@@ -155,9 +150,11 @@ contract('SyscoinERC20Manager', function(accounts) {
       erc20AssetCancel = await SyscoinERC20.new("SyscoinToken", "SYSX", 8, {from: owner});
       await erc20AssetCancel.assign(cancelAddress, value);
       await erc20AssetCancel.approve(erc20ManagerForCancel.options.address, burnVal, {from: cancelAddress});
+      // update registry
+      await erc20ManagerForCancel.methods.processAsset('0x2', assetGUID, 2, erc20AssetCancel.address, 8).send({gas: 300000, from: trustedRelayerContract});
 
-      let tx = await erc20ManagerForCancel.methods.freezeBurnERC20(burnVal, assetGUID, erc20AssetCancel.address, 8, syscoinAddress).send({from: cancelAddress, gas: 300000});
-      bridgetransferid = tx.events.TokenFreeze.returnValues.bridgetransferid;
+      let tx = await erc20ManagerForCancel.methods.freezeBurnERC20(burnVal, assetGUID, syscoinAddress).send({from: cancelAddress, gas: 300000});
+      bridgetransferid = tx.events.TokenFreeze.returnValues.transferIdAndPrecisions & 0xFFFFFFFF;
     });
 
     describe("cancelTransferRequest()", () => {
@@ -195,7 +192,7 @@ contract('SyscoinERC20Manager', function(accounts) {
 
         it("Cancel deposit is not enough", async () => {
           // travel in time 3 weeks forward
-          await blockchainTimeoutSeconds(CANCEL_MINT_TIMEOUT);
+          await blockchainTimeoutSeconds(CANCEL_MINT_TIMEOUT+1);
           await expectRevert(
             erc20ManagerForCancel.methods.cancelTransferRequest(bridgetransferid).send({from: cancelAddress}),
             "#SyscoinERC20Manager cancelTransferRequest(): Cancel deposit incorrect"
@@ -205,7 +202,7 @@ contract('SyscoinERC20Manager', function(accounts) {
 
       it("should process cancel request succesfully", async () => {
         // travel in time 3 weeks forward
-        await blockchainTimeoutSeconds(CANCEL_MINT_TIMEOUT);
+        await blockchainTimeoutSeconds(CANCEL_MINT_TIMEOUT+1);
         let tx = await erc20ManagerForCancel.methods.cancelTransferRequest(bridgetransferid).send({from: cancelAddress, value: web3.utils.toWei('3', 'ether')});
         assert.equal(cancelAddress, tx.events.CancelTransferRequest.returnValues.canceller, "msg.sender incorrect");
         assert.equal(1, tx.events.CancelTransferRequest.returnValues.bridgetransferid, "bridgetransferid incorrect");
@@ -234,7 +231,7 @@ contract('SyscoinERC20Manager', function(accounts) {
         let startingAssetGUIDBal = await erc20ManagerForCancel.methods.assetBalances(assetGUID).call();
 
         // travel in time 3 weeks forward
-        await blockchainTimeoutSeconds(CANCEL_MINT_TIMEOUT);
+        await blockchainTimeoutSeconds(CANCEL_MINT_TIMEOUT+1);
         await erc20ManagerForCancel.methods.cancelTransferRequest(bridgetransferid).send({from: cancelAddress, value: web3.utils.toWei('3', 'ether')});
 
         let startingEthBal = parseInt(await web3.eth.getBalance(cancelAddress));
@@ -286,7 +283,7 @@ contract('SyscoinERC20Manager', function(accounts) {
 
       it("should processCancelTransferFail succesfully", async () => {
         // travel in time 3 weeks forward
-        await blockchainTimeoutSeconds(CANCEL_MINT_TIMEOUT);
+        await blockchainTimeoutSeconds(CANCEL_MINT_TIMEOUT+1);
         await erc20ManagerForCancel.methods.cancelTransferRequest(bridgetransferid).send({from: cancelAddress, value: web3.utils.toWei('3', 'ether')});
 
         let startingEthBal = parseInt(await web3.eth.getBalance(challangerAddress));

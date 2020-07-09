@@ -19,7 +19,7 @@ contract SyscoinERC20ManagerForTests is SyscoinERC20Manager {
     function freezeBurnERC20(
         uint value,
         uint32 assetGUID,
-        bytes memory
+        string memory
     ) public returns (bool)
     {
         // commented out on purpose

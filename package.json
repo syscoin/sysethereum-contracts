@@ -24,7 +24,8 @@
     "web3": "^1.2.4"
   },
   "devDependencies": {
-    "@openzeppelin/cli": "^2.6.0"
+    "@openzeppelin/cli": "^2.6.0",
+    "eth-json-rpc-filters": "^4.1.1"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
