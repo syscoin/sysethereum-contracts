@@ -210,7 +210,7 @@ contract SyscoinSuperblocks is Initializable, SyscoinSuperblocksI, SyscoinErrorC
      */
     function parseMintTx(bytes memory txBytes)
         public
-        view
+        pure
         returns (uint errorCode, uint32 bridgeTransferId)
     {
         uint32 version;
@@ -230,7 +230,7 @@ contract SyscoinSuperblocks is Initializable, SyscoinSuperblocksI, SyscoinErrorC
      */
     function parseAssetTx(bytes memory txBytes)
         public
-        view
+        pure
         returns (uint errorCode, uint32 assetGuid, address erc20Address, uint8 precision)
     {
         uint32 version;
