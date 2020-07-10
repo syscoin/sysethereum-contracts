@@ -71,10 +71,11 @@ contract SyscoinERC20Manager is Initializable {
         return true;
     }
     
-    function init(Network _network, address _trustedRelayerContract) public initializer {
+    function init(Network _network, address _trustedRelayerContract, uint32 _sysxGuid, address _sysxAddress, uint8 _precision) public initializer {
         net = _network;
         trustedRelayerContract = _trustedRelayerContract;
         bridgeTransferIdCount = 0;
+        assetRegistry[_sysxGuid] = AssetRegistryItem({erc20ContractAddress:_sysxAddress, height:1, precision: _precision});
     }
 
     modifier onlyTrustedRelayer() {
@@ -194,7 +195,8 @@ contract SyscoinERC20Manager is Initializable {
         uint d = deposits[bridgeTransferId];
         delete deposits[bridgeTransferId];
         // stop using .transfer() because of gas issue after ethereum upgrade
-        tokenFreezeAddressPayable.call.value(d)("");
+        (bool success, ) = tokenFreezeAddressPayable.call.value(d)("");
+        require(success, "Could not execute tokenFreezeAddressPayable.call.value");
         emit CancelTransferSucceeded(bridgeTransfer.tokenFreezerAddress, bridgeTransferId);
     }
 
@@ -213,7 +215,8 @@ contract SyscoinERC20Manager is Initializable {
         uint d = deposits[bridgeTransferId];
         delete deposits[bridgeTransferId];
         // stop using .transfer() because of gas issue after ethereum upgrade
-        challengerAddress.call.value(d)("");
+        (bool success, ) = challengerAddress.call.value(d)("");
+        require(success, "Could not execute challengerAddress.call.value");
         emit CancelTransferFailed(bridgeTransfer.tokenFreezerAddress, bridgeTransferId);
     }
 

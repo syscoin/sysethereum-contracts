@@ -38,12 +38,13 @@ contract('SyscoinERC20Manager', function(accounts) {
 
   beforeEach("set up SyscoinERC20Manager, SyscoinERC20", async () => {
     this.project = await TestHelper({from: proxyAdmin});
+    erc20Asset = await SyscoinERC20.new("SyscoinToken", "SYSX", 8, {from: owner});
     erc20Manager = await this.project.createProxy(SyscoinERC20ManagerV0, {
       initMethod: 'init',
-      initArgs: [utils.SYSCOIN_REGTEST, trustedRelayerContract]
+      initArgs: [utils.SYSCOIN_REGTEST, trustedRelayerContract, utils.SYSX_ASSET_GUID, erc20Asset.address, 8]
     });
     
-    erc20Asset = await SyscoinERC20.new("SyscoinToken", "SYSX", 8, {from: owner});
+    
     await erc20Asset.assign(owner, value);
     await erc20Asset.approve(erc20Manager.options.address, burnVal, {from: owner}); 
     // set registry
@@ -142,12 +143,13 @@ contract('SyscoinERC20Manager', function(accounts) {
     const CANCEL_TRANSFER_TIMEOUT = 3600; // 1 hour in seconds
 
     beforeEach("Prepare env", async () => {
+      erc20AssetCancel = await SyscoinERC20.new("SyscoinToken", "SYSX", 8, {from: owner});
       erc20ManagerForCancel = await this.project.createProxy(SyscoinERC20ManagerV0, {
         initMethod: 'init',
-        initArgs: [utils.SYSCOIN_REGTEST, trustedRelayerContract]
+        initArgs: [utils.SYSCOIN_REGTEST, trustedRelayerContract, utils.SYSX_ASSET_GUID, erc20AssetCancel.address, 8]
       });
 
-      erc20AssetCancel = await SyscoinERC20.new("SyscoinToken", "SYSX", 8, {from: owner});
+      
       await erc20AssetCancel.assign(cancelAddress, value);
       await erc20AssetCancel.approve(erc20ManagerForCancel.options.address, burnVal, {from: cancelAddress});
       // update registry

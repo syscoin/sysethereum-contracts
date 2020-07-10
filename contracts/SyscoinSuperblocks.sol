@@ -253,8 +253,8 @@ contract SyscoinSuperblocks is Initializable, SyscoinSuperblocksI, SyscoinErrorC
      * @return bridge id (uint32)
      */
     function scanMintTx(bytes memory txBytes, uint pos)
-        public
-        view
+        private
+        pure
         returns (uint32)
     {
         uint bridgeId;
@@ -282,8 +282,8 @@ contract SyscoinSuperblocks is Initializable, SyscoinSuperblocksI, SyscoinErrorC
      * @return asset guid (uint32), erc20 address and precision linked to the asset guid to update registry in erc20manager
      */
     function scanAssetTx(bytes memory txBytes, uint pos)
-        public
-        view
+        private
+        pure
         returns (uint32, address, uint8)
     {
         uint32 assetGUID;
@@ -587,8 +587,6 @@ contract SyscoinSuperblocks is Initializable, SyscoinSuperblocksI, SyscoinErrorC
             address destinationAddress;
             uint ret;
             uint32 assetGUID;
-            address erc20ContractAddress;
-            uint8 precision;
             (ret, value, destinationAddress, assetGUID) = parseBurnTx(_txBytes);
             if(ret != 0){
                 emit RelayTransaction(bytes32(txHash), ret);

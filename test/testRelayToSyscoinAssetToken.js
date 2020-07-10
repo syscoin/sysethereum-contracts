@@ -27,14 +27,15 @@ contract('testRelayToSyscoinAssetToken', function(accounts) {
   const erc20OwnerRinkeby = '0xfE234d3994f95Bf7CEBD9837C4444F5AF63F0a97';
   before(async () => {
     this.project = await TestHelper({from: proxyAdmin});
+    erc20Token = await ERC20.new("LegacyToken", "LEGX", 18, {from: owner});
     erc20Manager = await this.project.createProxy(SyscoinERC20Manager, {
       initMethod: 'init',
-      initArgs: [utils.SYSCOIN_REGTEST, trustedRelayerContract]
+      initArgs: [utils.SYSCOIN_REGTEST, trustedRelayerContract, utils.SYSX_ASSET_GUID, erc20Token.address, 8]
     });
 
     SyscoinSuperblocks = await SyscoinSuperblocksArtifact.new();
     
-    erc20Token = await ERC20.new("LegacyToken", "LEGX", 18, {from: owner});
+    
     await erc20Token.assign(owner, value);
     await erc20Token.approve(erc20Manager.options.address, burnVal, {from: owner});
     // set registry

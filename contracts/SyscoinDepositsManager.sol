@@ -45,7 +45,8 @@ contract SyscoinDepositsManager {
 
         deposits[msg.sender] = deposits[msg.sender].sub(amount);
         // stop using .transfer() because of gas issue after ethereum upgrade
-        msg.sender.call.value(amount)("");
+        (bool success, ) = msg.sender.call.value(amount)("");
+        require(success, "Could not execute msg.sender.call.value");
         emit DepositWithdrawn(msg.sender, amount);
         return deposits[msg.sender];
     }

@@ -270,15 +270,15 @@ contract('SyscoinSuperblocks', (accounts) => {
 
     beforeEach("Setup env for cancellation challange", async () => {
       superblocksForChallange = await this.project.createProxy(SyscoinSuperblocksForTests);
-
+      erc20Asset = await SyscoinERC20.new("SyscoinToken", "SYSX", 8, {from: owner});
       erc20Manager = await this.project.createProxy(SyscoinERC20Manager, {
         initMethod: 'init',
-        initArgs: [utils.SYSCOIN_REGTEST, superblocksForChallange.options.address]
+        initArgs: [utils.SYSCOIN_REGTEST, superblocksForChallange.options.address, utils.SYSX_ASSET_GUID, erc20Asset.address, 8]
       });
 
       await superblocksForChallange.methods.init(erc20Manager.options.address, claimManager).send({from: owner, gas: 300000});
 
-      erc20Asset = await SyscoinERC20.new("SyscoinToken", "SYSX", 8, {from: owner});
+      
 
       let tx, bridgeTransferId;
       // generate transfer for given bridgeTransferId
