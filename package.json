@@ -7,7 +7,7 @@
   },
   "dependencies": {
     "@openzeppelin/upgrades": "^2.6.0",
-    "@truffle/hdwallet-provider": "^1.0.25",
+    "@truffle/hdwallet-provider": "^1.0.38",
     "bitcoin-proof": "2.0.0",
     "bitcoinjs-lib": "^5.1.6",
     "bitcore-message": "^1.0.4",
@@ -19,7 +19,7 @@
     "openzeppelin-test-helpers": "^0.4.3",
     "solc": "^0.5.13",
     "solidity-rlp": "^2.0.1",
-    "truffle": "^5.1.5",
+    "truffle": "^5.1.34",
     "truffle-assertions": "^0.9.1",
     "web3": "^1.2.4"
   },
