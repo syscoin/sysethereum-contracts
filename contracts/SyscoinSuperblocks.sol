@@ -282,7 +282,7 @@ contract SyscoinSuperblocks is Initializable, SyscoinSuperblocksI, SyscoinErrorC
      * @return asset guid (uint32), erc20 address and precision linked to the asset guid to update registry in erc20manager
      */
     function scanAssetTx(bytes memory txBytes, uint pos)
-        private
+        public
         pure
         returns (uint32, address, uint8)
     {
