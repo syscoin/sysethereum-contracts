@@ -30,7 +30,7 @@ contract('testRelayToSyscoinAssetToken', function(accounts) {
     erc20Token = await ERC20.new("LegacyToken", "LEGX", 18, {from: owner});
     erc20Manager = await this.project.createProxy(SyscoinERC20Manager, {
       initMethod: 'init',
-      initArgs: [utils.SYSCOIN_REGTEST, trustedRelayerContract, utils.SYSX_ASSET_GUID, erc20Token.address, 8]
+      initArgs: [utils.SYSCOIN_REGTEST, trustedRelayerContract, assetGUID, erc20Token.address, 8]
     });
 
     SyscoinSuperblocks = await SyscoinSuperblocksArtifact.new();
@@ -38,8 +38,6 @@ contract('testRelayToSyscoinAssetToken', function(accounts) {
     
     await erc20Token.assign(owner, value);
     await erc20Token.approve(erc20Manager.options.address, burnVal, {from: owner});
-    // set registry
-    await erc20Manager.methods.processAsset('0x0', assetGUID, 1, erc20Token.address, 8).send({gas: 300000, from: trustedRelayerContract});
     // burn erc20
     await erc20Manager.methods.freezeBurnERC20(burnVal, assetGUID, syscoinAddress).send({from: owner, gas: 300000});
     

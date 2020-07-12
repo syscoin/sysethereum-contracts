@@ -41,14 +41,12 @@ contract('SyscoinERC20Manager', function(accounts) {
     erc20Asset = await SyscoinERC20.new("SyscoinToken", "SYSX", 8, {from: owner});
     erc20Manager = await this.project.createProxy(SyscoinERC20ManagerV0, {
       initMethod: 'init',
-      initArgs: [utils.SYSCOIN_REGTEST, trustedRelayerContract, utils.SYSX_ASSET_GUID, erc20Asset.address, 8]
+      initArgs: [utils.SYSCOIN_REGTEST, trustedRelayerContract, assetGUID, erc20Asset.address, 8]
     });
     
     
     await erc20Asset.assign(owner, value);
     await erc20Asset.approve(erc20Manager.options.address, burnVal, {from: owner}); 
-    // set registry
-    await erc20Manager.methods.processAsset('0x0', assetGUID, 1, erc20Asset.address, 8).send({gas: 300000, from: trustedRelayerContract});
 
   })
 
@@ -146,14 +144,12 @@ contract('SyscoinERC20Manager', function(accounts) {
       erc20AssetCancel = await SyscoinERC20.new("SyscoinToken", "SYSX", 8, {from: owner});
       erc20ManagerForCancel = await this.project.createProxy(SyscoinERC20ManagerV0, {
         initMethod: 'init',
-        initArgs: [utils.SYSCOIN_REGTEST, trustedRelayerContract, utils.SYSX_ASSET_GUID, erc20AssetCancel.address, 8]
+        initArgs: [utils.SYSCOIN_REGTEST, trustedRelayerContract, assetGUID, erc20AssetCancel.address, 8]
       });
 
       
       await erc20AssetCancel.assign(cancelAddress, value);
       await erc20AssetCancel.approve(erc20ManagerForCancel.options.address, burnVal, {from: cancelAddress});
-      // update registry
-      await erc20ManagerForCancel.methods.processAsset('0x2', assetGUID, 2, erc20AssetCancel.address, 8).send({gas: 300000, from: trustedRelayerContract});
 
       let tx = await erc20ManagerForCancel.methods.freezeBurnERC20(burnVal, assetGUID, syscoinAddress).send({from: cancelAddress, gas: 300000});
       bridgetransferid = tx.events.TokenFreeze.returnValues.transferIdAndPrecisions & 0xFFFFFFFF;
@@ -236,18 +232,18 @@ contract('SyscoinERC20Manager', function(accounts) {
         await blockchainTimeoutSeconds(CANCEL_MINT_TIMEOUT+1);
         await erc20ManagerForCancel.methods.cancelTransferRequest(bridgetransferid).send({from: cancelAddress, value: web3.utils.toWei('3', 'ether')});
 
-        let startingEthBal = parseInt(await web3.eth.getBalance(cancelAddress));
+        let startingEthBal = web3.utils.toBN(await web3.eth.getBalance(cancelAddress));
 
         // travel in time 1 hour forward
         await blockchainTimeoutSeconds(CANCEL_TRANSFER_TIMEOUT+1);
         let tx = await erc20ManagerForCancel.methods.cancelTransferSuccess(bridgetransferid).send({from: cancelAddress});
 
-        let finalEthBal = parseInt(await web3.eth.getBalance(cancelAddress));
+        let finalEthBal = web3.utils.toBN(await web3.eth.getBalance(cancelAddress));
         let finalErc20Bal = await erc20AssetCancel.balanceOf(cancelAddress);
         let finalAssetGUIDBal = await erc20ManagerForCancel.methods.assetBalances(assetGUID).call();
 
         // we are doing 2.99 ETH because some ether got used for TX fees
-        assert(startingEthBal + parseInt(web3.utils.toWei('2.99', 'ether')) < finalEthBal, "Ether balance incorrect");
+        assert(startingEthBal.add(web3.utils.toBN(web3.utils.toWei('2.99', 'ether'))).lt(finalEthBal), "Ether balance incorrect");
         assert.equal(startingErc20Bal.toNumber() + burnVal, finalErc20Bal.toNumber(), "ERC20 balance incorrect");
         assert.equal(startingAssetGUIDBal - burnVal, finalAssetGUIDBal, "Asset GUID balance incorrect");
 
@@ -288,12 +284,12 @@ contract('SyscoinERC20Manager', function(accounts) {
         await blockchainTimeoutSeconds(CANCEL_MINT_TIMEOUT+1);
         await erc20ManagerForCancel.methods.cancelTransferRequest(bridgetransferid).send({from: cancelAddress, value: web3.utils.toWei('3', 'ether')});
 
-        let startingEthBal = parseInt(await web3.eth.getBalance(challangerAddress));
+        let startingEthBal = web3.utils.toBN(await web3.eth.getBalance(challangerAddress));
 
         let tx = await erc20ManagerForCancel.methods.processCancelTransferFail(bridgetransferid, challangerAddress).send({from: trustedRelayerContract});
 
-        let finalEthBal = parseInt(await web3.eth.getBalance(challangerAddress));
-        assert.equal(startingEthBal + parseInt(web3.utils.toWei('3', 'ether')), finalEthBal, "Ether balance incorrect");
+        let finalEthBal = web3.utils.toBN(await web3.eth.getBalance(challangerAddress));
+        assert.equal(startingEthBal.add(web3.utils.toBN(web3.utils.toWei('3', 'ether'))).toString(), finalEthBal.toString(), "Ether balance incorrect");
 
         assert.equal(tx.events.CancelTransferFailed.returnValues.canceller, cancelAddress, "canceller incorrect")
         assert.equal(tx.events.CancelTransferFailed.returnValues.bridgetransferid, bridgetransferid, "bridgetransferid incorrect")
