@@ -12,9 +12,8 @@ contract SyscoinMessageLibrary {
     enum Network { MAINNET, TESTNET, REGTEST }
     uint32 constant SYSCOIN_TX_VERSION_ALLOCATION_BURN_TO_ETHEREUM = 0x7407;
 
-    // Convert a variable integer into something useful and return it and
-    // the index to after it.
-    function parseVarInt(bytes memory txBytes, uint pos) public pure returns (uint, uint) {
+    // Convert a compact size for wire for variable length fields
+    function parseCompactSize(bytes memory txBytes, uint pos) public pure returns (uint, uint) {
         // the first byte tells us how big the integer is
         uint8 ibit = uint8(txBytes[pos]);
         pos += 1;  // skip ibit
@@ -29,6 +28,22 @@ contract SyscoinMessageLibrary {
             return (getBytesLE(txBytes, pos, 64), pos + 8);
         }
     }
+    // Convert a variable integer into something useful and return it and
+    // the index to after it.
+    function parseVarInt(bytes memory txBytes, uint pos, uint max) public pure returns (uint) {
+        uint n = 0;
+        while(true) {
+            uint chData = uint(txBytes[pos]);
+            require(n <= (max >> 7), "#SyscoinMessageLibrary parseVarInt(): size too large");
+            pos += 1;
+            n = (n << 7) | (chData & 0x7F);
+            if ((chData & 0x80) > 0) {
+                require((n != max), "#SyscoinMessageLibrary parseVarInt(): size too large");
+                n++;
+            } else {
+                return n;
+            }
+        }
 
     // convert little endian bytes to uint
     function getBytesLE(bytes memory data, uint pos, uint bits)

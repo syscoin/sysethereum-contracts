@@ -109,21 +109,21 @@ contract SyscoinSuperblocks is Initializable, SyscoinSuperblocksI, SyscoinErrorC
         uint numAssets;
         uint numOutputs;
         uint output_value_compressed;
-        (numAssets, pos) = parseVarInt(txBytes, pos);
+        (numAssets, pos) = parseCompactSize(txBytes, pos);
         require(numAssets == 1, "#SyscoinSuperblocks scanBurnTx(): Invalid numAssets");
         // get nAsset
         assetGUID = bytesToUint32Flipped(txBytes, pos);
         pos += 4;
-        (numOutputs, pos) = parseVarInt(txBytes, pos);
+        (numOutputs, pos) = parseCompactSize(txBytes, pos);
         require(numOutputs < 10, "#SyscoinSuperblocks scanBurnTx(): Invalid numOutputs");
         // find output that is connected to the burn output (opIndex)
         for (uint i = 0; i < numOutputs; i++) {
             (op, pos) = getOpcode(txBytes, pos);
              // get compressed amount
             if(op == opIndex) {
-                (output_value_compressed, pos) = parseVarInt(txBytes, pos);
+                (output_value_compressed, pos) = parseVarInt(txBytes, pos, 2**64);
             } else {
-                (, pos) = parseVarInt(txBytes, pos);
+                (, pos) = parseCompactSize(txBytes, pos);
             }
         }
         require(output_value_compressed > 0, "#SyscoinSuperblocks scanBurnTx(): Burn output index not found");
@@ -157,28 +157,28 @@ contract SyscoinSuperblocks is Initializable, SyscoinSuperblocksI, SyscoinErrorC
         uint output_value;
         uint n_outputs;
 
-        (n_inputs, pos) = parseVarInt(txBytes, pos);
+        (n_inputs, pos) = parseCompactSize(txBytes, pos);
         // if dummy 0x00 is present this is a witness transaction
         if(n_inputs == 0x00){
-            (n_inputs, pos) = parseVarInt(txBytes, pos); // flag
+            (n_inputs, pos) = parseCompactSize(txBytes, pos); // flag
             require(n_inputs != 0x00, "#SyscoinSuperblocks getOpReturnPos(): Unexpected dummy/flag");
             // after dummy/flag the real var int comes for txins
-            (n_inputs, pos) = parseVarInt(txBytes, pos);
+            (n_inputs, pos) = parseCompactSize(txBytes, pos);
         }
         require(n_inputs < 100, "#SyscoinSuperblocks getOpReturnPos(): Incorrect size of n_inputs");
 
         for (uint i = 0; i < n_inputs; i++) {
             pos += 36;  // skip outpoint
-            (script_len, pos) = parseVarInt(txBytes, pos);
+            (script_len, pos) = parseCompactSize(txBytes, pos);
             pos += script_len + 4;  // skip sig_script, seq
         }
         
-        (n_outputs, pos) = parseVarInt(txBytes, pos);
+        (n_outputs, pos) = parseCompactSize(txBytes, pos);
         require(n_outputs < 10, "#SyscoinSuperblocks getOpReturnPos(): Incorrect size of n_outputs");
         for (uint i = 0; i < n_outputs; i++) {
             pos += 8;
             // varint
-            (script_len, pos) = parseVarInt(txBytes, pos);
+            (script_len, pos) = parseCompactSize(txBytes, pos);
             if(!isOpReturn(txBytes, pos)){
                 // output script
                 pos += script_len;
@@ -261,17 +261,17 @@ contract SyscoinSuperblocks is Initializable, SyscoinSuperblocksI, SyscoinErrorC
         uint numAssets;
         uint numOutputs;
         uint amount;
-        (numAssets, pos) = parseVarInt(txBytes, pos);
+        (numAssets, pos) = parseCompactSize(txBytes, pos);
         require(numAssets == 1);
         // skip nAsset
         pos += 4;
-        (numOutputs, pos) = parseVarInt(txBytes, pos);
+        (numOutputs, pos) = parseCompactSize(txBytes, pos);
         require(numOutputs == 1);
         // skip over output index
         pos += 1;
         // skip over compressed amount
-        (amount, pos) = parseVarInt(txBytes, pos);
-        (bridgeId, pos) = parseVarInt(txBytes, pos);
+        pos += 4;
+        bridgeId = bytesToUint32Flipped(txBytes, pos);
         return uint32(bridgeId);
     }
 
@@ -292,22 +292,22 @@ contract SyscoinSuperblocks is Initializable, SyscoinSuperblocksI, SyscoinErrorC
         uint bytesToRead;
         uint numAssets;
         uint numOutputs;
-        (numAssets, pos) = parseVarInt(txBytes, pos);
+        (numAssets, pos) = parseCompactSize(txBytes, pos);
         require(numAssets == 1);
         // get nAsset
         assetGUID = bytesToUint32Flipped(txBytes, pos);
         pos += 4;
-        (numOutputs, pos) = parseVarInt(txBytes, pos);
+        (numOutputs, pos) = parseCompactSize(txBytes, pos);
         require(numOutputs == 1);
         // skip over output index
         pos += 1;
         // skip over compressed amount
-        (bytesToRead, pos) = parseVarInt(txBytes, pos);
+        (bytesToRead, pos) = parseCompactSize(txBytes, pos);
         // nPrecision
         precision = uint8(txBytes[pos]);
         pos += 1;
         // get vchContract
-        (bytesToRead, pos) = parseVarInt(txBytes, pos);
+        (bytesToRead, pos) = parseCompactSize(txBytes, pos);
         require(bytesToRead == 0x14,
         "scanAssetTx(): Invalid number of bytes read for contract field");
         erc20Address = readEthereumAddress(txBytes, pos);
@@ -713,19 +713,19 @@ contract SyscoinSuperblocks is Initializable, SyscoinSuperblocksI, SyscoinErrorC
     {
         uint n_inputs;
         uint script_len;
-        (n_inputs, pos) = parseVarInt(txBytes, pos);
+        (n_inputs, pos) = parseCompactSize(txBytes, pos);
         // if dummy 0x00 is present this is a witness transaction
         if(n_inputs == 0x00){
-            (n_inputs, pos) = parseVarInt(txBytes, pos); // flag
+            (n_inputs, pos) = parseCompactSize(txBytes, pos); // flag
             require(n_inputs != 0x00, "#SyscoinSuperblocks skipInputs(): Unexpected dummy/flag");
             // after dummy/flag the real var int comes for txins
-            (n_inputs, pos) = parseVarInt(txBytes, pos);
+            (n_inputs, pos) = parseCompactSize(txBytes, pos);
         }
         require(n_inputs < 100, "#SyscoinSuperblocks skipInputs(): Incorrect size of n_inputs");
 
         for (uint i = 0; i < n_inputs; i++) {
             pos += 36;  // skip outpoint
-            (script_len, pos) = parseVarInt(txBytes, pos);
+            (script_len, pos) = parseCompactSize(txBytes, pos);
             pos += script_len + 4;  // skip sig_script, seq
         }
 
