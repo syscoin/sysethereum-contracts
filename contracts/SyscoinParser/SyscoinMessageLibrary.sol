@@ -30,10 +30,10 @@ contract SyscoinMessageLibrary {
     }
     // Convert a variable integer into something useful and return it and
     // the index to after it.
-    function parseVarInt(bytes memory txBytes, uint pos, uint max) public pure returns (uint) {
+    function parseVarInt(bytes memory txBytes, uint pos, uint max) public pure returns (uint, uint) {
         uint n = 0;
         while(true) {
-            uint chData = uint(txBytes[pos]);
+            uint8 chData = uint8(txBytes[pos]);
             require(n <= (max >> 7), "#SyscoinMessageLibrary parseVarInt(): size too large");
             pos += 1;
             n = (n << 7) | (chData & 0x7F);
@@ -41,9 +41,10 @@ contract SyscoinMessageLibrary {
                 require((n != max), "#SyscoinMessageLibrary parseVarInt(): size too large");
                 n++;
             } else {
-                return n;
+                return (n, pos);
             }
         }
+    }
 
     // convert little endian bytes to uint
     function getBytesLE(bytes memory data, uint pos, uint bits)

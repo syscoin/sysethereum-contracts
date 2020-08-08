@@ -230,13 +230,13 @@ contract SyscoinBattleManager is Initializable, SyscoinErrorCodes, SyscoinMessag
         uint n_outputs;
         uint script_len;
 
-        (n_outputs, pos) = parseVarInt(txBytes, pos);
+        (n_outputs, pos) = parseCompactSize(txBytes, pos);
 
         require(n_outputs < 10);
 
         for (uint i = 0; i < n_outputs; i++) {
             pos += 8;
-            (script_len, pos) = parseVarInt(txBytes, pos);
+            (script_len, pos) = parseCompactSize(txBytes, pos);
             pos += script_len;
         }
 
@@ -268,7 +268,7 @@ contract SyscoinBattleManager is Initializable, SyscoinErrorCodes, SyscoinMessag
         uint n_siblings;
         uint halt;
 
-        (n_siblings, pos) = parseVarInt(txBytes, pos);
+        (n_siblings, pos) = parseCompactSize(txBytes, pos);
 
         if (stop == 0 || stop > n_siblings) {
             halt = n_siblings;
@@ -300,18 +300,18 @@ contract SyscoinBattleManager is Initializable, SyscoinErrorCodes, SyscoinMessag
     {
         uint n_inputs;
         uint script_len;
-        (n_inputs, pos) = parseVarInt(txBytes, pos);
+        (n_inputs, pos) = parseCompactSize(txBytes, pos);
         // if dummy 0x00 is present this is a witness transaction
         if(n_inputs == 0x00){
-            (n_inputs, pos) = parseVarInt(txBytes, pos); // flag
+            (n_inputs, pos) = parseCompactSize(txBytes, pos); // flag
             require(n_inputs != 0x00);
             // after dummy/flag the real var int comes for txins
-            (n_inputs, pos) = parseVarInt(txBytes, pos);
+            (n_inputs, pos) = parseCompactSize(txBytes, pos);
         }
         require(n_inputs == 1);
 
         pos += 36;  // skip outpoint
-        (script_len, pos) = parseVarInt(txBytes, pos);
+        (script_len, pos) = parseCompactSize(txBytes, pos);
         bytes memory coinbaseScript;
         coinbaseScript = sliceArray(txBytes, pos, pos+script_len);
         pos += script_len + 4;  // skip sig_script, seq

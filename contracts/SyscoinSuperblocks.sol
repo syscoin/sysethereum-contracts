@@ -105,25 +105,25 @@ contract SyscoinSuperblocks is Initializable, SyscoinSuperblocksI, SyscoinErrorC
         uint32 assetGUID;
         address destinationAddress;
         uint output_value;
-        uint8 op;
-        uint numAssets;
-        uint numOutputs;
+        uint op;
+        uint compactSize;
         uint output_value_compressed;
-        (numAssets, pos) = parseCompactSize(txBytes, pos);
-        require(numAssets == 1, "#SyscoinSuperblocks scanBurnTx(): Invalid numAssets");
+        uint maxVal = 2**64;
+        (compactSize, pos) = parseCompactSize(txBytes, pos);
+        require(compactSize == 1, "#SyscoinSuperblocks scanBurnTx(): Invalid numAssets");
         // get nAsset
         assetGUID = bytesToUint32Flipped(txBytes, pos);
         pos += 4;
-        (numOutputs, pos) = parseCompactSize(txBytes, pos);
-        require(numOutputs < 10, "#SyscoinSuperblocks scanBurnTx(): Invalid numOutputs");
+        (compactSize, pos) = parseCompactSize(txBytes, pos);
+        require(compactSize < 10, "#SyscoinSuperblocks scanBurnTx(): Invalid numOutputs");
         // find output that is connected to the burn output (opIndex)
-        for (uint i = 0; i < numOutputs; i++) {
-            (op, pos) = getOpcode(txBytes, pos);
+        for (uint i = 0; i < compactSize; i++) {
+            (op, pos) = parseCompactSize(txBytes, pos);
              // get compressed amount
             if(op == opIndex) {
-                (output_value_compressed, pos) = parseVarInt(txBytes, pos, 2**64);
+                (output_value_compressed, pos) = parseVarInt(txBytes, pos, maxVal);
             } else {
-                (, pos) = parseCompactSize(txBytes, pos);
+                (, pos) = parseVarInt(txBytes, pos, maxVal);
             }
         }
         require(output_value_compressed > 0, "#SyscoinSuperblocks scanBurnTx(): Burn output index not found");
@@ -261,6 +261,7 @@ contract SyscoinSuperblocks is Initializable, SyscoinSuperblocksI, SyscoinErrorC
         uint numAssets;
         uint numOutputs;
         uint amount;
+        uint bytesToRead;
         (numAssets, pos) = parseCompactSize(txBytes, pos);
         require(numAssets == 1);
         // skip nAsset
@@ -268,9 +269,12 @@ contract SyscoinSuperblocks is Initializable, SyscoinSuperblocksI, SyscoinErrorC
         (numOutputs, pos) = parseCompactSize(txBytes, pos);
         require(numOutputs == 1);
         // skip over output index
-        pos += 1;
+        (, pos) = parseCompactSize(txBytes, pos);
         // skip over compressed amount
-        pos += 4;
+        (, pos) = parseVarInt(txBytes, pos, 2**64);
+        // skip notary sig
+        (bytesToRead, pos) = parseCompactSize(txBytes, pos);
+        pos += bytesToRead;
         bridgeId = bytesToUint32Flipped(txBytes, pos);
         return uint32(bridgeId);
     }
@@ -300,9 +304,12 @@ contract SyscoinSuperblocks is Initializable, SyscoinSuperblocksI, SyscoinErrorC
         (numOutputs, pos) = parseCompactSize(txBytes, pos);
         require(numOutputs == 1);
         // skip over output index
-        pos += 1;
+        (, pos) = parseCompactSize(txBytes, pos);
         // skip over compressed amount
+        (, pos) = parseVarInt(txBytes, pos, 2**64);
+        // skip notary sig
         (bytesToRead, pos) = parseCompactSize(txBytes, pos);
+        pos += bytesToRead;
         // nPrecision
         precision = uint8(txBytes[pos]);
         pos += 1;
