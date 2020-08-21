@@ -9,7 +9,7 @@ const ERC20Asset = artifacts.require('./token/SyscoinERC20.sol');
 const SYSCOIN_MAINNET = 0;
 const SYSCOIN_TESTNET = 1;
 const SYSCOIN_REGTEST = 2;
-const SYSX_ASSET_GUID = 1965866356; // testnet sysx
+const SYSX_ASSET_GUID = 2615707979; // testnet sysx
 const SUPERBLOCK_OPTIONS_PRODUCTION = {
   DURATION: 60,   // 60 blocks per superblock
   DELAY: 3 * 3600,  // 3 hours
@@ -55,8 +55,10 @@ async function deploy(networkName, options, accounts, networkId, superblockOptio
   console.log('Superblock Init TX hash: ', tx.transactionHash, '\n');
 
   console.log('\nInitializing SYSX...');
-  let burnVal = web3.utils.toWei("88.8", "finney"); // total supply 888m COIN on Syscoin
+  let burnVal = web3.utils.toWei("88.7", "finney"); // total supply 888m COIN on Syscoin
+  //let burnValTest = web3.utils.toWei("0.1", "finney");
   await erc20Asset.assign(accounts[0], burnVal);
+  //await erc20Asset.assign("0xB0ea8c9Ee8aa87EfD28a12De8C034F947C144053", burnValTest);
   await erc20Asset.approve(SyscoinERC20Manager.address, burnVal, {from: accounts[0]}); 
 
   tx = await SyscoinERC20Manager.methods.freezeBurnERC20(burnVal, SYSX_ASSET_GUID, "0x1").send({from: accounts[0], gas: 300000});
