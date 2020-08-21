@@ -34,6 +34,9 @@ module.exports = {
       gasPrice: "6000000000"
     }
   },
+  plugins: [
+    'truffle-plugin-verify'
+  ],
   api_keys: {
     etherscan: etherscanAPIKEY
   },
