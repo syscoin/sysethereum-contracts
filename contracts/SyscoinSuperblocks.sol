@@ -45,6 +45,9 @@ contract SyscoinSuperblocks is Initializable, SyscoinSuperblocksI, SyscoinErrorC
         require(msg.sender == trustedClaimManager);
         _;
     }
+    uint32 constant ASSET_UPDATE_CONTRACT = 2;
+    uint32 constant ASSET_INIT = 128;
+
 
     // @param _syscoinERC20Manager - address of the SyscoinERC20Manager contract to be associated with
     // @param _claimManager - address of the ClaimManager contract to be associated with
@@ -296,6 +299,7 @@ contract SyscoinSuperblocks is Initializable, SyscoinSuperblocksI, SyscoinErrorC
         uint bytesToRead;
         uint numAssets;
         uint numOutputs;
+        uint8 nUpdateFlags;
         (numAssets, pos) = parseCompactSize(txBytes, pos);
         require(numAssets == 1);
         // get nAsset
@@ -313,6 +317,17 @@ contract SyscoinSuperblocks is Initializable, SyscoinSuperblocksI, SyscoinErrorC
         // nPrecision
         precision = uint8(txBytes[pos]);
         pos += 1;
+        // update flags
+        nUpdateFlags = uint8(txBytes[pos]);
+        pos += 1;
+        require((nUpdateFlags & ASSET_UPDATE_CONTRACT) > 0, "scanAssetTx(): Update flags mask did set ASSET_UPDATE_CONTRACT bit");
+        if((nUpdateFlags & ASSET_INIT) > 0) {
+            // skip symbol
+            (bytesToRead, pos) = parseCompactSize(txBytes, pos);
+            pos += bytesToRead;
+            // skip over max supply
+            (, pos) = parseVarInt(txBytes, pos, 2**64);
+        }
         // get vchContract
         (bytesToRead, pos) = parseCompactSize(txBytes, pos);
         require(bytesToRead == 0x14,
