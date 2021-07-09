@@ -37,20 +37,15 @@ module.exports = {
   api_keys: {
     etherscan: etherscanAPIKEY
   },
-  solc: {
-    optimizer: {
-      enabled: true,
-      runs: 200
-    }
-  },
   compilers: {
     solc: {
-      version: "0.8.6",
+      version: "native",
+      docker: false,
       settings: {
         optimizer: {
           enabled: true,
           runs: 200
-        }
+        },
       }
     }
   }

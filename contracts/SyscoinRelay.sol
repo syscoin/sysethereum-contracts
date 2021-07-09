@@ -263,9 +263,9 @@ contract SyscoinRelay is SyscoinRelayI, SyscoinErrorCodes, SyscoinMessageLibrary
             return ERR_INVALID_HEADER;
         }
         // ensure the NEVM block number can lookup a valid syscoin block hash
-        /*if (sysblockhash(_blockNumber) != dblShaFlip(_syscoinBlockHeader)) {
+        if (uint(sysblockhash(_blockNumber)) != dblShaFlip(_syscoinBlockHeader)) {
             return ERR_INVALID_HEADER_HASH;
-        }*/
+        }
         // then ensure that the SPV proof against this validated syscoin block header is also valid
         return verifyTx(_txBytes, _txIndex, _txSiblings, _syscoinBlockHeader);
     }
