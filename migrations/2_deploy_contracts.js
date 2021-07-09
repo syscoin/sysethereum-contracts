@@ -1,134 +1,22 @@
-// Load zos scripts and truffle wrapper function
-const { ConfigManager, scripts } = require('@openzeppelin/cli');
-const { add, push, create } = scripts;
-
-/* Retrieve compiled contract artifacts. */
-const ERC20Asset = artifacts.require('./token/SyscoinERC20.sol');
-
-
-const SYSCOIN_MAINNET = 0;
-const SYSCOIN_TESTNET = 1;
-const SYSCOIN_REGTEST = 2;
-const SYSX_ASSET_GUID = 2615707979; // testnet sysx
-const SUPERBLOCK_OPTIONS_PRODUCTION = {
-  DURATION: 60,   // 60 blocks per superblock
-  DELAY: 3 * 3600,  // 3 hours
-  TIMEOUT: 600,     // 10 minutes
-  CONFIRMATIONS: 3 // Superblocks required to confirm semi approved superblock
-};
-
-
-const SUPERBLOCK_OPTIONS_LOCAL = {
-  DURATION: 60,     // 10 blocks per superblock
-  DELAY: 60,        // 1 minute
-  TIMEOUT: 30,      // 30 seconds
-  CONFIRMATIONS: 1 // Superblocks required to confirm semi approved superblock
-};
-var SyscoinSuperblocks;
-async function deploy(networkName, options, accounts, networkId, superblockOptions) {
-  // Register contracts in the zos project
-  add({ contractsData: [{ name: 'SyscoinSuperblocks', alias: 'SyscoinSuperblocks' }] });
-  add({ contractsData: [{ name: 'SyscoinERC20Manager', alias: 'SyscoinERC20Manager' }] });
-  add({ contractsData: [{ name: 'SyscoinBattleManager', alias: 'SyscoinBattleManager' }] });
-  add({ contractsData: [{ name: 'SyscoinClaimManager', alias: 'SyscoinClaimManager' }] });
-
+const SyscoinERC20Manager = artifacts.require('./token/SyscoinERC20Manager.sol');
+const SyscoinMessageLibrary = artifacts.require('./SyscoinParser/SyscoinMessageLibrary.sol');
+const SyscoinRelay = artifacts.require('./SyscoinRelay.sol');
+const SYSX_ASSET_GUID = 2615707979;
+async function deploy(deployer, accounts) {
   // Push implementation contracts to the network
   console.log('Deploying implementations...');
-
-  await push(options);
-
-  // Create an instance of MyContract, setting initial value to 42
-  console.log('\nDeploying SyscoinSuperblocks proxy instance at address ');
-  SyscoinSuperblocks = await create(Object.assign({ contractAlias: 'SyscoinSuperblocks' }, options));
-
-  console.log('\nDeploying and Initializing SyscoinERC20Manager proxy instance at address ');
-  let SyscoinERC20Manager = await create(Object.assign({ contractAlias: 'SyscoinERC20Manager', methodName: 'init', methodArgs: [networkId, SyscoinSuperblocks.address, SYSX_ASSET_GUID, erc20Asset.address, 8] }, options));
-
-  console.log('\nDeploying and Initializing SyscoinBattleManager proxy instance at address ');
-  let SyscoinBattleManager = await create(Object.assign({ contractAlias: 'SyscoinBattleManager', methodName: 'init', methodArgs: [networkId, SyscoinSuperblocks.address, superblockOptions.DURATION, superblockOptions.TIMEOUT] }, options));
-
-  console.log('\nDeploying and Initializing SyscoinClaimManager proxy instance at address ');
-  let SyscoinClaimManager = await create(Object.assign({ contractAlias: 'SyscoinClaimManager', methodName: 'init', methodArgs: [SyscoinSuperblocks.address, SyscoinBattleManager.address, superblockOptions.DELAY, superblockOptions.TIMEOUT, superblockOptions.CONFIRMATIONS] }, options));
-
-  console.log('\nInitializing SyscoinSuperblocks...');
-  let tx = await SyscoinSuperblocks.methods.init(SyscoinERC20Manager.address, SyscoinClaimManager.address).send({ from: accounts[0], gas: 300000 });
-  console.log('Superblock Init TX hash: ', tx.transactionHash, '\n');
-
-  console.log('\nInitializing SYSX...');
-  let burnVal = web3.utils.toWei("88.7", "finney"); // total supply 888m COIN on Syscoin
-  //let burnValTest = web3.utils.toWei("0.1", "finney");
-  await erc20Asset.assign(accounts[0], burnVal);
-  //await erc20Asset.assign("0xB0ea8c9Ee8aa87EfD28a12De8C034F947C144053", burnValTest);
-  await erc20Asset.approve(SyscoinERC20Manager.address, burnVal, {from: accounts[0]}); 
-
-  tx = await SyscoinERC20Manager.methods.freezeBurnERC20(burnVal, SYSX_ASSET_GUID, "0x1").send({from: accounts[0], gas: 300000});
-  let balance = await erc20Asset.balanceOf(accounts[0]);
-  if(balance != 0)
-    console.log('\nerc20Asset user balance after burn is not the expected one');
-  let assetBalance = await SyscoinERC20Manager.methods.assetBalances(SYSX_ASSET_GUID).call();
-  if(assetBalance != burnVal){
-    console.log('\nassetBalances for asset GUID is not correct');
-  }
-  let erc20ManagerBalance = await erc20Asset.balanceOf(SyscoinERC20Manager.address);
-  if(erc20ManagerBalance != burnVal){
-    console.log('\Token balance for ERC20 manager is not correct: ' + erc20ManagerBalance);
-  }
-  console.log('ERC20 Manager FreezeBurn TX hash: ', tx.transactionHash, '\n');
-
-  
-  
-
-  var superblocksMerkleRoot = "0x00000a52cb9c7e2a8adf64421eadba8a90b895a0f7aa20e1695b0491040b6e3c";
-  var timestamp = 1576019883;
-  var mtptimestamp = 1576019875;
-  var lastHash = "0x00000a52cb9c7e2a8adf64421eadba8a90b895a0f7aa20e1695b0491040b6e3c"; // 360
-  var parentId = "0x0";
-  var lastBits = 504281460; // 1e0eb974
-
-  let tx2 = await SyscoinSuperblocks.methods.initialize(superblocksMerkleRoot, timestamp, mtptimestamp, lastHash, lastBits, parentId).send({ from: accounts[0], gas: 300000 });
-  console.log('Superblocks initialize TX hash: ', tx2.transactionHash, '\n');
-
-  console.log('Initializing SyscoinBattleManager...');
-  tx = await SyscoinBattleManager.methods.setSyscoinClaimManager(SyscoinClaimManager.address).send({ from: accounts[0], gas: 300000 });
-  console.log('BattleManager setSyscoinClaimManager TX hash: ', tx.transactionHash, '\n');
-
-  let linkTemplates = {
-    mainnet: "https://etherscan.io/address",
-    rinkeby: "https://rinkeby.etherscan.io/address"
-  };
-
-  if (networkName in linkTemplates) {
-    let link = linkTemplates[networkName];
-
-    console.log("\Proxies:");
-    console.log("* %s/%s - superblocks", link, SyscoinSuperblocks.address);
-    console.log("* %s/%s - battle manager", link, SyscoinBattleManager.address);
-    console.log("* %s/%s - claim manager", link, SyscoinClaimManager.address);
-  }
+  await deployer.deploy(SyscoinMessageLibrary, {gas: 2000000});
+  await deployer.deploy(SyscoinRelay, {gas: 5000000});
+  await deployer.link(SyscoinMessageLibrary, SyscoinRelay);
+  await deployer.deploy(SyscoinERC20Manager, SyscoinRelay.address, SYSX_ASSET_GUID, '0x0000000000000000000000000000000000000000');
+  const syscoinRelay = await SyscoinRelay.at(SyscoinRelay.address);
+  await syscoinRelay.init(SyscoinERC20Manager.address);
   return SyscoinERC20Manager;
 }
 
 module.exports = function(deployer, networkName, accounts) {
   console.log('Deploy wallet', accounts);
   deployer.then(async () => {
-    const { network, txParams } = await ConfigManager.initNetworkConfiguration({ network: networkName, from: accounts[0] })
-    console.log('\nDeploying SYSX ');
-    erc20Asset = await deployer.deploy(ERC20Asset,
-      "SyscoinToken", "SYSX", 8,
-      {from: accounts[0], gas: 2000000 }
-    );
-    if (networkName === 'development') {
-      await deploy(networkName, { network, txParams }, accounts, SYSCOIN_REGTEST, SUPERBLOCK_OPTIONS_LOCAL);
-    } else {
-      if (networkName === 'ropsten') {
-        await deploy(networkName, { network, txParams }, accounts, SYSCOIN_MAINNET, SUPERBLOCK_OPTIONS_PRODUCTION);
-      } else if (networkName === 'rinkeby') {
-        await deploy(networkName, { network, txParams }, accounts, SYSCOIN_TESTNET, SUPERBLOCK_OPTIONS_PRODUCTION);
-      } else if (networkName === 'mainnet') {
-        await deploy(networkName, { network, txParams }, accounts, SYSCOIN_MAINNET, SUPERBLOCK_OPTIONS_PRODUCTION);
-      } else if (networkName === 'integrationSyscoinRegtest') {
-        await deploy(networkName, { network, txParams }, accounts, SYSCOIN_REGTEST, SUPERBLOCK_OPTIONS_PRODUCTION);
-      }
-    }
+    await deploy(deployer, accounts);
   });
 };

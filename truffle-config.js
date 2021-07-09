@@ -1,4 +1,4 @@
-var HDWalletProvider = require("@truffle/hdwallet-provider");
+const HDWalletProvider = require('@truffle/hdwallet-provider');
 const etherscanAPIKEY = process.env.ETHERSCAN;
 var mnenomic = "cup aisle bright dice when flame left assume laptop lock cry brown";
 module.exports = {
@@ -45,7 +45,7 @@ module.exports = {
   },
   compilers: {
     solc: {
-      version: "0.5.13",
+      version: "0.8.6",
       settings: {
         optimizer: {
           enabled: true,

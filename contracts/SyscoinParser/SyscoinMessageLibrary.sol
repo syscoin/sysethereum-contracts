@@ -1,16 +1,9 @@
-pragma solidity ^0.5.13;
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.6;
 
-import "solidity-rlp/contracts/RLPReader.sol";
 
 // parse a raw Syscoin transaction byte array
 contract SyscoinMessageLibrary {
-
-    using RLPReader for RLPReader.RLPItem;
-    using RLPReader for bytes;
-
-    uint constant ERR_PARSE_TX_SYS = 10170;
-    enum Network { MAINNET, TESTNET, REGTEST }
-    uint32 constant SYSCOIN_TX_VERSION_ALLOCATION_BURN_TO_ETHEREUM = 0x7407;
 
     // Convert a compact size for wire for variable length fields
     function parseCompactSize(bytes memory txBytes, uint pos) public pure returns (uint, uint) {
@@ -27,6 +20,7 @@ contract SyscoinMessageLibrary {
         } else if (ibit == 0xff) {
             return (getBytesLE(txBytes, pos, 64), pos + 8);
         }
+        revert('#SyscoinMessageLibrary parseCompactSize invalid opcode');
     }
     // Convert a variable integer into something useful and return it and
     // the index to after it.
@@ -44,6 +38,7 @@ contract SyscoinMessageLibrary {
                 return (n, pos);
             }
         }
+        revert('#SyscoinMessageLibrary parseVarInt invalid opcode');
     }
 
     // convert little endian bytes to uint
@@ -158,24 +153,5 @@ contract SyscoinMessageLibrary {
         }
 
         return flip32Bytes(resultHash);
-    }
-
-    // @dev returns a portion of a given byte array specified by its starting and ending points
-    // Breaks underscore naming convention for parameters because it raises a compiler error
-    // if `offset` is changed to `_offset`.
-    //
-    // @param _rawBytes - array to be sliced
-    // @param offset - first byte of sliced array
-    // @param _endIndex - last byte of sliced array
-    function sliceArray(bytes memory _rawBytes, uint offset, uint _endIndex) public view returns (bytes memory) {
-        uint len = _endIndex - offset;
-        bytes memory result = new bytes(len);
-        assembly {
-            // Call precompiled contract to copy data
-            if iszero(staticcall(gas, 0x04, add(add(_rawBytes, 0x20), offset), len, add(result, 0x20), len)) {
-                revert(0, 0)
-            }
-        }
-        return result;
     }
 }
