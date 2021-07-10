@@ -8,7 +8,7 @@ async function deploy(deployer, accounts) {
   await deployer.deploy(SyscoinMessageLibrary, {gas: 2000000});
   await deployer.deploy(SyscoinRelay, {gas: 5000000});
   await deployer.link(SyscoinMessageLibrary, SyscoinRelay);
-  await deployer.deploy(SyscoinERC20Manager, SyscoinRelay.address, SYSX_ASSET_GUID, '0x0000000000000000000000000000000000000000');
+  await deployer.deploy(SyscoinERC20Manager, SyscoinRelay.address, SYSX_ASSET_GUID, '0x0000000000000000000000000000000000000000', {gas: 5000000});
   const syscoinRelay = await SyscoinRelay.at(SyscoinRelay.address);
   await syscoinRelay.init(SyscoinERC20Manager.address);
   return SyscoinERC20Manager;
