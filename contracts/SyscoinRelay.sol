@@ -270,11 +270,13 @@ contract SyscoinRelay is SyscoinRelayI, SyscoinErrorCodes, SyscoinMessageLibrary
         uint[] memory _txSiblings
     ) private returns (uint) {
         if (_syscoinBlockHeader.length != 80) {  
-            return ERR_INVALID_HEADER;
+            emit VerifyTransaction(0, ERR_INVALID_HEADER);
+            return 0;
         }
         // ensure the NEVM block number can lookup a valid syscoin block hash
         if (uint(sysblockhash(_blockNumber)) != dblSha(_syscoinBlockHeader)) {
-            return ERR_INVALID_HEADER_HASH;
+            emit VerifyTransaction(0, ERR_INVALID_HEADER_HASH);
+            return 0;
         }
         // then ensure that the SPV proof against this validated syscoin block header is also valid
         return verifyTx(_txBytes, _txIndex, _txSiblings, _syscoinBlockHeader);
@@ -282,7 +284,7 @@ contract SyscoinRelay is SyscoinRelayI, SyscoinErrorCodes, SyscoinMessageLibrary
 
     // @dev - relays transaction `_txBytes` to ERC20Manager's processTransaction() method.
     // Also logs the value of processTransaction.
-    // Note: callers cannot be 100% certain when an ERR_RELAY_VERIFY occurs because
+    // Note: callers cannot be 100% certain when an error occurs because
     // it may also have been returned by processTransaction(). Callers should be
     // aware of the contract that they are relaying transactions to and
     // understand what that contract's processTransaction method returns.
@@ -300,26 +302,23 @@ contract SyscoinRelay is SyscoinRelayI, SyscoinErrorCodes, SyscoinMessageLibrary
         bytes memory _syscoinBlockHeader
     ) public override returns (uint) {
         uint txHash = verifySPVProofs(_blockNumber, _syscoinBlockHeader, _txBytes, _txIndex, _txSiblings);
-        if (txHash != 0) {
-            uint value;
-            address destinationAddress;
-            uint ret;
-            uint32 assetGUID;
-            (ret, value, destinationAddress, assetGUID) = parseBurnTx(_txBytes);
-            if(ret != 0){
-                emit RelayTransaction(bytes32(txHash), ret);
-                return ret;
-            }
-            syscoinERC20Manager.processTransaction(txHash, value, destinationAddress, assetGUID);
-            return value;
+        require(txHash != 0);
+        uint value;
+        address destinationAddress;
+        uint ret;
+        uint32 assetGUID;
+        (ret, value, destinationAddress, assetGUID) = parseBurnTx(_txBytes);
+        if(ret != 0){
+            emit RelayTransaction(bytes32(txHash), ret);
+            return ret;
         }
-        emit RelayTransaction(bytes32(0), ERR_RELAY_VERIFY);
-        return(ERR_RELAY_VERIFY);
+        syscoinERC20Manager.processTransaction(txHash, value, destinationAddress, assetGUID);
+        return value;
     }
 
     // @dev - relays asset transaction(new or update) `_txBytes` to ERC20Manager's processAsset() method.
     // Also logs the value of processAsset.
-    // Note: callers cannot be 100% certain when an ERR_RELAY_VERIFY occurs because
+    // Note: callers cannot be 100% certain when an error occurs because
     // it may also have been returned by processAsset(). Callers should be
     // aware of the contract that they are relaying transactions to and
     // understand what that contract's processTransaction method returns.
@@ -337,21 +336,19 @@ contract SyscoinRelay is SyscoinRelayI, SyscoinErrorCodes, SyscoinMessageLibrary
         bytes memory _syscoinBlockHeader
     ) public override returns (uint) {
         uint txHash = verifySPVProofs(_blockNumber, _syscoinBlockHeader, _txBytes, _txIndex, _txSiblings);
-        if (txHash != 0) {
-            uint ret;
-            uint32 assetGUID;
-            address erc20ContractAddress;
-            uint8 precision;
-            (ret, assetGUID, erc20ContractAddress, precision) = parseAssetTx(_txBytes);
-            if(ret != 0){
-                emit RelayTransaction(bytes32(txHash), ret);
-                return ret;
-            }
-            syscoinERC20Manager.processAsset(txHash, assetGUID, _blockNumber, erc20ContractAddress, precision);
-            return 0;
+        require(txHash != 0);
+        uint ret;
+        uint32 assetGUID;
+        address erc20ContractAddress;
+        uint8 precision;
+        (ret, assetGUID, erc20ContractAddress, precision) = parseAssetTx(_txBytes);
+        if(ret != 0){
+            emit RelayTransaction(bytes32(txHash), ret);
+            return ret;
         }
-        emit RelayTransaction(bytes32(0), ERR_RELAY_VERIFY);
-        return(ERR_RELAY_VERIFY);
+        syscoinERC20Manager.processAsset(txHash, assetGUID, _blockNumber, erc20ContractAddress, precision);
+        return 0;
+       
     }
 
     // @dev - Parses a syscoin tx
