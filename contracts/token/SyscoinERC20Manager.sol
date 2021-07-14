@@ -45,7 +45,12 @@ contract SyscoinERC20Manager is SyscoinTransactionProcessorI {
         trustedRelayerContract = _trustedRelayerContract;
         SYSAssetGUID = _sysxGuid;
         testNetwork = _erc20ContractAddress != address(0);
-        assetRegistry[_sysxGuid] = AssetRegistryItem({erc20ContractAddress:_erc20ContractAddress, height:1, precision: 8});
+        assetRegistry[_sysxGuid] = AssetRegistryItem({erc20ContractAddress:_trustedRelayerContract, height:1, precision: 8});
+        // override erc20ContractAddress field if running tests, because erc20 is passed in some tests to the constructor for SYSX
+        // but in deployment _erc20ContractAddress is empty so in that case we need it to be set to a non-empty field we just use _trustedRelayerContract (could be anything thats not empty)
+        if (_erc20ContractAddress != address(0)) {
+            assetRegistry[_sysxGuid].erc20ContractAddress = _erc20ContractAddress;
+        }
     }
 
     modifier onlyTrustedRelayer() {
@@ -125,6 +130,7 @@ contract SyscoinERC20Manager is SyscoinTransactionProcessorI {
         require(value > 0, "Value must be positive");
         uint8 nLocalPrecision;
         if (assetGUID == SYSAssetGUID && !testNetwork) {
+            nLocalPrecision = 18;
             require(value == msg.value, "msg.value must be the same as value");
             depositsSYS = depositsSYS + msg.value;
         } else {
