@@ -7,17 +7,17 @@ const truffleAssert = require('truffle-assertions');
 contract('testRelayToSyscoinAssetToken', function(accounts) {
   const owner = accounts[1];
   let value = web3.utils.toWei("20");
-  const burnVal = web3.utils.toWei("10");
+  const burnVal = web3.utils.toWei("0.5");
   const syscoinAddress = "004322ec9eb713f37cf8d701d819c165549d53d14e";
-  const assetGUID = 3725793040;
+  const assetGUID = 123456;
   let assetGUIDParsed;
   let erc20Address;
   const trustedRelayerContract = accounts[0];
   let erc20Manager, erc20Token;
   let ret, amount;
   const txHash = '0x1af00a984c6264e1202d676d79d9a099275f130c007e30d00a76fa299fcbb481';
-  const txData = '0x86000000000102cd69ed3add69ef46f820a3e8248507e9401e940efc1ccb8010e253b1640c8f480200000000feffffffa221cb90e439ca8c5583238feebd31d6f6bf788895fb2fc4981150783b238f260000000000feffffff020000000000000000216a1f01101713de02000a015a14fe234d3994f95bf7cebd9837c4444f5af63f0a97f9336fc4130000001600148a397f06baf551349eb1327f9c0d94fb054e3d94024730440220375ca6f154e362631fdc393fd3968c41d457c8c3ba847e2c12638116f4f89470022019b25ffcefbc84b005cc571f5262d33c4e8f820fa1cc92bf1e09861207fb38a00121035c5cd51716d11b51db2aae42e309f691b26fcb784bd5b68730e005167475b9dd02473044022078260660eae3a910e26f3e017416e68fafbfaa5ee018f204195993c0167fbbea02201a9c59ca1985440ccef67e67ddb158a8cf4fad57c310b0caea474f769f1c6cac0121038a79c8bee13e10d162ea5cb88c19455e75a1ba81debfcbc63b5bee44df7b4c1ccd000000';
-  const erc20OwnerRinkeby = '0xfE234d3994f95Bf7CEBD9837C4444F5AF63F0a97';
+  const txData = '0x8600000000010228ed59d71961dafec1b182e46bc728b65fd6a72f0889dff7a7ec81c8fa6c840c0100000000feffffffb63f6c7ee12ef77f24684101ff029117ff77f5680f395645b00d93f7054e9df60000000000feffffff020000000000000000216a1f0186c340020030013000140a300433019986214c2cad9cadbcd7b54f245f81f9321a1e01000000160014f78dac4b40114a46e35b904e54d1af548f7e068d024730440220640f01887a2f55a946f3b118621fc9dd4bff2b29b5e154fa28b40e5c758e7532022065e8e0df2439c6bc3ebb0b84e0d17bda17857553a01f365cdeeedde93c724dd4012103be74d90431aa52aa558a55a8b8ac821d7ba84798ab47347d3923e6d67b8a24ce0247304402202ec09213bf61f8afc9e2ec7dc9114d5d2c64f488318f0a3587ee1c82b0a15de502206866a523fcf4e09708cdcb42d9384a2d7de7dfa3e4e1884cb56a66935a39ea82012102d8dc16f2e1acbcc615b2c6a8e565212c973d30ad8eea2dc7040df70170bb82c500000000';
+  const erc20Owner = '0x0a300433019986214C2cAD9CaDbcD7b54f245f81';
   before(async () => {
     erc20Token = await SyscoinERC20.new("LegacyToken", "LEGX", 18, {from: owner});
     erc20Manager = await SyscoinERC20Manager.new(trustedRelayerContract, assetGUID, erc20Token.address);
@@ -34,18 +34,19 @@ contract('testRelayToSyscoinAssetToken', function(accounts) {
     assert.equal(await erc20Token.balanceOf(owner), value - burnVal, `erc20Token's user balance after burn is not the expected one`);
     assert.equal(await erc20Manager.assetBalances(assetGUID), burnVal, `assetBalances for ${assetGUID} GUID is not correct`);
     [ ret, amount, erc20Address, assetGUIDParsed ]  = Object.values(await SyscoinRelay.parseBurnTx(txData));
+    assert.equal(ret,0);
   });
 
   it('test mint asset', async () => {
+    assert.equal(amount,0x2faf080); // burn value 0.5 COINS, the SPT has 8 precision
     assert.equal(assetGUIDParsed,assetGUID)
-    assert.equal(amount,1000000000); // burn value 10 COINS, the SPT has 8 precision
-    assert.equal(erc20Address,erc20OwnerRinkeby);
+    assert.equal(erc20Address,erc20Owner);
     erc20Manager.assetBalances.call(assetGUID, function(err, result){
       assert.equal(result, burnVal, "erc20Manager balance is not correct");
     });
-    await erc20Manager.processTransaction(txHash, amount.toString(), erc20OwnerRinkeby, assetGUID, {gas: 300000, from: trustedRelayerContract});
+    await erc20Manager.processTransaction(txHash, amount.toString(), erc20Owner, assetGUID, {gas: 300000, from: trustedRelayerContract});
     const userValue = burnVal;
-    assert.equal(await erc20Token.balanceOf(erc20OwnerRinkeby), userValue, `erc20Token's user balance after mint is not the expected one`);
+    assert.equal(await erc20Token.balanceOf(erc20Owner), userValue, `erc20Token's user balance after mint is not the expected one`);
   });
   it("processTransaction fail - tx already processed", async () => {
     await erc20Token.approve(erc20Manager.address, burnVal, {from: owner});

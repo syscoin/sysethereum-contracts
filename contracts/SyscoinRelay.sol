@@ -9,7 +9,7 @@ import "./SyscoinParser/SyscoinMessageLibrary.sol";
 contract SyscoinRelay is SyscoinRelayI, SyscoinErrorCodes, SyscoinMessageLibrary {
     uint32 constant SYSCOIN_TX_VERSION_ASSET_ACTIVATE = 130;
     uint32 constant SYSCOIN_TX_VERSION_ASSET_UPDATE = 131;
-    uint32 constant SYSCOIN_TX_VERSION_ALLOCATION_BURN_TO_ETHEREUM = 134;
+    uint32 constant SYSCOIN_TX_VERSION_ALLOCATION_BURN_TO_NEVM = 134;
     bytes1 constant OP_PUSHDATA1 = 0x4c;
     bytes1 constant OP_PUSHDATA2 = 0x4d;
     uint32 constant ASSET_UPDATE_CONTRACT = 2;
@@ -61,44 +61,50 @@ contract SyscoinRelay is SyscoinRelayI, SyscoinErrorCodes, SyscoinMessageLibrary
         return n;
     }
 
+
     // Returns asset data parsed from the op_return data output from syscoin asset burn transaction
     function scanBurnTx(bytes memory txBytes, uint opIndex, uint pos)
         internal
         pure
         returns (uint, address, uint32)
     {
-        uint32 assetGUID;
+        uint assetGUID;
+        uint32 assetGUID32;
         address destinationAddress;
         uint output_value;
-        uint op;
-        uint compactSize;
+        uint bytesToRead;
+        uint numOutputs;
         uint output_value_compressed;
         uint maxVal = 2**64;
-        (compactSize, pos) = parseCompactSize(txBytes, pos);
-        require(compactSize == 1, "#SyscoinRelay scanBurnTx(): Invalid numAssets");
+        (numOutputs, pos) = parseCompactSize(txBytes, pos);
+        require(numOutputs == 1, "#SyscoinRelay scanBurnTx(): Invalid numAssets");
         // get nAsset
-        assetGUID = bytesToUint32Flipped(txBytes, pos);
-        pos += 4;
-        (compactSize, pos) = parseCompactSize(txBytes, pos);
-        require(compactSize < 10, "#SyscoinRelay scanBurnTx(): Invalid numOutputs");
+        (assetGUID, pos) = parseVarInt(txBytes, pos, maxVal);
+        assetGUID32 = uint32(assetGUID);
+        (numOutputs, pos) = parseCompactSize(txBytes, pos);
+        require(numOutputs < 10, "#SyscoinRelay scanBurnTx(): Invalid numOutputs");
         // find output that is connected to the burn output (opIndex)
-        for (uint i = 0; i < compactSize; i++) {
-            (op, pos) = parseCompactSize(txBytes, pos);
+        for (uint i = 0; i < numOutputs; i++) {
+            // output index
+            (bytesToRead, pos) = parseCompactSize(txBytes, pos);
              // get compressed amount
-            if(op == opIndex) {
+            if(bytesToRead == opIndex) {
                 (output_value_compressed, pos) = parseVarInt(txBytes, pos, maxVal);
             } else {
                 (, pos) = parseVarInt(txBytes, pos, maxVal);
             }
         }
+        // skip notary sig
+        (bytesToRead, pos) = parseCompactSize(txBytes, pos);
+        pos += bytesToRead;
         require(output_value_compressed > 0, "#SyscoinRelay scanBurnTx(): Burn output index not found");
         output_value = DecompressAmount(uint64(output_value_compressed));
          // destination address
-        (op, pos) = getOpcode(txBytes, pos);
+        (numOutputs, pos) = getOpcode(txBytes, pos);
         // ethereum contracts are 20 bytes (without the 0x)
-        require(op == 0x14, "#SyscoinRelay scanBurnTx(): Invalid destinationAddress");
+        require(numOutputs == 0x14, "#SyscoinRelay scanBurnTx(): Invalid destinationAddress");
         destinationAddress = readEthereumAddress(txBytes, pos);
-        return (output_value, destinationAddress, assetGUID);
+        return (output_value, destinationAddress, assetGUID32);
     }
 
     // Read the ethereum address embedded in the tx output
@@ -202,24 +208,28 @@ contract SyscoinRelay is SyscoinRelayI, SyscoinErrorCodes, SyscoinMessageLibrary
         pure
         returns (uint32, address, uint8)
     {
-        uint32 assetGUID;
+        uint assetGUID;
+        uint32 assetGUID32;
         address erc20Address;
         uint8 precision;
         uint bytesToRead;
         uint numAssets;
         uint numOutputs;
         uint8 nUpdateFlags;
+        uint maxVal = 2**64;
+        
         (numAssets, pos) = parseCompactSize(txBytes, pos);
-        require(numAssets == 1);
+        require(numAssets == 1, "#SyscoinRelay scanAssetTx(): Invalid numAssets");
         // get nAsset
-        assetGUID = bytesToUint32Flipped(txBytes, pos);
-        pos += 4;
+        (assetGUID, pos) = parseVarInt(txBytes, pos, maxVal);
+        assetGUID32 = uint32(assetGUID);
         (numOutputs, pos) = parseCompactSize(txBytes, pos);
         require(numOutputs == 1);
+        
         // skip over output index
         (, pos) = parseCompactSize(txBytes, pos);
         // skip over compressed amount
-        (, pos) = parseVarInt(txBytes, pos, 2**64);
+        (, pos) = parseVarInt(txBytes, pos, maxVal);
         // skip notary sig
         (bytesToRead, pos) = parseCompactSize(txBytes, pos);
         pos += bytesToRead;
@@ -235,14 +245,14 @@ contract SyscoinRelay is SyscoinRelayI, SyscoinErrorCodes, SyscoinMessageLibrary
             (bytesToRead, pos) = parseCompactSize(txBytes, pos);
             pos += bytesToRead;
             // skip over max supply
-            (, pos) = parseVarInt(txBytes, pos, 2**64);
+            (, pos) = parseVarInt(txBytes, pos, maxVal);
         }
         // get vchContract
         (bytesToRead, pos) = parseCompactSize(txBytes, pos);
         require(bytesToRead == 0x14,
         "scanAssetTx(): Invalid number of bytes read for contract field");
         erc20Address = readEthereumAddress(txBytes, pos);
-        return (assetGUID, erc20Address, precision);
+        return (assetGUID32, erc20Address, precision);
     }
 
 
@@ -263,7 +273,7 @@ contract SyscoinRelay is SyscoinRelayI, SyscoinErrorCodes, SyscoinMessageLibrary
             return ERR_INVALID_HEADER;
         }
         // ensure the NEVM block number can lookup a valid syscoin block hash
-        if (uint(sysblockhash(_blockNumber)) != dblShaFlip(_syscoinBlockHeader)) {
+        if (uint(sysblockhash(_blockNumber)) != dblSha(_syscoinBlockHeader)) {
             return ERR_INVALID_HEADER_HASH;
         }
         // then ensure that the SPV proof against this validated syscoin block header is also valid
@@ -362,7 +372,7 @@ contract SyscoinRelay is SyscoinRelayI, SyscoinErrorCodes, SyscoinMessageLibrary
         uint pos = 0;
         uint opIndex = 0;
         version = bytesToUint32Flipped(txBytes, pos);
-        if(version != SYSCOIN_TX_VERSION_ALLOCATION_BURN_TO_ETHEREUM){
+        if(version != SYSCOIN_TX_VERSION_ALLOCATION_BURN_TO_NEVM){
             return (ERR_PARSE_TX_SYS, output_value, destinationAddress, assetGUID);
         }
         (opIndex, pos) = getOpReturnPos(txBytes, 4);
@@ -399,12 +409,15 @@ contract SyscoinRelay is SyscoinRelayI, SyscoinErrorCodes, SyscoinMessageLibrary
             return 0;
         }
     }
+    function dblSha(bytes memory _dataBytes) public pure returns (uint) {
+        return uint(sha256(abi.encodePacked(sha256(abi.encodePacked(_dataBytes)))));
+    }
 
     // @dev - Bitcoin-way of hashing
     // @param _dataBytes - raw data to be hashed
     // @return - result of applying SHA-256 twice to raw data and then flipping the bytes
     function dblShaFlip(bytes memory _dataBytes) public pure returns (uint) {
-        return flip32Bytes(uint(sha256(abi.encodePacked(sha256(abi.encodePacked(_dataBytes))))));
+        return flip32Bytes(dblSha(_dataBytes));
     }
 
     // @dev - extract Merkle root field from a raw Syscoin block header
