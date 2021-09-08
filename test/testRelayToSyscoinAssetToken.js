@@ -9,8 +9,8 @@ contract('testRelayToSyscoinAssetToken', function(accounts) {
   let value = web3.utils.toWei("20");
   const burnVal = web3.utils.toWei("0.5");
   const syscoinAddress = "004322ec9eb713f37cf8d701d819c165549d53d14e";
-  const assetGUID = 123456;
-  let assetGUIDParsed;
+  const assetGuid = 123456;
+  let assetGuidParsed;
   let erc20Address;
   const trustedRelayerContract = accounts[0];
   let erc20Manager, erc20Token;
@@ -20,7 +20,7 @@ contract('testRelayToSyscoinAssetToken', function(accounts) {
   const erc20Owner = '0x0a300433019986214C2cAD9CaDbcD7b54f245f81';
   before(async () => {
     erc20Token = await SyscoinERC20.new("LegacyToken", "LEGX", 18, {from: owner});
-    erc20Manager = await SyscoinERC20Manager.new(trustedRelayerContract, assetGUID, erc20Token.address);
+    erc20Manager = await SyscoinERC20Manager.new(trustedRelayerContract, assetGuid, erc20Token.address);
 
     SyscoinRelay = await SyscoinRelayArtifact.new();
     
@@ -28,29 +28,29 @@ contract('testRelayToSyscoinAssetToken', function(accounts) {
     await erc20Token.assign(owner, value);
     await erc20Token.approve(erc20Manager.address, burnVal, {from: owner});
     // burn erc20
-    await erc20Manager.freezeBurnERC20(burnVal, assetGUID, syscoinAddress, {from: owner, gas: 300000});
+    await erc20Manager.freezeBurnERC20(burnVal, assetGuid, syscoinAddress, {from: owner, gas: 300000});
     
     assert.equal(await erc20Token.balanceOf(erc20Manager.address), burnVal, "erc20Manager balance is not correct");
     assert.equal(await erc20Token.balanceOf(owner), value - burnVal, `erc20Token's user balance after burn is not the expected one`);
-    assert.equal(await erc20Manager.assetBalances(assetGUID), burnVal, `assetBalances for ${assetGUID} GUID is not correct`);
-    [ ret, amount, erc20Address, assetGUIDParsed ]  = Object.values(await SyscoinRelay.parseBurnTx(txData));
+    assert.equal(await erc20Manager.assetBalances(assetGuid), burnVal, `assetBalances for ${assetGuid} Guid is not correct`);
+    [ ret, amount, erc20Address, assetGuidParsed ]  = Object.values(await SyscoinRelay.parseBurnTx(txData));
     assert.equal(ret,0);
   });
 
   it('test mint asset', async () => {
     assert.equal(amount,0x2faf080); // burn value 0.5 COINS, the SPT has 8 precision
-    assert.equal(assetGUIDParsed,assetGUID)
+    assert.equal(assetGuidParsed,assetGuid)
     assert.equal(erc20Address,erc20Owner);
-    erc20Manager.assetBalances.call(assetGUID, function(err, result){
+    erc20Manager.assetBalances.call(assetGuid, function(err, result){
       assert.equal(result, burnVal, "erc20Manager balance is not correct");
     });
-    await erc20Manager.processTransaction(txHash, amount.toString(), erc20Owner, assetGUID, {gas: 300000, from: trustedRelayerContract});
+    await erc20Manager.processTransaction(txHash, amount.toString(), erc20Owner, assetGuid, {gas: 300000, from: trustedRelayerContract});
     const userValue = burnVal;
     assert.equal(await erc20Token.balanceOf(erc20Owner), userValue, `erc20Token's user balance after mint is not the expected one`);
   });
   it("processTransaction fail - tx already processed", async () => {
     await erc20Token.approve(erc20Manager.address, burnVal, {from: owner});
-    await erc20Manager.freezeBurnERC20(burnVal, assetGUID, syscoinAddress, {from: owner, gas: 300000});
-    await truffleAssert.reverts(erc20Manager.processTransaction(txHash, amount.toString(), owner,assetGUID, {from: trustedRelayerContract, gas: 300000}));
+    await erc20Manager.freezeBurnERC20(burnVal, assetGuid, syscoinAddress, {from: owner, gas: 300000});
+    await truffleAssert.reverts(erc20Manager.processTransaction(txHash, amount.toString(), owner,assetGuid, {from: trustedRelayerContract, gas: 300000}));
   });
 });

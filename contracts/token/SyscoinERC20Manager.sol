@@ -14,15 +14,14 @@ contract SyscoinERC20Manager is SyscoinTransactionProcessorI {
     // Only syscoin txs relayed from trustedRelayerContract will be accepted.
     address public trustedRelayerContract;
     mapping(uint32 => uint256) public assetBalances;
-    uint depositsSYS;
-    uint32 immutable SYSAssetGUID;
+    uint32 immutable SYSAssetGuid;
     // network that the stored blocks belong to
     bool private immutable testNetwork;
     // Syscoin transactions that were already processed by processTransaction()
     mapping(uint => bool) private syscoinTxHashesAlreadyProcessed;
 
-    event TokenUnfreeze(uint32 assetGUID, address receipient, uint value);
-    event TokenFreeze(uint32 assetGUID, address freezer, uint value, uint precisions);
+    event TokenUnfreeze(uint32 assetGuid, address receipient, uint value);
+    event TokenFreeze(uint32 assetGuid, address freezer, uint value, uint precisions);
     struct AssetRegistryItem {
         address erc20ContractAddress;
         uint64 height;
@@ -43,7 +42,7 @@ contract SyscoinERC20Manager is SyscoinTransactionProcessorI {
     
     constructor (address _trustedRelayerContract, uint32 _sysxGuid, address _erc20ContractAddress) {
         trustedRelayerContract = _trustedRelayerContract;
-        SYSAssetGUID = _sysxGuid;
+        SYSAssetGuid = _sysxGuid;
         testNetwork = _erc20ContractAddress != address(0);
         assetRegistry[_sysxGuid] = AssetRegistryItem({erc20ContractAddress:_trustedRelayerContract, height:1, precision: 8});
         // override erc20ContractAddress field if running tests, because erc20 is passed in some tests to the constructor for SYSX
@@ -66,16 +65,16 @@ contract SyscoinERC20Manager is SyscoinTransactionProcessorI {
         uint txHash,
         uint value,
         address destinationAddress,
-        uint32 assetGUID
+        uint32 assetGuid
     ) public override onlyTrustedRelayer {
         // lookup asset from registry
-        AssetRegistryItem storage assetRegistryItem = assetRegistry[assetGUID];
+        AssetRegistryItem storage assetRegistryItem = assetRegistry[assetGuid];
         // ensure state is Ok
         require(assetRegistryItem.erc20ContractAddress != address(0),
             "#SyscoinERC20Manager processTransaction(): Asset not found in registry");
         IERC20Metadata erc20;
         uint8 nLocalPrecision;
-        if (assetGUID == SYSAssetGUID && !testNetwork) {
+        if (assetGuid == SYSAssetGuid && !testNetwork) {
             nLocalPrecision = 18;
         } else {
             erc20 = IERC20Metadata(assetRegistryItem.erc20ContractAddress);
@@ -90,76 +89,71 @@ contract SyscoinERC20Manager is SyscoinTransactionProcessorI {
         require(value > 0, "Value must be positive");
         // Add tx to the syscoinTxHashesAlreadyProcessed and Check tx was not already processed
         require(insert(txHash), "TX already processed");
-
-        if (assetGUID == SYSAssetGUID && !testNetwork) {
-            withdrawSYS(value);
+        if (assetGuid == SYSAssetGuid && !testNetwork) {
+            withdrawSYS(value, payable(destinationAddress));
         } else {
-            withdrawAsset(erc20, assetGUID, value, destinationAddress);
+            withdrawAsset(erc20, assetGuid, value, destinationAddress);
         }
-        emit TokenUnfreeze(assetGUID, destinationAddress, value);
+        emit TokenUnfreeze(assetGuid, destinationAddress, value);
     }
 
     function processAsset(
         uint _txHash,
-        uint32 _assetGUID,
+        uint32 _assetGuid,
         uint64 _height,
         address _erc20ContractAddress,
         uint8 _precision
     ) public override onlyTrustedRelayer {
         // ensure height increases over asset updates
-        require(assetRegistry[_assetGUID].height < _height, "Height must increase when updating asset registry");
+        require(assetRegistry[_assetGuid].height < _height, "Height must increase when updating asset registry");
         // Add tx to the syscoinTxHashesAlreadyProcessed and Check tx was not already processed
         require(insert(_txHash), "TX already processed");
-        assetRegistry[_assetGUID] = AssetRegistryItem({erc20ContractAddress:_erc20ContractAddress, height:_height, precision: _precision});
-        emit TokenRegistry(_assetGUID, _erc20ContractAddress);
+        assetRegistry[_assetGuid] = AssetRegistryItem({erc20ContractAddress:_erc20ContractAddress, height:_height, precision: _precision});
+        emit TokenRegistry(_assetGuid, _erc20ContractAddress);
     }
 
     function freezeBurnERC20(
         uint value,
-        uint32 assetGUID,
+        uint32 assetGuid,
         string memory syscoinAddress
     ) public payable override returns (bool)
     {
         require(bytes(syscoinAddress).length > 0, "syscoinAddress cannot be zero");
-        require(assetGUID > 0, "Asset GUID must not be 0");
+        require(assetGuid > 0, "Asset Guid must not be 0");
         // lookup asset from registry
-        AssetRegistryItem storage assetRegistryItem = assetRegistry[assetGUID];
+        AssetRegistryItem storage assetRegistryItem = assetRegistry[assetGuid];
         // ensure state is Ok
         require(assetRegistryItem.erc20ContractAddress != address(0),
             "#SyscoinERC20Manager freezeBurnERC20(): Asset not found in registry");
         require(value > 0, "Value must be positive");
         uint8 nLocalPrecision;
-        if (assetGUID == SYSAssetGUID && !testNetwork) {
+        if (assetGuid == SYSAssetGuid && !testNetwork) {
             nLocalPrecision = 18;
             require(value == msg.value, "msg.value must be the same as value");
-            depositsSYS = depositsSYS + msg.value;
         } else {
             IERC20Metadata erc20 = IERC20Metadata(assetRegistryItem.erc20ContractAddress);
             nLocalPrecision = erc20.decimals();
-            depositAsset(erc20, assetGUID, value);
+            depositAsset(erc20, assetGuid, value);
         }
         uint precisions = nLocalPrecision + uint(assetRegistryItem.precision)*(2**32);
-        emit TokenFreeze(assetGUID, msg.sender, value, precisions);
+        emit TokenFreeze(assetGuid, msg.sender, value, precisions);
         return true;
     }
-    function withdrawAsset(IERC20Metadata erc20, uint32 assetGUID, uint value, address destinationAddress) private {
-        require(assetBalances[assetGUID] >= value && value > 0, "Value must be positive and contract has to have sufficient balance of this asset");
+    function withdrawAsset(IERC20Metadata erc20, uint32 assetGuid, uint value, address destinationAddress) private {
+        require(assetBalances[assetGuid] >= value && value > 0, "Value must be positive and contract has to have sufficient balance of this asset");
         unchecked {
-            assetBalances[assetGUID] -= value;
+            assetBalances[assetGuid] -= value;
         }
         SafeERC20.safeTransfer(erc20, destinationAddress, value);
     }
-    function withdrawSYS(uint value) private {
-        require(depositsSYS >= value && value > 0, "Value must be positive and contract has to have sufficient balance of SYS");
-        unchecked {
-            depositsSYS -= value;
-        }
+    function withdrawSYS(uint value, address payable destinationAddress) private {
+        require(address(this).balance >= value && value > 0, "Value must be positive and contract has to have sufficient balance of SYS");
         // stop using .transfer() because of gas issue after ethereum upgrade
-        (bool success, ) = msg.sender.call{value: value}("");
+        (bool success, ) = destinationAddress.call{value: value}("");
         require(success, "Could not execute msg.sender.call.value");
     }
-    function depositAsset(IERC20Metadata erc20, uint32 assetGUID, uint value) private {
+    function depositAsset(IERC20Metadata erc20, uint32 assetGuid, uint value) private {
         SafeERC20.safeTransferFrom(erc20, msg.sender, address(this), value);
-        assetBalances[assetGUID] += value;
+        assetBalances[assetGuid] += value;
     }
 }
