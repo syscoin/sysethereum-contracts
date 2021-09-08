@@ -21,7 +21,7 @@ module.exports = {
       host: "localhost",
       port: 8101,
       from: "0xe600696eb0555c93f2c391a1406726cee239091d",
-      network_id: "58", 
+      network_id: "5700", 
       gas: 1000000,
       gasPrice: "10000000000"
     },
@@ -29,7 +29,7 @@ module.exports = {
       provider:   function () {
          return new HDWalletProvider(mnenomic, "http://localhost:8101");
       },
-      network_id: "58",
+      network_id: "5700",
       gasPrice: "6000000000"
     }
   },

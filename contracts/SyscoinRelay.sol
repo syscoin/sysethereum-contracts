@@ -64,12 +64,12 @@ contract SyscoinRelay is SyscoinRelayI, SyscoinErrorCodes, SyscoinMessageLibrary
 
     // Returns asset data parsed from the op_return data output from syscoin asset burn transaction
     function scanBurnTx(bytes memory txBytes, uint opIndex, uint pos)
-        internal
+        public
         pure
         returns (uint, address, uint32)
     {
-        uint assetGUID;
-        uint32 assetGUID32;
+        uint assetGuid;
+        uint32 assetGuid32;
         address destinationAddress;
         uint output_value;
         uint bytesToRead;
@@ -79,8 +79,8 @@ contract SyscoinRelay is SyscoinRelayI, SyscoinErrorCodes, SyscoinMessageLibrary
         (numOutputs, pos) = parseCompactSize(txBytes, pos);
         require(numOutputs == 1, "#SyscoinRelay scanBurnTx(): Invalid numAssets");
         // get nAsset
-        (assetGUID, pos) = parseVarInt(txBytes, pos, maxVal);
-        assetGUID32 = uint32(assetGUID);
+        (assetGuid, pos) = parseVarInt(txBytes, pos, maxVal);
+        assetGuid32 = uint32(assetGuid);
         (numOutputs, pos) = parseCompactSize(txBytes, pos);
         require(numOutputs < 10, "#SyscoinRelay scanBurnTx(): Invalid numOutputs");
         // find output that is connected to the burn output (opIndex)
@@ -104,7 +104,7 @@ contract SyscoinRelay is SyscoinRelayI, SyscoinErrorCodes, SyscoinMessageLibrary
         // ethereum contracts are 20 bytes (without the 0x)
         require(numOutputs == 0x14, "#SyscoinRelay scanBurnTx(): Invalid destinationAddress");
         destinationAddress = readEthereumAddress(txBytes, pos);
-        return (output_value, destinationAddress, assetGUID32);
+        return (output_value, destinationAddress, assetGuid32);
     }
 
     // Read the ethereum address embedded in the tx output
@@ -198,7 +198,7 @@ contract SyscoinRelay is SyscoinRelayI, SyscoinErrorCodes, SyscoinMessageLibrary
 
 
      /**
-     * Parse txBytes and returns assetguid + contract address
+     * Parse txBytes and returns assetGuid + contract address
      * @param txBytes syscoin raw transaction
      * @param pos position at where to start parsing
      * @return asset guid (uint32), erc20 address and precision linked to the asset guid to update registry in erc20manager
@@ -208,8 +208,8 @@ contract SyscoinRelay is SyscoinRelayI, SyscoinErrorCodes, SyscoinMessageLibrary
         pure
         returns (uint32, address, uint8)
     {
-        uint assetGUID;
-        uint32 assetGUID32;
+        uint assetGuid;
+        uint32 assetGuid32;
         address erc20Address;
         uint8 precision;
         uint bytesToRead;
@@ -221,8 +221,8 @@ contract SyscoinRelay is SyscoinRelayI, SyscoinErrorCodes, SyscoinMessageLibrary
         (numAssets, pos) = parseCompactSize(txBytes, pos);
         require(numAssets == 1, "#SyscoinRelay scanAssetTx(): Invalid numAssets");
         // get nAsset
-        (assetGUID, pos) = parseVarInt(txBytes, pos, maxVal);
-        assetGUID32 = uint32(assetGUID);
+        (assetGuid, pos) = parseVarInt(txBytes, pos, maxVal);
+        assetGuid32 = uint32(assetGuid);
         (numOutputs, pos) = parseCompactSize(txBytes, pos);
         require(numOutputs == 1);
         
@@ -252,7 +252,7 @@ contract SyscoinRelay is SyscoinRelayI, SyscoinErrorCodes, SyscoinMessageLibrary
         require(bytesToRead == 0x14,
         "scanAssetTx(): Invalid number of bytes read for contract field");
         erc20Address = readEthereumAddress(txBytes, pos);
-        return (assetGUID32, erc20Address, precision);
+        return (assetGuid32, erc20Address, precision);
     }
 
 
@@ -306,13 +306,13 @@ contract SyscoinRelay is SyscoinRelayI, SyscoinErrorCodes, SyscoinMessageLibrary
         uint value;
         address destinationAddress;
         uint ret;
-        uint32 assetGUID;
-        (ret, value, destinationAddress, assetGUID) = parseBurnTx(_txBytes);
+        uint32 assetGuid;
+        (ret, value, destinationAddress, assetGuid) = parseBurnTx(_txBytes);
         if(ret != 0){
             emit RelayTransaction(bytes32(txHash), ret);
             return ret;
         }
-        syscoinERC20Manager.processTransaction(txHash, value, destinationAddress, assetGUID);
+        syscoinERC20Manager.processTransaction(txHash, value, destinationAddress, assetGuid);
         return value;
     }
 
@@ -338,15 +338,15 @@ contract SyscoinRelay is SyscoinRelayI, SyscoinErrorCodes, SyscoinMessageLibrary
         uint txHash = verifySPVProofs(_blockNumber, _syscoinBlockHeader, _txBytes, _txIndex, _txSiblings);
         require(txHash != 0);
         uint ret;
-        uint32 assetGUID;
+        uint32 assetGuid;
         address erc20ContractAddress;
         uint8 precision;
-        (ret, assetGUID, erc20ContractAddress, precision) = parseAssetTx(_txBytes);
+        (ret, assetGuid, erc20ContractAddress, precision) = parseAssetTx(_txBytes);
         if(ret != 0){
             emit RelayTransaction(bytes32(txHash), ret);
             return ret;
         }
-        syscoinERC20Manager.processAsset(txHash, assetGUID, _blockNumber, erc20ContractAddress, precision);
+        syscoinERC20Manager.processAsset(txHash, assetGuid, _blockNumber, erc20ContractAddress, precision);
         return 0;
        
     }
@@ -360,21 +360,18 @@ contract SyscoinRelay is SyscoinRelayI, SyscoinErrorCodes, SyscoinMessageLibrary
     function parseBurnTx(bytes memory txBytes)
         public
         pure
-        returns (uint, uint, address, uint32)
+        returns (uint errorCode, uint output_value, address destinationAddress, uint32 assetGuid)
     {
-        uint output_value;
-        uint32 assetGUID;
-        address destinationAddress;
         uint32 version;
         uint pos = 0;
         uint opIndex = 0;
         version = bytesToUint32Flipped(txBytes, pos);
         if(version != SYSCOIN_TX_VERSION_ALLOCATION_BURN_TO_NEVM){
-            return (ERR_PARSE_TX_SYS, output_value, destinationAddress, assetGUID);
+            return (ERR_PARSE_TX_SYS, output_value, destinationAddress, assetGuid);
         }
         (opIndex, pos) = getOpReturnPos(txBytes, 4);
-        (output_value, destinationAddress, assetGUID) = scanBurnTx(txBytes, opIndex, pos);
-        return (0, output_value, destinationAddress, assetGUID);
+        (output_value, destinationAddress, assetGuid) = scanBurnTx(txBytes, opIndex, pos);
+        return (0, output_value, destinationAddress, assetGuid);
     }
 
     // @dev - Checks whether the transaction given by `_txBytes` is in the block identified by `_txBlockHeaderBytes`.
