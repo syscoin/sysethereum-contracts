@@ -7,13 +7,13 @@
   },
   "dependencies": {
     "@openzeppelin/contracts": "^4.2.0",
-    "@truffle/hdwallet-provider": "^1.0.38",
-    "ganache-cli": "^6.7.0",
+    "@truffle/hdwallet-provider": "^1.5.1-alpha.0",
+    "ganache-cli": "^6.12.2",
     "openzeppelin-solidity": "^4.2.0",
     "solc": "^0.8.6",
-    "truffle": "^5.3.13",
+    "truffle": "^5.4.9",
     "truffle-assertions": "^0.9.1",
-    "web3": "^1.4.0"
+    "web3": "^1.5.2"
   },
   "devDependencies": {
     "eth-json-rpc-filters": "^4.1.1"
