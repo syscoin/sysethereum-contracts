@@ -1,0 +1,549 @@
+{
+  "contractName": "SyscoinErrorCodes",
+  "abi": [],
+  "metadata": "{\"compiler\":{\"version\":\"0.8.7-develop.2021.7.7+commit.46514ffa.mod\"},\"language\":\"Solidity\",\"output\":{\"abi\":[],\"devdoc\":{\"kind\":\"dev\",\"methods\":{},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{},\"version\":1}},\"settings\":{\"compilationTarget\":{\"project:/contracts/SyscoinErrorCodes.sol\":\"SyscoinErrorCodes\"},\"evmVersion\":\"berlin\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\"},\"optimizer\":{\"enabled\":true,\"runs\":200},\"remappings\":[]},\"sources\":{\"project:/contracts/SyscoinErrorCodes.sol\":{\"keccak256\":\"0xfa20e9fc49ae9f27a8d4370e0c40b6e786ce322cdd9d5862cab04fefa51169b6\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://4963c6806204a2e032c2972505473d239155d8995d227e6276b94d85c54e29f9\",\"dweb:/ipfs/QmYozjmNdVFBQuF4LCqKutwMjLjfayrrDMpsJriEGC9KUJ\"]}},\"version\":1}",
+  "bytecode": "0x6080604052348015600f57600080fd5b50606780601d6000396000f3fe6080604052600080fdfea2646970667358221220fea9918b808401f0c0ee821395e555b60bf48b7732a8e8f14e5f764d679c83c664736f6c63782a302e382e372d646576656c6f702e323032312e372e372b636f6d6d69742e34363531346666612e6d6f64005b",
+  "deployedBytecode": "0x6080604052600080fdfea2646970667358221220fea9918b808401f0c0ee821395e555b60bf48b7732a8e8f14e5f764d679c83c664736f6c63782a302e382e372d646576656c6f702e323032312e372e372b636f6d6d69742e34363531346666612e6d6f64005b",
+  "immutableReferences": {},
+  "generatedSources": [],
+  "deployedGeneratedSources": [],
+  "sourceMap": "92:256:9:-:0;;;;;;;;;;;;;;;;;;;",
+  "deployedSourceMap": "92:256:9:-:0;;;;;",
+  "source": "// SPDX-License-Identifier: MIT\npragma solidity ^0.8.6;\n\n// @dev - SyscoinRelay error codes\ncontract SyscoinErrorCodes {\n    uint constant ERR_INVALID_HEADER = 10000;\n    uint constant ERR_INVALID_HEADER_HASH = 10010;\n    uint constant ERR_PARSE_TX_SYS = 10020;\n    uint constant ERR_MERKLE_ROOT = 10030;\n    uint constant ERR_TX_64BYTE = 10040;\n\n}\n",
+  "sourcePath": "/Users/jagsidhu/work/Documents/GitHub/sysethereum-contracts/contracts/SyscoinErrorCodes.sol",
+  "ast": {
+    "absolutePath": "project:/contracts/SyscoinErrorCodes.sol",
+    "exportedSymbols": {
+      "SyscoinErrorCodes": [
+        1368
+      ]
+    },
+    "id": 1369,
+    "license": "MIT",
+    "nodeType": "SourceUnit",
+    "nodes": [
+      {
+        "id": 1352,
+        "literals": [
+          "solidity",
+          "^",
+          "0.8",
+          ".6"
+        ],
+        "nodeType": "PragmaDirective",
+        "src": "32:23:9"
+      },
+      {
+        "abstract": false,
+        "baseContracts": [],
+        "contractDependencies": [],
+        "contractKind": "contract",
+        "fullyImplemented": true,
+        "id": 1368,
+        "linearizedBaseContracts": [
+          1368
+        ],
+        "name": "SyscoinErrorCodes",
+        "nameLocation": "101:17:9",
+        "nodeType": "ContractDefinition",
+        "nodes": [
+          {
+            "constant": true,
+            "id": 1355,
+            "mutability": "constant",
+            "name": "ERR_INVALID_HEADER",
+            "nameLocation": "139:18:9",
+            "nodeType": "VariableDeclaration",
+            "scope": 1368,
+            "src": "125:40:9",
+            "stateVariable": true,
+            "storageLocation": "default",
+            "typeDescriptions": {
+              "typeIdentifier": "t_uint256",
+              "typeString": "uint256"
+            },
+            "typeName": {
+              "id": 1353,
+              "name": "uint",
+              "nodeType": "ElementaryTypeName",
+              "src": "125:4:9",
+              "typeDescriptions": {
+                "typeIdentifier": "t_uint256",
+                "typeString": "uint256"
+              }
+            },
+            "value": {
+              "hexValue": "3130303030",
+              "id": 1354,
+              "isConstant": false,
+              "isLValue": false,
+              "isPure": true,
+              "kind": "number",
+              "lValueRequested": false,
+              "nodeType": "Literal",
+              "src": "160:5:9",
+              "typeDescriptions": {
+                "typeIdentifier": "t_rational_10000_by_1",
+                "typeString": "int_const 10000"
+              },
+              "value": "10000"
+            },
+            "visibility": "internal"
+          },
+          {
+            "constant": true,
+            "id": 1358,
+            "mutability": "constant",
+            "name": "ERR_INVALID_HEADER_HASH",
+            "nameLocation": "185:23:9",
+            "nodeType": "VariableDeclaration",
+            "scope": 1368,
+            "src": "171:45:9",
+            "stateVariable": true,
+            "storageLocation": "default",
+            "typeDescriptions": {
+              "typeIdentifier": "t_uint256",
+              "typeString": "uint256"
+            },
+            "typeName": {
+              "id": 1356,
+              "name": "uint",
+              "nodeType": "ElementaryTypeName",
+              "src": "171:4:9",
+              "typeDescriptions": {
+                "typeIdentifier": "t_uint256",
+                "typeString": "uint256"
+              }
+            },
+            "value": {
+              "hexValue": "3130303130",
+              "id": 1357,
+              "isConstant": false,
+              "isLValue": false,
+              "isPure": true,
+              "kind": "number",
+              "lValueRequested": false,
+              "nodeType": "Literal",
+              "src": "211:5:9",
+              "typeDescriptions": {
+                "typeIdentifier": "t_rational_10010_by_1",
+                "typeString": "int_const 10010"
+              },
+              "value": "10010"
+            },
+            "visibility": "internal"
+          },
+          {
+            "constant": true,
+            "id": 1361,
+            "mutability": "constant",
+            "name": "ERR_PARSE_TX_SYS",
+            "nameLocation": "236:16:9",
+            "nodeType": "VariableDeclaration",
+            "scope": 1368,
+            "src": "222:38:9",
+            "stateVariable": true,
+            "storageLocation": "default",
+            "typeDescriptions": {
+              "typeIdentifier": "t_uint256",
+              "typeString": "uint256"
+            },
+            "typeName": {
+              "id": 1359,
+              "name": "uint",
+              "nodeType": "ElementaryTypeName",
+              "src": "222:4:9",
+              "typeDescriptions": {
+                "typeIdentifier": "t_uint256",
+                "typeString": "uint256"
+              }
+            },
+            "value": {
+              "hexValue": "3130303230",
+              "id": 1360,
+              "isConstant": false,
+              "isLValue": false,
+              "isPure": true,
+              "kind": "number",
+              "lValueRequested": false,
+              "nodeType": "Literal",
+              "src": "255:5:9",
+              "typeDescriptions": {
+                "typeIdentifier": "t_rational_10020_by_1",
+                "typeString": "int_const 10020"
+              },
+              "value": "10020"
+            },
+            "visibility": "internal"
+          },
+          {
+            "constant": true,
+            "id": 1364,
+            "mutability": "constant",
+            "name": "ERR_MERKLE_ROOT",
+            "nameLocation": "280:15:9",
+            "nodeType": "VariableDeclaration",
+            "scope": 1368,
+            "src": "266:37:9",
+            "stateVariable": true,
+            "storageLocation": "default",
+            "typeDescriptions": {
+              "typeIdentifier": "t_uint256",
+              "typeString": "uint256"
+            },
+            "typeName": {
+              "id": 1362,
+              "name": "uint",
+              "nodeType": "ElementaryTypeName",
+              "src": "266:4:9",
+              "typeDescriptions": {
+                "typeIdentifier": "t_uint256",
+                "typeString": "uint256"
+              }
+            },
+            "value": {
+              "hexValue": "3130303330",
+              "id": 1363,
+              "isConstant": false,
+              "isLValue": false,
+              "isPure": true,
+              "kind": "number",
+              "lValueRequested": false,
+              "nodeType": "Literal",
+              "src": "298:5:9",
+              "typeDescriptions": {
+                "typeIdentifier": "t_rational_10030_by_1",
+                "typeString": "int_const 10030"
+              },
+              "value": "10030"
+            },
+            "visibility": "internal"
+          },
+          {
+            "constant": true,
+            "id": 1367,
+            "mutability": "constant",
+            "name": "ERR_TX_64BYTE",
+            "nameLocation": "323:13:9",
+            "nodeType": "VariableDeclaration",
+            "scope": 1368,
+            "src": "309:35:9",
+            "stateVariable": true,
+            "storageLocation": "default",
+            "typeDescriptions": {
+              "typeIdentifier": "t_uint256",
+              "typeString": "uint256"
+            },
+            "typeName": {
+              "id": 1365,
+              "name": "uint",
+              "nodeType": "ElementaryTypeName",
+              "src": "309:4:9",
+              "typeDescriptions": {
+                "typeIdentifier": "t_uint256",
+                "typeString": "uint256"
+              }
+            },
+            "value": {
+              "hexValue": "3130303430",
+              "id": 1366,
+              "isConstant": false,
+              "isLValue": false,
+              "isPure": true,
+              "kind": "number",
+              "lValueRequested": false,
+              "nodeType": "Literal",
+              "src": "339:5:9",
+              "typeDescriptions": {
+                "typeIdentifier": "t_rational_10040_by_1",
+                "typeString": "int_const 10040"
+              },
+              "value": "10040"
+            },
+            "visibility": "internal"
+          }
+        ],
+        "scope": 1369,
+        "src": "92:256:9",
+        "usedErrors": []
+      }
+    ],
+    "src": "32:317:9"
+  },
+  "legacyAST": {
+    "absolutePath": "project:/contracts/SyscoinErrorCodes.sol",
+    "exportedSymbols": {
+      "SyscoinErrorCodes": [
+        1368
+      ]
+    },
+    "id": 1369,
+    "license": "MIT",
+    "nodeType": "SourceUnit",
+    "nodes": [
+      {
+        "id": 1352,
+        "literals": [
+          "solidity",
+          "^",
+          "0.8",
+          ".6"
+        ],
+        "nodeType": "PragmaDirective",
+        "src": "32:23:9"
+      },
+      {
+        "abstract": false,
+        "baseContracts": [],
+        "contractDependencies": [],
+        "contractKind": "contract",
+        "fullyImplemented": true,
+        "id": 1368,
+        "linearizedBaseContracts": [
+          1368
+        ],
+        "name": "SyscoinErrorCodes",
+        "nameLocation": "101:17:9",
+        "nodeType": "ContractDefinition",
+        "nodes": [
+          {
+            "constant": true,
+            "id": 1355,
+            "mutability": "constant",
+            "name": "ERR_INVALID_HEADER",
+            "nameLocation": "139:18:9",
+            "nodeType": "VariableDeclaration",
+            "scope": 1368,
+            "src": "125:40:9",
+            "stateVariable": true,
+            "storageLocation": "default",
+            "typeDescriptions": {
+              "typeIdentifier": "t_uint256",
+              "typeString": "uint256"
+            },
+            "typeName": {
+              "id": 1353,
+              "name": "uint",
+              "nodeType": "ElementaryTypeName",
+              "src": "125:4:9",
+              "typeDescriptions": {
+                "typeIdentifier": "t_uint256",
+                "typeString": "uint256"
+              }
+            },
+            "value": {
+              "hexValue": "3130303030",
+              "id": 1354,
+              "isConstant": false,
+              "isLValue": false,
+              "isPure": true,
+              "kind": "number",
+              "lValueRequested": false,
+              "nodeType": "Literal",
+              "src": "160:5:9",
+              "typeDescriptions": {
+                "typeIdentifier": "t_rational_10000_by_1",
+                "typeString": "int_const 10000"
+              },
+              "value": "10000"
+            },
+            "visibility": "internal"
+          },
+          {
+            "constant": true,
+            "id": 1358,
+            "mutability": "constant",
+            "name": "ERR_INVALID_HEADER_HASH",
+            "nameLocation": "185:23:9",
+            "nodeType": "VariableDeclaration",
+            "scope": 1368,
+            "src": "171:45:9",
+            "stateVariable": true,
+            "storageLocation": "default",
+            "typeDescriptions": {
+              "typeIdentifier": "t_uint256",
+              "typeString": "uint256"
+            },
+            "typeName": {
+              "id": 1356,
+              "name": "uint",
+              "nodeType": "ElementaryTypeName",
+              "src": "171:4:9",
+              "typeDescriptions": {
+                "typeIdentifier": "t_uint256",
+                "typeString": "uint256"
+              }
+            },
+            "value": {
+              "hexValue": "3130303130",
+              "id": 1357,
+              "isConstant": false,
+              "isLValue": false,
+              "isPure": true,
+              "kind": "number",
+              "lValueRequested": false,
+              "nodeType": "Literal",
+              "src": "211:5:9",
+              "typeDescriptions": {
+                "typeIdentifier": "t_rational_10010_by_1",
+                "typeString": "int_const 10010"
+              },
+              "value": "10010"
+            },
+            "visibility": "internal"
+          },
+          {
+            "constant": true,
+            "id": 1361,
+            "mutability": "constant",
+            "name": "ERR_PARSE_TX_SYS",
+            "nameLocation": "236:16:9",
+            "nodeType": "VariableDeclaration",
+            "scope": 1368,
+            "src": "222:38:9",
+            "stateVariable": true,
+            "storageLocation": "default",
+            "typeDescriptions": {
+              "typeIdentifier": "t_uint256",
+              "typeString": "uint256"
+            },
+            "typeName": {
+              "id": 1359,
+              "name": "uint",
+              "nodeType": "ElementaryTypeName",
+              "src": "222:4:9",
+              "typeDescriptions": {
+                "typeIdentifier": "t_uint256",
+                "typeString": "uint256"
+              }
+            },
+            "value": {
+              "hexValue": "3130303230",
+              "id": 1360,
+              "isConstant": false,
+              "isLValue": false,
+              "isPure": true,
+              "kind": "number",
+              "lValueRequested": false,
+              "nodeType": "Literal",
+              "src": "255:5:9",
+              "typeDescriptions": {
+                "typeIdentifier": "t_rational_10020_by_1",
+                "typeString": "int_const 10020"
+              },
+              "value": "10020"
+            },
+            "visibility": "internal"
+          },
+          {
+            "constant": true,
+            "id": 1364,
+            "mutability": "constant",
+            "name": "ERR_MERKLE_ROOT",
+            "nameLocation": "280:15:9",
+            "nodeType": "VariableDeclaration",
+            "scope": 1368,
+            "src": "266:37:9",
+            "stateVariable": true,
+            "storageLocation": "default",
+            "typeDescriptions": {
+              "typeIdentifier": "t_uint256",
+              "typeString": "uint256"
+            },
+            "typeName": {
+              "id": 1362,
+              "name": "uint",
+              "nodeType": "ElementaryTypeName",
+              "src": "266:4:9",
+              "typeDescriptions": {
+                "typeIdentifier": "t_uint256",
+                "typeString": "uint256"
+              }
+            },
+            "value": {
+              "hexValue": "3130303330",
+              "id": 1363,
+              "isConstant": false,
+              "isLValue": false,
+              "isPure": true,
+              "kind": "number",
+              "lValueRequested": false,
+              "nodeType": "Literal",
+              "src": "298:5:9",
+              "typeDescriptions": {
+                "typeIdentifier": "t_rational_10030_by_1",
+                "typeString": "int_const 10030"
+              },
+              "value": "10030"
+            },
+            "visibility": "internal"
+          },
+          {
+            "constant": true,
+            "id": 1367,
+            "mutability": "constant",
+            "name": "ERR_TX_64BYTE",
+            "nameLocation": "323:13:9",
+            "nodeType": "VariableDeclaration",
+            "scope": 1368,
+            "src": "309:35:9",
+            "stateVariable": true,
+            "storageLocation": "default",
+            "typeDescriptions": {
+              "typeIdentifier": "t_uint256",
+              "typeString": "uint256"
+            },
+            "typeName": {
+              "id": 1365,
+              "name": "uint",
+              "nodeType": "ElementaryTypeName",
+              "src": "309:4:9",
+              "typeDescriptions": {
+                "typeIdentifier": "t_uint256",
+                "typeString": "uint256"
+              }
+            },
+            "value": {
+              "hexValue": "3130303430",
+              "id": 1366,
+              "isConstant": false,
+              "isLValue": false,
+              "isPure": true,
+              "kind": "number",
+              "lValueRequested": false,
+              "nodeType": "Literal",
+              "src": "339:5:9",
+              "typeDescriptions": {
+                "typeIdentifier": "t_rational_10040_by_1",
+                "typeString": "int_const 10040"
+              },
+              "value": "10040"
+            },
+            "visibility": "internal"
+          }
+        ],
+        "scope": 1369,
+        "src": "92:256:9",
+        "usedErrors": []
+      }
+    ],
+    "src": "32:317:9"
+  },
+  "compiler": {
+    "name": "solc",
+    "version": "0.8.7-develop.2021.7.7+commit.46514ffa.mod.Darwin.appleclang"
+  },
+  "networks": {},
+  "schemaVersion": "3.4.3",
+  "updatedAt": "2021-09-13T14:51:48.163Z",
+  "devdoc": {
+    "kind": "dev",
+    "methods": {},
+    "version": 1
+  },
+  "userdoc": {
+    "kind": "user",
+    "methods": {},
+    "version": 1
+  }
+}
