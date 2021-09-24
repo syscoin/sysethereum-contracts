@@ -23,12 +23,21 @@ contract('SyscoinRelay', (accounts) => {
       assert.equal(result.assetGuid, '123456', "Asset Guid should be 123456");
       assert.equal(result.erc20Address, '0xA738a563F9ecb55e0b2245D1e9E380f0fE455ea1', "Asset ERC20 Contract should be 0xA738a563F9ecb55e0b2245D1e9E380f0fE455ea1");
     });
+    
     it("parseBurnTx()", async () => {
       const txBytes = "0x86000000000101e04131c39b082d7837b67b78c1a7e8836552c5eb484c57bcd38092eba64495420100000000fdffffff020000000000000000216a1f0186c34002001301770014bf76b51ddfbe584b92d039c95f6444fabc8956a6febcadf4010000001600146d810fc818716daec63c0a4ee0c2dc2efe73677c02483045022100f11cb8515593b85afbad0c879c395d78034ac64235a4e49df969c6410e56c1d1022058821088d43ee24b82f9257bbe2a67b29222bae741145de2c0cea92d195b27da0121020fbc960c4f095ff3cdb43947dd8238447459365a06eb9a688348d63127cb50d500000000";
       let result = await syscoinRelay.parseBurnTx(txBytes);
       assert.equal(result.errorCode, '0', "errorCode should be 0");
       assert.equal(result.assetGuid, '123456', "Asset Guid should be 123456");
       assert.equal(result.output_value, '200000000', "output_value should be 200000000");
+      assert.equal(result.destinationAddress, '0xbf76B51dDfBe584b92d039c95F6444FABC8956A6', "destinationAddress should be 0xbf76B51dDfBe584b92d039c95F6444FABC8956A6");
+    });
+    it("parseBurnTx1()", async () => {
+      const txBytes = "0x86000000000102506702ad3ead57b7dc7aa997bd9060048a06462950f08a36e1677c44baacd26a0000000000fdffffff506702ad3ead57b7dc7aa997bd9060048a06462950f08a36e1677c44baacd26a0200000000fdffffff0300000000000000002b6a29028799cfc86202000601560086c3400102800c0014bf76b51ddfbe584b92d039c95f6444fabc8956a63e32052a010000001600141b9ac7e9f0b5197939faddd721ea4344539417caa8020000000000001600141b9ac7e9f0b5197939faddd721ea4344539417ca02483045022100c76dcdd5737a137c1c0aacaf5f6d8c359ddeffc1f602932f2a60a9cf27edd0d102203824008de9d458b61a4b9b513a1a9bd8e352d33690765bec76a36561f0adfee50121039a4bfa6fa6bc1d9bdf1ba3d7dba686e1a2d3826f85ac44c477e77a5cfc76d907024830450221008ac3eee9036c67f21f9cf55e1d4468d37164c983a96aacc634670deadc56189a0220349fb3c105696f605a3d96d78d14916d7197b05a3e187b9a4ed65007138e83060121039094f42abf62812c8243b701ab5cbc17cc5d5c4cf03f50efe1db2a6ca762dc1c00000000";
+      let result = await syscoinRelay.parseBurnTx(txBytes);
+      assert.equal(result.errorCode, '0', "errorCode should be 0");
+      assert.equal(result.assetGuid, '2203329762', "Asset Guid should be 2203329762");
+      assert.equal(result.output_value, '100000', "output_value should be 100000");
       assert.equal(result.destinationAddress, '0xbf76B51dDfBe584b92d039c95F6444FABC8956A6', "destinationAddress should be 0xbf76B51dDfBe584b92d039c95F6444FABC8956A6");
     });
     it("scanAssetTx", async () => {
@@ -43,6 +52,16 @@ contract('SyscoinRelay', (accounts) => {
     it("scanBurnTx", async () => {
       const expectedJson = '{"0":"bebc200","1":"0xbf76B51dDfBe584b92d039c95F6444FABC8956A6","2":"1e240"}';
       const txBytes = "0x86000000000101e04131c39b082d7837b67b78c1a7e8836552c5eb484c57bcd38092eba64495420100000000fdffffff020000000000000000216a1f0186c34002001301770014bf76b51ddfbe584b92d039c95f6444fabc8956a6febcadf4010000001600146d810fc818716daec63c0a4ee0c2dc2efe73677c02483045022100f11cb8515593b85afbad0c879c395d78034ac64235a4e49df969c6410e56c1d1022058821088d43ee24b82f9257bbe2a67b29222bae741145de2c0cea92d195b27da0121020fbc960c4f095ff3cdb43947dd8238447459365a06eb9a688348d63127cb50d500000000";
+      const resultPos = await syscoinRelay.getOpReturnPos(txBytes, 4);
+      var opIndex = parseInt(resultPos[0]);
+      var pos = parseInt(resultPos[1]);
+      
+      const result = await syscoinRelay.scanBurnTx(txBytes, opIndex, pos);
+      assert.equal(JSON.stringify(result), expectedJson, "converted burn tx bytes are not the expected ones");
+    });
+    it("scanBurnTx1", async () => {
+      const expectedJson = '{"0":"186a0","1":"0xbf76B51dDfBe584b92d039c95F6444FABC8956A6","2":"835424e2"}';
+      const txBytes = "0x86000000000102506702ad3ead57b7dc7aa997bd9060048a06462950f08a36e1677c44baacd26a0000000000fdffffff506702ad3ead57b7dc7aa997bd9060048a06462950f08a36e1677c44baacd26a0200000000fdffffff0300000000000000002b6a29028799cfc86202000601560086c3400102800c0014bf76b51ddfbe584b92d039c95f6444fabc8956a63e32052a010000001600141b9ac7e9f0b5197939faddd721ea4344539417caa8020000000000001600141b9ac7e9f0b5197939faddd721ea4344539417ca02483045022100c76dcdd5737a137c1c0aacaf5f6d8c359ddeffc1f602932f2a60a9cf27edd0d102203824008de9d458b61a4b9b513a1a9bd8e352d33690765bec76a36561f0adfee50121039a4bfa6fa6bc1d9bdf1ba3d7dba686e1a2d3826f85ac44c477e77a5cfc76d907024830450221008ac3eee9036c67f21f9cf55e1d4468d37164c983a96aacc634670deadc56189a0220349fb3c105696f605a3d96d78d14916d7197b05a3e187b9a4ed65007138e83060121039094f42abf62812c8243b701ab5cbc17cc5d5c4cf03f50efe1db2a6ca762dc1c00000000";
       const resultPos = await syscoinRelay.getOpReturnPos(txBytes, 4);
       var opIndex = parseInt(resultPos[0]);
       var pos = parseInt(resultPos[1]);

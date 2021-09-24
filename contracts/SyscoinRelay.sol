@@ -61,50 +61,78 @@ contract SyscoinRelay is SyscoinRelayI, SyscoinErrorCodes, SyscoinMessageLibrary
         return n;
     }
 
-
+    function parseFirstAssetCommitmentInTx(bytes memory txBytes, uint pos, int opIndex) internal pure returns (uint, uint32, uint) {
+        uint numAssets;
+        uint assetGuid;
+        uint32 assetGuid32;
+        uint bytesToRead;
+        uint numOutputs;
+        uint output_value;
+        uint maxVal = 2**64;
+        (numAssets, pos) = parseCompactSize(txBytes, pos);
+        // loop through all assets in tx
+        for (uint assetIndex = 0; assetIndex < numAssets; assetIndex++) {
+            // the first asset is the one we care about
+            if(assetIndex == 0) {
+                // get nAsset
+                (assetGuid, pos) = parseVarInt(txBytes, pos, maxVal);
+                assetGuid32 = uint32(assetGuid);
+                (numOutputs, pos) = parseCompactSize(txBytes, pos);
+                // find output that is connected to the burn output (opIndex)
+                for (uint i = 0; i < numOutputs; i++) {
+                    // output index
+                    (bytesToRead, pos) = parseCompactSize(txBytes, pos);
+                    // get compressed amount
+                    if(int(bytesToRead) == opIndex) {
+                        (output_value, pos) = parseVarInt(txBytes, pos, maxVal);
+                    } else {
+                        (, pos) = parseVarInt(txBytes, pos, maxVal);
+                    }
+                }
+                // skip notary sig
+                (bytesToRead, pos) = parseCompactSize(txBytes, pos);
+                pos += bytesToRead;
+                if(opIndex >= 0) {
+                    require(output_value > 0, "#SyscoinRelay parseFirstAssetCommitmentInTx(): output index not found");
+                    output_value = DecompressAmount(uint64(output_value));
+                }
+            // skip over all other assets
+            } else {
+                // get nAsset
+                (, pos) = parseVarInt(txBytes, pos, maxVal);
+                (numOutputs, pos) = parseCompactSize(txBytes, pos);
+                // find output that is connected to the burn output (opIndex)
+                for (uint i = 0; i < numOutputs; i++) {
+                    // skip output index
+                    (, pos) = parseCompactSize(txBytes, pos);
+                    // skip compressed amount
+                    (, pos) = parseVarInt(txBytes, pos, maxVal);
+                }
+                // skip notary sig
+                (bytesToRead, pos) = parseCompactSize(txBytes, pos);
+                pos += bytesToRead;
+            }
+        }
+        return (output_value, assetGuid32, pos);
+    }
     // Returns asset data parsed from the op_return data output from syscoin asset burn transaction
     function scanBurnTx(bytes memory txBytes, uint opIndex, uint pos)
         public
         pure
         returns (uint, address, uint32)
     {
-        uint assetGuid;
-        uint32 assetGuid32;
+        uint32 assetGuid;
         address destinationAddress;
         uint output_value;
-        uint bytesToRead;
-        uint numOutputs;
-        uint output_value_compressed;
-        uint maxVal = 2**64;
-        (numOutputs, pos) = parseCompactSize(txBytes, pos);
-        require(numOutputs == 1, "#SyscoinRelay scanBurnTx(): Invalid numAssets");
-        // get nAsset
-        (assetGuid, pos) = parseVarInt(txBytes, pos, maxVal);
-        assetGuid32 = uint32(assetGuid);
-        (numOutputs, pos) = parseCompactSize(txBytes, pos);
-        require(numOutputs < 10, "#SyscoinRelay scanBurnTx(): Invalid numOutputs");
-        // find output that is connected to the burn output (opIndex)
-        for (uint i = 0; i < numOutputs; i++) {
-            // output index
-            (bytesToRead, pos) = parseCompactSize(txBytes, pos);
-             // get compressed amount
-            if(bytesToRead == opIndex) {
-                (output_value_compressed, pos) = parseVarInt(txBytes, pos, maxVal);
-            } else {
-                (, pos) = parseVarInt(txBytes, pos, maxVal);
-            }
-        }
-        // skip notary sig
-        (bytesToRead, pos) = parseCompactSize(txBytes, pos);
-        pos += bytesToRead;
-        require(output_value_compressed > 0, "#SyscoinRelay scanBurnTx(): Burn output index not found");
-        output_value = DecompressAmount(uint64(output_value_compressed));
-         // destination address
-        (numOutputs, pos) = getOpcode(txBytes, pos);
+        uint numBytesInAddress;
+        // return burned amount of an asset from the first asset output (opIndex is the index we are looking for inside of the first asset)
+        (output_value, assetGuid, pos) = parseFirstAssetCommitmentInTx(txBytes, pos, int(opIndex));
+        // destination address
+        (numBytesInAddress, pos) = getOpcode(txBytes, pos);
         // ethereum contracts are 20 bytes (without the 0x)
-        require(numOutputs == 0x14, "#SyscoinRelay scanBurnTx(): Invalid destinationAddress");
+        require(numBytesInAddress == 0x14, "#SyscoinRelay scanBurnTx(): Invalid destinationAddress");
         destinationAddress = readEthereumAddress(txBytes, pos);
-        return (output_value, destinationAddress, assetGuid32);
+        return (output_value, destinationAddress, assetGuid);
     }
 
     // Read the ethereum address embedded in the tx output
@@ -208,31 +236,16 @@ contract SyscoinRelay is SyscoinRelayI, SyscoinErrorCodes, SyscoinMessageLibrary
         pure
         returns (uint32, address, uint8)
     {
-        uint assetGuid;
-        uint32 assetGuid32;
+        uint32 assetGuid;
         address erc20Address;
         uint8 precision;
         uint bytesToRead;
-        uint numAssets;
-        uint numOutputs;
         uint8 nUpdateFlags;
         uint maxVal = 2**64;
         
-        (numAssets, pos) = parseCompactSize(txBytes, pos);
-        require(numAssets == 1, "#SyscoinRelay scanAssetTx(): Invalid numAssets");
-        // get nAsset
-        (assetGuid, pos) = parseVarInt(txBytes, pos, maxVal);
-        assetGuid32 = uint32(assetGuid);
-        (numOutputs, pos) = parseCompactSize(txBytes, pos);
-        require(numOutputs == 1);
+        // return asset from the first asset output
+        (, assetGuid, pos) = parseFirstAssetCommitmentInTx(txBytes, pos, -1);
         
-        // skip over output index
-        (, pos) = parseCompactSize(txBytes, pos);
-        // skip over compressed amount
-        (, pos) = parseVarInt(txBytes, pos, maxVal);
-        // skip notary sig
-        (bytesToRead, pos) = parseCompactSize(txBytes, pos);
-        pos += bytesToRead;
         // nPrecision
         precision = uint8(txBytes[pos]);
         pos += 1;
@@ -252,7 +265,7 @@ contract SyscoinRelay is SyscoinRelayI, SyscoinErrorCodes, SyscoinMessageLibrary
         require(bytesToRead == 0x14,
         "scanAssetTx(): Invalid number of bytes read for contract field");
         erc20Address = readEthereumAddress(txBytes, pos);
-        return (assetGuid32, erc20Address, precision);
+        return (assetGuid, erc20Address, precision);
     }
 
 
