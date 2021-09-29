@@ -52624,11 +52624,11 @@
       "events": {},
       "links": {},
       "address": "0xD822557aC2F2b77A1988617308e4A29A89Cb95A6",
-      "transactionHash": "0x3658aa89f1bd56224de263443c0a748ec76acf483a986188de9dab14c84466f6"
+      "transactionHash": "0x9d4235abc24216179825286e8db631c2134fa90801fc09106b370402629e9d8b"
     }
   },
   "schemaVersion": "3.4.3",
-  "updatedAt": "2021-09-21T18:59:41.593Z",
+  "updatedAt": "2021-09-27T20:59:35.448Z",
   "networkType": "ethereum",
   "devdoc": {
     "kind": "dev",
