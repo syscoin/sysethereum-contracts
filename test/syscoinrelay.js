@@ -69,5 +69,16 @@ contract('SyscoinRelay', (accounts) => {
       const result = await syscoinRelay.scanBurnTx(txBytes, opIndex, pos);
       assert.equal(JSON.stringify(result), expectedJson, "converted burn tx bytes are not the expected ones");
     });
+    it("scanBurnTx2", async () => {
+      const expectedJson = '{"0":"3b9aca00","1":"0x3779F14B66343CC6191060646bd8edB51e34f3B6","2":"2f0a9379"}';
+      const txBytes = "0x8600000000010163cdd871d58292ee1699c02caa8aef5872a502337082b3ad106992dd5da59d270000000000feffffff020000000000000000216a1f0181f7a9a57901000a00143779f14b66343cc6191060646bd8edb51e34f3b60809010000000000160014c9e8c2952caa6ea53a0e65a375105c3c80de96d40247304402201bc3edb4b9e62a677116bc298cdc9e12773abfec5ed9cf4d207755513839fefd022023743a923882d2dcecd4fe02a09160811c939077dc7ea7192fa5accd5dc2e4dd012102c22456739386731b3321de1aa3fa656c3d9b04bc625af7f303fb84b9efcf078100000000";
+      const resultPos = await syscoinRelay.getOpReturnPos(txBytes, 4);
+      var opIndex = parseInt(resultPos[0]);
+      var pos = parseInt(resultPos[1]);
+      
+      const result = await syscoinRelay.scanBurnTx(txBytes, opIndex, pos);
+      assert.equal(JSON.stringify(result), expectedJson, "converted burn tx bytes are not the expected ones");
+    });
+    
   });
 });
