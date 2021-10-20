@@ -19,7 +19,7 @@ contract SyscoinRelay is SyscoinRelayI, SyscoinErrorCodes, SyscoinMessageLibrary
     event RelayTransaction(bytes32 txHash, uint returnCode);
 
     // @param _syscoinERC20Manager - address of the SyscoinERC20Manager contract to be associated with
-    function init(address _syscoinERC20Manager) public {
+    function init(address _syscoinERC20Manager) external {
         require(address(syscoinERC20Manager) == address(0) && _syscoinERC20Manager != address(0));
         syscoinERC20Manager = SyscoinTransactionProcessorI(_syscoinERC20Manager);
     }
@@ -32,7 +32,7 @@ contract SyscoinRelay is SyscoinRelayI, SyscoinErrorCodes, SyscoinMessageLibrary
     }
 
 
-    function bytesToUint32(bytes memory input, uint pos) public pure returns (uint32 result) {
+    function bytesToUint32(bytes memory input, uint pos) external pure returns (uint32 result) {
         result = uint32(uint8(input[pos+3])) + uint32(uint8(input[pos + 2]))*(2**8) + uint32(uint8(input[pos + 1]))*(2**16) + uint32(uint8(input[pos]))*(2**24);
     }
 
@@ -313,7 +313,7 @@ contract SyscoinRelay is SyscoinRelayI, SyscoinErrorCodes, SyscoinMessageLibrary
         uint _txIndex,
         uint[] memory _txSiblings,
         bytes memory _syscoinBlockHeader
-    ) public override returns (uint) {
+    ) external override returns (uint) {
         uint txHash = verifySPVProofs(_blockNumber, _syscoinBlockHeader, _txBytes, _txIndex, _txSiblings);
         require(txHash != 0);
         uint value;
@@ -347,7 +347,7 @@ contract SyscoinRelay is SyscoinRelayI, SyscoinErrorCodes, SyscoinMessageLibrary
         uint _txIndex,
         uint[] memory _txSiblings,
         bytes memory _syscoinBlockHeader
-    ) public override returns (uint) {
+    ) external override returns (uint) {
         uint txHash = verifySPVProofs(_blockNumber, _syscoinBlockHeader, _txBytes, _txIndex, _txSiblings);
         require(txHash != 0);
         uint ret;

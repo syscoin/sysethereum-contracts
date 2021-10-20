@@ -2,7 +2,8 @@
 pragma solidity ^0.8.6;
 
 import "openzeppelin-solidity/contracts/token/ERC20/ERC20.sol";
-
+// note that this class is only used for testing and not meant to be deployed to a mainnet
+// see test/testRelayToSyscoinAssetToken.js and test/testSyscoinERC20Manager.js
 contract SyscoinERC20 is ERC20 {
     uint8 immutable private _decimals;
     constructor(
