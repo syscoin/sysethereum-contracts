@@ -66,7 +66,7 @@ contract SyscoinERC20Manager is SyscoinTransactionProcessorI {
         uint value,
         address destinationAddress,
         uint32 assetGuid
-    ) external override onlyTrustedRelayer {
+    ) public override onlyTrustedRelayer {
         // lookup asset from registry
         AssetRegistryItem storage assetRegistryItem = assetRegistry[assetGuid];
         // ensure state is Ok
@@ -103,7 +103,7 @@ contract SyscoinERC20Manager is SyscoinTransactionProcessorI {
         uint64 _height,
         address _erc20ContractAddress,
         uint8 _precision
-    ) external override onlyTrustedRelayer {
+    ) public override onlyTrustedRelayer {
         // ensure height increases over asset updates
         require(assetRegistry[_assetGuid].height < _height, "Height must increase when updating asset registry");
         // Add tx to the syscoinTxHashesAlreadyProcessed and Check tx was not already processed
@@ -116,7 +116,7 @@ contract SyscoinERC20Manager is SyscoinTransactionProcessorI {
         uint value,
         uint32 assetGuid,
         string memory syscoinAddress
-    ) external payable override returns (bool)
+    ) public payable override returns (bool)
     {
         require(bytes(syscoinAddress).length > 0, "syscoinAddress cannot be zero");
         require(assetGuid > 0, "Asset Guid must not be 0");
