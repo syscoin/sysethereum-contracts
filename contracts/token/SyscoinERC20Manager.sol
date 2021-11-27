@@ -1,64 +1,34 @@
-pragma solidity ^0.5.13;
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.6;
 
-import "openzeppelin-solidity/contracts/math/SafeMath.sol";
-import "../interfaces/SyscoinERC20I.sol";
-import "@openzeppelin/upgrades/contracts/Initializable.sol";
+import "@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol";
+import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 
-contract SyscoinERC20Manager is Initializable {
-    using SafeMath for uint;
-    using SafeMath for uint8;
+import "../interfaces/SyscoinTransactionProcessorI.sol";
 
-    // Lock constants
-    uint private constant MIN_LOCK_VALUE = 10; // 0.1 token
-    uint private constant SUPERBLOCK_SUBMITTER_LOCK_FEE = 10000; // 10000 = 0.01%
-    uint private constant MIN_CANCEL_DEPOSIT = 3000000000000000000; // 3 eth
-    uint private constant CANCEL_TRANSFER_TIMEOUT = 3600; // 1 hour in seconds
-    uint private constant CANCEL_MINT_TIMEOUT = 907200; // 1.5 weeks in seconds
-    // Variables set by constructor
+contract SyscoinERC20Manager is SyscoinTransactionProcessorI {
+
+    using SafeERC20 for IERC20Metadata;
 
     // Contract to trust for tx included in a syscoin block verification.
     // Only syscoin txs relayed from trustedRelayerContract will be accepted.
     address public trustedRelayerContract;
-
-
     mapping(uint32 => uint256) public assetBalances;
+    uint32 immutable SYSAssetGuid;
+    // network that the stored blocks belong to
+    bool private immutable testNetwork;
     // Syscoin transactions that were already processed by processTransaction()
     mapping(uint => bool) private syscoinTxHashesAlreadyProcessed;
 
-    uint32 bridgeTransferIdCount;
-    
-    enum BridgeTransferStatus { Uninitialized, Ok, CancelRequested, CancelChallenged, CancelOk }
-    
-    struct BridgeTransfer {
-        uint timestamp;
-        uint value;
-        address erc20ContractAddress;
-        address tokenFreezerAddress;
-        uint32 assetGUID;
-        BridgeTransferStatus status;           
-    }
-
-    mapping(uint32 => BridgeTransfer) private bridgeTransfers;
-    mapping(uint32 => uint) private deposits;
-
-    // network that the stored blocks belong to
-    enum Network { MAINNET, TESTNET, REGTEST }
-    Network private net;
-
-    event TokenUnfreeze(address receipient, uint value);
-    event TokenUnfreezeFee(address receipient, uint value);
-    event TokenFreeze(address freezer, uint value, uint32 bridgetransferid);
-    event CancelTransferRequest(address canceller, uint32 bridgetransferid);
-    event CancelTransferSucceeded(address canceller, uint32 bridgetransferid);
-    event CancelTransferFailed(address canceller, uint32 bridgetransferid);
-
+    event TokenUnfreeze(uint32 assetGuid, address receipient, uint value);
+    event TokenFreeze(uint32 assetGuid, address freezer, uint value, uint precisions);
     struct AssetRegistryItem {
         address erc20ContractAddress;
-        uint32 height;     
+        uint64 height;
+        uint8 precision;   
     }
     mapping(uint32 => AssetRegistryItem) public assetRegistry;
     event TokenRegistry(uint32 assetGuid, address erc20ContractAddress);
-    using SafeERC20 for SyscoinERC20I;
     function contains(uint value) private view returns (bool) {
         return syscoinTxHashesAlreadyProcessed[value];
     }
@@ -70,34 +40,21 @@ contract SyscoinERC20Manager is Initializable {
         return true;
     }
     
-    function init(Network _network, address _trustedRelayerContract) public initializer {
-        net = _network;
+    constructor (address _trustedRelayerContract, uint32 _sysxGuid, address _erc20ContractAddress) {
         trustedRelayerContract = _trustedRelayerContract;
-        bridgeTransferIdCount = 0;
+        SYSAssetGuid = _sysxGuid;
+        testNetwork = _erc20ContractAddress != address(0);
+        assetRegistry[_sysxGuid] = AssetRegistryItem({erc20ContractAddress:_trustedRelayerContract, height:1, precision: 8});
+        // override erc20ContractAddress field if running tests, because erc20 is passed in some tests to the constructor for SYSX
+        // but in deployment _erc20ContractAddress is empty so in that case we need it to be set to a non-empty field we just use _trustedRelayerContract (could be anything thats not empty)
+        if (_erc20ContractAddress != address(0)) {
+            assetRegistry[_sysxGuid].erc20ContractAddress = _erc20ContractAddress;
+        }
     }
 
     modifier onlyTrustedRelayer() {
         require(msg.sender == trustedRelayerContract, "Call must be from trusted relayer");
         _;
-    }
-
-    modifier minimumValue(address erc20ContractAddress, uint value) {
-        uint256 decimals = SyscoinERC20I(erc20ContractAddress).decimals();
-        require(
-            value >= (uint256(10) ** decimals).div(MIN_LOCK_VALUE),
-            "Value must be bigger or equal MIN_LOCK_VALUE"
-        );
-        _;
-    }
-
-    function requireMinimumValue(uint8 decimalsIn, uint value) private pure {
-        uint256 decimals = uint256(decimalsIn);
-        require(value > 0, "Value must be positive");
-        require(
-            value >= (uint256(10) ** decimals).div(MIN_LOCK_VALUE),
-            "Value must be bigger or equal MIN_LOCK_VALUE"
-        );
-        
     }
 
     function wasSyscoinTxProcessed(uint txHash) public view returns (bool) {
@@ -108,174 +65,95 @@ contract SyscoinERC20Manager is Initializable {
         uint txHash,
         uint value,
         address destinationAddress,
-        address superblockSubmitterAddress,
-        address erc20ContractAddress,
-        uint32 assetGUID,
-        uint8 precision
-    ) public onlyTrustedRelayer {
-        SyscoinERC20I erc20 = SyscoinERC20I(erc20ContractAddress);
-        uint8 nLocalPrecision = erc20.decimals();
+        uint32 assetGuid
+    ) external override onlyTrustedRelayer {
+        // lookup asset from registry
+        AssetRegistryItem storage assetRegistryItem = assetRegistry[assetGuid];
+        // ensure state is Ok
+        require(assetRegistryItem.erc20ContractAddress != address(0),
+            "#SyscoinERC20Manager processTransaction(): Asset not found in registry");
+        IERC20Metadata erc20;
+        uint8 nLocalPrecision;
+        if (assetGuid == SYSAssetGuid && !testNetwork) {
+            nLocalPrecision = 18;
+        } else {
+            erc20 = IERC20Metadata(assetRegistryItem.erc20ContractAddress);
+            nLocalPrecision = erc20.decimals();
+        } 
         // see issue #372 on syscoin
-        if(nLocalPrecision > precision){
-            value *= uint(10)**(uint(nLocalPrecision - precision));
-        }else if(nLocalPrecision < precision){
-            value /= uint(10)**(uint(precision - nLocalPrecision));
+        if(nLocalPrecision > assetRegistryItem.precision){
+            value *= uint(10)**(uint(nLocalPrecision - assetRegistryItem.precision));
+        } else if(nLocalPrecision < assetRegistryItem.precision){
+            value /= uint(10)**(uint(assetRegistryItem.precision - nLocalPrecision));
         }
-        requireMinimumValue(nLocalPrecision, value);
+        require(value > 0, "Value must be positive");
         // Add tx to the syscoinTxHashesAlreadyProcessed and Check tx was not already processed
         require(insert(txHash), "TX already processed");
-
-
-        assetBalances[assetGUID] = assetBalances[assetGUID].sub(value);
-
-        uint superblockSubmitterFee = value.div(SUPERBLOCK_SUBMITTER_LOCK_FEE);
-        uint userValue = value.sub(superblockSubmitterFee);
-
-        // pay the fee
-        erc20.safeTransfer(superblockSubmitterAddress, superblockSubmitterFee);
-        emit TokenUnfreezeFee(superblockSubmitterAddress, superblockSubmitterFee);
-
-        // get your token
-        erc20.safeTransfer(destinationAddress, userValue);
-        emit TokenUnfreeze(destinationAddress, userValue);
+        if (assetGuid == SYSAssetGuid && !testNetwork) {
+            withdrawSYS(value, payable(destinationAddress));
+        } else {
+            withdrawAsset(erc20, assetGuid, value, destinationAddress);
+        }
+        emit TokenUnfreeze(assetGuid, destinationAddress, value);
     }
 
     function processAsset(
         uint _txHash,
-        uint32 _assetGUID,
-        uint32 _height,
-        address _erc20ContractAddress
-    ) public onlyTrustedRelayer {
+        uint32 _assetGuid,
+        uint64 _height,
+        address _erc20ContractAddress,
+        uint8 _precision
+    ) external override onlyTrustedRelayer {
         // ensure height increases over asset updates
-        require(assetRegistry[_assetGUID].height < _height, "Height must increase when updating asset registry");
+        require(assetRegistry[_assetGuid].height < _height, "Height must increase when updating asset registry");
         // Add tx to the syscoinTxHashesAlreadyProcessed and Check tx was not already processed
         require(insert(_txHash), "TX already processed");
-        assetRegistry[_assetGUID] = AssetRegistryItem({erc20ContractAddress:_erc20ContractAddress, height:_height});
-        emit TokenRegistry(_assetGUID, _erc20ContractAddress);
-    }
-    
-    function cancelTransferRequest(uint32 bridgeTransferId) public payable {
-        // lookup state by bridgeTransferId
-        BridgeTransfer storage bridgeTransfer = bridgeTransfers[bridgeTransferId];
-        // ensure state is Ok
-        require(bridgeTransfer.status == BridgeTransferStatus.Ok,
-            "#SyscoinERC20Manager cancelTransferRequest(): Status of bridge transfer must be Ok");
-        // ensure msg.sender is same as tokenFreezerAddress
-        // we don't have to do this but we do it anyway so someone can't accidentily cancel a transfer they did not make
-        require(msg.sender == bridgeTransfer.tokenFreezerAddress, "#SyscoinERC20Manager cancelTransferRequest(): Only msg.sender is allowed to cancel");
-        // if freezeBurnERC20 was called less than 1.5 weeks ago then return error
-        // 0.5 week buffer since only 1 week of blocks are allowed to pass before cannot mint on sys
-        require((block.timestamp - bridgeTransfer.timestamp) > (net == Network.MAINNET? CANCEL_MINT_TIMEOUT: 36000), "#SyscoinERC20Manager cancelTransferRequest(): Transfer must be at least 1.5 week old");
-        // ensure min deposit paid
-        require(msg.value >= MIN_CANCEL_DEPOSIT,
-            "#SyscoinERC20Manager cancelTransferRequest(): Cancel deposit incorrect");
-        deposits[bridgeTransferId] = msg.value;
-        // set height for cancel time begin to enforce a delay to wait for challengers
-        bridgeTransfer.timestamp = block.timestamp;
-        // set state of bridge transfer to CancelRequested
-        bridgeTransfer.status = BridgeTransferStatus.CancelRequested;
-        emit CancelTransferRequest(msg.sender, bridgeTransferId);
+        assetRegistry[_assetGuid] = AssetRegistryItem({erc20ContractAddress:_erc20ContractAddress, height:_height, precision: _precision});
+        emit TokenRegistry(_assetGuid, _erc20ContractAddress);
     }
 
-    function cancelTransferSuccess(uint32 bridgeTransferId) public {
-        // lookup state by bridgeTransferId
-        BridgeTransfer storage bridgeTransfer = bridgeTransfers[bridgeTransferId];
-        // ensure state is CancelRequested to avoid people trying to claim multiple times 
-        // and that it has to be on an active cancel request
-        require(bridgeTransfer.status == BridgeTransferStatus.CancelRequested,
-            "#SyscoinERC20Manager cancelTransferSuccess(): Status must be CancelRequested");
-        // check if timeout period passed (atleast 1 hour of blocks have to have passed)
-        require((block.timestamp - bridgeTransfer.timestamp) > CANCEL_TRANSFER_TIMEOUT, "#SyscoinERC20Manager cancelTransferSuccess(): 1 hour timeout is required");
-        // set state of bridge transfer to CancelOk
-        bridgeTransfer.status = BridgeTransferStatus.CancelOk;
-        // refund erc20 to the tokenFreezerAddress
-        SyscoinERC20I erc20 = SyscoinERC20I(bridgeTransfer.erc20ContractAddress);
-        assetBalances[bridgeTransfer.assetGUID] = assetBalances[bridgeTransfer.assetGUID].sub(bridgeTransfer.value);
-        erc20.safeTransfer(bridgeTransfer.tokenFreezerAddress, bridgeTransfer.value);
-        // pay back deposit
-        address payable tokenFreezeAddressPayable = address(uint160(bridgeTransfer.tokenFreezerAddress));
-        uint d = deposits[bridgeTransferId];
-        delete deposits[bridgeTransferId];
-        // stop using .transfer() because of gas issue after ethereum upgrade
-        tokenFreezeAddressPayable.call.value(d)("");
-        emit CancelTransferSucceeded(bridgeTransfer.tokenFreezerAddress, bridgeTransferId);
-    }
-
-    function processCancelTransferFail(uint32 bridgeTransferId, address payable challengerAddress)
-        public
-        onlyTrustedRelayer
-    {
-        // lookup state by bridgeTransferId
-        BridgeTransfer storage bridgeTransfer = bridgeTransfers[bridgeTransferId];
-        // ensure state is CancelRequested
-        require(bridgeTransfer.status == BridgeTransferStatus.CancelRequested,
-            "#SyscoinERC20Manager cancelTransferSuccess(): Status must be CancelRequested to Fail the transfer");
-        // set state of bridge transfer to CancelChallenged
-        bridgeTransfer.status = BridgeTransferStatus.CancelChallenged;
-        // pay deposit to challenger
-        uint d = deposits[bridgeTransferId];
-        delete deposits[bridgeTransferId];
-        // stop using .transfer() because of gas issue after ethereum upgrade
-        challengerAddress.call.value(d)("");
-        emit CancelTransferFailed(bridgeTransfer.tokenFreezerAddress, bridgeTransferId);
-    }
-
-    // keyhash or scripthash for syscoinWitnessProgram
     function freezeBurnERC20(
         uint value,
-        uint32 assetGUID,
-        address erc20ContractAddress,
-        uint8 precision,
-        bytes memory syscoinAddress
-    )
-        public
-        minimumValue(erc20ContractAddress, value)
-        returns (bool)
+        uint32 assetGuid,
+        string memory syscoinAddress
+    ) external payable override returns (bool)
     {
-        require(syscoinAddress.length > 0, "syscoinAddress cannot be zero");
-        require(assetGUID > 0, "Asset GUID must not be 0");
-        if (net != Network.REGTEST) {
-            require(assetRegistry[assetGUID].erc20ContractAddress == erc20ContractAddress, "Asset registry contract does not match what was provided to this call");
+        require(bytes(syscoinAddress).length > 0, "syscoinAddress cannot be zero");
+        require(assetGuid > 0, "Asset Guid must not be 0");
+        // lookup asset from registry
+        AssetRegistryItem storage assetRegistryItem = assetRegistry[assetGuid];
+        // ensure state is Ok
+        require(assetRegistryItem.erc20ContractAddress != address(0),
+            "#SyscoinERC20Manager freezeBurnERC20(): Asset not found in registry");
+        require(value > 0, "Value must be positive");
+        uint8 nLocalPrecision;
+        if (assetGuid == SYSAssetGuid && !testNetwork) {
+            nLocalPrecision = 18;
+            require(value == msg.value, "msg.value must be the same as value");
+        } else {
+            IERC20Metadata erc20 = IERC20Metadata(assetRegistryItem.erc20ContractAddress);
+            nLocalPrecision = erc20.decimals();
+            depositAsset(erc20, assetGuid, value);
         }
-
-        SyscoinERC20I erc20 = SyscoinERC20I(erc20ContractAddress);
-        require(precision == erc20.decimals(), "Decimals were not provided with the correct value");
-        erc20.safeTransferFrom(msg.sender, address(this), value);
-        assetBalances[assetGUID] = assetBalances[assetGUID].add(value);
-
-        // store some state needed for potential bridge transfer cancellation
-        // create bridgeTransferId mapping structure with status + height + value + erc20ContractAddress + assetGUID + tokenFreezerAddress
-        bridgeTransferIdCount++;
-        bridgeTransfers[bridgeTransferIdCount] = BridgeTransfer({
-            status: BridgeTransferStatus.Ok,
-            value: value,
-            erc20ContractAddress: erc20ContractAddress,
-            assetGUID: assetGUID,
-            timestamp: block.timestamp,
-            tokenFreezerAddress: msg.sender
-        });
-        emit TokenFreeze(msg.sender, value, bridgeTransferIdCount);
+        uint precisions = nLocalPrecision + uint(assetRegistryItem.precision)*(2**32);
+        emit TokenFreeze(assetGuid, msg.sender, value, precisions);
         return true;
     }
-
-    // @dev - Returns the bridge transfer data for the supplied bridge transfer ID
-    //
-    function getBridgeTransfer(uint32 bridgeTransferId) external view returns (
-        uint _timestamp,
-        uint _value,
-        address _erc20ContractAddress,
-        address _tokenFreezerAddress,
-        uint32 _assetGUID,
-        BridgeTransferStatus _status
-    ) {
-        BridgeTransfer storage bridgeTransfer = bridgeTransfers[bridgeTransferId];
-        return (
-            bridgeTransfer.timestamp,
-            bridgeTransfer.value,
-            bridgeTransfer.erc20ContractAddress,
-            bridgeTransfer.tokenFreezerAddress,
-            bridgeTransfer.assetGUID,
-            bridgeTransfer.status
-        );
+    function withdrawAsset(IERC20Metadata erc20, uint32 assetGuid, uint value, address destinationAddress) private {
+        require(assetBalances[assetGuid] >= value && value > 0, "Value must be positive and contract has to have sufficient balance of this asset");
+        unchecked {
+            assetBalances[assetGuid] -= value;
+        }
+        SafeERC20.safeTransfer(erc20, destinationAddress, value);
+    }
+    function withdrawSYS(uint value, address payable destinationAddress) private {
+        require(address(this).balance >= value && value > 0, "Value must be positive and contract has to have sufficient balance of SYS");
+        // stop using .transfer() because of gas issue after ethereum upgrade
+        (bool success, ) = destinationAddress.call{value: value}("");
+        require(success, "Could not execute msg.sender.call.value");
+    }
+    function depositAsset(IERC20Metadata erc20, uint32 assetGuid, uint value) private {
+        SafeERC20.safeTransferFrom(erc20, msg.sender, address(this), value);
+        assetBalances[assetGuid] += value;
     }
 }

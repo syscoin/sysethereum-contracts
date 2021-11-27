@@ -1,4 +1,4 @@
-var HDWalletProvider = require("@truffle/hdwallet-provider");
+const HDWalletProvider = require('@truffle/hdwallet-provider');
 const etherscanAPIKEY = process.env.ETHERSCAN;
 var mnenomic = "cup aisle bright dice when flame left assume laptop lock cry brown";
 module.exports = {
@@ -12,48 +12,40 @@ module.exports = {
     },
     mainnet: {
       host: "localhost",
-      port: 8645,
-      from: "0x8d827Cf5515718a79Be1DC38152873bC0C1cA263",
-      skipDryRun: true,
-      network_id: "1",
-      gasPrice: "30000000000" // 30 gWei
+      port: 8101,
+      from: "0xe600696eb0555c93f2c391a1406726cee239091d",
+      network_id: "57",
+      gasPrice: "10000000000" // 10 gWei
     },
-    ropsten: {
+    tanenbaum: {
       host: "localhost",
-      port: 8545,
-      network_id: "3", // Ropsten
+      port: 8101,
+      from: "0xe600696eb0555c93f2c391a1406726cee239091d",
+      network_id: "5700", 
       gas: 1000000,
-      gasPrice: "20000000000"
+      maxFeePerGas: 1000000,
+      maxPriorityFeePerGas: "1000000"
     },
     rinkeby: {
       provider:   function () {
-         return new HDWalletProvider(mnenomic, "https://rinkeby.infura.io/v3/d178aecf49154b12be98e68e998cfb8d");
+         return new HDWalletProvider(mnenomic, "http://localhost:8101");
       },
-      network_id: "4",
-      skipDryRun: true,
+      network_id: "5700",
       gasPrice: "6000000000"
     }
   },
-  plugins: [
-    'truffle-plugin-verify'
-  ],
   api_keys: {
     etherscan: etherscanAPIKEY
   },
-  solc: {
-    optimizer: {
-      enabled: true,
-      runs: 200
-    }
-  },
   compilers: {
     solc: {
-      version: "0.5.13",
+      version: "native",
+      docker: false,
       settings: {
         optimizer: {
           enabled: true,
           runs: 200
-        }
+        },
       }
     }
   }
