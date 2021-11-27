@@ -6,7 +6,7 @@
     "test": "test"
   },
   "dependencies": {
-    "@openzeppelin/contracts": "^4.2.0",
+    "@openzeppelin/contracts": "^4.3.3",
     "@truffle/hdwallet-provider": "^1.5.1-alpha.0",
     "ganache-cli": "^6.12.2",
     "openzeppelin-solidity": "^4.2.0",
