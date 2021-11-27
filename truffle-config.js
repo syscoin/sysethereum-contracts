@@ -15,7 +15,9 @@ module.exports = {
       port: 8101,
       from: "0xe600696eb0555c93f2c391a1406726cee239091d",
       network_id: "57",
-      gasPrice: "10000000000" // 10 gWei
+      gas: 1000000,
+      maxFeePerGas: 1000000,
+      maxPriorityFeePerGas: "1000000"
     },
     tanenbaum: {
       host: "localhost",
