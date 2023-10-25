@@ -2020,6 +2020,12 @@
     "version": "0.8.7-develop.2021.7.7+commit.46514ffa.mod.Darwin.appleclang"
   },
   "networks": {
+    "57": {
+      "events": {},
+      "links": {},
+      "address": "0x4C14020f953B6aB03FCa5880EEc39bFC1C37243E",
+      "transactionHash": "0xda222f6a485b332c24fb2ece090fd9f1dae7ba79d1520183eba420a8f66aee84"
+    },
     "5700": {
       "events": {},
       "links": {},
@@ -2028,7 +2034,7 @@
     }
   },
   "schemaVersion": "3.4.3",
-  "updatedAt": "2021-09-27T20:59:35.468Z",
+  "updatedAt": "2021-12-07T02:48:39.830Z",
   "networkType": "ethereum",
   "devdoc": {
     "kind": "dev",
