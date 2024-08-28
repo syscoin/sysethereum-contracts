@@ -1,61 +1,62 @@
 {
   "contractName": "SyscoinErrorCodes",
   "abi": [],
-  "metadata": "{\"compiler\":{\"version\":\"0.8.7-develop.2021.7.7+commit.46514ffa.mod\"},\"language\":\"Solidity\",\"output\":{\"abi\":[],\"devdoc\":{\"kind\":\"dev\",\"methods\":{},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{},\"version\":1}},\"settings\":{\"compilationTarget\":{\"project:/contracts/SyscoinErrorCodes.sol\":\"SyscoinErrorCodes\"},\"evmVersion\":\"berlin\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\"},\"optimizer\":{\"enabled\":true,\"runs\":200},\"remappings\":[]},\"sources\":{\"project:/contracts/SyscoinErrorCodes.sol\":{\"keccak256\":\"0xfa20e9fc49ae9f27a8d4370e0c40b6e786ce322cdd9d5862cab04fefa51169b6\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://4963c6806204a2e032c2972505473d239155d8995d227e6276b94d85c54e29f9\",\"dweb:/ipfs/QmYozjmNdVFBQuF4LCqKutwMjLjfayrrDMpsJriEGC9KUJ\"]}},\"version\":1}",
-  "bytecode": "0x6080604052348015600f57600080fd5b50606780601d6000396000f3fe6080604052600080fdfea2646970667358221220fea9918b808401f0c0ee821395e555b60bf48b7732a8e8f14e5f764d679c83c664736f6c63782a302e382e372d646576656c6f702e323032312e372e372b636f6d6d69742e34363531346666612e6d6f64005b",
-  "deployedBytecode": "0x6080604052600080fdfea2646970667358221220fea9918b808401f0c0ee821395e555b60bf48b7732a8e8f14e5f764d679c83c664736f6c63782a302e382e372d646576656c6f702e323032312e372e372b636f6d6d69742e34363531346666612e6d6f64005b",
+  "metadata": "{\"compiler\":{\"version\":\"0.8.17+commit.8df45f5f\"},\"language\":\"Solidity\",\"output\":{\"abi\":[],\"devdoc\":{\"kind\":\"dev\",\"methods\":{},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{},\"version\":1}},\"settings\":{\"compilationTarget\":{\"project:/contracts/SyscoinErrorCodes.sol\":\"SyscoinErrorCodes\"},\"evmVersion\":\"london\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\"},\"optimizer\":{\"enabled\":true,\"runs\":200},\"remappings\":[]},\"sources\":{\"project:/contracts/SyscoinErrorCodes.sol\":{\"keccak256\":\"0x8aec72639577436f66cdfc65408f3acbeb0b29e60565c2ad0d26f6cc826ca192\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://90de0cfa0e680e00df4c2d150f9e1f92ec8ceb1d00544835e911688715d5423b\",\"dweb:/ipfs/QmYtwsfDnunfMrm9zmX8Lc7Tr54m3yv1XXGavWdVvYMndt\"]}},\"version\":1}",
+  "bytecode": "0x6080604052348015600f57600080fd5b50603f80601d6000396000f3fe6080604052600080fdfea264697066735822122050d3f7982c9223978bbcf64b5fa9b2cc121ab96fc02c6448e3165208f701f36264736f6c63430008110033",
+  "deployedBytecode": "0x6080604052600080fdfea264697066735822122050d3f7982c9223978bbcf64b5fa9b2cc121ab96fc02c6448e3165208f701f36264736f6c63430008110033",
   "immutableReferences": {},
   "generatedSources": [],
   "deployedGeneratedSources": [],
-  "sourceMap": "92:256:9:-:0;;;;;;;;;;;;;;;;;;;",
-  "deployedSourceMap": "92:256:9:-:0;;;;;",
-  "source": "// SPDX-License-Identifier: MIT\npragma solidity ^0.8.6;\n\n// @dev - SyscoinRelay error codes\ncontract SyscoinErrorCodes {\n    uint constant ERR_INVALID_HEADER = 10000;\n    uint constant ERR_INVALID_HEADER_HASH = 10010;\n    uint constant ERR_PARSE_TX_SYS = 10020;\n    uint constant ERR_MERKLE_ROOT = 10030;\n    uint constant ERR_TX_64BYTE = 10040;\n\n}\n",
+  "sourceMap": "93:256:1:-:0;;;;;;;;;;;;;;;;;;;",
+  "deployedSourceMap": "93:256:1:-:0;;;;;",
+  "source": "// SPDX-License-Identifier: MIT\npragma solidity ^0.8.17;\n\n// @dev - SyscoinRelay error codes\ncontract SyscoinErrorCodes {\n    uint constant ERR_INVALID_HEADER = 10000;\n    uint constant ERR_INVALID_HEADER_HASH = 10010;\n    uint constant ERR_PARSE_TX_SYS = 10020;\n    uint constant ERR_MERKLE_ROOT = 10030;\n    uint constant ERR_TX_64BYTE = 10040;\n\n}\n",
   "sourcePath": "/Users/jagsidhu/work/Documents/GitHub/sysethereum-contracts/contracts/SyscoinErrorCodes.sol",
   "ast": {
     "absolutePath": "project:/contracts/SyscoinErrorCodes.sol",
     "exportedSymbols": {
       "SyscoinErrorCodes": [
-        1368
+        75
       ]
     },
-    "id": 1369,
+    "id": 76,
     "license": "MIT",
     "nodeType": "SourceUnit",
     "nodes": [
       {
-        "id": 1352,
+        "id": 59,
         "literals": [
           "solidity",
           "^",
           "0.8",
-          ".6"
+          ".17"
         ],
         "nodeType": "PragmaDirective",
-        "src": "32:23:9"
+        "src": "32:24:1"
       },
       {
         "abstract": false,
         "baseContracts": [],
+        "canonicalName": "SyscoinErrorCodes",
         "contractDependencies": [],
         "contractKind": "contract",
         "fullyImplemented": true,
-        "id": 1368,
+        "id": 75,
         "linearizedBaseContracts": [
-          1368
+          75
         ],
         "name": "SyscoinErrorCodes",
-        "nameLocation": "101:17:9",
+        "nameLocation": "102:17:1",
         "nodeType": "ContractDefinition",
         "nodes": [
           {
             "constant": true,
-            "id": 1355,
+            "id": 62,
             "mutability": "constant",
             "name": "ERR_INVALID_HEADER",
-            "nameLocation": "139:18:9",
+            "nameLocation": "140:18:1",
             "nodeType": "VariableDeclaration",
-            "scope": 1368,
-            "src": "125:40:9",
+            "scope": 75,
+            "src": "126:40:1",
             "stateVariable": true,
             "storageLocation": "default",
             "typeDescriptions": {
@@ -63,10 +64,10 @@
               "typeString": "uint256"
             },
             "typeName": {
-              "id": 1353,
+              "id": 60,
               "name": "uint",
               "nodeType": "ElementaryTypeName",
-              "src": "125:4:9",
+              "src": "126:4:1",
               "typeDescriptions": {
                 "typeIdentifier": "t_uint256",
                 "typeString": "uint256"
@@ -74,14 +75,14 @@
             },
             "value": {
               "hexValue": "3130303030",
-              "id": 1354,
+              "id": 61,
               "isConstant": false,
               "isLValue": false,
               "isPure": true,
               "kind": "number",
               "lValueRequested": false,
               "nodeType": "Literal",
-              "src": "160:5:9",
+              "src": "161:5:1",
               "typeDescriptions": {
                 "typeIdentifier": "t_rational_10000_by_1",
                 "typeString": "int_const 10000"
@@ -92,13 +93,13 @@
           },
           {
             "constant": true,
-            "id": 1358,
+            "id": 65,
             "mutability": "constant",
             "name": "ERR_INVALID_HEADER_HASH",
-            "nameLocation": "185:23:9",
+            "nameLocation": "186:23:1",
             "nodeType": "VariableDeclaration",
-            "scope": 1368,
-            "src": "171:45:9",
+            "scope": 75,
+            "src": "172:45:1",
             "stateVariable": true,
             "storageLocation": "default",
             "typeDescriptions": {
@@ -106,10 +107,10 @@
               "typeString": "uint256"
             },
             "typeName": {
-              "id": 1356,
+              "id": 63,
               "name": "uint",
               "nodeType": "ElementaryTypeName",
-              "src": "171:4:9",
+              "src": "172:4:1",
               "typeDescriptions": {
                 "typeIdentifier": "t_uint256",
                 "typeString": "uint256"
@@ -117,14 +118,14 @@
             },
             "value": {
               "hexValue": "3130303130",
-              "id": 1357,
+              "id": 64,
               "isConstant": false,
               "isLValue": false,
               "isPure": true,
               "kind": "number",
               "lValueRequested": false,
               "nodeType": "Literal",
-              "src": "211:5:9",
+              "src": "212:5:1",
               "typeDescriptions": {
                 "typeIdentifier": "t_rational_10010_by_1",
                 "typeString": "int_const 10010"
@@ -135,13 +136,13 @@
           },
           {
             "constant": true,
-            "id": 1361,
+            "id": 68,
             "mutability": "constant",
             "name": "ERR_PARSE_TX_SYS",
-            "nameLocation": "236:16:9",
+            "nameLocation": "237:16:1",
             "nodeType": "VariableDeclaration",
-            "scope": 1368,
-            "src": "222:38:9",
+            "scope": 75,
+            "src": "223:38:1",
             "stateVariable": true,
             "storageLocation": "default",
             "typeDescriptions": {
@@ -149,10 +150,10 @@
               "typeString": "uint256"
             },
             "typeName": {
-              "id": 1359,
+              "id": 66,
               "name": "uint",
               "nodeType": "ElementaryTypeName",
-              "src": "222:4:9",
+              "src": "223:4:1",
               "typeDescriptions": {
                 "typeIdentifier": "t_uint256",
                 "typeString": "uint256"
@@ -160,14 +161,14 @@
             },
             "value": {
               "hexValue": "3130303230",
-              "id": 1360,
+              "id": 67,
               "isConstant": false,
               "isLValue": false,
               "isPure": true,
               "kind": "number",
               "lValueRequested": false,
               "nodeType": "Literal",
-              "src": "255:5:9",
+              "src": "256:5:1",
               "typeDescriptions": {
                 "typeIdentifier": "t_rational_10020_by_1",
                 "typeString": "int_const 10020"
@@ -178,13 +179,13 @@
           },
           {
             "constant": true,
-            "id": 1364,
+            "id": 71,
             "mutability": "constant",
             "name": "ERR_MERKLE_ROOT",
-            "nameLocation": "280:15:9",
+            "nameLocation": "281:15:1",
             "nodeType": "VariableDeclaration",
-            "scope": 1368,
-            "src": "266:37:9",
+            "scope": 75,
+            "src": "267:37:1",
             "stateVariable": true,
             "storageLocation": "default",
             "typeDescriptions": {
@@ -192,10 +193,10 @@
               "typeString": "uint256"
             },
             "typeName": {
-              "id": 1362,
+              "id": 69,
               "name": "uint",
               "nodeType": "ElementaryTypeName",
-              "src": "266:4:9",
+              "src": "267:4:1",
               "typeDescriptions": {
                 "typeIdentifier": "t_uint256",
                 "typeString": "uint256"
@@ -203,14 +204,14 @@
             },
             "value": {
               "hexValue": "3130303330",
-              "id": 1363,
+              "id": 70,
               "isConstant": false,
               "isLValue": false,
               "isPure": true,
               "kind": "number",
               "lValueRequested": false,
               "nodeType": "Literal",
-              "src": "298:5:9",
+              "src": "299:5:1",
               "typeDescriptions": {
                 "typeIdentifier": "t_rational_10030_by_1",
                 "typeString": "int_const 10030"
@@ -221,13 +222,13 @@
           },
           {
             "constant": true,
-            "id": 1367,
+            "id": 74,
             "mutability": "constant",
             "name": "ERR_TX_64BYTE",
-            "nameLocation": "323:13:9",
+            "nameLocation": "324:13:1",
             "nodeType": "VariableDeclaration",
-            "scope": 1368,
-            "src": "309:35:9",
+            "scope": 75,
+            "src": "310:35:1",
             "stateVariable": true,
             "storageLocation": "default",
             "typeDescriptions": {
@@ -235,10 +236,10 @@
               "typeString": "uint256"
             },
             "typeName": {
-              "id": 1365,
+              "id": 72,
               "name": "uint",
               "nodeType": "ElementaryTypeName",
-              "src": "309:4:9",
+              "src": "310:4:1",
               "typeDescriptions": {
                 "typeIdentifier": "t_uint256",
                 "typeString": "uint256"
@@ -246,14 +247,14 @@
             },
             "value": {
               "hexValue": "3130303430",
-              "id": 1366,
+              "id": 73,
               "isConstant": false,
               "isLValue": false,
               "isPure": true,
               "kind": "number",
               "lValueRequested": false,
               "nodeType": "Literal",
-              "src": "339:5:9",
+              "src": "340:5:1",
               "typeDescriptions": {
                 "typeIdentifier": "t_rational_10040_by_1",
                 "typeString": "int_const 10040"
@@ -263,58 +264,59 @@
             "visibility": "internal"
           }
         ],
-        "scope": 1369,
-        "src": "92:256:9",
+        "scope": 76,
+        "src": "93:256:1",
         "usedErrors": []
       }
     ],
-    "src": "32:317:9"
+    "src": "32:318:1"
   },
   "legacyAST": {
     "absolutePath": "project:/contracts/SyscoinErrorCodes.sol",
     "exportedSymbols": {
       "SyscoinErrorCodes": [
-        1368
+        75
       ]
     },
-    "id": 1369,
+    "id": 76,
     "license": "MIT",
     "nodeType": "SourceUnit",
     "nodes": [
       {
-        "id": 1352,
+        "id": 59,
         "literals": [
           "solidity",
           "^",
           "0.8",
-          ".6"
+          ".17"
         ],
         "nodeType": "PragmaDirective",
-        "src": "32:23:9"
+        "src": "32:24:1"
       },
       {
         "abstract": false,
         "baseContracts": [],
+        "canonicalName": "SyscoinErrorCodes",
         "contractDependencies": [],
         "contractKind": "contract",
         "fullyImplemented": true,
-        "id": 1368,
+        "id": 75,
         "linearizedBaseContracts": [
-          1368
+          75
         ],
         "name": "SyscoinErrorCodes",
-        "nameLocation": "101:17:9",
+        "nameLocation": "102:17:1",
         "nodeType": "ContractDefinition",
         "nodes": [
           {
             "constant": true,
-            "id": 1355,
+            "id": 62,
             "mutability": "constant",
             "name": "ERR_INVALID_HEADER",
-            "nameLocation": "139:18:9",
+            "nameLocation": "140:18:1",
             "nodeType": "VariableDeclaration",
-            "scope": 1368,
-            "src": "125:40:9",
+            "scope": 75,
+            "src": "126:40:1",
             "stateVariable": true,
             "storageLocation": "default",
             "typeDescriptions": {
@@ -322,10 +324,10 @@
               "typeString": "uint256"
             },
             "typeName": {
-              "id": 1353,
+              "id": 60,
               "name": "uint",
               "nodeType": "ElementaryTypeName",
-              "src": "125:4:9",
+              "src": "126:4:1",
               "typeDescriptions": {
                 "typeIdentifier": "t_uint256",
                 "typeString": "uint256"
@@ -333,14 +335,14 @@
             },
             "value": {
               "hexValue": "3130303030",
-              "id": 1354,
+              "id": 61,
               "isConstant": false,
               "isLValue": false,
               "isPure": true,
               "kind": "number",
               "lValueRequested": false,
               "nodeType": "Literal",
-              "src": "160:5:9",
+              "src": "161:5:1",
               "typeDescriptions": {
                 "typeIdentifier": "t_rational_10000_by_1",
                 "typeString": "int_const 10000"
@@ -351,13 +353,13 @@
           },
           {
             "constant": true,
-            "id": 1358,
+            "id": 65,
             "mutability": "constant",
             "name": "ERR_INVALID_HEADER_HASH",
-            "nameLocation": "185:23:9",
+            "nameLocation": "186:23:1",
             "nodeType": "VariableDeclaration",
-            "scope": 1368,
-            "src": "171:45:9",
+            "scope": 75,
+            "src": "172:45:1",
             "stateVariable": true,
             "storageLocation": "default",
             "typeDescriptions": {
@@ -365,10 +367,10 @@
               "typeString": "uint256"
             },
             "typeName": {
-              "id": 1356,
+              "id": 63,
               "name": "uint",
               "nodeType": "ElementaryTypeName",
-              "src": "171:4:9",
+              "src": "172:4:1",
               "typeDescriptions": {
                 "typeIdentifier": "t_uint256",
                 "typeString": "uint256"
@@ -376,14 +378,14 @@
             },
             "value": {
               "hexValue": "3130303130",
-              "id": 1357,
+              "id": 64,
               "isConstant": false,
               "isLValue": false,
               "isPure": true,
               "kind": "number",
               "lValueRequested": false,
               "nodeType": "Literal",
-              "src": "211:5:9",
+              "src": "212:5:1",
               "typeDescriptions": {
                 "typeIdentifier": "t_rational_10010_by_1",
                 "typeString": "int_const 10010"
@@ -394,13 +396,13 @@
           },
           {
             "constant": true,
-            "id": 1361,
+            "id": 68,
             "mutability": "constant",
             "name": "ERR_PARSE_TX_SYS",
-            "nameLocation": "236:16:9",
+            "nameLocation": "237:16:1",
             "nodeType": "VariableDeclaration",
-            "scope": 1368,
-            "src": "222:38:9",
+            "scope": 75,
+            "src": "223:38:1",
             "stateVariable": true,
             "storageLocation": "default",
             "typeDescriptions": {
@@ -408,10 +410,10 @@
               "typeString": "uint256"
             },
             "typeName": {
-              "id": 1359,
+              "id": 66,
               "name": "uint",
               "nodeType": "ElementaryTypeName",
-              "src": "222:4:9",
+              "src": "223:4:1",
               "typeDescriptions": {
                 "typeIdentifier": "t_uint256",
                 "typeString": "uint256"
@@ -419,14 +421,14 @@
             },
             "value": {
               "hexValue": "3130303230",
-              "id": 1360,
+              "id": 67,
               "isConstant": false,
               "isLValue": false,
               "isPure": true,
               "kind": "number",
               "lValueRequested": false,
               "nodeType": "Literal",
-              "src": "255:5:9",
+              "src": "256:5:1",
               "typeDescriptions": {
                 "typeIdentifier": "t_rational_10020_by_1",
                 "typeString": "int_const 10020"
@@ -437,13 +439,13 @@
           },
           {
             "constant": true,
-            "id": 1364,
+            "id": 71,
             "mutability": "constant",
             "name": "ERR_MERKLE_ROOT",
-            "nameLocation": "280:15:9",
+            "nameLocation": "281:15:1",
             "nodeType": "VariableDeclaration",
-            "scope": 1368,
-            "src": "266:37:9",
+            "scope": 75,
+            "src": "267:37:1",
             "stateVariable": true,
             "storageLocation": "default",
             "typeDescriptions": {
@@ -451,10 +453,10 @@
               "typeString": "uint256"
             },
             "typeName": {
-              "id": 1362,
+              "id": 69,
               "name": "uint",
               "nodeType": "ElementaryTypeName",
-              "src": "266:4:9",
+              "src": "267:4:1",
               "typeDescriptions": {
                 "typeIdentifier": "t_uint256",
                 "typeString": "uint256"
@@ -462,14 +464,14 @@
             },
             "value": {
               "hexValue": "3130303330",
-              "id": 1363,
+              "id": 70,
               "isConstant": false,
               "isLValue": false,
               "isPure": true,
               "kind": "number",
               "lValueRequested": false,
               "nodeType": "Literal",
-              "src": "298:5:9",
+              "src": "299:5:1",
               "typeDescriptions": {
                 "typeIdentifier": "t_rational_10030_by_1",
                 "typeString": "int_const 10030"
@@ -480,13 +482,13 @@
           },
           {
             "constant": true,
-            "id": 1367,
+            "id": 74,
             "mutability": "constant",
             "name": "ERR_TX_64BYTE",
-            "nameLocation": "323:13:9",
+            "nameLocation": "324:13:1",
             "nodeType": "VariableDeclaration",
-            "scope": 1368,
-            "src": "309:35:9",
+            "scope": 75,
+            "src": "310:35:1",
             "stateVariable": true,
             "storageLocation": "default",
             "typeDescriptions": {
@@ -494,10 +496,10 @@
               "typeString": "uint256"
             },
             "typeName": {
-              "id": 1365,
+              "id": 72,
               "name": "uint",
               "nodeType": "ElementaryTypeName",
-              "src": "309:4:9",
+              "src": "310:4:1",
               "typeDescriptions": {
                 "typeIdentifier": "t_uint256",
                 "typeString": "uint256"
@@ -505,14 +507,14 @@
             },
             "value": {
               "hexValue": "3130303430",
-              "id": 1366,
+              "id": 73,
               "isConstant": false,
               "isLValue": false,
               "isPure": true,
               "kind": "number",
               "lValueRequested": false,
               "nodeType": "Literal",
-              "src": "339:5:9",
+              "src": "340:5:1",
               "typeDescriptions": {
                 "typeIdentifier": "t_rational_10040_by_1",
                 "typeString": "int_const 10040"
@@ -522,20 +524,20 @@
             "visibility": "internal"
           }
         ],
-        "scope": 1369,
-        "src": "92:256:9",
+        "scope": 76,
+        "src": "93:256:1",
         "usedErrors": []
       }
     ],
-    "src": "32:317:9"
+    "src": "32:318:1"
   },
   "compiler": {
     "name": "solc",
-    "version": "0.8.7-develop.2021.7.7+commit.46514ffa.mod.Darwin.appleclang"
+    "version": "0.8.17+commit.8df45f5f.Emscripten.clang"
   },
   "networks": {},
   "schemaVersion": "3.4.3",
-  "updatedAt": "2021-09-27T20:50:58.225Z",
+  "updatedAt": "2024-08-28T20:37:46.046Z",
   "devdoc": {
     "kind": "dev",
     "methods": {},

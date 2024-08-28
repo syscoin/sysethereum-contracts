@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.6;
+pragma solidity ^0.8.17;
 
-import "../interfaces/SyscoinTransactionProcessorI.sol";
+import "./interfaces/SyscoinTransactionProcessorI.sol";
 
 contract SyscoinVaultManager is SyscoinTransactionProcessorI {
 

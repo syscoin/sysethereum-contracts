@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.6;
+pragma solidity ^0.8.17;
 
 import './interfaces/SyscoinRelayI.sol';
 import "./interfaces/SyscoinTransactionProcessorI.sol";
@@ -9,13 +9,15 @@ import "./SyscoinParser/SyscoinMessageLibrary.sol";
 contract SyscoinRelay is SyscoinRelayI, SyscoinErrorCodes, SyscoinMessageLibrary {
     bytes1 constant OP_PUSHDATA1 = 0x4c;
     bytes1 constant OP_PUSHDATA2 = 0x4d;
+    address internal constant SYSBLOCKHASH_PRECOMPILE_ADDRESS = address(0x61);
+    uint16 internal constant SYSBLOCKHASH_PRECOMPILE_COST = 200;
     SyscoinTransactionProcessorI public syscoinVaultManager;
     event VerifyTransaction(bytes32 txHash, uint returnCode);
     event RelayTransaction(bytes32 txHash, uint returnCode);
 
     // @param _syscoinVaultManager - address of the SyscoinVaultManager contract to be associated with
     function init(address _syscoinVaultManager) external {
-        require(address(_syscoinVaultManager) == address(0) && _syscoinVaultManager != address(0));
+        require(address(syscoinVaultManager) == address(0) && _syscoinVaultManager != address(0));
         syscoinVaultManager = SyscoinTransactionProcessorI(_syscoinVaultManager);
     }
 
@@ -28,10 +30,10 @@ contract SyscoinRelay is SyscoinRelayI, SyscoinErrorCodes, SyscoinMessageLibrary
 
 
     // Returns address parsed from the op_return data output from syscoin burn transaction
-    function scanBurnTx(bytes memory txBytes, uint opIndex, uint pos)
+    function scanBurnTx(bytes memory txBytes, uint pos)
         public
         pure
-        returns address
+        returns (address)
     {
         uint numBytesInAddress;
         // destination address
@@ -56,7 +58,7 @@ contract SyscoinRelay is SyscoinRelayI, SyscoinErrorCodes, SyscoinMessageLibrary
         return (uint8(txBytes[pos]), pos + 1);
     }
 
-    function getOpReturnPos(bytes memory txBytes, uint pos) public pure returns (uint, uint, uint) {
+    function getOpReturnPos(bytes memory txBytes, uint pos) public pure returns (uint, uint) {
         uint n_inputs;
         uint script_len;
         uint output_value;
@@ -81,7 +83,7 @@ contract SyscoinRelay is SyscoinRelayI, SyscoinErrorCodes, SyscoinMessageLibrary
         (n_outputs, pos) = parseCompactSize(txBytes, pos);
         require(n_outputs < 10, "#SyscoinRelay getOpReturnPos(): Incorrect size of n_outputs");
         for (uint i = 0; i < n_outputs; i++) {
-            output_value = getBytesLE(txBytes, pos, 64)
+            output_value = getBytesLE(txBytes, pos, 64);
             pos += 8;
             // varint
             (script_len, pos) = parseCompactSize(txBytes, pos);
@@ -104,7 +106,7 @@ contract SyscoinRelay is SyscoinRelayI, SyscoinErrorCodes, SyscoinMessageLibrary
             } else {
                 pos += 1; // skip 1 byte varint
             }
-            return (i, pos, output_value);
+            return (pos, output_value);
         }
         revert("#SyscoinRelay getOpReturnPos(): No OpReturn found");
     }
@@ -128,8 +130,18 @@ contract SyscoinRelay is SyscoinRelayI, SyscoinErrorCodes, SyscoinMessageLibrary
             emit VerifyTransaction(0, ERR_INVALID_HEADER);
             return 0;
         }
-        // ensure the NEVM block number can lookup a valid syscoin block hash
-        if (uint(sysblockhash(_blockNumber)) != dblSha(_syscoinBlockHeader)) {
+        // Create the input data for the SYSBLOCKHASH precompile
+        bytes memory input = abi.encodePacked(_blockNumber);
+
+        // Call the SYSBLOCKHASH precompile
+        (bool success, bytes memory result) = SYSBLOCKHASH_PRECOMPILE_ADDRESS.staticcall{gas: SYSBLOCKHASH_PRECOMPILE_COST}(input);
+
+        // Ensure the call was successful and the result is not empty
+        require(success, "SYSBLOCKHASH precompile call failed.");
+        require(result.length > 0, "SYSBLOCKHASH precompile returned empty result.");
+
+        // Compare the result (the Syscoin block hash) with the expected double SHA256 hash of the block header
+        if (uint256(bytes32(result)) != dblSha(_syscoinBlockHeader)) {
             emit VerifyTransaction(0, ERR_INVALID_HEADER_HASH);
             return 0;
         }
@@ -182,8 +194,8 @@ contract SyscoinRelay is SyscoinRelayI, SyscoinErrorCodes, SyscoinMessageLibrary
         returns (uint errorCode, uint output_value, address destinationAddress)
     {
         uint pos = 0;
-        (opIndex, pos, output_value) = getOpReturnPos(txBytes, 4);
-        destinationAddress = scanBurnTx(txBytes, opIndex, pos);
+        (pos, output_value) = getOpReturnPos(txBytes, 4);
+        destinationAddress = scanBurnTx(txBytes, pos);
         return (0, output_value, destinationAddress);
     }
 
