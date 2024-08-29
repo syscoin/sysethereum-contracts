@@ -5,8 +5,10 @@ import './interfaces/SyscoinRelayI.sol';
 import "./interfaces/SyscoinTransactionProcessorI.sol";
 import "./SyscoinErrorCodes.sol";
 import "./SyscoinParser/SyscoinMessageLibrary.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
 
-contract SyscoinRelay is SyscoinRelayI, SyscoinErrorCodes, SyscoinMessageLibrary {
+contract SyscoinRelay is SyscoinRelayI, SyscoinErrorCodes, SyscoinMessageLibrary, Ownable {
+    bool public initialized = false;
     bytes1 constant OP_PUSHDATA1 = 0x4c;
     bytes1 constant OP_PUSHDATA2 = 0x4d;
     address internal constant SYSBLOCKHASH_PRECOMPILE_ADDRESS = address(0x61);
@@ -16,10 +18,13 @@ contract SyscoinRelay is SyscoinRelayI, SyscoinErrorCodes, SyscoinMessageLibrary
     event RelayTransaction(bytes32 txHash, uint returnCode);
 
     // @param _syscoinVaultManager - address of the SyscoinVaultManager contract to be associated with
-    function init(address _syscoinVaultManager) external {
-        require(address(syscoinVaultManager) == address(0) && _syscoinVaultManager != address(0));
+    function init(address _syscoinVaultManager) external onlyOwner {
+        require(!initialized, "Already initialized");
+        require(_syscoinVaultManager != address(0), "Invalid address");
         syscoinVaultManager = SyscoinTransactionProcessorI(_syscoinVaultManager);
+        initialized = true;
     }
+
 
     // Returns true if the tx output is an OP_RETURN output
     function isOpReturn(bytes memory txBytes, uint pos) internal pure returns (bool) {

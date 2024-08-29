@@ -2,8 +2,9 @@
 pragma solidity ^0.8.17;
 
 import "./interfaces/SyscoinTransactionProcessorI.sol";
+import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 
-contract SyscoinVaultManager is SyscoinTransactionProcessorI {
+contract SyscoinVaultManager is SyscoinTransactionProcessorI, ReentrancyGuard {
 
 
     // Contract to trust for tx included in a syscoin block verification.
@@ -42,7 +43,7 @@ contract SyscoinVaultManager is SyscoinTransactionProcessorI {
         uint txHash,
         uint value,
         address destinationAddress
-    ) external override onlyTrustedRelayer {
+    ) external override onlyTrustedRelayer nonReentrant {
         value *= uint(10)**(uint(10));
         
         require(value > 0, "Value must be positive");
@@ -65,9 +66,8 @@ contract SyscoinVaultManager is SyscoinTransactionProcessorI {
     }
 
     function withdrawSYS(uint value, address payable destinationAddress) private {
-        require(address(this).balance >= value && value > 0, "Value must be positive and contract has to have sufficient balance of SYS");
-        // stop using .transfer() because of gas issue after ethereum upgrade
+        require(address(this).balance >= value && value > 0, "Insufficient balance or invalid value");
         (bool success, ) = destinationAddress.call{value: value}("");
-        require(success, "Could not execute msg.sender.call.value");
+        require(success, "Withdraw failed");
     }
 }

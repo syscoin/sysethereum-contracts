@@ -7,20 +7,24 @@ contract SyscoinMessageLibrary {
 
     // Convert a compact size for wire for variable length fields
     function parseCompactSize(bytes memory txBytes, uint pos) public pure returns (uint, uint) {
-        // the first byte tells us how big the integer is
+        require(pos < txBytes.length, "Out of bounds");
+
         uint8 ibit = uint8(txBytes[pos]);
-        pos += 1;  // skip ibit
+        pos += 1;
 
         if (ibit < 0xfd) {
             return (ibit, pos);
         } else if (ibit == 0xfd) {
+            require(pos + 2 <= txBytes.length, "Out of bounds");
             return (getBytesLE(txBytes, pos, 16), pos + 2);
         } else if (ibit == 0xfe) {
+            require(pos + 4 <= txBytes.length, "Out of bounds");
             return (getBytesLE(txBytes, pos, 32), pos + 4);
         } else if (ibit == 0xff) {
+            require(pos + 8 <= txBytes.length, "Out of bounds");
             return (getBytesLE(txBytes, pos, 64), pos + 8);
         }
-        revert('#SyscoinMessageLibrary parseCompactSize invalid opcode');
+        revert("#SyscoinMessageLibrary parseCompactSize invalid opcode");
     }
     // Convert a variable integer into something useful and return it and
     // the index to after it.
