@@ -63,7 +63,7 @@ contract SyscoinRelay is SyscoinRelayI, SyscoinErrorCodes, SyscoinMessageLibrary
         return (uint8(txBytes[pos]), pos + 1);
     }
 
-    function getOpReturnPos(bytes memory txBytes, uint pos) public pure returns (uint, uint) {
+    function getOpReturnPos(bytes memory txBytes, uint pos) internal pure returns (uint, uint) {
         uint n_inputs;
         uint script_len;
         uint output_value;
@@ -151,7 +151,12 @@ contract SyscoinRelay is SyscoinRelayI, SyscoinErrorCodes, SyscoinMessageLibrary
             return 0;
         }
         // then ensure that the SPV proof against this validated syscoin block header is also valid
-        return verifyTx(_txBytes, _txIndex, _txSiblings, _syscoinBlockHeader);
+        uint txHash = verifySPVProofs(_blockNumber, _syscoinBlockHeader, _txBytes, _txIndex, _txSiblings);
+        if (txHash == 0) {
+            emit VerifyTransaction(0, ERR_TX_VERIFICATION_FAILED);
+            return 0;
+        }
+        return txHash;
     }
 
     // @dev - relays transaction `_txBytes` to SyscoinVaultManager's processTransaction() method.
@@ -233,14 +238,14 @@ contract SyscoinRelay is SyscoinRelayI, SyscoinErrorCodes, SyscoinMessageLibrary
             return 0;
         }
     }
-    function dblSha(bytes memory _dataBytes) public pure returns (uint) {
+    function dblSha(bytes memory _dataBytes) internal pure returns (uint) {
         return uint(sha256(abi.encodePacked(sha256(abi.encodePacked(_dataBytes)))));
     }
 
     // @dev - Bitcoin-way of hashing
     // @param _dataBytes - raw data to be hashed
     // @return - result of applying SHA-256 twice to raw data and then flipping the bytes
-    function dblShaFlip(bytes memory _dataBytes) public pure returns (uint) {
+    function dblShaFlip(bytes memory _dataBytes) internal pure returns (uint) {
         return flip32Bytes(dblSha(_dataBytes));
     }
 
@@ -249,7 +254,7 @@ contract SyscoinRelay is SyscoinRelayI, SyscoinErrorCodes, SyscoinMessageLibrary
     // @param _blockHeader - Syscoin block header bytes
     // @param pos - where to start reading root from
     // @return - block's Merkle root in big endian format
-    function getHeaderMerkleRoot(bytes memory _blockHeader) public pure returns (uint) {
+    function getHeaderMerkleRoot(bytes memory _blockHeader) internal pure returns (uint) {
         uint merkle;
         assembly {
             merkle := mload(add(add(_blockHeader, 32), 0x24))

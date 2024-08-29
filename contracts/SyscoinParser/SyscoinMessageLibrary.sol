@@ -6,7 +6,7 @@ pragma solidity ^0.8.17;
 contract SyscoinMessageLibrary {
 
     // Convert a compact size for wire for variable length fields
-    function parseCompactSize(bytes memory txBytes, uint pos) public pure returns (uint, uint) {
+    function parseCompactSize(bytes memory txBytes, uint pos) internal pure returns (uint, uint) {
         require(pos < txBytes.length, "Out of bounds");
 
         uint8 ibit = uint8(txBytes[pos]);
@@ -30,24 +30,24 @@ contract SyscoinMessageLibrary {
     // the index to after it.
     function parseVarInt(bytes memory txBytes, uint pos, uint max) public pure returns (uint, uint) {
         uint n = 0;
-        while(true) {
+        while (true) {
             uint8 chData = uint8(txBytes[pos]);
             require(n <= (max >> 7), "#SyscoinMessageLibrary parseVarInt(): size too large");
             pos += 1;
             n = (n << 7) | (chData & 0x7F);
-            if ((chData & 0x80) > 0) {
-                require((n != max), "#SyscoinMessageLibrary parseVarInt(): size too large");
-                n++;
-            } else {
-                return (n, pos);
+            if ((chData & 0x80) == 0) {
+                require(n != max, "#SyscoinMessageLibrary parseVarInt(): size too large");
+                break;
             }
+            require(n + 1 > n, "#SyscoinMessageLibrary parseVarInt(): overflow detected"); // overflow check
+            n++;
         }
-        revert('#SyscoinMessageLibrary parseVarInt invalid opcode');
+        return (n, pos);
     }
 
     // convert little endian bytes to uint
     function getBytesLE(bytes memory data, uint pos, uint bits)
-        public
+        internal
         pure
         returns (uint256 result)
     {
@@ -61,7 +61,7 @@ contract SyscoinMessageLibrary {
     //
     // @param _input - little-endian value
     // @return - input value in big-endian format
-    function flip32Bytes(uint _input) public pure returns (uint result) {
+    function flip32Bytes(uint _input) internal pure returns (uint result) {
         assembly {
             let pos := mload(0x40)
             mstore8(add(pos, 0), byte(31, _input))
@@ -108,10 +108,12 @@ contract SyscoinMessageLibrary {
     // @return - Merkle tree root of the block the transaction belongs to if the proof is valid,
     // garbage if it's invalid
     function computeMerkle(uint _txHash, uint _txIndex, uint[] memory _siblings)
-        public
-        pure
-        returns (uint)
+    public
+    pure
+    returns (uint)
     {
+        require(_siblings.length > 0, "#SyscoinMessageLibrary computeMerkle(): No siblings provided");
+        
         uint length = _siblings.length;
         uint i;
         for (i = 0; i < length; i++) {
