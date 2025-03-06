@@ -16,7 +16,7 @@
 
 ## Introduction
 
-**Sysethereum** is a set of smart contracts on the [NEVM (Syscoin’s EVM layer)](https://syscoin.org) that implements a *decentralized* and *trust-minimized* bridge between the **Syscoin UTXO blockchain** and the **NEVM**. It allows assets (Syscoin Platform Tokens or plain SYS) to move seamlessly between the two worlds.
+**Sysethereum** is a set of smart contracts on the [NEVM (Syscoin’s EVM layer)](https://syscoin.org) that implements a *decentralized* bridge between the **Syscoin UTXO blockchain** and the **NEVM**. It allows assets (Syscoin Platform Tokens or plain SYS) to move seamlessly between the two worlds.
 
 > **Note**: If you are new to the Syscoin <=> NEVM bridge, check out the [**sysethereum-docs** repository](https://github.com/syscoin/sysethereum-docs) for an overview of the bridging process and user flow.
 
