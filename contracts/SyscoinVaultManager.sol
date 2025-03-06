@@ -7,6 +7,8 @@ import "@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol";
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 import "@openzeppelin/contracts/token/ERC1155/IERC1155.sol";
+import "@openzeppelin/contracts/token/ERC1155/utils/ERC1155Holder.sol";
+import "@openzeppelin/contracts/token/ERC721/utils/ERC721Holder.sol";
 import "./interfaces/SyscoinTransactionProcessorI.sol";
 /**
  * @title SyscoinVaultManager
@@ -25,7 +27,7 @@ import "./interfaces/SyscoinTransactionProcessorI.sol";
  *   - For ERC721, bridging 1 token => 'tokenIdx' is new each time or looked up.
  *   - For ERC1155, bridging 'amount' => 'tokenIdx' references specific tokenId in the contract.
  */
-contract SyscoinVaultManager is SyscoinTransactionProcessorI, ReentrancyGuard {
+contract SyscoinVaultManager is SyscoinTransactionProcessorI, ReentrancyGuard, ERC1155Holder, ERC721Holder {
     using SafeERC20 for IERC20Metadata;
 
     //-------------------------------------------------------------------------
@@ -48,7 +50,8 @@ contract SyscoinVaultManager is SyscoinTransactionProcessorI, ReentrancyGuard {
         // tokenIndex => realTokenId for NFT / 1155
         mapping(uint32 => uint256) tokenRegistry;
     }
-
+    // 9,999,999,999.99999999 => ~1e18 satoshis (10B -1)
+    uint256 constant MAX_SYS_SUPPLY_SATS = 9999999999 * 100000000; 
     //-------------------------------------------------------------------------
     // State Variables
     //-------------------------------------------------------------------------
@@ -79,7 +82,7 @@ contract SyscoinVaultManager is SyscoinTransactionProcessorI, ReentrancyGuard {
     // Events
     //-------------------------------------------------------------------------
 
-    event TokenFreeze(uint64 indexed assetGuid, address indexed freezer, uint value, uint precisions);
+    event TokenFreeze(uint64 indexed assetGuid, address indexed freezer, uint value);
     event TokenUnfreeze(uint64 indexed assetGuid, address indexed recipient, uint value);
     event TokenRegistry(uint32 indexed assetId, address assetContract, AssetType assetType);
 
@@ -138,8 +141,8 @@ contract SyscoinVaultManager is SyscoinTransactionProcessorI, ReentrancyGuard {
         if (assetGuid == SYSAssetGuid) {
             // bridging in native SYS
             require(value > 0, "Value must be positive");
-            uint adjustedValue = _adjustValueForDecimals(value, 18);
-            _withdrawSYS(adjustedValue, payable(destination));
+            uint mintedAmount = scaleFromSatoshi(value, 18);
+            _withdrawSYS(mintedAmount, payable(destination));
         } else {
             (uint32 tokenIdx, uint32 assetId) = _parseAssetGuid(assetGuid);
             AssetRegistryItem storage item = assetRegistry[assetId];
@@ -147,8 +150,8 @@ contract SyscoinVaultManager is SyscoinTransactionProcessorI, ReentrancyGuard {
 
             if (item.assetType == AssetType.ERC20) {
                 require(value > 0, "Value must be positive");
-                uint adjustedValue = _adjustValueForDecimals(value, item.precision);
-                _withdrawERC20(item.assetContract, adjustedValue, destination);
+                uint mintedAmount = scaleFromSatoshi(value, item.precision);
+                _withdrawERC20(item.assetContract, mintedAmount, destination);
             } 
             else if (item.assetType == AssetType.ERC721) {
                 // bridging 1 NFT => value=1
@@ -192,12 +195,13 @@ contract SyscoinVaultManager is SyscoinTransactionProcessorI, ReentrancyGuard {
         returns (bool)
     {
         require(bytes(syscoinAddr).length > 0, "Syscoin address required");
-
+        uint satoshiValue;
         if (assetAddr == address(0)) {
             // bridging native coin => must match msg.value
             require(value == msg.value, "Value mismatch for native bridging");
+            satoshiValue = scaleToSatoshi(value, 18); // "native SYS on NEVM" is 18 dec
             // just log the freeze => user must parse
-            emit TokenFreeze(SYSAssetGuid, msg.sender, value, 8);
+            emit TokenFreeze(SYSAssetGuid, msg.sender, satoshiValue);
             return true;
         }
 
@@ -219,7 +223,6 @@ contract SyscoinVaultManager is SyscoinTransactionProcessorI, ReentrancyGuard {
             newItem.assetContract = assetAddr;
             newItem.precision = _defaultPrecision(detectedType, assetAddr);
             newItem.tokenIdCount = 0;
-
             emit TokenRegistry(assetId, assetAddr, detectedType);
         }
 
@@ -229,20 +232,19 @@ contract SyscoinVaultManager is SyscoinTransactionProcessorI, ReentrancyGuard {
         // deposit
         if (item.assetType == AssetType.ERC20) {
             require(value > 0, "ERC20 deposit => value>0");
-            // check if scaledValue fits in 2^63-1
-            // same logic as `_adjustValueForDecimals`, but we do a local check:
-            uint scaledValue = _checkScaledValue(value, item.precision);
-            // revert if > 2^63-1
-            require(scaledValue <= 0x7FFFFFFFFFFFFFFF, "Bridging amount too large");
+            satoshiValue = scaleToSatoshi(value, item.precision);
             _depositERC20(assetAddr, value);
         }
         else if (item.assetType == AssetType.ERC721) {
             // bridging 1 NFT => value=1
             require(value == 1, "ERC721 => bridging 1 NFT");
+            satoshiValue = value; // no decimals => 1:1
             _depositERC721(assetAddr, tokenId);
         }
         else if (item.assetType == AssetType.ERC1155) {
             require(value > 0, "ERC1155 => bridging requires value>0");
+            satoshiValue = value; // no decimals => 1:1
+            require(satoshiValue <= MAX_SYS_SUPPLY_SATS, "Overflow bridging to Sys");
             _depositERC1155(assetAddr, tokenId, value);
         }
         else {
@@ -254,11 +256,9 @@ contract SyscoinVaultManager is SyscoinTransactionProcessorI, ReentrancyGuard {
         if (item.assetType == AssetType.ERC721 || item.assetType == AssetType.ERC1155) {
             tokenIndex = _findOrAssignTokenIndex(item, tokenId);
         }
-
         // assetGuid => (tokenIndex << 32) | assetId
         uint64 assetGuid = (uint64(tokenIndex) << 32) | uint64(assetId);
-
-        emit TokenFreeze(assetGuid, msg.sender, value, item.precision);
+        emit TokenFreeze(assetGuid, msg.sender, satoshiValue);
         return true;
     }
 
@@ -314,32 +314,47 @@ contract SyscoinVaultManager is SyscoinTransactionProcessorI, ReentrancyGuard {
         return newIndex;
     }
 
-    // For bridging from Sys => NEVM, we multiply or divide to match the local token decimals
-    function _adjustValueForDecimals(uint rawValue, uint8 registryPrecision) internal pure returns (uint) {
-        // Sys => 8 decimals, if registryPrecision=18 => multiply => possible overflow
-        // after we do the math, ensure <= 2^63-1
-        uint8 sysDecimals = 8;
-        uint scaled = rawValue;
-        if (registryPrecision > sysDecimals) {
-            scaled = scaled * (10 ** (registryPrecision - sysDecimals));
-        } else if (registryPrecision < sysDecimals) {
-            scaled = scaled / (10 ** (sysDecimals - registryPrecision));
+    /**
+    * @dev scaleToSatoshi: Convert `rawValue` from `tokenDecimals` to 8 decimals.
+    *      Then require <= MAX_SYS_SUPPLY_SATS.
+    *
+    * Example:
+    *   tokenDecimals=18, rawValue=1000000000000000000 (1 token)
+    *   => scaleDown => 1 * 10^(8-18) => 1/10^10 => truncated => 0 if < 10^10
+    *   => if fromDecimals < 8 => scale up => leftover fraction => none, integer multiply
+    */
+    function scaleToSatoshi(uint rawValue, uint8 tokenDecimals) internal pure returns (uint) {
+        uint scaled;
+        if (tokenDecimals > 8) {
+            // scale down => integer division truncates fraction
+            scaled = rawValue / (10 ** (tokenDecimals - 8));
+        } else if (tokenDecimals < 8) {
+            // scale up
+            scaled = rawValue * (10 ** (8 - tokenDecimals));
+        } else {
+            scaled = rawValue;
         }
-        require(scaled <= 0x7FFFFFFFFFFFFFFF, "Bridged amount too large");
+        require(scaled <= MAX_SYS_SUPPLY_SATS, "Overflow bridging to Sys");
         return scaled;
     }
-
-    // Same logic but used in freezeBurn to check if bridging from NEVM => Sys might overflow
-    function _checkScaledValue(uint rawValue, uint8 registryPrecision) internal pure returns (uint) {
-        // e.g. if registryPrecision=18, we do rawValue * 10^(18-8) => check <= 2^63-1
-        uint8 sysDecimals = 8;
-        uint scaled = rawValue;
-        if (registryPrecision > sysDecimals) {
-            scaled = scaled * (10 ** (registryPrecision - sysDecimals));
-        } else if (registryPrecision < sysDecimals) {
-            scaled = scaled / (10 ** (sysDecimals - registryPrecision));
+    /**
+    * @dev scaleFromSatoshi: Convert `satValue` in 8 decimals to `tokenDecimals`.
+    *      Typically no overflow check is needed, because we assume Sys side
+    *      never exceeds ~1e18. If you want to be extra safe, do an additional check.
+    *
+    * Example:
+    *   tokenDecimals=18, satValue=123 (1.23e2 => 1.23 sat) => scaleUp => 123 * 10^(18-8) => 123 * 10^10.
+    */
+    function scaleFromSatoshi(uint satValue, uint8 tokenDecimals) internal pure returns (uint) {
+        if (tokenDecimals > 8) {
+            // scale up
+            return satValue * (10 ** (tokenDecimals - 8));
+        } else if (tokenDecimals < 8) {
+            // scale down => integer div
+            return satValue / (10 ** (8 - tokenDecimals));
+        } else {
+            return satValue;
         }
-        return scaled;
     }
 
     //-------------------------------------------------------------------------
@@ -352,11 +367,11 @@ contract SyscoinVaultManager is SyscoinTransactionProcessorI, ReentrancyGuard {
     }
 
     function _withdrawERC20(address assetContract, uint amount, address to) internal {
-        IERC20Metadata(assetContract).safeTransferFrom(address(this), to, amount);
+        IERC20Metadata(assetContract).safeTransfer(to, amount);
     }
 
     function _depositERC721(address assetContract, uint tokenId) internal {
-        IERC721(assetContract).transferFrom(msg.sender, address(this), tokenId);
+        IERC721(assetContract).safeTransferFrom(msg.sender, address(this), tokenId);
     }
 
     function _withdrawERC721(address assetContract, uint tokenId, address to) internal {

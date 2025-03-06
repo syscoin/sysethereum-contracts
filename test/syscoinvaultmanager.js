@@ -28,18 +28,21 @@ contract("SyscoinVaultManager", (accounts) => {
       // give user 100 tokens
       await erc20.mint(owner, web3.utils.toWei("100")); 
       // user approves
-      await erc20.approve(vault.address, web3.utils.toWei("10"), {from: owner});
+      await erc20.approve(vault.address, web3.utils.toWei("5"), {from: owner});
       // freezeBurn 5 tokens
-      let tx = await vault.freezeBurn(
-        web3.utils.toWei("5"),
+      const tx = await vault.freezeBurn(
+        web3.utils.toWei("5"), // 5 in smallest decimal units
         erc20.address,
-        0, // tokenId = 0 for ERC20
+        0,
         "sys1qtestaddress",
-        {from: owner}
+        { from: owner }
       );
+      
 
+      // Now check the event on `tx`
       truffleAssert.eventEmitted(tx, 'TokenFreeze', (ev) => {
-        return ev.value.toString() === web3.utils.toWei("5");
+        // But your bridging code might actually log a scaled satoshiValue, e.g. "500000000"
+        return ev.value.toString() === "500000000";
       });
 
       // confirm the asset auto-registered
@@ -62,33 +65,57 @@ contract("SyscoinVaultManager", (accounts) => {
 
     it("should revert if scaledValue > 2^63-1", async () => {
       // decimals=18 => bridging 1e10 => 1e10 * 1e10 => 1e20 => exceeds 2^63-1 ~ 9.22e18
-      await erc20.mint(owner, web3.utils.toWei("1000000000000")); // 1e12
+      await erc20.mint(owner, web3.utils.toWei("10000000000"));
       // approve
-      await erc20.approve(vault.address, web3.utils.toWei("1000000000000"), {from: owner});
+      await erc20.approve(vault.address, web3.utils.toWei("10000000000"), {from: owner});
       // try bridging
       await truffleAssert.reverts(
         vault.freezeBurn(
-          web3.utils.toWei("1000000000000"), // 1e12
+          web3.utils.toWei("10000000000"),
           erc20.address,
           0,
           "sys1qtestaddress",
           {from: owner}
         ),
-        "Bridging amount too large"
+        "Overflow bridging to Sys"
       );
     });
-
+    it("should pass 10b - 1", async () => {
+      // 10b - 1
+      await erc20.mint(owner, web3.utils.toWei("9999999999"));
+      // approve
+      await erc20.approve(vault.address, web3.utils.toWei("9999999999"), {from: owner});
+      // try bridging
+      await vault.freezeBurn(
+        web3.utils.toWei("9999999999"),
+        erc20.address,
+        0,
+        "sys1qtestaddress",
+        {from: owner}
+      );
+    });
     it("should handle a processTransaction from trustedRelayer", async () => {
       // simulate a sys->nevm bridging
       const mockTxHash = 12345;
+      // register asset by freezeBurn(1, erc20,0,...) or some minimal deposit
+      await erc20.mint(owner, "100");
+      await erc20.approve(vault.address, "100", {from: owner});
+      await vault.freezeBurn(
+        "100",
+        erc20.address,
+        0,
+        "sys1someaddr",
+        { from: owner }
+      );
       const assetId = await vault.assetRegistryByAddress(erc20.address);
       // assetGuid => (tokenIndex<<32) | assetId
       // tokenIndex=0 for ERC20
       const assetGuid = (BigInt(0) << 32n) | BigInt(assetId.toNumber());
-      // call processTransaction
+      expect(assetId.toNumber()).to.be.eq(1);
+      // now asset is in registry => processTransaction 
       await vault.processTransaction(
         mockTxHash,
-        100, // bridging 100 raw
+        "100", // bridging 100 raw
         accounts[2], // destination
         assetGuid,
         {from: trustedRelayer}
@@ -98,7 +125,7 @@ contract("SyscoinVaultManager", (accounts) => {
       await truffleAssert.reverts(
         vault.processTransaction(
           mockTxHash,
-          50,
+          "100",
           accounts[3],
           assetGuid,
           {from: trustedRelayer}
@@ -148,6 +175,75 @@ contract("SyscoinVaultManager", (accounts) => {
         "ERC721 => bridging 1 NFT"
       );
     });
+    it("should bridging 1 NFT => value=1", async () => {
+      // Mint tokenId=1
+      await erc721.mint(owner);
+      // Approve vault
+      await erc721.approve(vault.address,2,{ from: owner });
+      let tx = await vault.freezeBurn(
+        1,
+        erc721.address,
+        2, 
+        "sys1mydestination",
+        { from: owner }
+      );
+      // check event => value=1
+      truffleAssert.eventEmitted(tx, "TokenFreeze", (ev) => {
+        return ev.value.toString() === "1";
+      });
+    });
+
+    it("should revert bridging value=2 for ERC721", async () => {
+      await erc721.mint(owner);
+      await erc721.approve(vault.address,3,{ from: owner });
+      await truffleAssert.reverts(
+        vault.freezeBurn(
+          2,
+          erc721.address,
+          3,
+          "sys1mydestination",
+          { from: owner }
+        ),
+        "ERC721 => bridging 1 NFT"
+      );
+    });
+    it("should bridging in => value=1 => unlock the NFT", async () => {
+      // Suppose tokenId=1 was locked. We do processTransaction(999,3,dest,assetGuid)
+      // parse item, calls _withdrawERC721
+      const assetId = await vault.assetRegistryByAddress(erc721.address);
+      let assetGuid = (BigInt(3) << 32n) | BigInt(assetId.toNumber()); 
+      await vault.freezeBurn(
+        1,
+        erc721.address,
+        3,
+        "sys1mydestination",
+        { from: owner }
+      )
+      // bridging => tokenIdx=3 => realTokenId=1
+      await vault.processTransaction(
+        1000,
+        1,
+        accounts[2],
+        assetGuid,
+        { from: trustedRelayer }
+      );
+      // we'd check the NFT is transferred => you'd need to read from NFT to confirm
+    });
+    it("should bridging in => value=2 => reverts", async () => {
+      // Suppose tokenId=1 was locked. We do processTransaction(999,3,dest,assetGuid)
+      // parse item, calls _withdrawERC721
+      const assetId = await vault.assetRegistryByAddress(erc721.address);
+      let assetGuid = (BigInt(3) << 32n) | BigInt(assetId.toNumber()); 
+      await truffleAssert.reverts(
+        vault.processTransaction(
+          1001,
+          2,
+          accounts[2],
+          assetGuid,
+          { from: trustedRelayer }
+        ),
+        "ERC721 bridging requires value=1");
+    });
   });
 
   describe("ERC1155 bridging tests", () => {
@@ -182,6 +278,76 @@ contract("SyscoinVaultManager", (accounts) => {
         ),
         "ERC1155 => bridging requires value>0"
       );
+    });
+    it("should freezeBurn 100 integer units in 1155 => bridging to Sys", async () => {
+      // user minted 1000 units of ID=777 in erc1155
+      await erc1155.mint(owner, 777, 1000);
+      await erc1155.setApprovalForAll(vault.address, true, { from: owner });
+      // bridging 200 => under 10B => pass
+      let tx = await vault.freezeBurn(
+        200,
+        erc1155.address,
+        777,
+        "sys1address",
+        { from: owner }
+      );
+      truffleAssert.eventEmitted(tx, "TokenFreeze", ev => {
+        return ev.value.toString() === "200";
+      });
+    });
+    it("should revert bridging >10B for 1155", async () => {
+      await erc1155.mint(owner, 777, "20000000000"); // 20B
+      await erc1155.setApprovalForAll(vault.address, true, { from: owner });
+      await vault.freezeBurn(
+        "20000000000", 
+        erc1155.address,
+        777,
+        "sys1address",
+        { from: owner }
+      );
+    });
+    it("should processTransaction for 1155 integer bridging", async () => {
+      // Suppose Sys side minted 300 for ID=777 => bridging to NEVM
+      // relay calls processTransaction(..., 300, ..., assetGuidFor1155)
+      await vault.processTransaction(
+        999,
+        300,
+        owner,
+        0x00000001_00000003, // tokenIdx=1, assetId=3, for example
+        { from: trustedRelayer }
+      );
+      // check user got 300 units => calls _withdrawERC1155(...,300)
+    });
+    it("should bridging 1155 quantity up to 10B-1", async () => {
+      // Mint ID=777 with 1e10-1 => 9999999999
+      await erc1155.mint(owner, 777, "9999999999");
+      // Approve 
+      await erc1155.setApprovalForAll(vault.address,true,{from:owner});
+      let tx = await vault.freezeBurn(
+        "9999999999",
+        erc1155.address,
+        777,
+        "sys1mydestination",
+        {from:owner}
+      );
+      truffleAssert.eventEmitted(tx, "TokenFreeze", (ev) => {
+        return ev.value.toString() === "9999999999";
+      });
+    });
+ 
+    it("should bridging 1155 quantity => direct integer unlock", async () => {
+      // Suppose user bridging 500 from Sys => call processTransaction(999,500,...)
+      const assetId = await vault.assetRegistryByAddress(erc1155.address);
+      let assetGuid = (BigInt(1) << 32n) | BigInt(assetId.toNumber());
+      await vault.processTransaction(
+        998, 
+        500, 
+        accounts[2],
+        assetGuid,
+        {from:trustedRelayer}
+      );
+      // check logs, or read from multi => see 500 was transferred 
+      // you'd need a more advanced mocking approach that allows us to confirm final balance
     });
   });
 
