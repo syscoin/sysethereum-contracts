@@ -109,10 +109,10 @@ contract SyscoinRelay is SyscoinRelayI, SyscoinErrorCodes, SyscoinMessageLibrary
     }
 
     // Returns asset data parsed from the op_return data output from syscoin asset burn transaction
-    function scanBurnTx(bytes memory txBytes, uint pos)
+    function scanBurnTx(bytes memory txBytes, uint opIndex, uint pos)
         public
         pure
-        returns (uint, address, uint64)
+        returns (uint output_value, address destinationAddress, uint64 assetGuid)
     {
         uint numBytesInAddress;
         (output_value, assetGuid, pos) = parseFirstAssetCommitmentInTx(txBytes, pos, int(opIndex));
@@ -200,12 +200,12 @@ contract SyscoinRelay is SyscoinRelayI, SyscoinErrorCodes, SyscoinMessageLibrary
     // @param _txIndex - transaction's index within the block
     // @param _txSiblings - transaction's Merkle siblings
     // @param _syscoinBlockHeader - block header containing transaction
-    function verifySPVProofs(
-        uint64 _blockNumber,
-        bytes memory _syscoinBlockHeader,
-        bytes memory _txBytes,
-        uint _txIndex,
-        uint[] memory _txSiblings
+   function verifySPVProofs(
+    uint64 _blockNumber,
+    bytes memory _syscoinBlockHeader,
+    bytes memory _txBytes,
+    uint _txIndex,
+    uint[] memory _txSiblings
     ) private returns (uint) {
         if (_syscoinBlockHeader.length != 80) {  
             emit VerifyTransaction(0, ERR_INVALID_HEADER);
@@ -217,23 +217,22 @@ contract SyscoinRelay is SyscoinRelayI, SyscoinErrorCodes, SyscoinMessageLibrary
         // Call the SYSBLOCKHASH precompile
         (bool success, bytes memory result) = SYSBLOCKHASH_PRECOMPILE_ADDRESS.staticcall{gas: SYSBLOCKHASH_PRECOMPILE_COST}(input);
 
-        // Ensure the call was successful and the result is not empty
         require(success, "SYSBLOCKHASH precompile call failed.");
-        require(result.length > 0, "SYSBLOCKHASH precompile returned empty result.");
+        require(result.length > 0, "SYSBLOCKHASH precompile returned empty.");
 
-        // Compare the result (the Syscoin block hash) with the expected double SHA256 hash of the block header
         if (uint256(bytes32(result)) != dblSha(_syscoinBlockHeader)) {
             emit VerifyTransaction(0, ERR_INVALID_HEADER_HASH);
             return 0;
         }
-        // then ensure that the SPV proof against this validated syscoin block header is also valid
-        uint txHash = verifySPVProofs(_blockNumber, _syscoinBlockHeader, _txBytes, _txIndex, _txSiblings);
+
+        uint txHash = verifyTx(_txBytes, _txIndex, _txSiblings, _syscoinBlockHeader);
         if (txHash == 0) {
             emit VerifyTransaction(0, ERR_TX_VERIFICATION_FAILED);
             return 0;
         }
         return txHash;
     }
+
 
     // @dev - relays transaction `_txBytes` to SyscoinVaultManager's processTransaction() method.
     // Also logs the value of processTransaction.
@@ -265,7 +264,7 @@ contract SyscoinRelay is SyscoinRelayI, SyscoinErrorCodes, SyscoinMessageLibrary
             emit RelayTransaction(bytes32(txHash), ret);
             return ret;
         }
-        syscoinVaultManager.processTransaction(txHash, value, destinationAddress);
+        syscoinVaultManager.processTransaction(txHash, value, destinationAddress, assetGuid);
         return value;
     }
 

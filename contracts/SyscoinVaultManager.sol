@@ -201,9 +201,23 @@ contract SyscoinVaultManager is SyscoinTransactionProcessorI, ReentrancyGuard {
         AssetRegistryItem storage item = assetRegistry[assetId];
         require(item.assetType == atype, "Mismatch asset type");
 
-        // deposit the tokens
+        // If bridging an ERC20, ensure 'value' won't exceed 2^63-1 after scaling on the UTXO side.
         if (item.assetType == AssetType.ERC20) {
             require(value > 0, "ERC20 deposit => value>0");
+            // Check if the scaled result can fit in int64 on UTXO side:
+            // scaledValue = value*(10^(precision-8)) or / if <8
+            // For a worst-case scenario: if item.precision > 8 => multiply => can overflow
+            // We'll do a local check using the same logic as _adjustValueForDecimals:
+            uint8 sysDecimals = 8;
+            uint scaledValue = value;
+            if (item.precision > sysDecimals) {
+                scaledValue = scaledValue * (10 ** (item.precision - sysDecimals));
+            } else if (item.precision < sysDecimals) {
+                scaledValue = scaledValue / (10 ** (sysDecimals - item.precision));
+            }
+            // Now ensure scaledValue <= 2^63-1 => 9,223,372,036,854,775,807
+            // (Aka int64 max)
+            require(scaledValue <= 0x7FFFFFFFFFFFFFFF, "Bridging amount too large");
             _depositERC20(item.assetContract, value);
         }
         else if (item.assetType == AssetType.ERC721) {
@@ -221,7 +235,6 @@ contract SyscoinVaultManager is SyscoinTransactionProcessorI, ReentrancyGuard {
         // figure out the "tokenIndex" if NFT
         uint32 tokenIndex = 0;
         if (item.assetType == AssetType.ERC721 || item.assetType == AssetType.ERC1155) {
-            // do we already know this tokenId? If not, store it:
             tokenIndex = _findOrAssignTokenIndex(item, tokenId);
         }
 
@@ -242,8 +255,8 @@ contract SyscoinVaultManager is SyscoinTransactionProcessorI, ReentrancyGuard {
      *      increments `item.tokenIdCount` and stores it under a new index.
      */
     function _findOrAssignTokenIndex(AssetRegistryItem storage item, uint256 realTokenId) internal returns (uint32) {
-        // If the same realTokenId can appear multiple times, you’ll need a reverse lookup
-        // to see if we already assigned an index. For simplicity, assume each deposit is unique:
+        // If the same realTokenId can appear multiple times, you’d need a reverse lookup
+        // For now, assume each deposit is unique:
         item.tokenIdCount++;
         uint32 newIndex = item.tokenIdCount;
         item.tokenRegistry[newIndex] = realTokenId;
@@ -251,19 +264,13 @@ contract SyscoinVaultManager is SyscoinTransactionProcessorI, ReentrancyGuard {
     }
 
     function _detectAssetType(address assetAddr) internal view returns (AssetType) {
-        // If a contract claims to implement ERC165, check 721 or 1155
-        //  - ERC721 interfaceId = 0x80ac58cd
-        //  - ERC1155 interfaceId = 0xd9b67a26
-        // Note: Some assets might incorrectly claim these or fail to claim them.
         bool supportsERC165 = ERC165Checker.supportsERC165(assetAddr);
-
         if (supportsERC165) {
-            bool isERC721 = ERC165Checker.supportsInterface(assetAddr, 0x80ac58cd);
-            if (isERC721) {
+            // ERC721 = 0x80ac58cd, ERC1155 = 0xd9b67a26
+            if (ERC165Checker.supportsInterface(assetAddr, 0x80ac58cd)) {
                 return AssetType.ERC721;
             }
-            bool isERC1155 = ERC165Checker.supportsInterface(assetAddr, 0xd9b67a26);
-            if (isERC1155) {
+            if (ERC165Checker.supportsInterface(assetAddr, 0xd9b67a26)) {
                 return AssetType.ERC1155;
             }
         }
@@ -286,7 +293,6 @@ contract SyscoinVaultManager is SyscoinTransactionProcessorI, ReentrancyGuard {
         assetId    = uint32(guid);
     }
 
-    // Track processed Syscoin tx
     function _insert(uint txHash) private returns (bool) {
         if (syscoinTxHashesAlreadyProcessed[txHash]) {
             return false;
@@ -330,16 +336,28 @@ contract SyscoinVaultManager is SyscoinTransactionProcessorI, ReentrancyGuard {
     }
 
     //-------------------------------------------------------------------------
-    // Utility: Adjust decimals if bridging to Syscoin’s 8 decimals
+    // Utility: Adjust decimals if bridging from Syscoin’s 8 decimals to local token decimals
     //-------------------------------------------------------------------------
 
     function _adjustValueForDecimals(uint rawValue, uint8 registryPrecision) internal pure returns (uint) {
+        // If bridging from Sys -> NEVM, 'rawValue' has 8 decimals on Sys,
+        // so we align it to the token's decimals. Or vice-versa if bridging the other direction,
+        // you'd do the same but in reverse. Here, this method is used in processTransaction.
+        // The final return must also fit in 64 bits (2^63-1).
+        // Let's do the scaling, then ensure it's under 2^63-1:
+
         uint8 sysDecimals = 8;
+        uint scaledValue = rawValue;
         if (registryPrecision > sysDecimals) {
-            return rawValue * (10 ** (registryPrecision - sysDecimals));
+            // multiply => potential overflow
+            scaledValue = scaledValue * (10 ** (registryPrecision - sysDecimals));
         } else if (registryPrecision < sysDecimals) {
-            return rawValue / (10 ** (sysDecimals - registryPrecision));
+            // divide
+            scaledValue = scaledValue / (10 ** (sysDecimals - registryPrecision));
         }
-        return rawValue;
+        // enforce 2^63-1 = 9,223,372,036,854,775,807
+        require(scaledValue <= 0x7FFFFFFFFFFFFFFF, "Bridged amount too large");
+
+        return scaledValue;
     }
 }
