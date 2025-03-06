@@ -56,6 +56,23 @@ contract SyscoinMessageLibrary {
         }
     }
 
+    // @dev - Converts a bytes of size 4 to uint32,
+    // e.g. for input [0x01, 0x02, 0x03 0x04] returns 0x01020304
+    function bytesToUint32Flipped(bytes memory input, uint pos)
+        public
+        pure
+        returns (uint32 result)
+    {
+        assembly {
+            let data := mload(add(add(input, 0x20), pos))
+            let flip := mload(0x40)
+            mstore8(add(flip, 0), byte(3, data))
+            mstore8(add(flip, 1), byte(2, data))
+            mstore8(add(flip, 2), byte(1, data))
+            mstore8(add(flip, 3), byte(0, data))
+            result := shr(mul(8, 28), mload(flip))
+        }
+    }
 
     // @dev - convert an unsigned integer from little-endian to big-endian representation
     //
