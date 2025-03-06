@@ -205,17 +205,14 @@ contract SyscoinVaultManager is SyscoinTransactionProcessorI, ReentrancyGuard {
         if (item.assetType == AssetType.ERC20) {
             require(value > 0, "ERC20 deposit => value>0");
             _depositERC20(item.assetContract, value);
-            // for fungible, tokenIndex=0
         }
         else if (item.assetType == AssetType.ERC721) {
             require(value == 1, "ERC721 => bridging 1 NFT");
             _depositERC721(item.assetContract, tokenId);
-            // store this tokenId in a new index if needed
         }
         else if (item.assetType == AssetType.ERC1155) {
             require(value > 0, "ERC1155 => bridging requires value>0");
             _depositERC1155(item.assetContract, tokenId, value);
-            // store this tokenId in a new index if needed
         }
         else {
             revert("Unsupported asset type");
@@ -345,7 +342,4 @@ contract SyscoinVaultManager is SyscoinTransactionProcessorI, ReentrancyGuard {
         }
         return rawValue;
     }
-
-    // Allow this contract to receive SYS
-    receive() external payable {}
 }
