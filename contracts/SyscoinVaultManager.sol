@@ -1,23 +1,24 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.17;
 
+import "@openzeppelin/contracts/utils/introspection/ERC165Checker.sol";
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol";
 import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 import "@openzeppelin/contracts/token/ERC1155/IERC1155.sol";
-import "./interfaces/SyscoinTransactionProcessorI.sol";
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
+import "./interfaces/SyscoinTransactionProcessorI.sol";
 
 /**
  * @title SyscoinVaultManager
  *
- * Lower 32 bits of assetGuid => assetId
- * Upper 32 bits of assetGuid => tokenId (if any, otherwise 0 for fungible)
+ * Lower 32 bits of assetGuid => assetId (local ID for the contract)
+ * Upper 32 bits of assetGuid => tokenIndex (for NFTs)
  *
  * Example:
  *   assetGuid = 0x00000001_0000ABCD
- *   - tokenId    = 0x00000001 (1 in decimal)
- *   - assetId = 0x0000ABCD (43981 in decimal)
+ *   - tokenIndex  = 0x00000001 (1 in decimal)
+ *   - assetId     = 0x0000ABCD (43981 in decimal)
  */
 contract SyscoinVaultManager is SyscoinTransactionProcessorI, ReentrancyGuard {
     using SafeERC20 for IERC20Metadata;
@@ -36,10 +37,11 @@ contract SyscoinVaultManager is SyscoinTransactionProcessorI, ReentrancyGuard {
 
     struct AssetRegistryItem {
         AssetType assetType;
-        uint32 tokenIdCount;
-        address assetContract;    // e.g., ERC20/721/1155 contract address
-        uint8 precision;          // For bridging decimals if needed (e.g., 8 for Syscoin assets)
-        mapping(uint32 => uint256) tokenRegistry;  // token index => tokenId
+        address assetContract;       // E.g. ERC20/721/1155 contract address
+        uint8 precision;             // For bridging decimals if needed
+        uint32 tokenIdCount;         // Number of NFT tokenIDs stored so far
+        // tokenIndex => realTokenId (for ERC721/1155)
+        mapping(uint32 => uint256) tokenRegistry;
     }
 
     //-------------------------------------------------------------------------
@@ -48,20 +50,21 @@ contract SyscoinVaultManager is SyscoinTransactionProcessorI, ReentrancyGuard {
 
     address public trustedRelayerContract;
 
-    // assetId => Asset info
-    mapping(uint32 => AssetRegistryItem) public assetRegistry;
+    // Maps a local 32-bit assetId to an AssetRegistryItem
+    mapping(uint32 => AssetRegistryItem) internal assetRegistry;
 
+    // Lets us quickly see if we've registered a particular contract
     mapping(address => uint32) public assetRegistryByAddress;
 
-    // Track processed Syscoin TXs (so they're not processed twice)
-    mapping(uint => bool) private syscoinTxHashesAlreadyProcessed;
-
-    // Example: The Syscoin asset GUID that references "native" SYS in NEVM (if any)
-    uint64 immutable SYSAssetGuid;
-
+    // Incrementing counter for new asset registrations
     uint32 public globalAssetIdCount;
 
-    bool private immutable testNetwork;
+    // Syscoin transactions that were already processed
+    mapping(uint => bool) private syscoinTxHashesAlreadyProcessed;
+
+    // If bridging "native SYS" in NEVM
+    uint64 public immutable SYSAssetGuid;
+    bool public immutable testNetwork;
 
     //-------------------------------------------------------------------------
     // Events
@@ -81,7 +84,7 @@ contract SyscoinVaultManager is SyscoinTransactionProcessorI, ReentrancyGuard {
         bool _testNetwork
     ) {
         trustedRelayerContract = _trustedRelayerContract;
-        SYSAssetGuid = _sysxGuid;
+        SYSAssetGuid = _sysxGuid; // e.g. your special GUID for native SYS bridging
         testNetwork = _testNetwork;
     }
 
@@ -95,160 +98,162 @@ contract SyscoinVaultManager is SyscoinTransactionProcessorI, ReentrancyGuard {
     }
 
     //-------------------------------------------------------------------------
-    // Public / External Functions
+    // External Bridge Functions
     //-------------------------------------------------------------------------
 
-
     /**
-     * @notice Process a syscoin->NEVM transaction (unfreeze).
-     *         Called by the trusted relayer to unlock assets on NEVM side.
+     * @notice Called by the trusted relayer to unlock tokens on NEVM side
+     *         after verifying a Syscoin->NEVM transaction (unfreeze).
      */
     function processTransaction(
         uint txHash,
         uint value,
         address destination,
         uint64 assetGuid
-    ) external override onlyTrustedRelayer {
+    )
+        external
+        override
+        onlyTrustedRelayer
+        nonReentrant
+    {
         require(_insert(txHash), "TX already processed");
-        (uint32 tokenIndex, uint32 assetIndex) = _parseAssetGuid(assetGuid);
-        AssetRegistryItem storage item = assetRegistry[assetIndex];
 
-        require(item.assetType != AssetType.INVALID);
+        // upper 32 => tokenIndex, lower 32 => assetId
+        (uint32 tokenIndex, uint32 assetId) = _parseAssetGuid(assetGuid);
+        AssetRegistryItem storage item = assetRegistry[assetId];
+        require(item.assetType != AssetType.INVALID, "Unknown assetId");
 
+        // Different bridging logic per asset type
         if (item.assetType == AssetType.SYS && !testNetwork) {
-            // Native SYS bridging
+            // bridging out native SYS
             require(value > 0, "Value must be positive");
-            uint adjustedValue = _adjustValueForDecimals(
-                value,
-                item.precision
-            );
+            uint adjustedValue = _adjustValueForDecimals(value, item.precision);
             _withdrawSYS(adjustedValue, payable(destination));
         }
         else if (item.assetType == AssetType.ERC20) {
             require(value > 0, "Value must be positive");
-            uint adjustedValue = _adjustValueForDecimals(
-                value,
-                item.precision
-            );
+            uint adjustedValue = _adjustValueForDecimals(value, item.precision);
             _withdrawERC20(item.assetContract, adjustedValue, destination);
         }
         else if (item.assetType == AssetType.ERC721) {
-            require(value == 1, "ERC721 bridging requires value == 1");
-            _withdrawERC721(item.assetContract, tokenIndex, destination);
+            // bridging out 1 NFT
+            require(value == 1, "ERC721 bridging requires value=1");
+            // retrieve real tokenId from the local mapping
+            uint256 realTokenId = item.tokenRegistry[tokenIndex];
+            require(realTokenId != 0, "No matching NFT tokenId");
+            _withdrawERC721(item.assetContract, realTokenId, destination);
         }
         else if (item.assetType == AssetType.ERC1155) {
+            // bridging out a quantity
             require(value > 0, "Value must be positive");
-            _withdrawERC1155(item.assetContract, tokenIndex, value, destination);
+            uint256 realTokenId = item.tokenRegistry[tokenIndex];
+            require(realTokenId != 0, "No matching 1155 tokenId");
+            _withdrawERC1155(item.assetContract, realTokenId, value, destination);
         }
 
         emit TokenUnfreeze(assetGuid, destination, value);
     }
 
     /**
-     * @notice NEVM -> Syscoin bridging. Locks/burns assets in this contract.
+     * @notice NEVM->Syscoin bridging: lock/burn assets in this contract
      */
     function freezeBurn(
         uint value,
         address assetAddr,
         uint256 tokenId,
         string memory syscoinAddr
-    ) external payable override returns (bool) 
+    )
+        external
+        payable
+        override
+        nonReentrant
+        returns (bool)
     {
         require(bytes(syscoinAddr).length > 0, "Syscoin address required");
-        // If assetAddr == 0, treat as native bridging
-        if (assetAddr != address(0)) {
-            // If fungible (SYS/ERC20), tokenIdCount=0 => assetGuid = assetIdIndex
-            uint64 assetGuid;
-            uint precision;
-            // 1. Detect asset type
-            AssetType assetTypeDetected = _detectAssetType(assetAddr);
 
-            // 2. Find or assign asset and tokenId
-            uint cId = assetRegistryByAddress[assetAddr];
-            if (cId == 0) {
-                // Not registered yet, auto-assign
-                // 3. Store in registry
-                precision = _defaultPrecision(assetTypeDetected, assetAddr);
-                assetRegistry[cId].assetType = assetTypeDetected;
-                assetRegistry[cId].assetContract = assetAddr;
-                assetRegistry[cId].precision = precision;
-                assetRegistry[cId].tokenIdCount = 0;
-                if(tokenId > 0) {
-                    uint32 newIndex = assetRegistry[cId].tokenIdCount + 1;
-                    assetRegistry[cId].tokenRegistry[newIndex] = tokenId;
-                    assetRegistry[cId].tokenIdCount = newIndex;
-                    assetGuid = (uint64(newIndex) << 32) | uint64(cId);
-                } else {
-                    assetGuid = uint64(globalAssetIdCount);
-                }
-                emit TokenRegistry(cId, assetAddr, assetTypeDetected);
-                assetRegistryByAddress[assetAddr] = globalAssetIdCount;
-                globalAssetIdCount++;
-            } else if(tokenId > 0) {
-                // registry exists so check token Identifier
-                precision = assetRegistry[cId].precision;
-                tokenIdCount = assetRegistry[cId].tokenRegistry[tokenId]
-                if(tokenIdCount == 0) {
-                    uint32 newIndex = assetRegistry[cId].tokenIdCount + 1;
-                    assetRegistry[cId].tokenRegistry[newIndex] = tokenId;
-                    assetRegistry[cId].tokenIdCount = newIndex;
-                    assetGuid = (uint64(newIndex) << 32) | uint64(cId);
-                } else {
-                    assetGuid = (uint64(tokenIdCount) << 32) | uint64(assetIdRegistry);
-                }
-            } else {
-                assetGuid = uint64(assetIdRegistry);
-            }
-
-            // 3. Do the actual deposit
-            require(value > 0, "Value must be > 0");
-            if (assetTypeDetected == AssetType.ERC20) {
-                _depositERC20(assetAddr, value);
-            } else if (assetTypeDetected == AssetType.ERC721) {
-                require(value == 1, "ERC721 deposit requires value==1");
-                _depositERC721(assetAddr, tokenId);
-            } else if (assetTypeDetected == AssetType.ERC1155) {
-                _depositERC1155(assetAddr, tokenId, value);
-            } else {
-                revert("Unsupported asset type or invalid token");
-            }
-
-            // 4. Emit event so your Syscoin logic knows which asset was deposited
-            emit TokenFreeze(
-                assetGuid,
-                msg.sender,
-                value,
-                precision
-            );
-        } else {
-            // E.g., bridging native SYS from NEVM to Syscoin
-            require(value == msg.value, "Value mismatch");
-            emit TokenFreeze(
-                SYSAssetGuid,
-                msg.sender,
-                value,
-                8
-            );
+        // If bridging native SYS (assetAddr=0)
+        if (assetAddr == address(0)) {
+            require(value == msg.value, "Value mismatch for native bridging");
+            // Just emit the freeze event referencing SYSAssetGuid
+            emit TokenFreeze(SYSAssetGuid, msg.sender, value, 8);
+            return true;
         }
+
+        // Otherwise, handle ERC20/721/1155 deposit
+        AssetType atype = _detectAssetType(assetAddr);
+        uint32 assetId = assetRegistryByAddress[assetAddr];
+        if (assetId == 0) {
+            // Not registered => create a new assetId
+            globalAssetIdCount++;
+            assetId = globalAssetIdCount;
+            assetRegistryByAddress[assetAddr] = assetId;
+
+            // init struct fields
+            AssetRegistryItem storage newItem = assetRegistry[assetId];
+            newItem.assetType = atype;
+            newItem.assetContract = assetAddr;
+            newItem.precision = _defaultPrecision(atype, assetAddr);
+            newItem.tokenIdCount = 0;
+
+            emit TokenRegistry(assetId, assetAddr, atype);
+        }
+
+        AssetRegistryItem storage item = assetRegistry[assetId];
+        require(item.assetType == atype, "Mismatch asset type");
+
+        // deposit the tokens
+        if (item.assetType == AssetType.ERC20) {
+            require(value > 0, "ERC20 deposit => value>0");
+            _depositERC20(item.assetContract, value);
+            // for fungible, tokenIndex=0
+        }
+        else if (item.assetType == AssetType.ERC721) {
+            require(value == 1, "ERC721 => bridging 1 NFT");
+            _depositERC721(item.assetContract, tokenId);
+            // store this tokenId in a new index if needed
+        }
+        else if (item.assetType == AssetType.ERC1155) {
+            require(value > 0, "ERC1155 => bridging requires value>0");
+            _depositERC1155(item.assetContract, tokenId, value);
+            // store this tokenId in a new index if needed
+        }
+        else {
+            revert("Unsupported asset type");
+        }
+
+        // figure out the "tokenIndex" if NFT
+        uint32 tokenIndex = 0;
+        if (item.assetType == AssetType.ERC721 || item.assetType == AssetType.ERC1155) {
+            // do we already know this tokenId? If not, store it:
+            tokenIndex = _findOrAssignTokenIndex(item, tokenId);
+        }
+
+        // build the assetGuid => (tokenIndex << 32) | assetId
+        uint64 assetGuid = (uint64(tokenIndex) << 32) | uint64(assetId);
+
+        // For logging, the "precision" can be item.precision or any combined logic
+        emit TokenFreeze(assetGuid, msg.sender, value, item.precision);
         return true;
     }
 
+    //-------------------------------------------------------------------------
+    // Internal Logic
+    //-------------------------------------------------------------------------
+
     /**
-     * @notice Check if a Syscoin TX has been processed
+     * @dev Finds if a given `tokenId` is already in the item.tokenRegistry. If not,
+     *      increments `item.tokenIdCount` and stores it under a new index.
      */
-    function wasSyscoinTxProcessed(uint txHash) public view returns (bool) {
-        return syscoinTxHashesAlreadyProcessed[txHash];
+    function _findOrAssignTokenIndex(AssetRegistryItem storage item, uint256 realTokenId) internal returns (uint32) {
+        // If the same realTokenId can appear multiple times, you’ll need a reverse lookup
+        // to see if we already assigned an index. For simplicity, assume each deposit is unique:
+        item.tokenIdCount++;
+        uint32 newIndex = item.tokenIdCount;
+        item.tokenRegistry[newIndex] = realTokenId;
+        return newIndex;
     }
 
-    //-------------------------------------------------------------------------
-    // Internal Functions
-    //-------------------------------------------------------------------------
-
-    /**
-     * @dev Attempt to detect whether `assetAddr` is ERC20, ERC721, or ERC1155 using ERC165
-     *      plus fallback for older ERC20s that do not implement any interface.
-     */
-    function _detectAssetType(address assetAddr) internal view returns AssetType {
+    function _detectAssetType(address assetAddr) internal view returns (AssetType) {
         // If a contract claims to implement ERC165, check 721 or 1155
         //  - ERC721 interfaceId = 0x80ac58cd
         //  - ERC1155 interfaceId = 0xd9b67a26
@@ -265,36 +270,26 @@ contract SyscoinVaultManager is SyscoinTransactionProcessorI, ReentrancyGuard {
                 return AssetType.ERC1155;
             }
         }
-
-        // If we get here, assume ERC20 (most widely used).
-        // If it's truly not ERC20, the deposit might fail later. But that's typical bridging risk.
         return AssetType.ERC20;
     }
-    /**
-     * @dev Determine a default precision if the asset is an ERC20, 
-     *      typically read `decimals()`. If that fails, default to 18.
-     */
+
     function _defaultPrecision(AssetType tType, address assetAddr) internal view returns (uint8) {
         if (tType == AssetType.ERC20) {
-            // Attempt decimals() call
             try IERC20Metadata(assetAddr).decimals() returns (uint8 dec) {
                 return dec;
             } catch {
-                return 18; // default
+                return 18;
             }
         }
-        // For ERC721/1155, no decimals concept, store 0 or 1 as your bridging default
         return 0;
     }
-    /**
-     * @dev `_parseAssetGuid` now interprets the upper 32 bits as tokenId,
-     *      lower 32 bits as assetId
-     */
-    function _parseAssetGuid(uint64 guid) internal pure returns (uint32 tokenId, uint32 assetId) {
-        tokenId    = uint32(guid >> 32);
-        assetId = uint32(guid);
+
+    function _parseAssetGuid(uint64 guid) internal pure returns (uint32 tokenIndex, uint32 assetId) {
+        tokenIndex = uint32(guid >> 32);
+        assetId    = uint32(guid);
     }
 
+    // Track processed Syscoin tx
     function _insert(uint txHash) private returns (bool) {
         if (syscoinTxHashesAlreadyProcessed[txHash]) {
             return false;
@@ -304,77 +299,53 @@ contract SyscoinVaultManager is SyscoinTransactionProcessorI, ReentrancyGuard {
     }
 
     //-------------------------------------------------------------------------
-    // ERC20
+    // Token Transfers
     //-------------------------------------------------------------------------
-
-    function _withdrawERC20(address assetContract, uint amount, address destination) internal {
-        IERC20 asset = IERC20(assetContract);
-        asset.safeTransfer(destination, amount);
-    }
 
     function _depositERC20(address assetContract, uint amount) internal {
-        IERC20 asset = IERC20(assetContract);
-        asset.safeTransferFrom(msg.sender, address(this), amount);
+        IERC20Metadata(assetContract).safeTransferFrom(msg.sender, address(this), amount);
     }
 
-    //-------------------------------------------------------------------------
-    // ERC721
-    //-------------------------------------------------------------------------
-
-    function _withdrawERC721(address assetContract, uint tokenId, address destination) internal {
-        IERC721 nft = IERC721(assetContract);
-        nft.transferFrom(address(this), destination, tokenId);
+    function _withdrawERC20(address assetContract, uint amount, address destination) internal {
+        IERC20Metadata(assetContract).safeTransfer(destination, amount);
     }
 
     function _depositERC721(address assetContract, uint tokenId) internal {
-        IERC721 nft = IERC721(assetContract);
-        nft.transferFrom(msg.sender, address(this), tokenId);
+        IERC721(assetContract).transferFrom(msg.sender, address(this), tokenId);
     }
 
-    //-------------------------------------------------------------------------
-    // ERC1155
-    //-------------------------------------------------------------------------
-
-    function _withdrawERC1155(address assetContract, uint tokenId, uint amount, address destination) internal {
-        IERC1155 multi = IERC1155(assetContract);
-        multi.safeTransferFrom(address(this), destination, tokenId, amount, "");
+    function _withdrawERC721(address assetContract, uint tokenId, address destination) internal {
+        IERC721(assetContract).transferFrom(address(this), destination, tokenId);
     }
 
     function _depositERC1155(address assetContract, uint tokenId, uint amount) internal {
-        IERC1155 multi = IERC1155(assetContract);
-        multi.safeTransferFrom(msg.sender, address(this), tokenId, amount, "");
+        IERC1155(assetContract).safeTransferFrom(msg.sender, address(this), tokenId, amount, "");
     }
 
-    //-------------------------------------------------------------------------
-    // Native SYS
-    //-------------------------------------------------------------------------
+    function _withdrawERC1155(address assetContract, uint tokenId, uint amount, address destination) internal {
+        IERC1155(assetContract).safeTransferFrom(address(this), destination, tokenId, amount, "");
+    }
 
     function _withdrawSYS(uint amount, address payable destination) internal {
+        require(address(this).balance >= amount, "Insufficient SYS");
         (bool success, ) = destination.call{value: amount}("");
         require(success, "Failed to send SYS");
     }
 
     //-------------------------------------------------------------------------
-    // Utilities
+    // Utility: Adjust decimals if bridging to Syscoin’s 8 decimals
     //-------------------------------------------------------------------------
-    function getTokenRegistryEntry(uint32 assetId, uint32 index) external view returns (uint256) {
-        return assetRegistry[assetId].tokenRegistry[index];
-    }
 
-    /**
-     * @dev Convert or “scale” a value based on difference between
-     *      Syscoin’s registry precision & actual ERC20 decimals.
-     */
-    function _adjustValueForDecimals(
-        uint rawValue,
-        uint8 registryPrecision
-    ) internal pure returns (uint) {
-        uint8 assetDecimals = 8;
-        if (registryPrecision > assetDecimals) {
-            return rawValue * (10 ** (registryPrecision - assetDecimals));
-        } else if (registryPrecision < assetDecimals) {
-            return rawValue / (10 ** (assetDecimals - registryPrecision));
+    function _adjustValueForDecimals(uint rawValue, uint8 registryPrecision) internal pure returns (uint) {
+        uint8 sysDecimals = 8;
+        if (registryPrecision > sysDecimals) {
+            return rawValue * (10 ** (registryPrecision - sysDecimals));
+        } else if (registryPrecision < sysDecimals) {
+            return rawValue / (10 ** (sysDecimals - registryPrecision));
         }
         return rawValue;
     }
+
+    // Allow this contract to receive SYS
+    receive() external payable {}
 }
