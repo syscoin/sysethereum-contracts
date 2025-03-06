@@ -21,6 +21,9 @@ contract("SyscoinVaultManager", (accounts) => {
     erc20 = await MockERC20.new("MockToken", "MCK", 18);
     erc721 = await MockERC721.new("MockNFT", "MNFT");
     erc1155 = await MockERC1155.new("https://test.api/");
+    // 2) Deploy mock tokens with different decimals
+    erc20_6dec = await MockERC20.new("SixDecToken","SIX", 6);  // 6 decimals
+    erc20_4dec = await MockERC20.new("FourDecToken","FOUR", 4);  // 4 decimals
   });
 
   describe("ERC20 bridging tests", () => {
@@ -50,7 +53,7 @@ contract("SyscoinVaultManager", (accounts) => {
       expect(userBalance.toString()).to.equal(web3.utils.toWei("95"))
       // confirm the asset auto-registered
       let assetId = await vault.assetRegistryByAddress(erc20.address);
-      expect(assetId.toNumber()).to.be.gt(0);
+      expect(assetId.toNumber()).to.be.eq(1);
     });
 
     it("should revert bridging zero", async () => {
@@ -100,6 +103,8 @@ contract("SyscoinVaultManager", (accounts) => {
       expect(vaultBalance.toString()).to.equal("10000000004000000000000000000");
       let userBalance = await erc20.balanceOf(owner);
       expect(userBalance.toString()).to.equal("10000000095000000000000000000")
+      let assetId = await vault.assetRegistryByAddress(erc20.address);
+      expect(assetId.toNumber()).to.be.eq(1);
     });
     it("should handle a processTransaction from trustedRelayer", async () => {
       // simulate a sys->nevm bridging
@@ -114,6 +119,7 @@ contract("SyscoinVaultManager", (accounts) => {
         "sys1someaddr",
         { from: owner }
       );
+      
       let vaultBalance = await erc20.balanceOf(vault.address);
       expect(vaultBalance.toString()).to.equal("10000000004000000000000000100");
       const assetId = await vault.assetRegistryByAddress(erc20.address);
@@ -144,7 +150,97 @@ contract("SyscoinVaultManager", (accounts) => {
       );
     });
   });
+  describe("Bridging a 6-decimals token => scale up to 8 decimals", () => {
+    it("should freezeBurn small amounts for 6-dec token => logs scaled satoshiValue", async () => {
+      // Suppose the token has 6 decimals => 1 = 1e6 base units
+      // If bridging NEVM->Sys, we do: scaleToSatoshi(value,6). 
+      // If fromDecimals < 8 => scale up => multiply by 10^(8-6)=10^2 => 1 => 100 sat
 
+      // 1) Mint 20 tokens => raw= 20 * 10^6= 2000000
+      await erc20_6dec.mint(owner, "20000000");  // 20 * 1e6
+
+      // 2) Approve 5 => raw= 5 * 1e6=5000000
+      await erc20_6dec.approve(vault.address, "5000000", { from: owner });
+
+      // 3) freezeBurn(5 => 5e6)
+      const tx = await vault.freezeBurn(
+        "5000000",  // 5 tokens in 6-dec base
+        erc20_6dec.address,
+        0,
+        "sys1qtestaddress",
+        { from: owner }
+      );
+      let assetId = await vault.assetRegistryByAddress(erc20_6dec.address);
+      expect(assetId.toNumber()).to.be.eq(2);
+      // scaleToSatoshi(5e6,6) => multiply by 10^(8-6)=10^2 => 5e6 *100= 5e8= 500000000 => event
+      truffleAssert.eventEmitted(tx, 'TokenFreeze', (ev) => {
+        return ev.value.toString() === "500000000";  // 5 tokens => 500000000 sat
+      });
+
+      // check final vault balance => 5 tokens
+      let vaultBal = await erc20_6dec.balanceOf(vault.address);
+      expect(vaultBal.toString()).to.equal("5000000"); // 5 in 6-dec = 5e6
+
+      // check user => 95 tokens left
+      let userBal = await erc20_6dec.balanceOf(owner);
+      expect(userBal.toString()).to.equal("15000000"); // 15 => 15e6
+    });
+
+    it("should revert bridging over 10B limit for 6-dec", async () => {
+      // bridging 1.5e11 tokens => if fromDec=6 => scaleUp => multiply by 10^(8-6)=10^2 => 
+      // final sat => 1.5e11 * 1e2=1.5e13 => exceeds ~1e18 if large enough
+      // or we do a simpler large number approach
+      // We'll do 1e10 => 1e10 * 10^(8-6)=1e10 * 1e2=1e12 => well under 1e18. So let's push bigger
+      // We'll do 1e13 => which is 1e13 * 1e2 =>1e15 => still <1e18 => might pass. 
+      // We want something that leads to >1e18 after scale => e.g. 2e13 => =>2e15 => 2e15 <1e18 actually ok
+      // Let's do 2e17 => The best approach is to do e.g. 2e17 => 2e17 *1e2=>2e19 =>>1e18 =>revert
+
+      await erc20_6dec.mint(owner, "200000000000000000"); // 2e17 => 2 *10^17
+      await erc20_6dec.approve(vault.address, "200000000000000000", { from: owner });
+      // freezeBurn => scale => rawValue=2e17 => fromDec=6 => scaleUp => multiply by 10^(8-6)=1e2 => result=2e19 => >1e18 => revert
+      await truffleAssert.reverts(
+        vault.freezeBurn(
+          "200000000000000000",
+          erc20_6dec.address,
+          0,
+          "sys1qtestaddress",
+          { from: owner }
+        ),
+        "Overflow bridging to Sys"
+      );
+    });
+  });
+
+  describe("Bridging a 4-decimals token => scale up x 10^(8-4)=10^4", () => {
+    it("should freezeBurn 12.3456 tokens => logs 1234560000 sat", async () => {
+      // 4 decimals => 12.3456 => raw=123456 => scale up => 10^(8-4)=1e4 => final=123456*1e4=1.23456e9 => 1234560000
+      // 1) mint e.g. 100 => raw=100 *1e4=1000000
+      await erc20_4dec.mint(owner, "1000000"); // 100 *1e4
+
+      // 2) bridging 12.3456 => raw=123456
+      await erc20_4dec.approve(vault.address, "123456", { from: owner });
+      let tx = await vault.freezeBurn(
+        "123456", 
+        erc20_4dec.address,
+        0,
+        "sys1qtestaddress",
+        { from: owner }
+      );
+      let assetId = await vault.assetRegistryByAddress(erc20_4dec.address);
+      expect(assetId.toNumber()).to.be.eq(3);
+      // scale => 123456*(1e4)=1.23456e9 => 1234560000 => check event
+      truffleAssert.eventEmitted(tx, 'TokenFreeze', (ev) => {
+        return ev.value.toString() === "1234560000";
+      });
+
+      // check final vault balance => 12.3456
+      let vaultBal = await erc20_4dec.balanceOf(vault.address);
+      expect(vaultBal.toString()).to.equal("123456");
+      // user => 100 - 12.3456= 87.6544 => raw=876544
+      let userBal = await erc20_4dec.balanceOf(owner);
+      expect(userBal.toString()).to.equal("876544");
+    });
+  });
   describe("ERC721 bridging tests", () => {
     it("should auto-register and freezeBurn an NFT", async () => {
       // mint an NFT to owner
@@ -160,12 +256,13 @@ contract("SyscoinVaultManager", (accounts) => {
         "sys1qNFTaddress",
         {from: owner}
       );
+      
       truffleAssert.eventEmitted(tx, 'TokenFreeze', (ev) => {
         // bridging 1 NFT
         return ev.value.toString() === '1';
       });
       let assetId = await vault.assetRegistryByAddress(erc721.address);
-      expect(assetId.toNumber()).to.be.gt(0);
+      expect(assetId.toNumber()).to.be.eq(4);
       let ownerOfNft = await erc721.ownerOf(1);
       expect(ownerOfNft).to.equal(vault.address);
 
@@ -279,7 +376,7 @@ contract("SyscoinVaultManager", (accounts) => {
         return ev.value.toString() === '5';
       });
       let assetId = await vault.assetRegistryByAddress(erc1155.address);
-      expect(assetId.toNumber()).to.be.gt(0);
+      expect(assetId.toNumber()).to.be.eq(5);
       let vaultBalAfter = await erc1155.balanceOf(vault.address, 777);
       expect(vaultBalAfter.toString()).to.equal("5");
     });
@@ -334,7 +431,7 @@ contract("SyscoinVaultManager", (accounts) => {
         999,
         300,
         owner,
-        0x00000001_00000003, // tokenIdx=1, assetId=3, for example
+        0x00000001_00000005, // tokenIdx=1, assetId=3, for example
         { from: trustedRelayer }
       );
       let userBal = await erc1155.balanceOf(owner, 777);

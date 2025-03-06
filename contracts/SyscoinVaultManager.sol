@@ -150,6 +150,7 @@ contract SyscoinVaultManager is SyscoinTransactionProcessorI, ReentrancyGuard, E
 
             if (item.assetType == AssetType.ERC20) {
                 require(value > 0, "Value must be positive");
+                require(tokenIdx == 0, "ERC20 bridging requires tokenIdx=0");
                 uint mintedAmount = scaleFromSatoshi(value, item.precision);
                 _withdrawERC20(item.assetContract, mintedAmount, destination);
             } 
@@ -158,7 +159,7 @@ contract SyscoinVaultManager is SyscoinTransactionProcessorI, ReentrancyGuard, E
                 require(value == 1, "ERC721 bridging requires value=1");
                 // look up the real tokenId
                 uint realTokenId = item.tokenRegistry[tokenIdx];
-                require(realTokenId != 0, "Unknown tokenIdx");
+                require(realTokenId != 0, "Unknown 721 tokenIdx");
                 _withdrawERC721(item.assetContract, realTokenId, destination);
             }
             else if (item.assetType == AssetType.ERC1155) {
@@ -199,6 +200,7 @@ contract SyscoinVaultManager is SyscoinTransactionProcessorI, ReentrancyGuard, E
         if (assetAddr == address(0)) {
             // bridging native coin => must match msg.value
             require(value == msg.value, "Value mismatch for native bridging");
+            require(tokenId == 0, "SYS => bridging requires tokenId==0");
             satoshiValue = scaleToSatoshi(value, 18); // "native SYS on NEVM" is 18 dec
             // just log the freeze => user must parse
             emit TokenFreeze(SYSAssetGuid, msg.sender, satoshiValue);
@@ -232,17 +234,20 @@ contract SyscoinVaultManager is SyscoinTransactionProcessorI, ReentrancyGuard, E
         // deposit
         if (item.assetType == AssetType.ERC20) {
             require(value > 0, "ERC20 deposit => value>0");
+            require(tokenId == 0, "ERC20 deposit => tokenId==0");
             satoshiValue = scaleToSatoshi(value, item.precision);
             _depositERC20(assetAddr, value);
         }
         else if (item.assetType == AssetType.ERC721) {
             // bridging 1 NFT => value=1
             require(value == 1, "ERC721 => bridging 1 NFT");
+            require(tokenId > 0, "ERC721 => bridging requires tokenId>0");
             satoshiValue = value; // no decimals => 1:1
             _depositERC721(assetAddr, tokenId);
         }
         else if (item.assetType == AssetType.ERC1155) {
             require(value > 0, "ERC1155 => bridging requires value>0");
+            require(tokenId > 0, "ERC1155 => bridging requires tokenId>0");
             satoshiValue = value; // no decimals => 1:1
             require(satoshiValue <= MAX_SYS_SUPPLY_SATS, "Overflow bridging to Sys");
             _depositERC1155(assetAddr, tokenId, value);
