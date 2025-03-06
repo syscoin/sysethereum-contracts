@@ -15,16 +15,20 @@ contract MaliciousReentrant is IERC1155Receiver {
     bool public didAttack;
     bool public attackReverted; // to track if the vault call reverted
 
-    constructor(address _vault, address _erc1155Asset) {
-        vault = SyscoinVaultManager(_vault);
+    constructor(address _erc1155Asset) {
         erc1155Asset = _erc1155Asset;
         didAttack = false;
         attackReverted = false;
     }
+    function setVault(address _vault) external {
+        vault = SyscoinVaultManager(_vault);
+    }
 
-    function doAttack(uint tokenId, uint amount) external {
-        // to test re-entrancy, we will call safeTransferFrom => triggers onERC1155Received
-        IERC1155(erc1155Asset).safeTransferFrom(msg.sender, address(this), tokenId, amount, "");
+    function doAttack(uint amount, uint32 assetId, uint32 tokenIdx) external {
+        // The malicious calls the vault => processTransaction => calls _withdrawERC1155(..., this) => triggers onERC1155Received
+        uint64 assetGuid = (uint64(tokenIdx) << 32) | uint64(assetId);
+        // pick a random txHash => 111
+        vault.processTransaction(111, amount, address(this), assetGuid);
     }
 
     // =============== IERC1155Receiver Implementation ================
@@ -35,19 +39,12 @@ contract MaliciousReentrant is IERC1155Receiver {
         uint256 value,
         bytes calldata /*data*/
     ) external override returns (bytes4) {
-        // If this is the first time, attempt re-entrancy
         if (!didAttack) {
             didAttack = true;
-            try vault.freezeBurn(
-                value,
-                erc1155Asset,
-                id,
-                "sysMaliciousAddress"
-            ) {
-                // If it didn't revert, that means re-entrancy was successful
-                revert("Malicious attack succeeded, re-entrancy is possible!");
+            try vault.freezeBurn(value, erc1155Asset, id, "sysMaliciousAddress") {
+                attackReverted = false;
+                revert("Malicious attack succeeded");
             } catch {
-                // expected revert due to nonReentrant
                 attackReverted = true;
             }
         }
