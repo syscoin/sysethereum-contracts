@@ -44,7 +44,10 @@ contract("SyscoinVaultManager", (accounts) => {
         // But your bridging code might actually log a scaled satoshiValue, e.g. "500000000"
         return ev.value.toString() === "500000000";
       });
-
+      let vaultBalance = await erc20.balanceOf(vault.address);
+      expect(vaultBalance.toString()).to.equal(web3.utils.toWei("5"));
+      let userBalance = await erc20.balanceOf(owner);
+      expect(userBalance.toString()).to.equal(web3.utils.toWei("95"))
       // confirm the asset auto-registered
       let assetId = await vault.assetRegistryByAddress(erc20.address);
       expect(assetId.toNumber()).to.be.gt(0);
@@ -93,6 +96,10 @@ contract("SyscoinVaultManager", (accounts) => {
         "sys1qtestaddress",
         {from: owner}
       );
+      let vaultBalance = await erc20.balanceOf(vault.address);
+      expect(vaultBalance.toString()).to.equal("10000000004000000000000000000");
+      let userBalance = await erc20.balanceOf(owner);
+      expect(userBalance.toString()).to.equal("10000000095000000000000000000")
     });
     it("should handle a processTransaction from trustedRelayer", async () => {
       // simulate a sys->nevm bridging
@@ -107,6 +114,8 @@ contract("SyscoinVaultManager", (accounts) => {
         "sys1someaddr",
         { from: owner }
       );
+      let vaultBalance = await erc20.balanceOf(vault.address);
+      expect(vaultBalance.toString()).to.equal("10000000004000000000000000100");
       const assetId = await vault.assetRegistryByAddress(erc20.address);
       // assetGuid => (tokenIndex<<32) | assetId
       // tokenIndex=0 for ERC20
@@ -120,7 +129,8 @@ contract("SyscoinVaultManager", (accounts) => {
         assetGuid,
         {from: trustedRelayer}
       );
-
+      let userBalance = await erc20.balanceOf(owner);
+      expect(userBalance.toString()).to.equal("10000000095000000000000000000")
       // replay => revert
       await truffleAssert.reverts(
         vault.processTransaction(
@@ -156,9 +166,9 @@ contract("SyscoinVaultManager", (accounts) => {
       });
       let assetId = await vault.assetRegistryByAddress(erc721.address);
       expect(assetId.toNumber()).to.be.gt(0);
+      let ownerOfNft = await erc721.ownerOf(1);
+      expect(ownerOfNft).to.equal(vault.address);
 
-      // confirm tokenIdCount increments
-      // can't easily read the mapping but we can parse events or do a second freeze
     });
     it("should revert bridging ERC721 if value != 1", async () => {
       // minted tokenId=2
@@ -176,7 +186,7 @@ contract("SyscoinVaultManager", (accounts) => {
       );
     });
     it("should bridging 1 NFT => value=1", async () => {
-      // Mint tokenId=1
+      // Mint tokenId=2
       await erc721.mint(owner);
       // Approve vault
       await erc721.approve(vault.address,2,{ from: owner });
@@ -191,6 +201,8 @@ contract("SyscoinVaultManager", (accounts) => {
       truffleAssert.eventEmitted(tx, "TokenFreeze", (ev) => {
         return ev.value.toString() === "1";
       });
+      let ownerOfNft = await erc721.ownerOf(2);
+      expect(ownerOfNft).to.equal(vault.address);
     });
 
     it("should revert bridging value=2 for ERC721", async () => {
@@ -219,6 +231,8 @@ contract("SyscoinVaultManager", (accounts) => {
         "sys1mydestination",
         { from: owner }
       )
+      let ownerOfNft = await erc721.ownerOf(3);
+      expect(ownerOfNft).to.equal(vault.address);
       // bridging => tokenIdx=3 => realTokenId=1
       await vault.processTransaction(
         1000,
@@ -227,7 +241,8 @@ contract("SyscoinVaultManager", (accounts) => {
         assetGuid,
         { from: trustedRelayer }
       );
-      // we'd check the NFT is transferred => you'd need to read from NFT to confirm
+      ownerOfNft = await erc721.ownerOf(3);
+      expect(ownerOfNft).to.equal(accounts[2]);
     });
     it("should bridging in => value=2 => reverts", async () => {
       // Suppose tokenId=1 was locked. We do processTransaction(999,3,dest,assetGuid)
@@ -265,6 +280,8 @@ contract("SyscoinVaultManager", (accounts) => {
       });
       let assetId = await vault.assetRegistryByAddress(erc1155.address);
       expect(assetId.toNumber()).to.be.gt(0);
+      let vaultBalAfter = await erc1155.balanceOf(vault.address, 777);
+      expect(vaultBalAfter.toString()).to.equal("5");
     });
 
     it("should revert bridging zero quantity in ERC1155", async () => {
@@ -294,6 +311,8 @@ contract("SyscoinVaultManager", (accounts) => {
       truffleAssert.eventEmitted(tx, "TokenFreeze", ev => {
         return ev.value.toString() === "200";
       });
+      let vaultBalAfter = await erc1155.balanceOf(vault.address, 777);
+      expect(vaultBalAfter.toString()).to.equal("205");
     });
     it("should revert bridging >10B for 1155", async () => {
       await erc1155.mint(owner, 777, "20000000000"); // 20B
@@ -305,6 +324,8 @@ contract("SyscoinVaultManager", (accounts) => {
         "sys1address",
         { from: owner }
       );
+      let vaultBalAfter = await erc1155.balanceOf(vault.address, 777);
+      expect(vaultBalAfter.toString()).to.equal("20000000205");
     });
     it("should processTransaction for 1155 integer bridging", async () => {
       // Suppose Sys side minted 300 for ID=777 => bridging to NEVM
@@ -316,7 +337,8 @@ contract("SyscoinVaultManager", (accounts) => {
         0x00000001_00000003, // tokenIdx=1, assetId=3, for example
         { from: trustedRelayer }
       );
-      // check user got 300 units => calls _withdrawERC1155(...,300)
+      let userBal = await erc1155.balanceOf(owner, 777);
+      expect(userBal.toString()).to.equal("1105");
     });
     it("should bridging 1155 quantity up to 10B-1", async () => {
       // Mint ID=777 with 1e10-1 => 9999999999
@@ -333,6 +355,8 @@ contract("SyscoinVaultManager", (accounts) => {
       truffleAssert.eventEmitted(tx, "TokenFreeze", (ev) => {
         return ev.value.toString() === "9999999999";
       });
+      let vaultBalAfter = await erc1155.balanceOf(vault.address, 777);
+      expect(vaultBalAfter.toString()).to.equal("29999999904");
     });
  
     it("should bridging 1155 quantity => direct integer unlock", async () => {
@@ -346,8 +370,8 @@ contract("SyscoinVaultManager", (accounts) => {
         assetGuid,
         {from:trustedRelayer}
       );
-      // check logs, or read from multi => see 500 was transferred 
-      // you'd need a more advanced mocking approach that allows us to confirm final balance
+      let userBal = await erc1155.balanceOf(accounts[2], 777);
+      expect(userBal.toString()).to.equal("500");
     });
   });
 
