@@ -44,12 +44,13 @@ contract SyscoinVaultManager is SyscoinTransactionProcessorI, ReentrancyGuard, E
 
     struct AssetRegistryItem {
         AssetType assetType;
-        address assetContract;  // e.g. ERC20/721/1155 address
-        uint8 precision;        // For bridging decimals if needed
-        uint32 tokenIdCount;    // increment for each NFT token
-        // tokenIndex => realTokenId for NFT / 1155
-        mapping(uint32 => uint256) tokenRegistry;
+        address assetContract;
+        uint8 precision;
+        uint32 tokenIdCount;
+        mapping(uint32 => uint256) tokenRegistry;            // tokenIdx => realTokenId
+        mapping(uint256 => uint32) reverseTokenRegistry;     // realTokenId => tokenIdx
     }
+
     // 9,999,999,999.99999999 => ~1e18 satoshis (10B -1)
     uint256 constant MAX_SYS_SUPPLY_SATS = 9999999999 * 100000000; 
     //-------------------------------------------------------------------------
@@ -82,7 +83,7 @@ contract SyscoinVaultManager is SyscoinTransactionProcessorI, ReentrancyGuard, E
     // Events
     //-------------------------------------------------------------------------
 
-    event TokenFreeze(uint64 indexed assetGuid, address indexed freezer, uint value);
+    event TokenFreeze(uint64 indexed assetGuid, address indexed freezer, uint satoshiValue, string syscoinAddr);
     event TokenUnfreeze(uint64 indexed assetGuid, address indexed recipient, uint value);
     event TokenRegistry(uint32 indexed assetId, address assetContract, AssetType assetType);
 
@@ -203,18 +204,16 @@ contract SyscoinVaultManager is SyscoinTransactionProcessorI, ReentrancyGuard, E
             require(tokenId == 0, "SYS => bridging requires tokenId==0");
             satoshiValue = scaleToSatoshi(value, 18); // "native SYS on NEVM" is 18 dec
             // just log the freeze => user must parse
-            emit TokenFreeze(SYSAssetGuid, msg.sender, satoshiValue);
+            emit TokenFreeze(SYSAssetGuid, msg.sender, satoshiValue, syscoinAddr);
             return true;
         }
-
-        // detect asset type
         AssetType detectedType = _detectAssetType(assetAddr);
-        // find or create an assetId
         uint32 assetId = assetRegistryByAddress[assetAddr];
+
+        // Asset registration check
         if (assetId == 0) {
-            // auto-register
             globalAssetIdCount++;
-            if(globalAssetIdCount == SYSAssetGuid) {
+            if (globalAssetIdCount == uint32(SYSAssetGuid)) {
                 globalAssetIdCount++;
             }
             assetId = globalAssetIdCount;
@@ -224,46 +223,43 @@ contract SyscoinVaultManager is SyscoinTransactionProcessorI, ReentrancyGuard, E
             newItem.assetType = detectedType;
             newItem.assetContract = assetAddr;
             newItem.precision = _defaultPrecision(detectedType, assetAddr);
-            newItem.tokenIdCount = 0;
             emit TokenRegistry(assetId, assetAddr, detectedType);
         }
 
         AssetRegistryItem storage item = assetRegistry[assetId];
         require(item.assetType == detectedType, "Mismatched asset type");
 
-        // deposit
-        if (item.assetType == AssetType.ERC20) {
-            require(value > 0, "ERC20 deposit => value>0");
-            require(tokenId == 0, "ERC20 deposit => tokenId==0");
+        // Deposit handling
+        if (detectedType == AssetType.ERC20) {
+            require(value > 0, "ERC20 requires positive value");
+            require(tokenId == 0, "ERC20 tokenId must be zero");
             satoshiValue = scaleToSatoshi(value, item.precision);
             _depositERC20(assetAddr, value);
         }
-        else if (item.assetType == AssetType.ERC721) {
-            // bridging 1 NFT => value=1
-            require(value == 1, "ERC721 => bridging 1 NFT");
-            require(tokenId > 0, "ERC721 => bridging requires tokenId>0");
-            satoshiValue = value; // no decimals => 1:1
+        else if (detectedType == AssetType.ERC721) {
+            require(value == 1, "ERC721 deposit requires exactly 1");
+            require(tokenId != 0, "ERC721 tokenId required");
+            satoshiValue = value;
             _depositERC721(assetAddr, tokenId);
         }
-        else if (item.assetType == AssetType.ERC1155) {
-            require(value > 0, "ERC1155 => bridging requires value>0");
-            require(tokenId > 0, "ERC1155 => bridging requires tokenId>0");
-            satoshiValue = value; // no decimals => 1:1
-            require(satoshiValue <= MAX_SYS_SUPPLY_SATS, "Overflow bridging to Sys");
+        else if (detectedType == AssetType.ERC1155) {
+            require(value > 0, "ERC1155 requires positive value");
+            require(tokenId != 0, "ERC1155 tokenId required");
+            satoshiValue = value;
             _depositERC1155(assetAddr, tokenId, value);
         }
         else {
-            revert("Unsupported or invalid asset type");
+            revert("Invalid asset type");
         }
-
         // figure out tokenIndex if NFT
         uint32 tokenIndex = 0;
         if (item.assetType == AssetType.ERC721 || item.assetType == AssetType.ERC1155) {
             tokenIndex = _findOrAssignTokenIndex(item, tokenId);
         }
-        // assetGuid => (tokenIndex << 32) | assetId
+        // Calculate assetGuid correctly
         uint64 assetGuid = (uint64(tokenIndex) << 32) | uint64(assetId);
-        emit TokenFreeze(assetGuid, msg.sender, satoshiValue);
+        emit TokenFreeze(assetGuid, msg.sender, satoshiValue, syscoinAddr);
+
         return true;
     }
 
@@ -311,13 +307,28 @@ contract SyscoinVaultManager is SyscoinTransactionProcessorI, ReentrancyGuard, E
         return 0;
     }
 
-    function _findOrAssignTokenIndex(AssetRegistryItem storage item, uint256 realTokenId) internal returns (uint32) {
-        // naive approach => each new deposit is a new index
-        item.tokenIdCount++;
-        uint32 newIndex = item.tokenIdCount;
-        item.tokenRegistry[newIndex] = realTokenId;
-        return newIndex;
+    function _findOrAssignTokenIndex(
+        AssetRegistryItem storage item,
+        uint256 realTokenId
+    )
+        internal
+        returns (uint32)
+    {
+        uint32 tokenIdx = item.reverseTokenRegistry[realTokenId];
+
+        if (tokenIdx == 0) { 
+            // Token hasn't been registered yet; assign a new index
+            item.tokenIdCount++;
+            tokenIdx = item.tokenIdCount;
+
+            item.tokenRegistry[tokenIdx] = realTokenId;
+            item.reverseTokenRegistry[realTokenId] = tokenIdx;
+        }
+        // else, tokenIdx already exists; reuse it
+
+        return tokenIdx;
     }
+
 
     /**
     * @dev scaleToSatoshi: Convert `rawValue` from `tokenDecimals` to 8 decimals.
@@ -395,5 +406,15 @@ contract SyscoinVaultManager is SyscoinTransactionProcessorI, ReentrancyGuard, E
         require(address(this).balance >= amount, "Not enough SYS");
         (bool success, ) = to.call{value: amount}("");
         require(success, "Sys transfer failed");
+    }
+
+    function getRealTokenIdFromTokenIdx(uint32 assetId, uint32 tokenIdx) external view returns (uint256) {
+        AssetRegistryItem storage item = assetRegistry[assetId];
+        return item.tokenRegistry[tokenIdx];
+    }
+
+    function getTokenIdxFromRealTokenId(uint32 assetId, uint256 realTokenId) external view returns (uint32) {
+        AssetRegistryItem storage item = assetRegistry[assetId];
+        return item.reverseTokenRegistry[realTokenId];
     }
 }

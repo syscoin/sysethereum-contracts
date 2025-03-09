@@ -45,7 +45,7 @@ contract("SyscoinVaultManager", (accounts) => {
       // Now check the event on `tx`
       truffleAssert.eventEmitted(tx, 'TokenFreeze', (ev) => {
         // But your bridging code might actually log a scaled satoshiValue, e.g. "500000000"
-        return ev.value.toString() === "500000000";
+        return ev.satoshiValue.toString() === "500000000";
       });
       let vaultBalance = await erc20.balanceOf(vault.address);
       expect(vaultBalance.toString()).to.equal(web3.utils.toWei("5"));
@@ -65,7 +65,7 @@ contract("SyscoinVaultManager", (accounts) => {
           "sys1qtestaddress",
           {from: owner}
         ),
-        "ERC20 deposit => value>0"
+        "ERC20 requires positive value"
       );
     });
 
@@ -174,7 +174,7 @@ contract("SyscoinVaultManager", (accounts) => {
       expect(assetId.toNumber()).to.be.eq(2);
       // scaleToSatoshi(5e6,6) => multiply by 10^(8-6)=10^2 => 5e6 *100= 5e8= 500000000 => event
       truffleAssert.eventEmitted(tx, 'TokenFreeze', (ev) => {
-        return ev.value.toString() === "500000000";  // 5 tokens => 500000000 sat
+        return ev.satoshiValue.toString() === "500000000";  // 5 tokens => 500000000 sat
       });
 
       // check final vault balance => 5 tokens
@@ -230,7 +230,7 @@ contract("SyscoinVaultManager", (accounts) => {
       expect(assetId.toNumber()).to.be.eq(3);
       // scale => 123456*(1e4)=1.23456e9 => 1234560000 => check event
       truffleAssert.eventEmitted(tx, 'TokenFreeze', (ev) => {
-        return ev.value.toString() === "1234560000";
+        return ev.satoshiValue.toString() === "1234560000";
       });
 
       // check final vault balance => 12.3456
@@ -242,6 +242,20 @@ contract("SyscoinVaultManager", (accounts) => {
     });
   });
   describe("ERC721 bridging tests", () => {
+    it("should revert bridging ERC721 tokenId=0", async () => {
+      await truffleAssert.reverts(
+        vault.freezeBurn(1, erc721.address, 0, "sys1addr", { from: owner }),
+        "ERC721 tokenId required"
+      );
+    });
+    
+    it("should revert bridging ERC1155 tokenId=0", async () => {
+      await truffleAssert.reverts(
+        vault.freezeBurn(1, erc1155.address, 0, "sys1addr", {from: owner}),
+        "ERC1155 tokenId required"
+      );
+    });
+    
     it("should auto-register and freezeBurn an NFT", async () => {
       // mint an NFT to owner
       await erc721.mint(owner);
@@ -259,7 +273,7 @@ contract("SyscoinVaultManager", (accounts) => {
       
       truffleAssert.eventEmitted(tx, 'TokenFreeze', (ev) => {
         // bridging 1 NFT
-        return ev.value.toString() === '1';
+        return ev.satoshiValue.toString() === '1';
       });
       let assetId = await vault.assetRegistryByAddress(erc721.address);
       expect(assetId.toNumber()).to.be.eq(4);
@@ -279,7 +293,7 @@ contract("SyscoinVaultManager", (accounts) => {
           "sys1qNFTaddress",
           {from: owner}
         ),
-        "ERC721 => bridging 1 NFT"
+        "ERC721 deposit requires exactly 1"
       );
     });
     it("should bridging 1 NFT => value=1", async () => {
@@ -296,7 +310,7 @@ contract("SyscoinVaultManager", (accounts) => {
       );
       // check event => value=1
       truffleAssert.eventEmitted(tx, "TokenFreeze", (ev) => {
-        return ev.value.toString() === "1";
+        return ev.satoshiValue.toString() === "1";
       });
       let ownerOfNft = await erc721.ownerOf(2);
       expect(ownerOfNft).to.equal(vault.address);
@@ -313,11 +327,11 @@ contract("SyscoinVaultManager", (accounts) => {
           "sys1mydestination",
           { from: owner }
         ),
-        "ERC721 => bridging 1 NFT"
+        "ERC721 deposit requires exactly 1"
       );
     });
     it("should bridging in => value=1 => unlock the NFT", async () => {
-      // Suppose tokenId=1 was locked. We do processTransaction(999,3,dest,assetGuid)
+      // Suppose tokenId=3 was locked. We do processTransaction(999,3,dest,assetGuid)
       // parse item, calls _withdrawERC721
       const assetId = await vault.assetRegistryByAddress(erc721.address);
       let assetGuid = (BigInt(3) << 32n) | BigInt(assetId.toNumber()); 
@@ -356,6 +370,136 @@ contract("SyscoinVaultManager", (accounts) => {
         ),
         "ERC721 bridging requires value=1");
     });
+    it("should revert when depositing already bridged ERC721 token", async () => {
+      // tokenId=1 already deposited in vault
+      await truffleAssert.reverts(
+        vault.freezeBurn(
+          1,
+          erc721.address,
+          1,
+          "sys1existingtoken",
+          {from: owner}
+        ),
+        "ERC721: transfer from incorrect owner"
+      );
+    });
+    it("should correctly calculate assetGuid for ERC721", async () => {
+      await erc721.mint(owner); // tokenId=4
+      await erc721.approve(vault.address, 4, {from: owner});
+      let tx = await vault.freezeBurn(
+        1,
+        erc721.address,
+        4, 
+        "sys1address",
+        {from: owner}
+      );
+      let assetId = await vault.assetRegistryByAddress(erc721.address);
+      let expectedAssetGuid = (BigInt(4) << 32n) | BigInt(assetId.toNumber());
+      truffleAssert.eventEmitted(tx, 'TokenFreeze', (ev) => {
+        return ev.assetGuid.toString() === expectedAssetGuid.toString();
+      });
+    });
+    it("should allow re-depositing ERC721 after withdrawal", async () => {
+      // Mint tokenId=10
+      await erc721.mint(owner, 10);
+      await erc721.approve(vault.address, 10, {from: owner});
+    
+      // Deposit NFT (tokenId=10)
+      const tx = await vault.freezeBurn(
+        1, 
+        erc721.address, 
+        10, 
+        "sys1addrNFT",
+        { from: owner }
+      );
+    
+      let ownerOfNft = await erc721.ownerOf(10);
+      expect(ownerOfNft).to.equal(vault.address);
+    
+      // Withdraw (simulate Syscoin relay)
+      const assetId = await vault.assetRegistryByAddress(erc721.address);
+      // should be the 5th index into the registry for this erc721
+      const assetGuid = (BigInt(5) << 32n) | BigInt(assetId.toNumber());
+      truffleAssert.eventEmitted(tx, 'TokenFreeze', (ev) => {
+        return ev.assetGuid.toString() === assetGuid.toString();
+      });
+      await vault.processTransaction(
+        5555, 
+        1, 
+        owner,
+        assetGuid,
+        {from: trustedRelayer}
+      );
+    
+      ownerOfNft = await erc721.ownerOf(10);
+      expect(ownerOfNft).to.equal(owner);
+    
+      // Now redeposit same tokenId
+      await erc721.approve(vault.address, 10, {from: owner});
+      await vault.freezeBurn(
+        1,
+        erc721.address,
+        10,
+        "sys1addrNFT",
+        { from: owner }
+      );
+    
+      ownerOfNft = await erc721.ownerOf(10);
+      expect(ownerOfNft).to.equal(vault.address);
+    });
+    it("should bridge ERC721 token with large tokenId correctly using registry", async () => {
+      const largeTokenId = web3.utils.toBN("123456789123456789123456789"); // large tokenId (uint256)
+      await erc721.mint(owner, largeTokenId);
+      await erc721.approve(vault.address, largeTokenId, {from: owner});
+    
+      // Deposit large tokenId
+      await vault.freezeBurn(
+        1,
+        erc721.address,
+        largeTokenId,
+        "sys1largeidaddr",
+        {from: owner}
+      );
+    
+      let assetId = await vault.assetRegistryByAddress(erc721.address);
+      let tokenIdx = await vault.getTokenIdxFromRealTokenId(assetId, largeTokenId);
+      assert(tokenIdx.toNumber() > 0, "TokenIdx should be assigned");
+    
+      // Now withdraw back
+      let assetGuid = (BigInt(tokenIdx.toNumber()) << 32n) | BigInt(assetId.toNumber());
+      await vault.processTransaction(
+        98765,
+        1,
+        owner,
+        assetGuid,
+        {from: trustedRelayer}
+      );
+    
+      let ownerOfNft = await erc721.ownerOf(largeTokenId);
+      expect(ownerOfNft).to.equal(owner);
+    });   
+    it("should correctly map ERC721 tokenIdx to realTokenId in registry", async () => {
+      const tokenId = 9999;
+      await erc721.mint(owner, tokenId);
+      await erc721.approve(vault.address, tokenId, {from: owner});
+    
+      await vault.freezeBurn(
+        1,
+        erc721.address,
+        tokenId,
+        "sys1address9999",
+        { from: owner }
+      );
+    
+      const assetId = await vault.assetRegistryByAddress(erc721.address);
+      const tokenIdx = await vault.getTokenIdxFromRealTokenId(assetId, tokenId);
+    
+      expect(tokenIdx.toNumber()).to.be.greaterThan(0);
+    
+      // Check reverse lookup
+      const realTokenId = await vault.getRealTokenIdFromTokenIdx(assetId, tokenIdx);
+      expect(realTokenId.toString()).to.equal(tokenId.toString());
+    });     
   });
 
   describe("ERC1155 bridging tests", () => {
@@ -373,7 +517,7 @@ contract("SyscoinVaultManager", (accounts) => {
         {from: owner}
       );
       truffleAssert.eventEmitted(tx, 'TokenFreeze', (ev) => {
-        return ev.value.toString() === '5';
+        return ev.satoshiValue.toString() === '5';
       });
       let assetId = await vault.assetRegistryByAddress(erc1155.address);
       expect(assetId.toNumber()).to.be.eq(5);
@@ -390,7 +534,7 @@ contract("SyscoinVaultManager", (accounts) => {
           "sys1155Address",
           {from: owner}
         ),
-        "ERC1155 => bridging requires value>0"
+        "ERC1155 requires positive value"
       );
     });
     it("should freezeBurn 100 integer units in 1155 => bridging to Sys", async () => {
@@ -406,7 +550,7 @@ contract("SyscoinVaultManager", (accounts) => {
         { from: owner }
       );
       truffleAssert.eventEmitted(tx, "TokenFreeze", ev => {
-        return ev.value.toString() === "200";
+        return ev.satoshiValue.toString() === "200";
       });
       let vaultBalAfter = await erc1155.balanceOf(vault.address, 777);
       expect(vaultBalAfter.toString()).to.equal("205");
@@ -450,7 +594,7 @@ contract("SyscoinVaultManager", (accounts) => {
         {from:owner}
       );
       truffleAssert.eventEmitted(tx, "TokenFreeze", (ev) => {
-        return ev.value.toString() === "9999999999";
+        return ev.satoshiValue.toString() === "9999999999";
       });
       let vaultBalAfter = await erc1155.balanceOf(vault.address, 777);
       expect(vaultBalAfter.toString()).to.equal("29999999904");
@@ -470,6 +614,82 @@ contract("SyscoinVaultManager", (accounts) => {
       let userBal = await erc1155.balanceOf(accounts[2], 777);
       expect(userBal.toString()).to.equal("500");
     });
+    it("should reuse tokenIdx for same ERC1155 tokenId", async () => {
+      // Initial deposit for tokenId=777
+      await erc1155.mint(owner, 10, 777);
+      await erc1155.setApprovalForAll(vault.address, true, { from: owner });
+      await vault.freezeBurn(10, erc1155.address, 777, "sys1addr1", { from: owner });
+    
+      // Get assetId and tokenIdx
+      let assetId = await vault.assetRegistryByAddress(erc1155.address);
+      const firstTokenIdx = await vault.assetRegistry(assetId).then(item => item.tokenIdCount.toNumber());
+      
+      // Deposit more of same tokenId
+      await erc1155.mint(owner, 10, 777);
+      await vault.freezeBurn(
+        5,
+        erc1155.address,
+        777,
+        "sys1address",
+        {from: owner}
+      );
+    
+      const secondTokenIdx = await vault.assetRegistry(assetId).then(item => item.tokenIdCount.toNumber());
+      
+      // Ensure tokenIdx didn't increment
+      expect(firstTokenIdx).to.equal(secondTokenIdx);
+    });  
+    it("should reuse same tokenIdx and update balances correctly on repeated ERC1155 deposits", async () => {
+      const tokenId = 888;
+    
+      // Initial mint and approval
+      await erc1155.mint(owner, tokenId, 100);
+      await erc1155.setApprovalForAll(vault.address, true, { from: owner });
+    
+      // First deposit: deposit 10 units
+      await vault.freezeBurn(
+        10,
+        erc1155.address,
+        tokenId,
+        "sys1address",
+        { from: owner }
+      );
+    
+      // Check vault balance after first deposit
+      let vaultBalance = await erc1155.balanceOf(vault.address, tokenId);
+      expect(vaultBalance.toNumber()).to.equal(10);
+    
+      // Check user balance: should have 90 left
+      let userBalance = await erc1155.balanceOf(owner, tokenId);
+      expect(userBalance.toNumber()).to.equal(90);
+    
+      // Get assetId and tokenIdx after first deposit
+      const assetId = await vault.assetRegistryByAddress(erc1155.address);
+      let item = await vault.assetRegistry(assetId);
+      const tokenIdxBefore = (await item.tokenIdCount).toNumber();
+    
+      // Second deposit: deposit 20 more units
+      await vault.freezeBurn(
+        20,
+        erc1155.address,
+        tokenId,
+        "sys1addrERC1155",
+        { from: owner }
+      );
+    
+      // Check tokenIdx was not incremented (reused)
+      let itemAfter = await vault.assetRegistry(assetId);
+      const tokenIdxAfter = await itemAfter.tokenIdCount.toNumber();
+      expect(tokenIdxAfter).to.equal(tokenIdxBefore);
+    
+      // Check updated vault balance: should be 30 total (10 + 20)
+      vaultBalance = await erc1155.balanceOf(vault.address, tokenId);
+      expect(vaultBalance.toNumber()).to.equal(30);
+    
+      // Check user's updated balance (80 units remaining)
+      userBalance = await erc1155.balanceOf(owner, tokenId);
+      expect(userBalance.toNumber()).to.equal(70);
+    });       
   });
 
 });
