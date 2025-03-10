@@ -76,9 +76,6 @@ contract SyscoinVaultManager is SyscoinTransactionProcessorI, ReentrancyGuard, E
     // if bridging native SYS from NEVM -> UTXO, or vice versa
     uint64 public immutable SYSAssetGuid;
 
-    // if true => testNetwork => skip some checks for native bridging
-    bool public immutable testNetwork;
-
     //-------------------------------------------------------------------------
     // Events
     //-------------------------------------------------------------------------
@@ -94,16 +91,13 @@ contract SyscoinVaultManager is SyscoinTransactionProcessorI, ReentrancyGuard, E
     /**
      * @param _trustedRelayerContract  The SyscoinRelay or similar contract
      * @param _sysxGuid                The Syscoin asset GUID representing "native SYS" (if needed)
-     * @param _testNetwork             If true => skip native bridging checks
      */
     constructor(
         address _trustedRelayerContract,
-        uint64 _sysxGuid,
-        bool _testNetwork
+        uint64 _sysxGuid
     ) {
         trustedRelayerContract = _trustedRelayerContract;
         SYSAssetGuid = _sysxGuid;
-        testNetwork = _testNetwork;
     }
 
     //-------------------------------------------------------------------------

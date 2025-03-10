@@ -13,10 +13,11 @@ module.exports = async function(deployer, network, accounts) {
   await deployer.deploy(SyscoinRelayTest);
 
   console.log('Deploying SyscoinVaultManager...');
-  // trustedRelayer is SyscoinRelay, sysxGuid=12345, testNetwork=false
-  await deployer.deploy(SyscoinVaultManager, SyscoinRelay.address, 12345, false);
+  // trustedRelayer is SyscoinRelay, sysxGuid=123456, testNetwork=false
+  await deployer.deploy(SyscoinVaultManager, SyscoinRelay.address, 123456, { from: accounts[0] });
 
   let syscoinRelay = await SyscoinRelay.deployed();
   console.log('Init syscoinRelay with SyscoinVaultManager...');
-  await syscoinRelay.init(SyscoinVaultManager.address);
+  await syscoinRelay.init(SyscoinVaultManager.address, { from: accounts[0] });
+
 };

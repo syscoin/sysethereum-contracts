@@ -12,7 +12,7 @@ module.exports = {
     },
     mainnet: {
       host: "localhost",
-      port: 8101,
+      port: 8545,
       from: "0xe600696eb0555c93f2c391a1406726cee239091d",
       network_id: "57",
       gas: 1000000,
@@ -20,13 +20,15 @@ module.exports = {
       maxPriorityFeePerGas: "1000000"
     },
     tanenbaum: {
-      host: "localhost",
-      port: 8101,
-      from: "0xe600696eb0555c93f2c391a1406726cee239091d",
-      network_id: "5700", 
-      gas: 1000000,
-      maxFeePerGas: 1000000,
-      maxPriorityFeePerGas: "1000000"
+      provider:   function () {
+        return new HDWalletProvider(mnenomic, "http://localhost:8545");
+      },
+      network_id: "5700",
+      gas: 8000000,
+      maxFeePerGas: 120000000,
+      maxPriorityFeePerGas: 10000000,
+      gasPrice: 120000000,
+      
     },
     rinkeby: {
       provider:   function () {
