@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.17;
+pragma solidity ^0.8.20;
 
 // Interface contract to be implemented by SyscoinVaultManager
 interface SyscoinTransactionProcessorI {

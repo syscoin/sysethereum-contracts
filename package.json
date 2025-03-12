@@ -6,14 +6,13 @@
     "test": "test"
   },
   "dependencies": {
-    "@openzeppelin/contracts": "^4.2.0",
-    "@truffle/hdwallet-provider": "^1.5.1-alpha.0",
-    "ganache-cli": "^6.12.2",
-    "openzeppelin-solidity": "^4.2.0",
-    "solc": "^0.8.17",
-    "truffle": "^5.4.9",
-    "truffle-assertions": "^0.9.1",
-    "web3": "^1.5.2"
+    "@ganache/cli": "^0.10.2",
+    "@openzeppelin/contracts": "^5.2.0",
+    "@truffle/hdwallet-provider": "^2.1.15",
+    "solc": "^0.8.20",
+    "truffle": "^5.11.5",
+    "truffle-assertions": "^0.9.2",
+    "web3": "^4.16.0"
   },
   "devDependencies": {
     "eth-json-rpc-filters": "^4.1.1"

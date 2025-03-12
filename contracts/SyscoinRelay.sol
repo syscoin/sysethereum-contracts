@@ -1,16 +1,21 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.17;
+pragma solidity ^0.8.20;
 
 import "./interfaces/SyscoinRelayI.sol";
 import "./interfaces/SyscoinTransactionProcessorI.sol";
-import "./SyscoinErrorCodes.sol";
 import "./SyscoinParser/SyscoinMessageLibrary.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 
-contract SyscoinRelay is SyscoinRelayI, SyscoinErrorCodes, SyscoinMessageLibrary, Ownable {
+contract SyscoinRelay is SyscoinRelayI, SyscoinMessageLibrary, Ownable {
     bool public initialized = false;
     uint32 constant SYSCOIN_TX_VERSION_ALLOCATION_BURN_TO_NEVM = 134;
-
+    uint constant ERR_INVALID_HEADER = 10000;
+    uint constant ERR_INVALID_HEADER_HASH = 10010;
+    uint constant ERR_PARSE_TX_SYS = 10020;
+    uint constant ERR_MERKLE_ROOT = 10030;
+    uint constant ERR_TX_64BYTE = 10040;
+    uint constant ERR_TX_VERIFICATION_FAILED = 10040;
+    uint constant ERR_OP_RETURN_PARSE_FAILED = 10050;
     bytes1 constant OP_PUSHDATA1 = 0x4c;
     bytes1 constant OP_PUSHDATA2 = 0x4d;
 
@@ -21,8 +26,8 @@ contract SyscoinRelay is SyscoinRelayI, SyscoinErrorCodes, SyscoinMessageLibrary
 
     event VerifyTransaction(bytes32 txHash, uint returnCode);
     event RelayTransaction(bytes32 txHash, uint returnCode);
+    constructor(address initialOwner) Ownable(initialOwner) {}
 
-    // @param _syscoinVaultManager - address of the SyscoinVaultManager contract to be associated with
     function init(address _syscoinVaultManager) external onlyOwner {
         require(!initialized, "Already initialized");
         require(_syscoinVaultManager != address(0), "Invalid address");
@@ -126,7 +131,6 @@ contract SyscoinRelay is SyscoinRelayI, SyscoinErrorCodes, SyscoinMessageLibrary
     function getOpReturnPos(bytes memory txBytes, uint pos) internal pure returns (uint, uint) {
         uint n_inputs;
         uint script_len;
-        uint output_value;
         uint n_outputs;
 
         (n_inputs, pos) = parseCompactSize(txBytes, pos);
@@ -147,12 +151,10 @@ contract SyscoinRelay is SyscoinRelayI, SyscoinErrorCodes, SyscoinMessageLibrary
         require(n_outputs < 10, "#SyscoinRelay getOpReturnPos(): Incorrect size of n_outputs");
 
         for (uint i = 0; i < n_outputs; i++) {
-            output_value = getBytesLE(txBytes, pos, 64);
             pos += 8;
             (script_len, pos) = parseCompactSize(txBytes, pos);
             if(!isOpReturn(txBytes, pos)){
                 pos += script_len;
-                output_value = 0;
                 continue;
             }
             pos += 1;
@@ -165,7 +167,7 @@ contract SyscoinRelay is SyscoinRelayI, SyscoinErrorCodes, SyscoinMessageLibrary
             } else {
                 pos += 1;
             }
-            return (pos, output_value);
+            return (i, pos);
         }
         revert("#SyscoinRelay getOpReturnPos(): No OpReturn found");
     }
@@ -248,8 +250,8 @@ contract SyscoinRelay is SyscoinRelayI, SyscoinErrorCodes, SyscoinMessageLibrary
         uint pos = 0;
         uint opIndex = 0;
         version = bytesToUint32Flipped(txBytes, pos);
-        if(version != SYSCOIN_TX_VERSION_ALLOCATION_BURN_TO_NEVM){
-            return (ERR_PARSE_TX_SYS, output_value, destinationAddress, assetGuid);
+        if (version != SYSCOIN_TX_VERSION_ALLOCATION_BURN_TO_NEVM) {
+            return (ERR_PARSE_TX_SYS, 0, address(0), 0);
         }
         (opIndex, pos) = getOpReturnPos(txBytes, 4);
         (output_value, destinationAddress, assetGuid) = scanBurnTx(txBytes, opIndex, pos);

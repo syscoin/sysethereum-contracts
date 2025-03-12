@@ -1,23 +1,26 @@
 const SyscoinVaultManager = artifacts.require('./SyscoinVaultManager.sol');
 const SyscoinMessageLibrary = artifacts.require('./SyscoinParser/SyscoinMessageLibrary.sol');
 const SyscoinRelay = artifacts.require('./SyscoinRelay.sol');
-const SyscoinRelayTest = artifacts.require('./SyscoinRelayTest.sol');
 
 module.exports = async function(deployer, network, accounts) {
+  const owner = accounts[0];
+
+  console.log("Owner address:", owner);
+  const balance = await web3.eth.getBalance(owner);
+  console.log("Balance of deployer:", balance.toString());
+
   console.log('Deploying SyscoinMessageLibrary...');
   await deployer.deploy(SyscoinMessageLibrary);
-  await deployer.link(SyscoinMessageLibrary, [SyscoinRelay, SyscoinRelayTest]);
+  await deployer.link(SyscoinMessageLibrary, [SyscoinRelay]);
 
-  console.log('Deploying SyscoinRelay & SyscoinRelayTest...');
-  await deployer.deploy(SyscoinRelay);
-  await deployer.deploy(SyscoinRelayTest);
+  console.log('Deploying SyscoinRelay...');
+  await deployer.deploy(SyscoinRelay, owner, { gas: 5000000 });  // explicitly set higher gas
 
   console.log('Deploying SyscoinVaultManager...');
-  // trustedRelayer is SyscoinRelay, sysxGuid=123456, testNetwork=false
-  await deployer.deploy(SyscoinVaultManager, SyscoinRelay.address, 123456, { from: accounts[0] });
+  await deployer.deploy(SyscoinVaultManager, SyscoinRelay.address, 123456, { from: owner });
 
-  let syscoinRelay = await SyscoinRelay.deployed();
-  console.log('Init syscoinRelay with SyscoinVaultManager...');
-  await syscoinRelay.init(SyscoinVaultManager.address, { from: accounts[0] });
+  const syscoinRelay = await SyscoinRelay.deployed();
 
+  console.log('Initializing SyscoinRelay with VaultManager...');
+  await syscoinRelay.init(SyscoinVaultManager.address, { from: owner });
 };
