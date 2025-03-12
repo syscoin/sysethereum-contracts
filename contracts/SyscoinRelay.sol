@@ -4,9 +4,8 @@ pragma solidity ^0.8.20;
 import "./interfaces/SyscoinRelayI.sol";
 import "./interfaces/SyscoinTransactionProcessorI.sol";
 import "./SyscoinParser/SyscoinMessageLibrary.sol";
-import "@openzeppelin/contracts/access/Ownable.sol";
 
-contract SyscoinRelay is SyscoinRelayI, SyscoinMessageLibrary, Ownable {
+contract SyscoinRelay is SyscoinRelayI, SyscoinMessageLibrary {
     bool public initialized = false;
     uint32 constant SYSCOIN_TX_VERSION_ALLOCATION_BURN_TO_NEVM = 134;
     uint constant ERR_INVALID_HEADER = 10000;
@@ -26,9 +25,7 @@ contract SyscoinRelay is SyscoinRelayI, SyscoinMessageLibrary, Ownable {
 
     event VerifyTransaction(bytes32 txHash, uint returnCode);
     event RelayTransaction(bytes32 txHash, uint returnCode);
-    constructor(address initialOwner) Ownable(initialOwner) {}
-
-    function init(address _syscoinVaultManager) external onlyOwner {
+    function init(address _syscoinVaultManager) external {
         require(!initialized, "Already initialized");
         require(_syscoinVaultManager != address(0), "Invalid address");
         syscoinVaultManager = SyscoinTransactionProcessorI(_syscoinVaultManager);

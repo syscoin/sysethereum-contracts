@@ -15,6 +15,7 @@ contract("SyscoinVaultManager", (accounts) => {
     vault = await SyscoinVaultManager.new(
       trustedRelayer, // trustedRelayer
       9999,           // SYSAssetGuid
+      owner
     );
     // deploy mocks
     erc20 = await MockERC20.new("MockToken", "MCK", 18);
@@ -239,6 +240,87 @@ contract("SyscoinVaultManager", (accounts) => {
       let userBal = await erc20_4dec.balanceOf(owner);
       expect(userBal.toString()).to.equal("876544");
     });
+  });
+  describe("Pause Functionality", () => {
+    it("should allow freezeBurn and processTransaction when not paused", async () => {
+      await erc20.mint(owner, web3.utils.toWei("100"));
+      await erc20.approve(vault.address, web3.utils.toWei("10"), { from: owner });
+  
+      await vault.freezeBurn(
+        web3.utils.toWei("10"),
+        erc20.address,
+        0,
+        "sys1addr",
+        { from: owner }
+      );
+  
+      const assetId = await vault.assetRegistryByAddress(erc20.address);
+      const assetGuid = (BigInt(0) << 32n) | BigInt(assetId.toNumber());
+  
+      await vault.processTransaction(
+        123,
+        1000000000,
+        owner,
+        assetGuid,
+        { from: trustedRelayer }
+      );
+    });
+  
+    it("should revert freezeBurn and processTransaction when paused", async () => {
+      await vault.setPaused(true, { from: owner });
+  
+      await truffleAssert.reverts(
+        vault.freezeBurn(
+          web3.utils.toWei("1"),
+          erc20.address,
+          0,
+          "sys1addr",
+          { from: owner }
+        ),
+        "Bridge is paused"
+      );
+  
+      const assetId = await vault.assetRegistryByAddress(erc20.address);
+      const assetGuid = (BigInt(0) << 32n) | BigInt(assetId.toNumber());
+  
+      await truffleAssert.reverts(
+        vault.processTransaction(
+          456,
+          100000000,
+          owner,
+          assetGuid,
+          { from: trustedRelayer }
+        ),
+        "Bridge is paused"
+      );
+    });
+  
+    it("should resume operations after unpausing", async () => {
+      await vault.setPaused(false, { from: owner });
+  
+      await erc20.approve(vault.address, web3.utils.toWei("5"), { from: owner });
+  
+      const tx = await vault.freezeBurn(
+        web3.utils.toWei("5"),
+        erc20.address,
+        0,
+        "sys1addr",
+        { from: owner }
+      );
+  
+      truffleAssert.eventEmitted(tx, 'TokenFreeze');
+  
+      const assetId = await vault.assetRegistryByAddress(erc20.address);
+      const assetGuid = (BigInt(0) << 32n) | BigInt(assetId.toNumber());
+  
+      await vault.processTransaction(
+        456,
+        500000000,
+        owner,
+        assetGuid,
+        { from: trustedRelayer }
+      );
+    });  
   });
   describe("ERC721 bridging tests", () => {
     it("should revert bridging ERC721 tokenId=0", async () => {

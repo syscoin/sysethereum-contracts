@@ -10,6 +10,8 @@ import "@openzeppelin/contracts/token/ERC1155/IERC1155.sol";
 import "@openzeppelin/contracts/token/ERC1155/utils/ERC1155Holder.sol";
 import "@openzeppelin/contracts/token/ERC721/utils/ERC721Holder.sol";
 import "./interfaces/SyscoinTransactionProcessorI.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
+
 /**
  * @title SyscoinVaultManager
  *
@@ -27,7 +29,7 @@ import "./interfaces/SyscoinTransactionProcessorI.sol";
  *   - For ERC721, bridging 1 token => 'tokenIdx' is new each time or looked up.
  *   - For ERC1155, bridging 'amount' => 'tokenIdx' references specific tokenId in the contract.
  */
-contract SyscoinVaultManager is SyscoinTransactionProcessorI, ReentrancyGuard, ERC1155Holder, ERC721Holder {
+contract SyscoinVaultManager is SyscoinTransactionProcessorI, ReentrancyGuard, ERC1155Holder, ERC721Holder, Ownable {
     using SafeERC20 for IERC20Metadata;
 
     //-------------------------------------------------------------------------
@@ -75,7 +77,7 @@ contract SyscoinVaultManager is SyscoinTransactionProcessorI, ReentrancyGuard, E
     // The Syscoin asset GUID that references "native" SYS
     // if bridging native SYS from NEVM -> UTXO, or vice versa
     uint64 public immutable SYSAssetGuid;
-
+    bool public paused;
     //-------------------------------------------------------------------------
     // Events
     //-------------------------------------------------------------------------
@@ -94,8 +96,10 @@ contract SyscoinVaultManager is SyscoinTransactionProcessorI, ReentrancyGuard, E
      */
     constructor(
         address _trustedRelayerContract,
-        uint64 _sysxGuid
-    ) {
+        uint64 _sysxGuid,
+        address _initialOwner
+    ) Ownable(_initialOwner) {
+        require(_trustedRelayerContract != address(0), "Invalid Relay");
         trustedRelayerContract = _trustedRelayerContract;
         SYSAssetGuid = _sysxGuid;
     }
@@ -103,6 +107,11 @@ contract SyscoinVaultManager is SyscoinTransactionProcessorI, ReentrancyGuard, E
     //-------------------------------------------------------------------------
     // Modifiers
     //-------------------------------------------------------------------------
+
+    modifier whenNotPaused() {
+        require(!paused, "Bridge is paused");
+        _;
+    }
 
     modifier onlyTrustedRelayer() {
         require(msg.sender == trustedRelayerContract, "Call must be from trusted relayer");
@@ -129,7 +138,7 @@ contract SyscoinVaultManager is SyscoinTransactionProcessorI, ReentrancyGuard, E
         external
         override
         onlyTrustedRelayer
-        nonReentrant
+        nonReentrant whenNotPaused
     {
         require(_insert(txHash), "TX already processed");
 
@@ -187,7 +196,7 @@ contract SyscoinVaultManager is SyscoinTransactionProcessorI, ReentrancyGuard, E
     )
         external
         payable
-        nonReentrant
+        nonReentrant whenNotPaused
         returns (bool)
     {
         require(bytes(syscoinAddr).length > 0, "Syscoin address required");
@@ -257,6 +266,9 @@ contract SyscoinVaultManager is SyscoinTransactionProcessorI, ReentrancyGuard, E
         return true;
     }
 
+    function setPaused(bool _paused) external onlyOwner {
+        paused = _paused;
+    }
     //-------------------------------------------------------------------------
     // Internal Helpers
     //-------------------------------------------------------------------------
