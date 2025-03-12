@@ -21,7 +21,7 @@ contract("Malicious Re-Entrancy Test", (accounts) => {
     attacker = await MaliciousReentrant.new(mock1155.address);
 
     // Now create the vault with `attacker.address` as the trusted relayer
-    vault = await SyscoinVaultManager.new(attacker.address, 8888, false);
+    vault = await SyscoinVaultManager.new(attacker.address, 8888);
 
     // Then set the vault address inside the malicious constructor or a separate init function
     await attacker.setVault(vault.address);
