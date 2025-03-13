@@ -30,7 +30,7 @@
 
 ### SyscoinVaultManager
 
-- `SyscoinVaultManager.sol` (and potential expansions like `SyscoinVaultManagerAllBridges.sol`) is responsible for:
+- `SyscoinVaultManager.sol` is responsible for:
   - **Holding deposits** or transferring tokens on the NEVM side.
   - Minting or transferring tokens when coins are locked on Syscoin UTXO side (UTXO -> NEVM).
   - Burning or locking tokens on NEVM when coins move back to Syscoin (NEVM -> UTXO).
