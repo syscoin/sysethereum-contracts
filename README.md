@@ -16,7 +16,7 @@
 
 ## Introduction
 
-**Sysethereum** is a set of smart contracts on the [NEVM (Syscoin’s EVM layer)](https://syscoin.org) that implements a *decentralized* bridge between the **Syscoin UTXO blockchain** and the **NEVM**. It allows assets (Syscoin Platform Tokens or plain SYS) to move seamlessly between the two worlds.
+**Sysethereum** is a set of smart contracts on the [NEVM (Syscoin’s EVM layer)](https://syscoin.org) that implements a _decentralized_ bridge between the **Syscoin UTXO blockchain** and the **NEVM**. It allows assets (Syscoin Platform Tokens or plain SYS) to move seamlessly between the two worlds.
 
 ---
 
@@ -38,7 +38,7 @@
 
 ### SyscoinMessageLibrary / SyscoinParser
 
-- A library used to parse and handle Syscoin transaction bytes, block headers, merkle proofs, etc.  
+- A library used to parse and handle Syscoin transaction bytes, block headers, merkle proofs, etc.
 - Provides functions like `parseVarInt`, `parseCompactSize`, and big-endian / little-endian conversions.
 
 ### Additional Contracts
@@ -52,10 +52,9 @@
 
 ### 1. System Requirements
 
-- **Node.js** v9.2.0 up to v11.15.0 (Truffle often works best in these ranges).  
-- **NPM** or **Yarn** – for installing JavaScript dependencies.  
-- **Ganache CLI** or another Ethereum-like local testnet environment.  
-- **Web3j** command line tool (optional).
+- **Node.js** v16 or later
+- **NPM** or **Yarn** – for installing JavaScript dependencies
+- **Hardhat** - for development, testing, and deployment
 
 ### 2. Cloning the Repository
 
@@ -63,33 +62,51 @@
 git clone https://github.com/syscoin/sysethereum-contracts.git
 cd sysethereum-contracts
 ```
-## Running the Tests
 
-* Install prerequisites
-  * [nodejs](https://nodejs.org) v9.2.0 to v11.15.0.
-  * [web3j](https://docs.web3j.io/command_line_tools/) command line tool
-* Clone this repo.
-* Install npm dependencies.
-  * cd to the directory where the repo is cloned.
-  ```
-    npm install
-  ```
+### 3. Install Dependencies
 
-* Compile contracts
-  ```
-    # compile contracts
-    npx truffle compile --all
-  ```
+```bash
+npm install
+```
 
-* Run tests:
-  ```
-    # first start ganache-cli - and do this again once your gas ran out
-    npx ganache-cli --gasLimit 4000000000000 -e 1000000
+## Development
 
-    # run tests
-    npx truffle test
-  ```
+### 1. Compile Contracts
+
+```bash
+npx hardhat compile
+```
+
+### 2. Run Tests
+
+```bash
+# Run all tests
+npx hardhat test
+
+```
+
+### 3. Running a Local Node
+
+```bash
+# Start a local Hardhat node
+npx hardhat node
+```
 
 ## Deployment
 
-* Run `./scripts/exportAndInit.sh`
+### 1. Local Deployment
+
+```bash
+# Deploy to local Hardhat network
+npx hardhat run scripts/deploy.ts --network localhost
+```
+
+### 2. Syscoin Mainnet Deployment
+
+```bash
+# Set your private key in .env file first
+# PRIVATE_KEY=your_private_key_here
+
+# Deploy to Syscoin mainnet
+npx hardhat run scripts/deploy.ts --network syscoin
+```

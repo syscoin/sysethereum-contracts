@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.17;
+pragma solidity ^0.8.20;
 
-import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
+import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 import "@openzeppelin/contracts/utils/introspection/ERC165Checker.sol";
 import "@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol";
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
@@ -9,7 +9,9 @@ import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 import "@openzeppelin/contracts/token/ERC1155/IERC1155.sol";
 import "@openzeppelin/contracts/token/ERC1155/utils/ERC1155Holder.sol";
 import "@openzeppelin/contracts/token/ERC721/utils/ERC721Holder.sol";
-import "./interfaces/SyscoinTransactionProcessorI.sol";
+import "./interfaces/ISyscoinTransactionProcessor.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
+
 /**
  * @title SyscoinVaultManager
  *
@@ -27,7 +29,13 @@ import "./interfaces/SyscoinTransactionProcessorI.sol";
  *   - For ERC721, bridging 1 token => 'tokenIdx' is new each time or looked up.
  *   - For ERC1155, bridging 'amount' => 'tokenIdx' references specific tokenId in the contract.
  */
-contract SyscoinVaultManager is SyscoinTransactionProcessorI, ReentrancyGuard, ERC1155Holder, ERC721Holder {
+contract SyscoinVaultManager is
+    ISyscoinTransactionProcessor,
+    ReentrancyGuard,
+    ERC1155Holder,
+    ERC721Holder,
+    Ownable
+{
     using SafeERC20 for IERC20Metadata;
 
     //-------------------------------------------------------------------------
@@ -47,12 +55,12 @@ contract SyscoinVaultManager is SyscoinTransactionProcessorI, ReentrancyGuard, E
         address assetContract;
         uint8 precision;
         uint32 tokenIdCount;
-        mapping(uint32 => uint256) tokenRegistry;            // tokenIdx => realTokenId
-        mapping(uint256 => uint32) reverseTokenRegistry;     // realTokenId => tokenIdx
+        mapping(uint32 => uint256) tokenRegistry; // tokenIdx => realTokenId
+        mapping(uint256 => uint32) reverseTokenRegistry; // realTokenId => tokenIdx
     }
 
     // 9,999,999,999.99999999 => ~1e18 satoshis (10B -1)
-    uint256 constant MAX_SYS_SUPPLY_SATS = 9999999999 * 100000000; 
+    uint256 constant MAX_SYS_SUPPLY_SATS = 9999999999 * 100000000;
     //-------------------------------------------------------------------------
     // State Variables
     //-------------------------------------------------------------------------
@@ -75,14 +83,27 @@ contract SyscoinVaultManager is SyscoinTransactionProcessorI, ReentrancyGuard, E
     // The Syscoin asset GUID that references "native" SYS
     // if bridging native SYS from NEVM -> UTXO, or vice versa
     uint64 public immutable SYSAssetGuid;
-
+    bool public paused;
     //-------------------------------------------------------------------------
     // Events
     //-------------------------------------------------------------------------
 
-    event TokenFreeze(uint64 indexed assetGuid, address indexed freezer, uint satoshiValue, string syscoinAddr);
-    event TokenUnfreeze(uint64 indexed assetGuid, address indexed recipient, uint value);
-    event TokenRegistry(uint32 indexed assetId, address assetContract, AssetType assetType);
+    event TokenFreeze(
+        uint64 indexed assetGuid,
+        address indexed freezer,
+        uint satoshiValue,
+        string syscoinAddr
+    );
+    event TokenUnfreeze(
+        uint64 indexed assetGuid,
+        address indexed recipient,
+        uint value
+    );
+    event TokenRegistry(
+        uint32 indexed assetId,
+        address assetContract,
+        AssetType assetType
+    );
 
     //-------------------------------------------------------------------------
     // Constructor
@@ -94,8 +115,10 @@ contract SyscoinVaultManager is SyscoinTransactionProcessorI, ReentrancyGuard, E
      */
     constructor(
         address _trustedRelayerContract,
-        uint64 _sysxGuid
-    ) {
+        uint64 _sysxGuid,
+        address _initialOwner
+    ) Ownable(_initialOwner) {
+        require(_trustedRelayerContract != address(0), "Invalid Relay");
         trustedRelayerContract = _trustedRelayerContract;
         SYSAssetGuid = _sysxGuid;
     }
@@ -104,8 +127,16 @@ contract SyscoinVaultManager is SyscoinTransactionProcessorI, ReentrancyGuard, E
     // Modifiers
     //-------------------------------------------------------------------------
 
+    modifier whenNotPaused() {
+        require(!paused, "Bridge is paused");
+        _;
+    }
+
     modifier onlyTrustedRelayer() {
-        require(msg.sender == trustedRelayerContract, "Call must be from trusted relayer");
+        require(
+            msg.sender == trustedRelayerContract,
+            "Call must be from trusted relayer"
+        );
         _;
     }
 
@@ -125,12 +156,7 @@ contract SyscoinVaultManager is SyscoinTransactionProcessorI, ReentrancyGuard, E
         uint value,
         address destination,
         uint64 assetGuid
-    )
-        external
-        override
-        onlyTrustedRelayer
-        nonReentrant
-    {
+    ) external override onlyTrustedRelayer nonReentrant whenNotPaused {
         require(_insert(txHash), "TX already processed");
 
         if (assetGuid == SYSAssetGuid) {
@@ -148,20 +174,23 @@ contract SyscoinVaultManager is SyscoinTransactionProcessorI, ReentrancyGuard, E
                 require(tokenIdx == 0, "ERC20 bridging requires tokenIdx=0");
                 uint mintedAmount = scaleFromSatoshi(value, item.precision);
                 _withdrawERC20(item.assetContract, mintedAmount, destination);
-            } 
-            else if (item.assetType == AssetType.ERC721) {
+            } else if (item.assetType == AssetType.ERC721) {
                 // bridging 1 NFT => value=1
                 require(value == 1, "ERC721 bridging requires value=1");
                 // look up the real tokenId
                 uint realTokenId = item.tokenRegistry[tokenIdx];
                 require(realTokenId != 0, "Unknown 721 tokenIdx");
                 _withdrawERC721(item.assetContract, realTokenId, destination);
-            }
-            else if (item.assetType == AssetType.ERC1155) {
+            } else if (item.assetType == AssetType.ERC1155) {
                 require(value > 0, "Value must be positive");
                 uint realTokenId = item.tokenRegistry[tokenIdx];
                 require(realTokenId != 0, "Unknown 1155 tokenIdx");
-                _withdrawERC1155(item.assetContract, realTokenId, value, destination);
+                _withdrawERC1155(
+                    item.assetContract,
+                    realTokenId,
+                    value,
+                    destination
+                );
             }
         }
 
@@ -184,12 +213,7 @@ contract SyscoinVaultManager is SyscoinTransactionProcessorI, ReentrancyGuard, E
         address assetAddr,
         uint256 tokenId,
         string memory syscoinAddr
-    )
-        external
-        payable
-        nonReentrant
-        returns (bool)
-    {
+    ) external payable nonReentrant whenNotPaused returns (bool) {
         require(bytes(syscoinAddr).length > 0, "Syscoin address required");
         uint satoshiValue;
         if (assetAddr == address(0)) {
@@ -198,7 +222,12 @@ contract SyscoinVaultManager is SyscoinTransactionProcessorI, ReentrancyGuard, E
             require(tokenId == 0, "SYS => bridging requires tokenId==0");
             satoshiValue = scaleToSatoshi(value, 18); // "native SYS on NEVM" is 18 dec
             // just log the freeze => user must parse
-            emit TokenFreeze(SYSAssetGuid, msg.sender, satoshiValue, syscoinAddr);
+            emit TokenFreeze(
+                SYSAssetGuid,
+                msg.sender,
+                satoshiValue,
+                syscoinAddr
+            );
             return true;
         }
         AssetType detectedType = _detectAssetType(assetAddr);
@@ -229,25 +258,25 @@ contract SyscoinVaultManager is SyscoinTransactionProcessorI, ReentrancyGuard, E
             require(tokenId == 0, "ERC20 tokenId must be zero");
             satoshiValue = scaleToSatoshi(value, item.precision);
             _depositERC20(assetAddr, value);
-        }
-        else if (detectedType == AssetType.ERC721) {
+        } else if (detectedType == AssetType.ERC721) {
             require(value == 1, "ERC721 deposit requires exactly 1");
             require(tokenId != 0, "ERC721 tokenId required");
             satoshiValue = value;
             _depositERC721(assetAddr, tokenId);
-        }
-        else if (detectedType == AssetType.ERC1155) {
+        } else if (detectedType == AssetType.ERC1155) {
             require(value > 0, "ERC1155 requires positive value");
             require(tokenId != 0, "ERC1155 tokenId required");
             satoshiValue = value;
             _depositERC1155(assetAddr, tokenId, value);
-        }
-        else {
+        } else {
             revert("Invalid asset type");
         }
         // figure out tokenIndex if NFT
         uint32 tokenIndex = 0;
-        if (item.assetType == AssetType.ERC721 || item.assetType == AssetType.ERC1155) {
+        if (
+            item.assetType == AssetType.ERC721 ||
+            item.assetType == AssetType.ERC1155
+        ) {
             tokenIndex = _findOrAssignTokenIndex(item, tokenId);
         }
         // Calculate assetGuid correctly
@@ -255,6 +284,10 @@ contract SyscoinVaultManager is SyscoinTransactionProcessorI, ReentrancyGuard, E
         emit TokenFreeze(assetGuid, msg.sender, satoshiValue, syscoinAddr);
 
         return true;
+    }
+
+    function setPaused(bool _paused) external onlyOwner {
+        paused = _paused;
     }
 
     //-------------------------------------------------------------------------
@@ -269,12 +302,16 @@ contract SyscoinVaultManager is SyscoinTransactionProcessorI, ReentrancyGuard, E
         return true;
     }
 
-    function _parseAssetGuid(uint64 guid) internal pure returns (uint32 tokenIdx, uint32 assetId) {
+    function _parseAssetGuid(
+        uint64 guid
+    ) internal pure returns (uint32 tokenIdx, uint32 assetId) {
         tokenIdx = uint32(guid >> 32);
-        assetId  = uint32(guid);
+        assetId = uint32(guid);
     }
 
-    function _detectAssetType(address contractAddr) internal view returns (AssetType) {
+    function _detectAssetType(
+        address contractAddr
+    ) internal view returns (AssetType) {
         bool supports165 = ERC165Checker.supportsERC165(contractAddr);
         if (supports165) {
             // 0x80ac58cd => ERC721
@@ -289,7 +326,10 @@ contract SyscoinVaultManager is SyscoinTransactionProcessorI, ReentrancyGuard, E
         return AssetType.ERC20;
     }
 
-    function _defaultPrecision(AssetType t, address contractAddr) internal view returns (uint8) {
+    function _defaultPrecision(
+        AssetType t,
+        address contractAddr
+    ) internal view returns (uint8) {
         if (t == AssetType.ERC20) {
             try IERC20Metadata(contractAddr).decimals() returns (uint8 dec) {
                 return dec;
@@ -304,13 +344,10 @@ contract SyscoinVaultManager is SyscoinTransactionProcessorI, ReentrancyGuard, E
     function _findOrAssignTokenIndex(
         AssetRegistryItem storage item,
         uint256 realTokenId
-    )
-        internal
-        returns (uint32)
-    {
+    ) internal returns (uint32) {
         uint32 tokenIdx = item.reverseTokenRegistry[realTokenId];
 
-        if (tokenIdx == 0) { 
+        if (tokenIdx == 0) {
             // Token hasn't been registered yet; assign a new index
             item.tokenIdCount++;
             tokenIdx = item.tokenIdCount;
@@ -323,17 +360,19 @@ contract SyscoinVaultManager is SyscoinTransactionProcessorI, ReentrancyGuard, E
         return tokenIdx;
     }
 
-
     /**
-    * @dev scaleToSatoshi: Convert `rawValue` from `tokenDecimals` to 8 decimals.
-    *      Then require <= MAX_SYS_SUPPLY_SATS.
-    *
-    * Example:
-    *   tokenDecimals=18, rawValue=1000000000000000000 (1 token)
-    *   => scaleDown => 1 * 10^(8-18) => 1/10^10 => truncated => 0 if < 10^10
-    *   => if fromDecimals < 8 => scale up => leftover fraction => none, integer multiply
-    */
-    function scaleToSatoshi(uint rawValue, uint8 tokenDecimals) internal pure returns (uint) {
+     * @dev scaleToSatoshi: Convert `rawValue` from `tokenDecimals` to 8 decimals.
+     *      Then require <= MAX_SYS_SUPPLY_SATS.
+     *
+     * Example:
+     *   tokenDecimals=18, rawValue=1000000000000000000 (1 token)
+     *   => scaleDown => 1 * 10^(8-18) => 1/10^10 => truncated => 0 if < 10^10
+     *   => if fromDecimals < 8 => scale up => leftover fraction => none, integer multiply
+     */
+    function scaleToSatoshi(
+        uint rawValue,
+        uint8 tokenDecimals
+    ) internal pure returns (uint) {
         uint scaled;
         if (tokenDecimals > 8) {
             // scale down => integer division truncates fraction
@@ -347,15 +386,19 @@ contract SyscoinVaultManager is SyscoinTransactionProcessorI, ReentrancyGuard, E
         require(scaled <= MAX_SYS_SUPPLY_SATS, "Overflow bridging to Sys");
         return scaled;
     }
+
     /**
-    * @dev scaleFromSatoshi: Convert `satValue` in 8 decimals to `tokenDecimals`.
-    *      Typically no overflow check is needed, because we assume Sys side
-    *      never exceeds ~1e18. If you want to be extra safe, do an additional check.
-    *
-    * Example:
-    *   tokenDecimals=18, satValue=123 (1.23e2 => 1.23 sat) => scaleUp => 123 * 10^(18-8) => 123 * 10^10.
-    */
-    function scaleFromSatoshi(uint satValue, uint8 tokenDecimals) internal pure returns (uint) {
+     * @dev scaleFromSatoshi: Convert `satValue` in 8 decimals to `tokenDecimals`.
+     *      Typically no overflow check is needed, because we assume Sys side
+     *      never exceeds ~1e18. If you want to be extra safe, do an additional check.
+     *
+     * Example:
+     *   tokenDecimals=18, satValue=123 (1.23e2 => 1.23 sat) => scaleUp => 123 * 10^(18-8) => 123 * 10^10.
+     */
+    function scaleFromSatoshi(
+        uint satValue,
+        uint8 tokenDecimals
+    ) internal pure returns (uint) {
         if (tokenDecimals > 8) {
             // scale up
             return satValue * (10 ** (tokenDecimals - 8));
@@ -373,27 +416,64 @@ contract SyscoinVaultManager is SyscoinTransactionProcessorI, ReentrancyGuard, E
 
     // deposit erc20 => use safeTransferFrom
     function _depositERC20(address assetContract, uint amount) internal {
-        IERC20Metadata(assetContract).safeTransferFrom(msg.sender, address(this), amount);
+        IERC20Metadata(assetContract).safeTransferFrom(
+            msg.sender,
+            address(this),
+            amount
+        );
     }
 
-    function _withdrawERC20(address assetContract, uint amount, address to) internal {
+    function _withdrawERC20(
+        address assetContract,
+        uint amount,
+        address to
+    ) internal {
         IERC20Metadata(assetContract).safeTransfer(to, amount);
     }
 
     function _depositERC721(address assetContract, uint tokenId) internal {
-        IERC721(assetContract).safeTransferFrom(msg.sender, address(this), tokenId);
+        IERC721(assetContract).safeTransferFrom(
+            msg.sender,
+            address(this),
+            tokenId
+        );
     }
 
-    function _withdrawERC721(address assetContract, uint tokenId, address to) internal {
+    function _withdrawERC721(
+        address assetContract,
+        uint tokenId,
+        address to
+    ) internal {
         IERC721(assetContract).transferFrom(address(this), to, tokenId);
     }
 
-    function _depositERC1155(address assetContract, uint tokenId, uint amount) internal {
-        IERC1155(assetContract).safeTransferFrom(msg.sender, address(this), tokenId, amount, "");
+    function _depositERC1155(
+        address assetContract,
+        uint tokenId,
+        uint amount
+    ) internal {
+        IERC1155(assetContract).safeTransferFrom(
+            msg.sender,
+            address(this),
+            tokenId,
+            amount,
+            ""
+        );
     }
 
-    function _withdrawERC1155(address assetContract, uint tokenId, uint amount, address to) internal {
-        IERC1155(assetContract).safeTransferFrom(address(this), to, tokenId, amount, "");
+    function _withdrawERC1155(
+        address assetContract,
+        uint tokenId,
+        uint amount,
+        address to
+    ) internal {
+        IERC1155(assetContract).safeTransferFrom(
+            address(this),
+            to,
+            tokenId,
+            amount,
+            ""
+        );
     }
 
     function _withdrawSYS(uint amount, address payable to) internal {
@@ -402,12 +482,18 @@ contract SyscoinVaultManager is SyscoinTransactionProcessorI, ReentrancyGuard, E
         require(success, "Sys transfer failed");
     }
 
-    function getRealTokenIdFromTokenIdx(uint32 assetId, uint32 tokenIdx) external view returns (uint256) {
+    function getRealTokenIdFromTokenIdx(
+        uint32 assetId,
+        uint32 tokenIdx
+    ) external view returns (uint256) {
         AssetRegistryItem storage item = assetRegistry[assetId];
         return item.tokenRegistry[tokenIdx];
     }
 
-    function getTokenIdxFromRealTokenId(uint32 assetId, uint256 realTokenId) external view returns (uint32) {
+    function getTokenIdxFromRealTokenId(
+        uint32 assetId,
+        uint256 realTokenId
+    ) external view returns (uint32) {
         AssetRegistryItem storage item = assetRegistry[assetId];
         return item.reverseTokenRegistry[realTokenId];
     }

@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.17;
+pragma solidity ^0.8.20;
 
-import "./SyscoinVaultManager.sol";
+import "../SyscoinVaultManager.sol";
 import "@openzeppelin/contracts/token/ERC1155/IERC1155Receiver.sol";
 
 /**
@@ -20,6 +20,7 @@ contract MaliciousReentrant is IERC1155Receiver {
         didAttack = false;
         attackReverted = false;
     }
+
     function setVault(address _vault) external {
         vault = SyscoinVaultManager(_vault);
     }
@@ -41,7 +42,9 @@ contract MaliciousReentrant is IERC1155Receiver {
     ) external override returns (bytes4) {
         if (!didAttack) {
             didAttack = true;
-            try vault.freezeBurn(value, erc1155Asset, id, "sysMaliciousAddress") {
+            try
+                vault.freezeBurn(value, erc1155Asset, id, "sysMaliciousAddress")
+            {
                 attackReverted = false;
                 revert("Malicious attack succeeded");
             } catch {
@@ -61,8 +64,11 @@ contract MaliciousReentrant is IERC1155Receiver {
         return this.onERC1155BatchReceived.selector;
     }
 
-    function supportsInterface(bytes4 interfaceId) external pure override returns (bool) {
-        return interfaceId == this.onERC1155Received.selector 
-            || interfaceId == this.onERC1155BatchReceived.selector;
+    function supportsInterface(
+        bytes4 interfaceId
+    ) external pure override returns (bool) {
+        return
+            interfaceId == this.onERC1155Received.selector ||
+            interfaceId == this.onERC1155BatchReceived.selector;
     }
 }
