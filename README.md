@@ -77,19 +77,19 @@ npm install
 npx hardhat compile
 ```
 
-### 2. Run Tests
+### 2. Running a Local Node
+
+```bash
+# Start a local Hardhat node
+npx hardhat node
+```
+
+### 3. Run Tests (must deploy local node first)
 
 ```bash
 # Run all tests
 npx hardhat test
 
-```
-
-### 3. Running a Local Node
-
-```bash
-# Start a local Hardhat node
-npx hardhat node
 ```
 
 ## Deployment
