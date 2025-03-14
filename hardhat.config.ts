@@ -1,7 +1,8 @@
 import { HardhatUserConfig } from "hardhat/config";
 import "@nomicfoundation/hardhat-toolbox";
 
-const PRIVATE_KEY = process.env.PRIVATE_KEY || "0x0000000000000000000000000000000000000000000000000000000000000000";
+// Use mnemonic
+const MNEMONIC = process.env.MNEMONIC || "test test test test test test test test test test test junk";
 
 const config: HardhatUserConfig = {
   solidity: {
@@ -17,18 +18,25 @@ const config: HardhatUserConfig = {
     // Local development network
     localhost: {
       url: "http://127.0.0.1:8545",
+      accounts: {
+        mnemonic: MNEMONIC,
+      }
     },
     // Syscoin Mainnet
     syscoin: {
       url: "https://rpc.syscoin.org",
       chainId: 57,
-      accounts: [PRIVATE_KEY]
+      accounts: {
+        mnemonic: MNEMONIC,
+      }
     },
     // Syscoin Tanenbaum Testnet
     tanenbaum: {
       url: "https://rpc.tanenbaum.io",
       chainId: 5700,
-      accounts: [PRIVATE_KEY]
+      accounts: {
+        mnemonic: MNEMONIC,
+      }
     },
   },
   defaultNetwork: 'localhost',
