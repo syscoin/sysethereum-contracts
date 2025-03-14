@@ -30,11 +30,11 @@
 
 ### SyscoinVaultManager
 
-- `SyscoinVaultManager.sol` (and potential expansions like `SyscoinVaultManagerAllBridges.sol`) is responsible for:
+- `SyscoinVaultManager.sol` is responsible for:
   - **Holding deposits** or transferring tokens on the NEVM side.
   - Minting or transferring tokens when coins are locked on Syscoin UTXO side (UTXO -> NEVM).
   - Burning or locking tokens on NEVM when coins move back to Syscoin (NEVM -> UTXO).
-  - Potential bridging for **ERC20**, **ERC721**, **ERC1155**, or native SYS (depending on the code version).
+  - Potential bridging for **ERC20**, **ERC721**, **ERC1155**, or native SYS.
 
 ### SyscoinMessageLibrary / SyscoinParser
 
@@ -104,8 +104,8 @@ npx hardhat run scripts/deploy.ts --network localhost
 ### 2. Syscoin Mainnet Deployment
 
 ```bash
-# Set your private key in .env file first
-# PRIVATE_KEY=your_private_key_here
+# Set your seed in .env file first
+# MNEMONIC=your_seed_phrase_here
 
 # Deploy to Syscoin mainnet
 npx hardhat run scripts/deploy.ts --network syscoin

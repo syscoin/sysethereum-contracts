@@ -1,7 +1,7 @@
 {
   "name": "sysethereum-contracts",
   "version": "1.0.0",
-  "description": "Syscoin <=> Ethereum bridge smart contracts",
+  "description": "Syscoin <=> NEVM bridge smart contracts",
   "dependencies": {
     "dotenv": "^16.4.7",
     "hardhat": "^2.22.19"

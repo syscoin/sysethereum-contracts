@@ -53,6 +53,9 @@ async function main() {
                 address: syscoinVaultManagerAddress,
                 constructorArguments: [syscoinRelayAddress, SYS_ASSET_GUID, deployer.address]
             });
+            // Sourcify verification
+            await run("sourcify", { network: network.name });
+            console.log("Contracts verified on Sourcify successfully.");
         } catch (error) {
             console.error(`Verification error: ${error}`);
         }
