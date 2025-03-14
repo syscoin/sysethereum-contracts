@@ -1,8 +1,7 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.17;
+pragma solidity ^0.8.20;
 
-interface SyscoinRelayI {
-
+interface ISyscoinRelay {
     function relayTx(
         uint64 _blockNumber,
         bytes calldata _txBytes,

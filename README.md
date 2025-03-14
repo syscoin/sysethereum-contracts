@@ -1,62 +1,112 @@
-# Sysethereum contracts
+**Sysethereum** – NEVM Contracts for the Syscoin <=> NEVM Bridge
 
 [![Build Status](https://travis-ci.com/syscoin/sysethereum-contracts.svg?branch=master)](https://travis-ci.com/syscoin/sysethereum-contracts)
 
-NEVM contracts for the Syscoin <=> NEVM bridge.
+---
 
-If you are new to the Syscoin <=> NEVM bridge, please check the [docs](https://github.com/syscoin/sysethereum-docs) repository first.
+## Table of Contents
 
-## Core components
-* [SyscoinRelay contract](contracts/SyscoinRelay.sol)
-  * Informs [SyscoinVaultManager contract](contracts/SyscoinVaultManager.sol) when a Syscoin transaction locked or unlocked funds.
-  * Parsing/working with Syscoin blocks, txs and merkle trees 
-* [SyscoinVaultManager contract](contracts/SyscoinVaultManager.sol)
-  * The vault manager contract to hold deposits or and transfer funds on unlock
-  * Tokens are minted or transferred when coins are locked on the Syscoin blockchain.
-  * Tokens are destroyed when coins should go back to the Syscoin blockchain (balances are saved for when moving back to NEVM).
+1. [Introduction](#introduction)
+2. [Architecture & Core Components](#architecture--core-components)
+3. [Prerequisites & Installation](#prerequisites--installation)
+4. [Running the Tests](#running-the-tests)
+5. [Deployment](#deployment)
 
-## Running the Tests
+---
 
-* Install prerequisites
-  * [nodejs](https://nodejs.org) v9.2.0 to v11.15.0.
-  * [web3j](https://docs.web3j.io/command_line_tools/) command line tool
-* Clone this repo.
-* Install npm dependencies.
-  * cd to the directory where the repo is cloned.
-  ```
-    npm install
-  ```
+## Introduction
 
-* Compile contracts
-  ```
-    # compile contracts
-    npx truffle compile --all
-  ```
+**Sysethereum** is a set of smart contracts on the [NEVM (Syscoin’s EVM layer)](https://syscoin.org) that implements a _decentralized_ bridge between the **Syscoin UTXO blockchain** and the **NEVM**. It allows assets (Syscoin Platform Tokens or plain SYS) to move seamlessly between the two worlds.
 
-* Run tests:
-  ```
-    # first start ganache-cli - and do this again once your gas ran out
-    npx ganache-cli --gasLimit 4000000000000 -e 1000000
+---
 
-    # run tests
-    npx truffle test
-  ```
+## Architecture & Core Components
+
+### SyscoinRelay
+
+- `SyscoinRelay.sol` is responsible for:
+  - Verifying Syscoin blocks, transactions, and **Merkle proofs** on the NEVM side.
+  - Informing the Vault Manager (`SyscoinVaultManager.sol`) when a Syscoin transaction has locked or unlocked funds on the UTXO chain.
+
+### SyscoinVaultManager
+
+- `SyscoinVaultManager.sol` is responsible for:
+  - **Holding deposits** or transferring tokens on the NEVM side.
+  - Minting or transferring tokens when coins are locked on Syscoin UTXO side (UTXO -> NEVM).
+  - Burning or locking tokens on NEVM when coins move back to Syscoin (NEVM -> UTXO).
+  - Potential bridging for **ERC20**, **ERC721**, **ERC1155**, or native SYS.
+
+### SyscoinMessageLibrary / SyscoinParser
+
+- A library used to parse and handle Syscoin transaction bytes, block headers, merkle proofs, etc.
+- Provides functions like `parseVarInt`, `parseCompactSize`, and big-endian / little-endian conversions.
+
+### Additional Contracts
+
+- **Test Mocks** (e.g., `MockERC20.sol`, `MockERC721.sol`, `MockERC1155.sol`) – used to test bridging flows in local test environments.
+- **MaliciousReentrant** – a test contract that verifies the bridge’s `nonReentrant` safety.
+
+---
+
+## Prerequisites & Installation
+
+### 1. System Requirements
+
+- **Node.js** v16 or later
+- **NPM** or **Yarn** – for installing JavaScript dependencies
+- **Hardhat** - for development, testing, and deployment
+
+### 2. Cloning the Repository
+
+```bash
+git clone https://github.com/syscoin/sysethereum-contracts.git
+cd sysethereum-contracts
+```
+
+### 3. Install Dependencies
+
+```bash
+npm install
+```
+
+## Development
+
+### 1. Compile Contracts
+
+```bash
+npx hardhat compile
+```
+
+### 2. Running a Local Node
+
+```bash
+# Start a local Hardhat node
+npx hardhat node
+```
+
+### 3. Run Tests (must deploy local node first)
+
+```bash
+# Run all tests
+npx hardhat test
+
+```
 
 ## Deployment
 
-To deploy the contracts
+### 1. Local Deployment
 
-### Requirements
+```bash
+# Deploy to local Hardhat network
+npx hardhat run scripts/deploy.ts --network localhost
+```
 
-* A Rinkeby/Mainnet client running with rpc enabled
+### 2. Syscoin Mainnet Deployment
 
-### Deployment
+```bash
+# Set your seed in .env file first
+# MNEMONIC=your_seed_phrase_here
 
-* Run `./scripts/exportAndInit.sh`
-
-## License
-
-MIT License<br/>
-Copyright (c) 2019 Blockchain Foundry Inc<br/>
-[License](LICENSE)
-
+# Deploy to Syscoin mainnet
+npx hardhat run scripts/deploy.ts --network syscoin
+```

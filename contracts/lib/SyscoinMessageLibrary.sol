@@ -1,12 +1,13 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.17;
-
+pragma solidity ^0.8.20;
 
 // parse a raw Syscoin transaction byte array
 contract SyscoinMessageLibrary {
-
     // Convert a compact size for wire for variable length fields
-    function parseCompactSize(bytes memory txBytes, uint pos) internal pure returns (uint, uint) {
+    function parseCompactSize(
+        bytes memory txBytes,
+        uint pos
+    ) internal pure returns (uint, uint) {
         require(pos < txBytes.length, "Out of bounds");
 
         uint8 ibit = uint8(txBytes[pos]);
@@ -26,36 +27,66 @@ contract SyscoinMessageLibrary {
         }
         revert("#SyscoinMessageLibrary parseCompactSize invalid opcode");
     }
+
     // Convert a variable integer into something useful and return it and
     // the index to after it.
-    function parseVarInt(bytes memory txBytes, uint pos, uint max) public pure returns (uint, uint) {
+    function parseVarInt(
+        bytes memory txBytes,
+        uint pos,
+        uint max
+    ) public pure returns (uint, uint) {
         uint n = 0;
         while (true) {
             uint8 chData = uint8(txBytes[pos]);
-            require(n <= (max >> 7), "#SyscoinMessageLibrary parseVarInt(): size too large");
+            require(
+                n <= (max >> 7),
+                "#SyscoinMessageLibrary parseVarInt(): size too large"
+            );
             pos += 1;
             n = (n << 7) | (chData & 0x7F);
             if ((chData & 0x80) == 0) {
-                require(n != max, "#SyscoinMessageLibrary parseVarInt(): size too large");
+                require(
+                    n != max,
+                    "#SyscoinMessageLibrary parseVarInt(): size too large"
+                );
                 break;
             }
-            require(n + 1 > n, "#SyscoinMessageLibrary parseVarInt(): overflow detected"); // overflow check
+            require(
+                n + 1 > n,
+                "#SyscoinMessageLibrary parseVarInt(): overflow detected"
+            ); // overflow check
             n++;
         }
         return (n, pos);
     }
 
     // convert little endian bytes to uint
-    function getBytesLE(bytes memory data, uint pos, uint bits)
-        internal
-        pure
-        returns (uint256 result)
-    {
+    function getBytesLE(
+        bytes memory data,
+        uint pos,
+        uint bits
+    ) internal pure returns (uint256 result) {
         for (uint256 i = 0; i < bits / 8; i++) {
             result += uint256(uint8(data[pos + i])) * 2 ** (i * 8);
         }
     }
 
+    // @dev - Converts a bytes of size 4 to uint32,
+    // e.g. for input [0x01, 0x02, 0x03 0x04] returns 0x01020304
+    function bytesToUint32Flipped(
+        bytes memory input,
+        uint pos
+    ) public pure returns (uint32 result) {
+        assembly {
+            let data := mload(add(add(input, 0x20), pos))
+            let flip := mload(0x40)
+            mstore8(add(flip, 0), byte(3, data))
+            mstore8(add(flip, 1), byte(2, data))
+            mstore8(add(flip, 2), byte(1, data))
+            mstore8(add(flip, 3), byte(0, data))
+            result := shr(mul(8, 28), mload(flip))
+        }
+    }
 
     // @dev - convert an unsigned integer from little-endian to big-endian representation
     //
@@ -99,7 +130,7 @@ contract SyscoinMessageLibrary {
             result := mload(pos)
         }
     }
-    
+
     // @dev - For a valid proof, returns the root of the Merkle tree.
     //
     // @param _txHash - transaction hash
@@ -107,13 +138,16 @@ contract SyscoinMessageLibrary {
     // @param _siblings - transaction's Merkle siblings
     // @return - Merkle tree root of the block the transaction belongs to if the proof is valid,
     // garbage if it's invalid
-    function computeMerkle(uint _txHash, uint _txIndex, uint[] memory _siblings)
-    public
-    pure
-    returns (uint)
-    {
-        require(_siblings.length > 0, "#SyscoinMessageLibrary computeMerkle(): No siblings provided");
-        
+    function computeMerkle(
+        uint _txHash,
+        uint _txIndex,
+        uint[] memory _siblings
+    ) public pure returns (uint) {
+        require(
+            _siblings.length > 0,
+            "#SyscoinMessageLibrary computeMerkle(): No siblings provided"
+        );
+
         uint length = _siblings.length;
         uint i;
         for (i = 0; i < length; i++) {
@@ -121,21 +155,24 @@ contract SyscoinMessageLibrary {
         }
 
         i = 0;
-        uint resultHash = flip32Bytes(_txHash);        
+        uint resultHash = flip32Bytes(_txHash);
 
         while (i < length) {
             uint proofHex = _siblings[i];
 
             uint left;
             uint right;
-            if (_txIndex % 2 == 1) { // 0 means _siblings is on the right; 1 means left
+            if (_txIndex % 2 == 1) {
+                // 0 means _siblings is on the right; 1 means left
                 left = proofHex;
                 right = resultHash;
             } else {
                 left = resultHash;
                 right = proofHex;
             }
-            resultHash = uint(sha256(abi.encodePacked(sha256(abi.encodePacked(left, right)))));
+            resultHash = uint(
+                sha256(abi.encodePacked(sha256(abi.encodePacked(left, right))))
+            );
 
             _txIndex /= 2;
             i += 1;
