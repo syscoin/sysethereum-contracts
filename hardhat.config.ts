@@ -1,7 +1,7 @@
 import { HardhatUserConfig } from "hardhat/config";
 import "@nomicfoundation/hardhat-toolbox";
 
-// Use mnemonic
+const PRIVATE_KEY = process.env.PRIVATE_KEY || "";
 const MNEMONIC = process.env.MNEMONIC || "test test test test test test test test test test test junk";
 
 const config: HardhatUserConfig = {
@@ -26,24 +26,20 @@ const config: HardhatUserConfig = {
     syscoin: {
       url: "https://rpc.syscoin.org",
       chainId: 57,
-      accounts: {
-        mnemonic: MNEMONIC,
-      }
+      accounts: [PRIVATE_KEY],
     },
     // Syscoin Tanenbaum Testnet
     tanenbaum: {
       url: "https://rpc.tanenbaum.io",
       chainId: 5700,
-      accounts: {
-        mnemonic: MNEMONIC,
-      }
+      accounts: [PRIVATE_KEY],
     },
   },
   defaultNetwork: 'localhost',
   etherscan: {
     apiKey: {
-      syscoin: "auto",
-      tanenbaum: "auto"
+      syscoin: "empty",
+      tanenbaum: "empty"
     },
     customChains: [
       {
@@ -51,15 +47,15 @@ const config: HardhatUserConfig = {
         chainId: 57,
         urls: {
           apiURL: "https://explorer.syscoin.org/api",
-          browserURL: "https://explorer.syscoin.org/",
+          browserURL: "https://explorer.syscoin.org",
         },
       },
       {
         network: "tanenbaum",
         chainId: 5700,
         urls: {
-          apiURL: "https://tanenbaum.io/api",
-          browserURL: "https://tanenbaum.io/",
+          apiURL: "https://explorer.tanenbaum.io/api",
+          browserURL: "https://explorer.tanenbaum.io",
         },
       }
     ],
