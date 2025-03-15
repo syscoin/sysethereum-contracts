@@ -23,6 +23,11 @@ async function main() {
     await syscoinVaultManager.waitForDeployment();
     const syscoinVaultManagerAddress = await syscoinVaultManager.getAddress();
     console.log(`SyscoinVaultManager deployed at: ${syscoinVaultManagerAddress}`);
+    // Initialize SyscoinRelay
+    console.log("Initializing SyscoinRelay...");
+    const initTx = await syscoinRelay.init(syscoinVaultManagerAddress);
+    await initTx.wait();
+    console.log("SyscoinRelay initialized successfully");
     // Confirm setup
     const configuredVaultAddress = await syscoinRelay.syscoinVaultManager();
     console.log("Relay configured VaultManager address:", configuredVaultAddress);
@@ -41,7 +46,7 @@ async function main() {
             SyscoinRelay: syscoinRelayAddress,
             SyscoinVaultManager: syscoinVaultManagerAddress,
             deployer: deployer.address,
-            SYS_ASSET_GUID,
+            SYS_ASSET_GUID: SYS_ASSET_GUID.toString()
         }, null, 4)
     );
 
