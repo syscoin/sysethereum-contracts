@@ -74,6 +74,7 @@ npm install
 ### 1. Compile Contracts
 
 ```bash
+npx hardhat clean
 npx hardhat compile
 ```
 
@@ -107,6 +108,7 @@ npx hardhat run scripts/deploy.ts --network localhost
 # Set your seed in .env file first
 # MNEMONIC=your_seed_phrase_here
 
-# Deploy to Syscoin mainnet
+# Deploy and verify Syscoin mainnet
 npx hardhat run scripts/deploy.ts --network syscoin
+npx hardhat verify scripts/verify.ts --network syscoin
 ```
