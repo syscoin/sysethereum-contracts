@@ -7,7 +7,7 @@ import "./lib/SyscoinMessageLibrary.sol";
 
 contract SyscoinRelay is ISyscoinRelay, SyscoinMessageLibrary {
     bool public initialized = false;
-    uint32 constant SYSCOIN_TX_VERSION_ALLOCATION_BURN_TO_NEVM = 134;
+    uint32 constant SYSCOIN_TX_VERSION_ALLOCATION_BURN_TO_NEVM = 141;
     uint constant ERR_INVALID_HEADER = 10000;
     uint constant ERR_INVALID_HEADER_HASH = 10010;
     uint constant ERR_PARSE_TX_SYS = 10020;
